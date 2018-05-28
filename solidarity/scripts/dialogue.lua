@@ -1,49 +1,38 @@
 -- for display, 1 = display one at a time, 2 = display all as options, 3 = display one of several options
 -- put functions in condition to check if conditions filled
-require("main")
-speaker = 1
 
 NPCdialogue = {
-  Grape = {[1] = {
-                  text = {"Oh hi.", "Did you see the giant cauliflowers?", "I can't wait to make soup!", "See you later!"},
-                  logic = {next = 2, speaker = "Grape", cond = true, off = true, display = 1}}, -- say once
-          [2] = {text = {"Have a great day!"},
-                logic = {next = 2, speaker = "Grape", cond = true, off = true, display = 1}} --repeat
+  Fennel = {[1] = {
+                  text = {"Oh hi "..player.name..".", "The foreman's giving you the evil eye, better get back to work", "We'll talk later ok?"},
+                  logic = {next = 2, speaker = "Fennel", cond = true, off = true, display = 1}}, -- say once
+          [2] = {text = {"Not now, I'll talk to you later."},
+                logic = {next = 2, speaker = "Fennel", cond = true, off = true, display = 1}} --repeat
         }, -- repeat
-  Lark = {[1] = {text = {"I love looking at the water, don't you?", "It's a bit too cold for swimming today."},
-                logic = {next = 3, speaker = "Lark", cond = true, off = true, display = 1}}, -- say once
-          [2] = {text = {"Have a great day!"},
-                logic = {next = 2, speaker = "Lark", cond = true, off = true, display = 1}},-- repeat
+  Mint = {[1] = {text = {"This heat is intense, I think I'm going to pass out.", "I wish I could take a break but the foreman's watching."},
+                logic = {next = 3, speaker = "Mint", cond = true, off = true, display = 1}}, -- say once
+          [2] = {text = {"Ok back to work I guess."},
+                logic = {next = 2, speaker = "Mint", cond = true, off = true, display = 1}},-- repeat
           [3] = {text = {"What's your favourite fish?"},
-                logic = {next = 4, speaker = "Lark", cond = true, off = false, display = 1}}, -- player response
+                logic = {next = 4, speaker = "Mint", cond = true, off = false, display = 1}}, -- player response
           [4] = {text = {"Carp", "Trout", "Salmon", "Bass", "Perch"},
                 logic = {next = 5, speaker = "player", cond = true, off = false, display = 2}},
           [5] = {text = {"Oh good choice.", "Me too!", "I thought so.", "Cool!", "I see."},
-                logic = {next = 2, speaker = "Lark", off = false, display = 3}} -- respond to player options
+                logic = {next = 2, speaker = "Mint", cond = true, off = false, display = 3}} -- respond to player options
+        },
+  Lark = {[1] = {text = {"What are you looking at? Get back to work!"},
+                logic = {next = 2, speaker = "Lark", cond = true, off = true, display = 1}},
+          [2] = {text = {"Do you want to fight?"},
+                logic = {next = 3, speaker = "Lark", cond = true, off = false, display = 1}},
+          [3] = {text = {"Yes", "No"},
+                logic = {next = 4, speaker = "player", cond = true, off = false, display = 2}},
+          [4] = {text = {"Hah, get ready to lose, loser.", "Too bad."},
+                logic = {next = 1, speaker = "Lark", cond = true, off = true, display = 3, trigger = {type = "battle", choice = 1}}},
         }
 }
 
 
-playerDialogue = {
-  Lark = {[1] = {text = {"Carp", "Trout", "Salmon"},
-  logic = {next = 4, cond = true, choice = 2}}
-  }
-}
-
 objectText = {
-  GardeningSign = "Gardening Supplies",
-  KitchenSign = "Kitchen and Dining Hall",
-  ClinicSign = "Health Clinic",
-  Cauliflower = "Giant cauliflowers, yum!",
-  Cauliflower2 = "Wow, this cauliflower is bigger than you are!",
-  RepairSign = "Repair Shop",
-  GlassSign = "Glassworking Studio",
-  WoodworkingSign = "Woodworking Studio",
-  MuseumSign = "Museum of History and Political Economy",
+  GardeningSign = "Field Supplies",
+  KitchenSign = "Dining Hall",
   DormitorySign = "Dormitory",
-  LibrarySign = "Library",
-  ScienceSign = "Research Lab",
-  GatheringSign = "Gathering Hall",
-  StationSign = "Hovertrain Station",
-  RainbowArt = "\'Rainbow\' by The Stone Collectors\' Club",
-  GenderArt = "\'Gender\' by The History Collective"}
+  MixingSign = "Potion Mixing"}

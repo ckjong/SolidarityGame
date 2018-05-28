@@ -1,3 +1,70 @@
+--change location to battlefield
+function battleMap(bMode, dMode) --battleMode, dialogueMode
+  if bMode == 1 and dMode == 0 then
+    storedLocation.x = player.grid_x
+    storedLocation.y = player.grid_y
+    currentLocation = "battlefield1"
+    locationMaps(currentLocation)
+    changeBackground(currentLocation)
+    player.grid_x = locationTriggers["battlefield1"][1][4]
+    player.act_x = player.grid_x
+    player.grid_y = locationTriggers["battlefield1"][1][5]
+    player.act_y = player.grid_y
+  end
+end
+
+--change location back to overworld
+function battleEnd(x, y)
+  currentLocation = "overworld"
+  locationMaps(currentLocation)
+  changeBackground(currentLocation)
+  player.grid_x = x
+  player.act_x = player.grid_x
+  player.grid_y = y
+  player.act_y = player.grid_y
+end
+
+--generate new maps or load old ones for each area
+function locationMaps(currentLocation)
+	if currentLocation == "overworld" then
+		mapFile1 = mapPath.overworld[1]
+		mapFile2 = mapPath.overworld[2]
+		print(currentLocation)
+		mapGen (bg.overworld, mapFile1, mapFile2)
+	elseif currentLocation == "gardeningShed" then
+		mapFile1 = mapPath.gardeningShed[1]
+		mapFile2 = mapPath.gardeningShed[2]
+		print(currentLocation)
+		mapGen (bg.gardeningShed, mapFile1, mapFile2)
+	elseif currentLocation == "battlefield1" then
+		mapFile1 = mapPath.battlefield1[1]
+		mapFile2 = mapPath.battlefield1[2]
+		print(currentLocation)
+		mapGen (bg.battlefield1, mapFile1, mapFile2)
+	end
+end
+
+--change location and map to match new location
+function changeMap(px, py, tbl)
+  for i = 1, #tbl do
+    if px == tbl[i][1] and py == tbl[i][2] then
+      currentLocation = tbl[i][3]
+      locationMaps(currentLocation)
+			changeBackground(currentLocation)
+			player.grid_x = tbl[i][4]
+			player.act_x = player.grid_x
+			player.grid_y = tbl[i][5]
+			player.act_y = player.grid_y
+			print(currentLocation)
+    end
+  end
+end
+
+--change background to match location
+function changeBackground(l)
+	currentBackground = bg[l]
+end
+
 
 function mapSize (img, s)
   local width = img:getWidth()

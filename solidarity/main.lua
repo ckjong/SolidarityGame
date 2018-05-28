@@ -2,14 +2,11 @@
 
 
 function love.load()
---dialogue and object descriptions
-require("scripts/dialogue")
---editor for creating new maps
-require("scripts/editor")
---code for navigating between maps
-require("scripts/drawfunctions")
---json for map files
-json = require("json")
+
+	--code for navigating between maps
+	require("scripts/drawfunctions")
+	--json for map files
+	json = require("json")
 
 
 --map
@@ -19,56 +16,65 @@ json = require("json")
 	mapExists = 0
 	locationTriggers = {
 										overworld = {
-											{6*gridsize, 9*gridsize, "gardeningShed", 6*gridsize, 12*gridsize},
-											{18*gridsize, 9*gridsize, "clinic", 4*gridsize, 10*gridsize}},
+											{17*gridsize, 16*gridsize, "gardeningShed", 6*gridsize, 12*gridsize}},
 										gardeningShed = {
-											{6*gridsize, 13*gridsize, "overworld", 6*gridsize, 10*gridsize}}
+											{6*gridsize, 13*gridsize, "overworld", 17*gridsize, 17*gridsize}},
+										battlefield1 = {
+											{nil, nil, "battlfield1", 3*gridsize, 6*gridsize}}
 									}
 	currentLocation = "overworld"
-	mapPath = {overworld = {"C:\\Users\\Carolyn\\Documents\\GitHub\\Solidarity\\solidarity\\scripts\\map.txt",
-	"C:\\Users\\Carolyn\\Documents\\GitHub\\Solidarity\\solidarity\\maps\\map1.txt"},
-	gardeningShed = {"C:\\Users\\Carolyn\\Documents\\GitHub\\Solidarity\\solidarity\\scripts\\map.txt",
-	"C:\\Users\\Carolyn\\Documents\\GitHub\\Solidarity\\solidarity\\maps\\map2.txt"}
+	mapPath = {overworld = {"C:\\Users\\Carolyn\\Documents\\GitHub\\SolidarityGame\\solidarity\\scripts\\map.txt",
+	"C:\\Users\\Carolyn\\Documents\\GitHub\\SolidarityGame\\solidarity\\maps\\map1.txt"},
+	gardeningShed = {"C:\\Users\\Carolyn\\Documents\\GitHub\\SolidarityGame\\solidarity\\scripts\\map.txt",
+	"C:\\Users\\Carolyn\\Documents\\GitHub\\SolidarityGame\\solidarity\\maps\\map2.txt"},
+	battlefield1 = {"C:\\Users\\Carolyn\\Documents\\GitHub\\SolidarityGame\\solidarity\\scripts\\map.txt",
+	"C:\\Users\\Carolyn\\Documents\\GitHub\\SolidarityGame\\solidarity\\maps\\map3.txt"}
 }
 
 	mapFile1 = nil
 	mapFile2 = nil
 --characters
 	player = {
-		grid_x = 8*gridsize,
-		grid_y = 17*gridsize,
-		act_x = 8*gridsize,
-		act_y = 17*gridsize,
+		grid_x = 17*gridsize,
+		grid_y = 18*gridsize,
+		act_x = 17*gridsize,
+		act_y = 18*gridsize,
 		speed = 32,
 		canMove = 1,
 		moveDir = 0,
 		threshold = 0,
 		facing = 2,
-		name = "Mint"
+		name = "Saffron",
+		battlestats = {hp = 2, damage = 1},
+		inventory = {},
+		party = {"Fennel", "Mint"}
 	}
 
 	npcs = {{
-		grid_x = 5*gridsize,
-		grid_y = 10*gridsize,
-		act_x = 5*gridsize,
-		act_y = 10*gridsize,
+		grid_x = 18*gridsize,
+		grid_y = 30*gridsize,
+		act_x = 18*gridsize,
+		act_y = 30*gridsize,
 		speed = 30,
 		canMove = 0,
 		moveDir = 0,
 		threshold = 0,
-		facing = 1,
+		facing = 1, --direction currently facing
 		start = 1, --direction facing when starting
 		location = "overworld",
 		dialogue = 0,
-		name = "Grape",
+		name = "Fennel",
+		status = "worker",
 		animationkey = 5, -- where animations start
 		n = 1, --stage in single conversation
-		c = 1}, -- dialogue case
+		c = 1, -- dialogue case
+		battlestats = {hp = 2, damage = 1}
+		},
 		{
-			grid_x = 9*gridsize,
-			grid_y = 21*gridsize,
-			act_x = 9*gridsize,
-			act_y = 21*gridsize,
+			grid_x = 14*gridsize,
+			grid_y = 22*gridsize,
+			act_x = 14*gridsize,
+			act_y = 22*gridsize,
 			speed = 30,
 			canMove = 0,
 			moveDir = 0,
@@ -77,44 +83,59 @@ json = require("json")
 			start = 2,
 			location = "overworld",
 			dialogue = 0,
-			name = "Lark",
-			animationkey = 9, -- where animations start
-			n = 1, --stage in single conversation
-			c = 1} -- dialogue case
+			name = "Mint",
+			status = "worker",
+			animationkey = 9,
+			n = 1,
+			c = 1,
+			battlestats = {hp = 2, damage = 1}
+			},
+			{
+				grid_x = 10*gridsize,
+				grid_y = 27*gridsize,
+				act_x = 10*gridsize,
+				act_y = 27*gridsize,
+				speed = 30,
+				canMove = 0,
+				moveDir = 0,
+				threshold = 0,
+				facing = 1,
+				start = 4,
+				location = "overworld",
+				dialogue = 0,
+				name = "Lark",
+				status = "boss",
+				animationkey = 13, -- where animations start
+				n = 1, --stage in single conversation
+				c = 1,
+				battlestats = {hp = 5, damage = 1}}
 }
 
+	storedLocation = {x = 0, y = 0}
+--battle
+	battleMode = 0
+	battleGlobal = {maxmoves = #player.party + 2, movesTaken = 0, turn = 0}
 
---objects
-objects = {
-	{7, 11, "GardeningSign"},
-	{7, 18, "KitchenSign"},
-	{17, 10, "ClinicSign"},
-	{10, 8, "Cauliflower"},
-	{12, 8, "Cauliflower2"},
-	{18, 16, "RepairSign"},
-	{25, 15, "GlassSign"},
-	{31, 15, "WoodworkingSign"},
-	{36, 14, "MuseumSign"},
- 	{28, 25, "DormitorySign"},
-	{36, 24, "LibrarySign"},
-	{40, 24, "ScienceSign"},
-	{23, 33, "GatheringSign"},
-	{33, 30, "StationSign"},
-	{28, 17, "RainbowArt"},
-	{27, 13, "GenderArt"}
-}
+	--objects
+	objects = {
+		{16, 17, "GardeningSign"},
+		{23, 17, "KitchenSign"},
+	 	{29, 26, "DormitorySign"},
+		{29, 34, "MixingSign"}
+	}
 --images
 	love.graphics.setDefaultFilter("nearest", "nearest")
 	love.graphics.setColor(0, 0, 0)
 	love.graphics.setBackgroundColor(255,255,255)
 
 
-	bg = {overworld = love.graphics.newImage("images/utopiabg.png"),
-				gardeningShed = love.graphics.newImage("images/utopia_gardeningshedbg.png")}
+	bg = {overworld = love.graphics.newImage("images/solidarity_overworld.png"),
+				gardeningShed = love.graphics.newImage("images/utopia_gardeningshedbg.png"),
+				battlefield1 = love.graphics.newImage("images/solidarity_battletest.png")}
 	currentBackground = bg.overworld
 
 	spritesheet1 = love.graphics.newImage("images/utopia.png")
-	animsheet1 = love.graphics.newImage("images/utopia_anim.png")
+	animsheet1 = love.graphics.newImage("images/solidarity_anim.png")
 	ui = {arrowright = love.graphics.newImage("images/utopiaui_0.png"),
 		arrowdown = love.graphics.newImage("images/utopiaui_5.png"),
 		pressz = love.graphics.newImage("images/utopiaui_6.png")
@@ -133,7 +154,11 @@ objects = {
 				 {newAnimation(animsheet1, 8*16, 4, 16, 16, .6 ), "npcs[2].walkup"},
 				 {newAnimation(animsheet1, 9*16, 4, 16, 16, .6 ), "npcs[2].walkdown"},
 				 {newAnimation(animsheet1, 10*16, 4, 16, 16, .65 ), "npcs[2].walkleft"},
-				 {newAnimation(animsheet1, 11*16, 4, 16, 16, .65 ), "npcs[2].walkright"}
+				 {newAnimation(animsheet1, 11*16, 4, 16, 16, .65 ), "npcs[2].walkright"},
+				 {newAnimation(animsheet1, 12*16, 4, 16, 16, .6 ), "npcs[3].walkup"},
+				 {newAnimation(animsheet1, 13*16, 4, 16, 16, .6 ), "npcs[3].walkdown"},
+				 {newAnimation(animsheet1, 14*16, 4, 16, 16, .65 ), "npcs[3].walkleft"},
+				 {newAnimation(animsheet1, 15*16, 4, 16, 16, .65 ), "npcs[3].walkright"}
 			 }
 
 --dialogue
@@ -142,54 +167,21 @@ objects = {
 	choice = {mode = 0, pos = 1, total = 1, name = "", case = 0, more = 0}
 	text = nil
 
+	--dialogue and object descriptions
+	require("scripts/dialogue")
+
 --timer for blinking text/images
 	timer = {base = .5, current = 0, trigger = 0}
+--editor for creating new maps
+	require("scripts/editor")
 
-
---generate map
-local mapFile1 = mapPath.overworld[1]
-local mapFile2 = mapPath.overworld[2]
-mapGen (bg.overworld, mapFile1, mapFile2)
-
-
+	--generate map
+	mapFile1 = mapPath.overworld[1]
+	mapFile2 = mapPath.overworld[2]
+	mapGen (bg.overworld, mapFile1, mapFile2)
 	--table.save(initTable, "D:\\my game projects\\utopia\\scripts\\initTable.lua")
 end
 
---generate new maps or load old ones for each area
-function locationMaps()
-	if currentLocation == "overworld" then
-		mapFile1 = mapPath.overworld[1]
-		mapFile2 = mapPath.overworld[2]
-		print(currentLocation)
-		mapGen (bg.overworld, mapFile1, mapFile2)
-	elseif currentLocation == "gardeningShed" then
-		mapFile1 = mapPath.gardeningShed[1]
-		mapFile2 = mapPath.gardeningShed[2]
-		print(currentLocation)
-		mapGen (bg.gardeningShed, mapFile1, mapFile2)
-	end
-end
-
---change location and map to match new location
-function changeMap(px, py, tbl)
-  for i = 1, #tbl do
-    if px == tbl[i][1] and py == tbl[i][2] then
-      currentLocation = tbl[i][3]
-      locationMaps()
-			changeBackground(currentLocation)
-			player.grid_x = tbl[i][4]
-			player.act_x = player.grid_x
-			player.grid_y = tbl[i][5]
-			player.act_y = player.grid_y
-			print(currentLocation)
-    end
-  end
-end
-
---change background to match location
-function changeBackground(l)
-	currentBackground = bg[l]
-end
 
 function love.update(dt)
 	if timer.current > 0 then
@@ -259,6 +251,7 @@ function love.update(dt)
 	if player.canMove == 1 then
 		changeMap(player.act_x, player.act_y, locationTriggers[currentLocation])
 	end
+
 	--animation time update
 	for k, v in pairs(animations) do
 		animations[k][1]["currentTime"] = animations[k][1]["currentTime"] + dt
@@ -308,7 +301,7 @@ function love.draw()
 	drawNPCs()
 
 	-- render tiles on top of player
-	if currentLocation ~= "overworld" then
+	if currentLocation == "gardeningShed" then
 		drawTop(currentLocation, locationTriggers)
 	end
 
@@ -383,22 +376,28 @@ function love.keypressed(key)
 		end
 	end
 
-	-- move between dialogue options
-		if choice.mode == 1 then
-			if key == "down" then
-				if choice.pos >= 1 and choice.pos < choice.total then
-					choice.pos = choice.pos + 1
-					choiceText(NPCdialogue[choice.name][choice.case].text, choice.pos, choice.total)
-				end
-			elseif key == "up" then
-				if choice.pos > 1 then
-					choice.pos = choice.pos - 1
-					choiceText(NPCdialogue[choice.name][choice.case].text, choice.pos, choice.total)
-				end
+-- move between dialogue options
+	if choice.mode == 1 then
+		if key == "down" then
+			if choice.pos >= 1 and choice.pos < choice.total then
+				choice.pos = choice.pos + 1
+				choiceText(NPCdialogue[choice.name][choice.case].text, choice.pos, choice.total)
+			end
+		elseif key == "up" then
+			if choice.pos > 1 then
+				choice.pos = choice.pos - 1
+				choiceText(NPCdialogue[choice.name][choice.case].text, choice.pos, choice.total)
 			end
 		end
-
 	end
+
+-- end battle
+	if battleMode == 1 and currentLocation == "battlefield1" then
+		if key == "escape" then
+			battleEnd(storedLocation.x, storedLocation.y)
+		end
+	end
+end
 
 
 --testmap for collision testing, update using map table
@@ -605,28 +604,6 @@ char.dialogue = 0
 return false
 end
 
---change text
--- function textUpdate (num, name, tbl, case)
--- 	dialogueMode = 1
--- 	player.canMove = 0
--- 	if case ~= 3 then
--- 		if NPCdialogue[name][3] ~= nil and case == 1 then
--- 			if num == #dialOpt then
--- 			choice.more = 1
--- 			end
--- 		end
--- 		if num < #dialOpt then
--- 			print("more choices case " .. case)
--- 			choice.more = 1
--- 		else
--- 			print("no more choices case " .. case)
--- 			choice.more = 0
--- 		end
--- 	else
--- 		choice.more = 0
--- 	end
--- 	text = name .. ": " .. dialOpt[num]
--- end
 
 function textUpdate (num, currentTbl)
 	print("textUpdate triggered")
@@ -636,18 +613,19 @@ function textUpdate (num, currentTbl)
 end
 
 --dialogue off
-function dialogueOff(tbl, i)
+function dialogueOff(tbl, i, next) -- tbl = npcs
 	print("dialogueOff triggered")
 	choice.more = 0
 	dialogueMode = 0
 	player.canMove = 1
 	tbl[i].n = 1
+	tbl[i].c = next
 	tbl[i].dialogue = 0
 end
 
 
 --choice text
-function choiceText(tbl, pos, total)
+function choiceText(tbl, pos, total) -- tbl = NPCdialogue[name][case], pos = choice.pos, total = choice.total
 	dialogueMode = 1
 	player.canMove = 0
 	local t = {}
@@ -655,8 +633,7 @@ function choiceText(tbl, pos, total)
 	local m = 1
 	if pos == 1 then
 		n = 2
-	end
-	if pos == total then
+	elseif pos == total then
 		m = 2
 	end
 	for i = pos - m, pos + n do
@@ -668,57 +645,72 @@ function choiceText(tbl, pos, total)
 end
 
 
-function DialogueSetup (tbl)
+function DialogueSetup (tbl) -- iterate through npcs table, lookup text in NPCdialogue
 	for i = 1, #tbl do
 		if initDialogue(tbl[i]) == true then
 			local name = tbl[i].name
 			local num = tbl[i].n
 			local case = tbl[i].c
 			local dialOpt = NPCdialogue[name][case]
-			if dialOpt.logic.display == 1 then
-				if dialOpt.logic.cond == true then
+			if dialOpt.logic.cond == true then
+				if dialOpt.logic.display == 1 then
 					if num <= #dialOpt.text then -- if there are more lines to say, advance through table
 						textUpdate(num, dialOpt)
 						tbl[i].n = num + 1
 						return
 					else
 						print("num > dialogue lines " .. tbl[i].n)
-						num = tbl[i].n
-						tbl[i].c = dialOpt.logic.next
 						if dialOpt.logic.off == true then
-							dialogueOff(tbl, i)
+							dialogueOff(tbl, i, dialOpt.logic.next)
 							return
 						else
 							tbl[i].n = 1
-							num = tbl[i].n
-							case = tbl[i].c
-							dialOpt = NPCdialogue[name][case]
+							tbl[i].c = dialOpt.logic.next
+							DialogueSetup (tbl)
 						end
 					end
 				end
-			end
-			if dialOpt.logic.display == 2 then
-				print("triggered display 2")
-				if dialOpt.logic.cond == true then
-					if choice.mode == 0 then
+				if dialOpt.logic.display == 2 then
+					print("triggered display 2")
+					if choice.mode == 0 then -- if choice has not been made yet
 						choice.mode = 1
 						choice.total = #dialOpt.text
 						choice.name = name
 						choice.case = case
-						choiceText(dialOpt.text, choice.pos, choice.total)
-						return
-					elseif choice.mode == 1 then
+						choiceText(dialOpt.text, choice.pos, choice.total) -- display dialogue options
 						tbl[i].c = dialOpt.logic.next
-						case = 	tbl[i].c
-						textUpdate (choice.pos, NPCdialogue[name][case])
-						choice.mode = 0
 						return
 					end
 				end
-			end
-			if dialOpt.logic.display == 3 then
-				tbl[i].c = dialOpt.logic.next
-				dialogueOff(tbl, i)
+				if dialOpt.logic.display == 3 then
+					if choice.mode == 1 then -- if choice has been made
+						textUpdate (choice.pos, NPCdialogue[name][case]) -- display response
+						if dialOpt.logic.trigger ~= nil then
+							if dialOpt.logic.trigger.choice == choice.pos then
+								if dialOpt.logic.trigger.type == "battle" then
+									battleMode = 1
+									choice.mode = 0
+									tbl[i].c = dialOpt.logic.next
+									dialogueOff(tbl, i, dialOpt.logic.next)
+									--change location to battlefield if battleMode active and dialogue finished
+									battleMap(battleMode, dialogueMode)
+									return
+								end
+							end
+						end
+						choice.mode = 0
+						tbl[i].c = dialOpt.logic.next
+						return
+					else
+						if dialOpt.logic.off == true then
+							dialogueOff(tbl, i, dialOpt.logic.next)
+						else
+							tbl[i].n = 1
+							tbl[i].c = dialOpt.logic.next
+							DialogueSetup (tbl)
+						end
+					end
+				end
 			end
 		end
 	end
