@@ -36,18 +36,19 @@ function love.load()
 --characters
 	player = {
 		grid_x = 17*gridsize,
-		grid_y = 18*gridsize,
+		grid_y = 22*gridsize,
 		act_x = 17*gridsize,
-		act_y = 18*gridsize,
-		speed = 32,
+		act_y = 22*gridsize,
+		speed = 48,
 		canMove = 1,
 		moveDir = 0,
 		threshold = 0,
 		facing = 2,
 		name = "Saffron",
-		battlestats = {hp = 2, damage = 1},
+		battlestats = {maxhp = 2, damage = 1, moves = 2},
 		inventory = {},
-		party = {"Fennel", "Mint"}
+		party = {1, 2}, -- Fennel, Mint
+		spells = {}
 	}
 
 	npcs = {{
@@ -68,7 +69,7 @@ function love.load()
 		animationkey = 5, -- where animations start
 		n = 1, --stage in single conversation
 		c = 1, -- dialogue case
-		battlestats = {hp = 2, damage = 1}
+		battlestats = {maxhp = 2, damage = 1, moves = 3}
 		},
 		{
 			grid_x = 14*gridsize,
@@ -88,7 +89,7 @@ function love.load()
 			animationkey = 9,
 			n = 1,
 			c = 1,
-			battlestats = {hp = 2, damage = 1}
+			battlestats = {maxhp = 2, damage = 1, moves = 2}
 			},
 			{
 				grid_x = 10*gridsize,
@@ -108,14 +109,36 @@ function love.load()
 				animationkey = 13, -- where animations start
 				n = 1, --stage in single conversation
 				c = 1,
-				battlestats = {hp = 5, damage = 1}}
+				battlestats = {maxhp = 5, damage = 1,  moves = 2}
+			},
+			{
+				grid_x = 16*gridsize,
+				grid_y = 21*gridsize,
+				act_x = 16*gridsize,
+				act_y = 21*gridsize,
+				speed = 30,
+				canMove = 0,
+				moveDir = 0,
+				threshold = 0,
+				facing = 1,
+				start = 4,
+				location = "overworld",
+				dialogue = 0,
+				name = "Finch",
+				status = "boss",
+				animationkey = 17, -- where animations start
+				n = 1, --stage in single conversation
+				c = 1,
+				battlestats = {maxhp = 3, damage = 1,  moves = 1}
+			}
 }
 
 	storedLocation = {x = 0, y = 0}
 --battle
 	battleMode = 0
-	battleGlobal = {maxmoves = #player.party + 2, movesTaken = 0, turn = 0}
+	battleGlobal = {maxmoves = #player.party + 2, movesTaken = 0, turn = 0, phase = 0}
 
+	require("scripts/battle")
 	--objects
 	objects = {
 		{16, 17, "GardeningSign"},
@@ -158,20 +181,27 @@ function love.load()
 				 {newAnimation(animsheet1, 12*16, 4, 16, 16, .6 ), "npcs[3].walkup"},
 				 {newAnimation(animsheet1, 13*16, 4, 16, 16, .6 ), "npcs[3].walkdown"},
 				 {newAnimation(animsheet1, 14*16, 4, 16, 16, .65 ), "npcs[3].walkleft"},
-				 {newAnimation(animsheet1, 15*16, 4, 16, 16, .65 ), "npcs[3].walkright"}
+				 {newAnimation(animsheet1, 15*16, 4, 16, 16, .65 ), "npcs[3].walkright"},
+				 {newAnimation(animsheet1, 16*16, 4, 16, 16, .6 ), "npcs[4].walkup"},
+				 {newAnimation(animsheet1, 17*16, 4, 16, 16, .6 ), "npcs[4].walkdown"},
+				 {newAnimation(animsheet1, 18*16, 4, 16, 16, .65 ), "npcs[4].walkleft"},
+				 {newAnimation(animsheet1, 19*16, 4, 16, 16, .65 ), "npcs[4].walkright"}
 			 }
 
 --dialogue
 	font = love.graphics.setNewFont("fonts/pixel.ttf", 8)
 	dialogueMode = 0
+	dialogueStage = 1
 	choice = {mode = 0, pos = 1, total = 1, name = "", case = 0, more = 0}
 	text = nil
+	trigger = {0}
 
 	--dialogue and object descriptions
 	require("scripts/dialogue")
 
 --timer for blinking text/images
-	timer = {base = .5, current = 0, trigger = 0}
+	timer = {{base = .5, current = 0, trigger = 0},
+					 {base = 2, current = 0, trigger = 0}}
 --editor for creating new maps
 	require("scripts/editor")
 
@@ -184,20 +214,38 @@ end
 
 
 function love.update(dt)
-	if timer.current > 0 then
-		timer.current = timer.current - dt
-	else
-		if timer.trigger == 0 then
-			timer.trigger = 1
+
+	if checkSpoken(npcs, NPCdialogue[dialogueStage], 5) == true then
+		print("spoken to everyone")
+		player.canMove = 0
+	end
+
+--run timers for blinking text, patrol, etc.
+	for i = 1, #timer do
+		if timer[i].current > 0 then
+			timer[i].current = timer[i].current - dt
 		else
-		 timer.trigger = 0
+			if timer[i].trigger == 0 then
+				timer[i].trigger = 1
+			else
+			 timer[i].trigger = 0
+			end
+			timer[i].current = timer[i].base
 		end
-		timer.current = timer.base
 	end
 	--immobilize player if dialoguemode active
 	if dialogueMode == 1 then
 		player.canMove = 0
 	end
+
+if dialogueMode == 0 then
+	if trigger[1] == 0 then
+		DialogueTrigger(17, 21, 3)
+	end
+	if player.canMove == 1 then
+		moveCharBack(17, 21, 17, 22, 2)
+	end
+end
 
 --set direction and destination position
 	if debugView == 0 then
@@ -259,6 +307,13 @@ function love.update(dt)
         animations[k][1]["currentTime"] = animations[k][1]["currentTime"] - animations[k][1]["duration"]
     end
 	end
+
+	--battlemode
+	if battleMode == 1 and battleGlobal.phase == 0 then
+		battleStart()
+		battleGlobal.phase = 1
+	end
+
 end
 
 
@@ -315,23 +370,23 @@ function love.draw()
 		local ynudge = 2
 		local boxposx = player.act_x - (width/2) + xnudge
 		local boxposy = player.act_y + (height/2) - recheight + ynudge
-		love.graphics.setColor(93, 43, 67)
-		love.graphics.rectangle("fill", boxposx, boxposy, recwidth, recheight) -- outside box (dark)
-		love.graphics.setColor(255, 247, 220)
-		love.graphics.rectangle("fill", boxposx+2, boxposy+2, recwidth-4, recheight-4) -- inside box (light colored)
-
+		--render dialogue box
+		drawBox(boxposx, boxposy, recwidth, recheight)
 		--draw z or arrow if more text
 		drawArrow()
-
 		--draw arrow for choices, shift text if arrow present
 		drawText(boxposx +4, boxposy + 4)
-
 	end
 
+	--draw UI for battles
+	if battleMode == 1 then
+		love.graphics.print("turn: " .. battleGlobal.turn .."   phase: " .. battleGlobal.phase, player.act_x - 48, player.act_y - 40)
+	end
 	love.graphics.pop()
 end
 
-
+-- KEY PRESSES --
+---------------
 function love.keypressed(key)
 
 --initiate debug mode
@@ -352,7 +407,7 @@ function love.keypressed(key)
 	end
 --- interact with objects or people
   if key == "z" then
-		DialogueSetup(npcs)
+		DialogueSetup(npcs, dialogueStage)
 		faceObject(player.facing)
 	end
 -- add block to editor
@@ -381,28 +436,28 @@ function love.keypressed(key)
 		if key == "down" then
 			if choice.pos >= 1 and choice.pos < choice.total then
 				choice.pos = choice.pos + 1
-				choiceText(NPCdialogue[choice.name][choice.case].text, choice.pos, choice.total)
+				choiceText(NPCdialogue[dialogueStage][choice.name][choice.case].text, choice.pos, choice.total)
 			end
 		elseif key == "up" then
 			if choice.pos > 1 then
 				choice.pos = choice.pos - 1
-				choiceText(NPCdialogue[choice.name][choice.case].text, choice.pos, choice.total)
+				choiceText(NPCdialogue[dialogueStage][choice.name][choice.case].text, choice.pos, choice.total)
 			end
 		end
 	end
 
 -- end battle
-	if battleMode == 1 and currentLocation == "battlefield1" then
-		if key == "escape" then
-			battleEnd(storedLocation.x, storedLocation.y)
-		end
+	if battleMode == 1 and key == "escape" then
+		battleMode = 0
+		battleGlobal.phase = 0
+		-- battleEnd(storedLocation.x, storedLocation.y)
 	end
 end
 
 
 --testmap for collision testing, update using map table
-function testMap(x, y)
-	if initTable[(player.grid_y / 16) + y][(player.grid_x / 16) + x] == 1 then
+function testMap(x1, y1, x2, y2)
+	if initTable[(y1 / gridsize) + y2][(x1 / gridsize) + x2] == 1 then
 		return false
 	end
 	return true
@@ -435,10 +490,30 @@ function testNPC(dir, x, y)
 	return false
 end
 
+--initiate dialogue if char enters a certain square
+function DialogueTrigger(x1, y1, f)
+	if player.act_x == x1*gridsize and player.act_y == y1*gridsize then
+		player.facing = f
+		DialogueSetup(npcs, dialogueStage)
+		trigger[1] = 1
+	end
+end
+--move character if they enter a certain point
+function moveCharBack(x1, y1, x2, y2, d)
+	if player.act_x == x1*gridsize and player.act_y == y1*gridsize  then
+		player.grid_x = x2*gridsize
+		player.grid_y = y2*gridsize
+		player.moveDir = d
+		player.facing = d
+	else
+		trigger[1] = 0
+	end
+end
+
 --change grid coordinates, up and down
 function changeGridy(char, dir, x, y, s)
 	char.facing = dir
-	if testMap(x, y) then
+	if testMap(char.grid_x, char.grid_y, x, y) then
 		if testNPC(dir, char.grid_x, char.grid_y) == false then
 			if math.abs(char.grid_x - char.act_x) <= char.threshold then
 				char.act_x = char.grid_x
@@ -453,7 +528,7 @@ end
 --change grid coordinates, left and right
 function changeGridx(char, dir, x, y, s)
 	char.facing = dir
-	if testMap(x, y) then
+	if testMap(char.grid_x, char.grid_y, x, y) then
 		if testNPC(dir, char.grid_x, char.grid_y) == false then
 			if math.abs(char.grid_y - char.act_y) <= char.threshold then
 				char.act_y = char.grid_y
@@ -645,28 +720,31 @@ function choiceText(tbl, pos, total) -- tbl = NPCdialogue[name][case], pos = cho
 end
 
 
-function DialogueSetup (tbl) -- iterate through npcs table, lookup text in NPCdialogue
+function DialogueSetup (tbl, n) -- iterate through npcs table, lookup text in NPCdialogue
 	for i = 1, #tbl do
 		if initDialogue(tbl[i]) == true then
 			local name = tbl[i].name
 			local num = tbl[i].n
 			local case = tbl[i].c
-			local dialOpt = NPCdialogue[name][case]
+			local dialOpt = NPCdialogue[n][name][case]
 			if dialOpt.logic.cond == true then
 				if dialOpt.logic.display == 1 then
 					if num <= #dialOpt.text then -- if there are more lines to say, advance through table
 						textUpdate(num, dialOpt)
 						tbl[i].n = num + 1
 						return
-					else
+					else -- if not then move to next segment
 						print("num > dialogue lines " .. tbl[i].n)
 						if dialOpt.logic.off == true then
+							if dialOpt.logic.spoken ~= nil then
+								dialOpt.logic.spoken = 1
+							end
 							dialogueOff(tbl, i, dialOpt.logic.next)
 							return
 						else
 							tbl[i].n = 1
 							tbl[i].c = dialOpt.logic.next
-							DialogueSetup (tbl)
+							DialogueSetup (tbl, n)
 						end
 					end
 				end
@@ -684,16 +762,19 @@ function DialogueSetup (tbl) -- iterate through npcs table, lookup text in NPCdi
 				end
 				if dialOpt.logic.display == 3 then
 					if choice.mode == 1 then -- if choice has been made
-						textUpdate (choice.pos, NPCdialogue[name][case]) -- display response
+						textUpdate (choice.pos, NPCdialogue[n][name][case]) -- display response
 						if dialOpt.logic.trigger ~= nil then
 							if dialOpt.logic.trigger.choice == choice.pos then
 								if dialOpt.logic.trigger.type == "battle" then
 									battleMode = 1
 									choice.mode = 0
 									tbl[i].c = dialOpt.logic.next
+									if dialOpt.logic.spoken ~= nil then
+										dialOpt.logic.spoken = 1
+									end
 									dialogueOff(tbl, i, dialOpt.logic.next)
 									--change location to battlefield if battleMode active and dialogue finished
-									battleMap(battleMode, dialogueMode)
+									-- battleMap(battleMode, dialogueMode)
 									return
 								end
 							end
@@ -703,15 +784,36 @@ function DialogueSetup (tbl) -- iterate through npcs table, lookup text in NPCdi
 						return
 					else
 						if dialOpt.logic.off == true then
+							if dialOpt.logic.spoken ~= nil then
+								dialOpt.logic.spoken = 1
+							end
 							dialogueOff(tbl, i, dialOpt.logic.next)
 						else
 							tbl[i].n = 1
 							tbl[i].c = dialOpt.logic.next
-							DialogueSetup (tbl)
+							DialogueSetup (tbl, n)
 						end
 					end
 				end
 			end
 		end
+	end
+end
+
+-- check if all chars spoken to
+function checkSpoken(tbl1, tbl2, num) -- npcs, NPCdialogue[stage]
+	local count = 0
+	for i = 1, #tbl1 do
+		local name = tbl1[i].name
+		for k = 1, #tbl2[name] do
+			if tbl2[name][k].logic.spoken == 1 then
+				count = count + 1
+			end
+		end
+	end
+	if count < num then
+		return false
+	else
+		return true
 	end
 end

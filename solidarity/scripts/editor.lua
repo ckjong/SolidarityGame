@@ -1,28 +1,28 @@
---change location to battlefield
-function battleMap(bMode, dMode) --battleMode, dialogueMode
-  if bMode == 1 and dMode == 0 then
-    storedLocation.x = player.grid_x
-    storedLocation.y = player.grid_y
-    currentLocation = "battlefield1"
-    locationMaps(currentLocation)
-    changeBackground(currentLocation)
-    player.grid_x = locationTriggers["battlefield1"][1][4]
-    player.act_x = player.grid_x
-    player.grid_y = locationTriggers["battlefield1"][1][5]
-    player.act_y = player.grid_y
-  end
-end
+-- --change location to battlefield
+-- function battleMap(bMode, dMode) --battleMode, dialogueMode
+--   if bMode == 1 and dMode == 0 then
+--     storedLocation.x = player.grid_x
+--     storedLocation.y = player.grid_y
+--     currentLocation = "battlefield1"
+--     locationMaps(currentLocation)
+--     changeBackground(currentLocation)
+--     player.grid_x = locationTriggers["battlefield1"][1][4]
+--     player.act_x = player.grid_x
+--     player.grid_y = locationTriggers["battlefield1"][1][5]
+--     player.act_y = player.grid_y
+--   end
+-- end
 
---change location back to overworld
-function battleEnd(x, y)
-  currentLocation = "overworld"
-  locationMaps(currentLocation)
-  changeBackground(currentLocation)
-  player.grid_x = x
-  player.act_x = player.grid_x
-  player.grid_y = y
-  player.act_y = player.grid_y
-end
+-- --change location back to overworld
+-- function battleEnd(x, y)
+--   currentLocation = "overworld"
+--   locationMaps(currentLocation)
+--   changeBackground(currentLocation)
+--   player.grid_x = x
+--   player.act_x = player.grid_x
+--   player.grid_y = y
+--   player.act_y = player.grid_y
+-- end
 
 --generate new maps or load old ones for each area
 function locationMaps(currentLocation)

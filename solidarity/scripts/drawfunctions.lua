@@ -1,3 +1,11 @@
+--render dialogue box
+function drawBox(boxposx, boxposy, recwidth, recheight)
+  love.graphics.setColor(93, 43, 67)
+  love.graphics.rectangle("fill", boxposx, boxposy, recwidth, recheight) -- outside box (dark)
+  love.graphics.setColor(255, 247, 220)
+  love.graphics.rectangle("fill", boxposx+2, boxposy+2, recwidth-4, recheight-4) -- inside box (light colored)
+end
+
 --render player
 function drawPlayer()
   for i = 1, 4 do
@@ -54,7 +62,7 @@ end
 function drawArrow()
   local width = (love.graphics.getWidth( )/4)/2 - 8
   local height = (love.graphics.getHeight( )/4)/2 - 8
-  if timer.trigger == 1 then
+  if timer[1].trigger == 1 then
     love.graphics.setColor(255, 255, 255)
     if choice.more ~= 2 then
       love.graphics.draw(ui.pressz, player.act_x + width, player.act_y + height)
