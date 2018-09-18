@@ -1,3 +1,10 @@
+--draw background
+function drawBackground()
+  love.graphics.setBackgroundColor(93, 43, 67)
+	love.graphics.setColor(255, 255, 255)
+	love.graphics.draw(currentBackground, 16, 16)
+end
+
 --render dialogue box
 function drawBox(boxposx, boxposy, recwidth, recheight)
   love.graphics.setColor(93, 43, 67)
@@ -11,7 +18,7 @@ function drawPlayer()
   for i = 1, 4 do
     if player.moveDir == i then
       local spriteNum = math.floor(animations[i][1]["currentTime"] / animations[i][1]["duration"] * #animations[i][1]["quads"]) + 1
-        love.graphics.draw(animations[i][1]["spriteSheet"], animations[i][1]["quads"][spriteNum], player.act_x, player.act_y, 0, 1)
+      love.graphics.draw(animations[i][1]["spriteSheet"], animations[i][1]["quads"][spriteNum], player.act_x, player.act_y, 0, 1)
     elseif player.moveDir == 0 then
       if player.facing == i then
         love.graphics.draw(animations[i][1]["spriteSheet"], animations[i][1]["quads"][1], player.act_x, player.act_y, 0, 1)
@@ -23,13 +30,27 @@ end
 function drawNPCs()
   for i = 1, #npcs do
     if currentLocation == npcs[i].location then
+      local j = npcs[i].moveDir-1
       local k = npcs[i].animationkey
       local f = npcs[i].facing-1
       local s = npcs[i].start-1
       if npcs[i].dialogue == 1 then
         love.graphics.draw(animations[k+f][1]["spriteSheet"], animations[k+f][1]["quads"][1], npcs[i].act_x, npcs[i].act_y, 0, 1)
       else
-        love.graphics.draw(animations[k+s][1]["spriteSheet"], animations[k+s][1]["quads"][1], npcs[i].act_x, npcs[i].act_y, 0, 1)
+        if npcs[i].canMove == 1 then
+          for v = 1, 4 do
+            if npcs[i].moveDir == v then
+              local spriteNum = math.floor(animations[k+j][1]["currentTime"] / animations[k+j][1]["duration"] * #animations[k+j][1]["quads"]) + 1
+              love.graphics.draw(animations[k+j][1]["spriteSheet"], animations[k+j][1]["quads"][spriteNum], npcs[i].act_x, npcs[i].act_y, 0, 1)
+            elseif npcs[i].moveDir == 0 then
+              if npcs[i].facing == v then
+                love.graphics.draw(animations[k+f][1]["spriteSheet"], animations[k+f][1]["quads"][1], npcs[i].act_x, npcs[i].act_y, 0, 1)
+              end
+            end
+          end
+        else
+          love.graphics.draw(animations[k+s][1]["spriteSheet"], animations[k+s][1]["quads"][1], npcs[i].act_x, npcs[i].act_y, 0, 1)
+        end
       end
     end
   end
@@ -70,4 +91,12 @@ function drawArrow()
       love.graphics.draw(ui.arrowdown, player.act_x + width, player.act_y + height)
     end
   end
+end
+
+function drawInfo(x, y)
+  love.graphics.setColor(255, 255, 255)
+  love.graphics.rectangle("fill",  x - 54, y - 54, 68, 32 )
+  love.graphics.setColor(0, 0, 0)
+  love.graphics.print(currentLocation, x - 48, y - 48)
+  love.graphics.print("x: " .. x/gridsize .." y: " .. y/gridsize, x - 48, y - 40)
 end

@@ -131,13 +131,51 @@ function drawEditor (tbl)
   end
 end
 
-function addBlock (tbl, x, y)
+function addBlock (tbl, x, y, n)
   print("triggered addblock")
-  local k = math.floor(x/16)
-  local v = math.floor(y/16)
+  local k = math.floor(x/gridsize)
+  local v = math.floor(y/gridsize)
   if tbl[v][k] == 0 then
-    tbl[v][k] = 1
-  elseif tbl[v][k] == 1 then
+    tbl[v][k] = n
+  elseif tbl[v][k] == n then
     tbl[v][k] = 0
   end
+end
+
+function saveMap()
+	if mapExists == 1 then
+		print("saved over old map")
+		f = assert(io.open(mapFile2, "w"))
+		initTableFile = json.encode(initTable)
+		f:write(initTableFile)
+		f:close(initTableFile)
+	else
+		print("saved over new map")
+		f = assert(io.open(mapFile1, "w"))
+		initTableFile = json.encode(initTable)
+		f:write(initTableFile)
+		f:close(initTableFile)
+	end
+end
+
+-- add location of NPCs or other moving obstacles to map collision
+function updateMap(tbl)
+	for v = 1, #initTable do
+		for k = 1, #initTable[v] do
+			if initTable[v][k] == 2 then
+				initTable[v][k] = 0
+			end
+		end
+	end
+	for i = 1, #tbl do
+		addBlock (initTable, tbl[i].grid_x, tbl[i].grid_y, 2)
+	end
+	saveMap()
+end
+
+--remove block from location
+function removeBlock(x, y)
+	if initTable[y][x] == 2 then
+		initTable[y][x] = 0
+	end
 end

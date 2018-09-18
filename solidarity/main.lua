@@ -7,6 +7,7 @@ function love.load()
 	require("scripts/drawfunctions")
 	--json for map files
 	json = require("json")
+	--pathfinding code
 
 
 --map
@@ -33,6 +34,15 @@ function love.load()
 
 	mapFile1 = nil
 	mapFile2 = nil
+
+	cutsceneControl = {stage = 0, total = 1, current = 1}
+	cutsceneList ={{
+		move = true,
+		npc = 3,
+		target = player,
+		noden = 1,
+		path = {}
+	}}
 --characters
 	player = {
 		grid_x = 17*gridsize,
@@ -202,22 +212,28 @@ function love.load()
 --timer for blinking text/images
 	timer = {{base = .5, current = 0, trigger = 0},
 					 {base = 2, current = 0, trigger = 0}}
---editor for creating new maps
-	require("scripts/editor")
+--editor for creating new maps and other functions
+	require("scripts/mapfunctions")
 
 	--generate map
 	mapFile1 = mapPath.overworld[1]
 	mapFile2 = mapPath.overworld[2]
 	mapGen (bg.overworld, mapFile1, mapFile2)
 	--table.save(initTable, "D:\\my game projects\\utopia\\scripts\\initTable.lua")
+
+	require("scripts/pathfinding")
+	-- add location of NPCs or other moving obstacles to map collision
+	updateMap(npcs)
 end
 
 
 function love.update(dt)
 
 	if checkSpoken(npcs, NPCdialogue[dialogueStage], 5) == true then
-		print("spoken to everyone")
-		player.canMove = 0
+		if cutsceneControl.stage == 0 then
+			print("spoken to everyone")
+			cutsceneControl.stage = 1
+		end
 	end
 
 --run timers for blinking text, patrol, etc.
@@ -249,17 +265,7 @@ end
 
 --set direction and destination position
 	if debugView == 0 then
-		if player.canMove == 1 then
-			if love.keyboard.isDown("up") and player.act_y <= player.grid_y then
-				changeGridy (player, 1, 0, -1, -1) -- char, dir, x-test, y-test, multiplier
-			elseif love.keyboard.isDown("down") and player.act_y >= player.grid_y then
-				changeGridy (player, 2, 0, 1, 1)
-			elseif love.keyboard.isDown("left") and player.act_x <= player.grid_x then
-				changeGridx (player, 3, -1, 0, -1)
-			elseif love.keyboard.isDown("right") and player.act_x >= player.grid_x then
-				changeGridx (player, 4, 1, 0, 1)
-			end
-		end
+		updateGrid(player)
 	elseif debugView == 1 then
 		if player.canMove == 1 then
 			if love.keyboard.isDown("up") and player.act_y <= player.grid_y then
@@ -308,6 +314,43 @@ end
     end
 	end
 
+--cutscene triggered, update map
+if cutsceneControl.stage == 1 then
+	updateMap(npcs) -- add NPC locations to map and save
+	local n = cutsceneControl.current
+	if cutsceneList[n].move == true then -- if npc is supposed to move
+		local i = cutsceneList[n].npc
+		local char = npcs[i]
+		local target = cutsceneList[n].target
+		--enable movement for npc
+		char.canMove = 1
+		--remove block from moving NPC
+		removeBlock(char.act_x/gridsize, char.act_y/gridsize)
+		--find path between npc location and target location (usually player)
+		cutsceneList[n].path = createPathNPC(math.floor(char.act_x/gridsize), math.floor(char.act_y/gridsize), (player.act_x/gridsize)-1, player.act_y/gridsize)
+	end
+	cutsceneControl.stage = 2
+end
+
+--cutsecene running, move characters
+if cutsceneControl.stage == 2 then
+	player.canMove = 0
+	local n = cutsceneControl.current
+	local path = cutsceneList[n].path
+	local i = cutsceneList[n].npc
+	local char = npcs[i]
+	if path then
+    if char.act_x == char.grid_x and char.act_y == char.grid_y then
+			if cutsceneList[n].noden < #cutsceneList[n].path then
+				cutsceneList[n].noden = cutsceneList[n].noden + 1
+				updateGridPos(path, char, cutsceneList[n].noden)
+				print("node n:" .. cutsceneList[n].noden)
+			end
+		end
+  end
+	char.moveDir, char.act_x, char.act_y = moveChar(char.moveDir, char.act_x, char.grid_x, char.act_y, char.grid_y, (char.speed *dt))
+end
+
 	--battlemode
 	if battleMode == 1 and battleGlobal.phase == 0 then
 		battleStart()
@@ -331,9 +374,7 @@ function love.draw()
 	love.graphics.scale( scale.x, scale.y )
 
 	-- draw background
-	love.graphics.setBackgroundColor(93, 43, 67)
-	love.graphics.setColor(255, 255, 255)
-	love.graphics.draw(currentBackground, 16, 16)
+	drawBackground()
 
 	--draw map
 	if debugView == 1 then
@@ -343,9 +384,7 @@ function love.draw()
 
 	--draw extra infoView
 	if infoView == 1 then
-		love.graphics.setColor(0, 0, 0)
-		love.graphics.print(currentLocation, player.act_x - 48, player.act_y - 48)
-		love.graphics.print("x: " .. player.act_x .." y: " .. player.act_y, player.act_x - 48, player.act_y - 40)
+		 drawInfo(player.act_x, player.act_y)
 	end
 
 	--render player
@@ -389,7 +428,7 @@ end
 ---------------
 function love.keypressed(key)
 
---initiate debug mode
+--initiate debug/map editing mode
   if key == "p" then
 	 	if debugView == 0 then
     	debugView = 1
@@ -412,23 +451,15 @@ function love.keypressed(key)
 	end
 -- add block to editor
 	if key == "space" and debugView == 1 then
-		addBlock (initTable, player.grid_x, player.grid_y)
+		addBlock (initTable, player.grid_x, player.grid_y, 1) -- editor.lua
 	end
 
 	if key == "s" and debugView == 1 then
-		if mapExists == 1 then
-			print("saved over old map")
-			f = assert(io.open(mapFile2, "w"))
-			initTableFile = json.encode(initTable)
-			f:write(initTableFile)
-			f:close(initTableFile)
-		else
-			print("saved over new map")
-			f = assert(io.open(mapFile1, "w"))
-			initTableFile = json.encode(initTable)
-			f:write(initTableFile)
-			f:close(initTableFile)
-		end
+		saveMap()
+	end
+
+	if key == "c" then --trigger cutscene for testing
+		cutsceneControl.stage = 1
 	end
 
 -- move between dialogue options
@@ -457,12 +488,13 @@ end
 
 --testmap for collision testing, update using map table
 function testMap(x1, y1, x2, y2)
-	if initTable[(y1 / gridsize) + y2][(x1 / gridsize) + x2] == 1 then
+	if initTable[(y1 / gridsize) + y2][(x1 / gridsize) + x2] > 0 then
 		return false
 	end
 	return true
 end
 
+--test to see if npc in the way of player
 function testNPC(dir, x, y)
 	for i = 1, #npcs do
 		if currentLocation == npcs[i].location then
@@ -498,7 +530,7 @@ function DialogueTrigger(x1, y1, f)
 		trigger[1] = 1
 	end
 end
---move character if they enter a certain point
+--move character to another location if they enter a certain point
 function moveCharBack(x1, y1, x2, y2, d)
 	if player.act_x == x1*gridsize and player.act_y == y1*gridsize  then
 		player.grid_x = x2*gridsize
@@ -540,6 +572,21 @@ function changeGridx(char, dir, x, y, s)
 	return
 end
 
+
+--
+function updateGrid(char)
+	if char.canMove == 1 then
+		if love.keyboard.isDown("up") and char.act_y <= char.grid_y then
+			changeGridy (char, 1, 0, -1, -1) -- char, dir, x-test, y-test, multiplier
+		elseif love.keyboard.isDown("down") and char.act_y >= char.grid_y then
+			changeGridy (char, 2, 0, 1, 1)
+		elseif love.keyboard.isDown("left") and char.act_x <= char.grid_x then
+			changeGridx (char, 3, -1, 0, -1)
+		elseif love.keyboard.isDown("right") and char.act_x >= char.grid_x then
+			changeGridx (char, 4, 1, 0, 1)
+		end
+	end
+end
 
 -- test to see if player next to object, return object name
 function testObject(x, y)
@@ -597,7 +644,7 @@ end
 
 
 --move character in direction of destination
-function moveChar(m, x1, x2, y1, y2, s)
+function moveChar(m, x1, x2, y1, y2, s)--moveDir, act_x, grid_x, act_y, grid_y, speed
 	if m == 1 then
 		if y1 > y2 then
 			y1 = y1 - s
