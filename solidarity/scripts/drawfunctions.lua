@@ -1,3 +1,18 @@
+--animation
+function newAnimation(image, start, length, width, height, duration)
+  local animation = {}
+  animation.spriteSheet = image;
+  animation.quads = {};
+	for y = start, start, height do
+    for x = 0, length * width - width, width do
+      table.insert(animation.quads, love.graphics.newQuad(x, y, width, height, image:getDimensions()))
+    end
+  end
+  animation.duration = duration or 1
+  animation.currentTime = 0
+  return animation
+end
+
 --draw background
 function drawBackground()
   love.graphics.setBackgroundColor(93, 43, 67)

@@ -162,24 +162,3 @@ function createPathNPC(x1, y1, x2, y2)
     return path
   end
 end
-
-function updateGridPos(tbl, char, n)
-  total = #tbl
-  char.grid_x = tbl[n].x*gridsize
-  char.grid_y = tbl[n].y*gridsize
-  if char.act_y > char.grid_y then
-    char.moveDir = 1
-    char.facing = 1
-  elseif char.act_y < char.grid_y then
-    char.moveDir = 2
-    char.facing = 2
-  elseif char.act_x > char.grid_x then
-    char.moveDir = 3
-    char.facing = 3
-  elseif char.act_x < char.grid_x then
-    char.moveDir = 4
-    char.facing = 4
-  end
-  print("gridx, gridy:" .. char.grid_x, char.grid_y)
-  print("actx, acty:" .. char.act_x, char.act_y)
-end
