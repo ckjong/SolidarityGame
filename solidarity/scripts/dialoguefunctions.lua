@@ -2,7 +2,9 @@
 
 --initiate dialogue if char enters a certain square
 function DialogueTrigger(x1, y1, f)
-	if player.act_x == x1*gridsize and player.act_y == y1*gridsize then
+	if (player.act_x - x1*gridsize) < 0.02 and (player.act_y - y1*gridsize) < 0.02 then
+		player.act_x = x1*gridsize
+		player.act_y = y1*gridsize
 		player.facing = f
 		DialogueSetup(npcs, dialogueStage)
 		trigger[1] = 1

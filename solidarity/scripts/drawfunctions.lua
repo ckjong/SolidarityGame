@@ -87,10 +87,10 @@ function drawText(x, y)
       love.graphics.draw(ui.arrowright, x, y + 16)
     end
     love.graphics.setColor(93, 43, 67)
-    love.graphics.printf(text, x+6, y, width - 8)
+    love.graphics.printf(text, x+6, y, width - 18)
   else
     love.graphics.setColor(93, 43, 67)
-    love.graphics.printf(text, x, y, width - 8) -- 48, 46, 112
+    love.graphics.printf(text, x, y, width - 18) -- 48, 46, 112
   end
 end
 

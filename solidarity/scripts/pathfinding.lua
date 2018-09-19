@@ -152,6 +152,8 @@ end
 -- if path then
 --   for k, node in ipairs(path) do print(node.x, node.y) end
 -- end
+
+
 function createPathNPC(x1, y1, x2, y2)
   print(x1, y1, x2, y2)
   local gameMap = initTable

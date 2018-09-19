@@ -34,6 +34,52 @@ function testNPC(dir, x, y)
 	return false
 end
 
+--check to see if spaces next to target are free
+function checkOpenSpace(x, y)
+  local open = {}
+  if testMap(x, y, 0, -1) then
+    table.insert(open, {0, -1, 2}) --x2, y2, direction NPC facing
+  end
+  if testMap(x, y, 0, 1) then
+    table.insert(open, {0, 1, 1})
+  end
+  if testMap(x, y, -1, 0) then
+    table.insert(open, {-1, 0, 4})
+  end
+  if testMap(x, y, 1, 0) then
+    table.insert(open, {1, 0, 3})
+  end
+  return open
+end
+
+--check if there is a path to each open space, return path and direction npc facing at end
+function checkPaths(tbl, char, x1, y1)
+  for i = 1, #tbl do
+    local x2, y2 = tbl[i][1], tbl[i][2]
+    print("number of open spots:"..#tbl)
+    print("open coords:"..tbl[i][1], tbl[i][2])
+    local path = createPathNPC(math.floor(char.act_x/gridsize), math.floor(char.act_y/gridsize), (x1/gridsize)+x2, (y1/gridsize)+y2)
+    if path ~= nil then
+      print("path found")
+      return path, tbl[i][3]
+    end
+  end
+end
+
+--adjust char position to be facing direction based on location of other character, up down left right, or stay same
+function changeFacing(x1, y1, x2, y2, f)
+  if x1 == x2 and y1 > y2 then
+    return 1
+  elseif x1 == x2 and y1 < y2 then
+    return 2
+  elseif x1 > x2 and y1 == y2 then
+    return 3
+  elseif x1 < x2 and y1 == y2 then
+    return 4
+  else
+    return f
+  end
+end
 --update grid position for moving NPCs during cutscenes
 function updateGridPosNPC(tbl, char, n)
   total = #tbl
@@ -64,7 +110,10 @@ function moveCharBack(x1, y1, x2, y2, d)
 		player.moveDir = d
 		player.facing = d
 	else
-		trigger[1] = 0
+    if trigger[1] == 1 then
+      print("trigger reset")
+		  trigger[1] = 0
+    end
 	end
 end
 

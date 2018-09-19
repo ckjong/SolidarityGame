@@ -160,13 +160,7 @@ end
 
 -- add location of NPCs or other moving obstacles to map collision
 function updateMap(tbl)
-	for v = 1, #initTable do
-		for k = 1, #initTable[v] do
-			if initTable[v][k] == 2 then
-				initTable[v][k] = 0
-			end
-		end
-	end
+	clearMap(2)
 	for i = 1, #tbl do
 		addBlock (initTable, tbl[i].grid_x, tbl[i].grid_y, 2)
 	end
@@ -177,5 +171,17 @@ end
 function removeBlock(x, y)
 	if initTable[y][x] == 2 then
 		initTable[y][x] = 0
+	end
+	saveMap()
+end
+
+--remove block from all nodes with value corresponding to n
+function clearMap(n)
+	for v = 1, #initTable do
+		for k = 1, #initTable[v] do
+			if initTable[v][k] == n then
+				initTable[v][k] = 0
+			end
+		end
 	end
 end

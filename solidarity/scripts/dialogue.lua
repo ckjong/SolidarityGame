@@ -22,17 +22,17 @@ NPCdialogue = {
         },
   Lark = {[1] = {text = {"What are you looking at? Get back to work!"},
                 logic = {next = 1, speaker = "Lark", cond = true, off = true, display = 1, spoken = 0}},
-          [2] = {text = {"Do you want to fight?"},
-                logic = {next = 3, speaker = "Lark", cond = true, off = false, display = 1}},
-          [3] = {text = {"Yes", "No"},
-                logic = {next = 4, speaker = "player", cond = true, off = false, display = 2}},
-          [4] = {text = {"Hah, get ready to lose, loser.", "Too bad."},
-                logic = {next = 1, speaker = "Lark", cond = true, off = true, display = 3, trigger = {type = "battle", choice = 1}}},
+          [2] = {text = {"What do you think you're doing huh?!", "We don't pay you to stand around and chat.", "You're going to make up for this by working overtime tonight."},
+                logic = {next = 3, speaker = "Lark", cond = true, off = false, display = 1, spoken = 0}},
+          [3] = {text = {"Now GET MOVING! ... *mutters* stupid lazy mudskins."},
+                logic = {next = 1, speaker = "Lark", cond = true, off = true, display = 1, spoken = 0}}
+          -- [4] = {text = {"Hah, get ready to lose, loser.", "Too bad."},
+          --       logic = {next = 1, speaker = "Lark", cond = true, off = true, display = 3, trigger = {type = "battle", choice = 1}}},
         },
-  Finch = {[1] = {text = {"Where do you think you're going?"},
-                logic = {next = 2, speaker = "Finch", cond = true, off = false, display = 1}},
-           [2] = {text = {"Get back to work!"},
-                logic = {next = 1, speaker = "Finch", cond = true, off = true, display = 1}}
+  Finch = {[1] = {text = {"Where do you think you're going?", "The day's not over yet!"},
+                logic = {next = 1, speaker = "Finch", cond = true, off = true, display = 1}},
+           [2] = {text = {"The day's not over yet!"},
+                logic = {next = 2, speaker = "Finch", cond = true, off = true, display = 1}}
         }
   }
 }
