@@ -35,14 +35,6 @@ function love.load()
 	mapFile1 = nil
 	mapFile2 = nil
 
-	cutsceneControl = {stage = 0, total = 1, current = 1}
-	cutsceneList ={{
-		move = true,
-		npc = 3,
-		target = player,
-		noden = 1,
-		path = {}
-	}}
 --characters
 	player = {
 		grid_x = 17*gridsize,
@@ -198,6 +190,20 @@ function love.load()
 				 {newAnimation(animsheet1, 19*16, 4, 16, 16, .65 ), "npcs[4].walkright"}
 			 }
 
+--cutscene
+cutsceneControl = {stage = 0, total = 1, current = 1}
+cutsceneList ={{
+	triggered = false,
+	move = true, --does the NPC move?
+	npc = 3, --which NPC
+	target = player, -- where do they move
+	origin = {}, --where did they start?
+	facing = 1, --what direction are they facing at the end
+	noden = 1, --what node are they walking to next
+	dialoguekey = 2,
+	path = {}
+}}
+
 --dialogue
 	font = love.graphics.setNewFont("fonts/pixel.ttf", 8)
 	dialogueMode = 0
@@ -220,7 +226,8 @@ function love.load()
 	mapFile2 = mapPath.overworld[2]
 	mapGen (bg.overworld, mapFile1, mapFile2)
 	--table.save(initTable, "D:\\my game projects\\utopia\\scripts\\initTable.lua")
-
+	require("scripts/dialoguefunctions")
+	require("scripts/movefunctions")
 	require("scripts/pathfinding")
 	-- add location of NPCs or other moving obstacles to map collision
 	updateMap(npcs)
@@ -231,8 +238,11 @@ function love.update(dt)
 
 	if checkSpoken(npcs, NPCdialogue[dialogueStage], 5) == true then
 		if cutsceneControl.stage == 0 then
-			print("spoken to everyone")
-			cutsceneControl.stage = 1
+			local n = cutsceneControl.current
+			if cutsceneList[n].triggered == false then
+				print("spoken to everyone")
+				cutsceneControl.stage = 1
+			end
 		end
 	end
 
@@ -265,39 +275,9 @@ end
 
 --set direction and destination position
 	if debugView == 0 then
-		updateGrid(player)
+		updateGrid(player, 1)
 	elseif debugView == 1 then
-		if player.canMove == 1 then
-			if love.keyboard.isDown("up") and player.act_y <= player.grid_y then
-				player.facing = 1
-				if math.abs(player.grid_x - player.act_x) <= player.threshold then
-					player.act_x = player.grid_x
-					player.grid_y = player.grid_y - gridsize
-					player.moveDir = 1
-				end
-			elseif love.keyboard.isDown("down") and player.act_y >= player.grid_y then
-				player.facing = 2
-				if math.abs(player.grid_x - player.act_x) <= player.threshold then
-					player.act_x = player.grid_x
-					player.grid_y = player.grid_y + gridsize
-					player.moveDir = 2
-				end
-			elseif love.keyboard.isDown("left") and player.act_x <= player.grid_x then
-				player.facing = 3
-				if math.abs(player.grid_y - player.act_y) <= player.threshold then
-					player.act_y = player.grid_y
-					player.grid_x = player.grid_x - gridsize
-					player.moveDir = 3
-				end
-			elseif love.keyboard.isDown("right") and player.act_x >= player.grid_x  then
-				player.facing = 4
-				if math.abs(player.grid_y - player.act_y) <= player.threshold then
-					player.act_y = player.grid_y
-					player.grid_x = player.grid_x + gridsize
-					player.moveDir = 4
-				end
-			end
-		end
+		updateGrid(player, 0)
 	end
 
 	player.moveDir, player.act_x, player.act_y = moveChar(player.moveDir, player.act_x, player.grid_x, player.act_y, player.grid_y, (player.speed *dt))
@@ -317,17 +297,25 @@ end
 --cutscene triggered, update map
 if cutsceneControl.stage == 1 then
 	updateMap(npcs) -- add NPC locations to map and save
+	addBlock (initTable, player.act_x, player.act_y, 2) -- add block for player location
 	local n = cutsceneControl.current
 	if cutsceneList[n].move == true then -- if npc is supposed to move
 		local i = cutsceneList[n].npc
 		local char = npcs[i]
 		local target = cutsceneList[n].target
+		local x1, y1 = target.act_x, target.act_y
 		--enable movement for npc
 		char.canMove = 1
 		--remove block from moving NPC
 		removeBlock(char.act_x/gridsize, char.act_y/gridsize)
+		--check if there is space on all sides of target, return table with x, y, and facing
+		local open = checkOpenSpace(x1, y1)
 		--find path between npc location and target location (usually player)
-		cutsceneList[n].path = createPathNPC(math.floor(char.act_x/gridsize), math.floor(char.act_y/gridsize), (player.act_x/gridsize)-1, player.act_y/gridsize)
+		cutsceneList[n].path, cutsceneList[n].facing = checkPaths(open, char, x1, y1)
+
+	end
+	if cutsceneList[n].triggered == false then
+		cutsceneList[n].triggered = true
 	end
 	cutsceneControl.stage = 2
 end
@@ -339,16 +327,37 @@ if cutsceneControl.stage == 2 then
 	local path = cutsceneList[n].path
 	local i = cutsceneList[n].npc
 	local char = npcs[i]
+	local target = cutsceneList[n].target
+	local t = #cutsceneList[n].path
 	if path then
     if char.act_x == char.grid_x and char.act_y == char.grid_y then
-			if cutsceneList[n].noden < #cutsceneList[n].path then
+			if cutsceneList[n].noden < t then
 				cutsceneList[n].noden = cutsceneList[n].noden + 1
-				updateGridPos(path, char, cutsceneList[n].noden)
+				updateGridPosNPC(path, char, cutsceneList[n].noden)
 				print("node n:" .. cutsceneList[n].noden)
 			end
 		end
   end
 	char.moveDir, char.act_x, char.act_y = moveChar(char.moveDir, char.act_x, char.grid_x, char.act_y, char.grid_y, (char.speed *dt))
+	if char.act_x == cutsceneList[n].path[t].x*gridsize and char.act_y == cutsceneList[n].path[t].y*gridsize then
+		char.facing = cutsceneList[n].facing
+		target.facing = changeFacing(target.act_x, target.act_y, char.act_x, char.act_y)
+		npcs[i].moveDir = 0
+		cutsceneControl.stage = 3
+	end
+end
+
+if cutsceneControl.stage == 3 then
+	local n = cutsceneControl.current
+	local i = cutsceneList[n].npc
+	npcs[i].c = cutsceneList[n].dialoguekey
+	DialogueSetup(npcs, dialogueStage)
+	cutsceneControl.stage = 4
+end
+
+if cutsceneControl.stage == 4 and dialogueMode == 0 then
+	clearMap(2)
+	player.canMove = 1
 end
 
 	--battlemode
@@ -364,7 +373,7 @@ end
 ---------------
 
 function love.draw()
-	local width = love.graphics.getWidth( )
+	local width = love.graphics.getWidth()
 	local height = love.graphics.getHeight()
 	local scale = {x=4, y=4}
 	local translate = {x = (width - gridsize*scale.x) / 2, y = (height - gridsize*scale.y) /2}
@@ -384,7 +393,7 @@ function love.draw()
 
 	--draw extra infoView
 	if infoView == 1 then
-		 drawInfo(player.act_x, player.act_y)
+		drawInfo(player.act_x, player.act_y)
 	end
 
 	--render player
@@ -414,7 +423,7 @@ function love.draw()
 		--draw z or arrow if more text
 		drawArrow()
 		--draw arrow for choices, shift text if arrow present
-		drawText(boxposx +4, boxposy + 4)
+		drawText(boxposx +6, boxposy + 4)
 	end
 
 	--draw UI for battles
@@ -459,7 +468,13 @@ function love.keypressed(key)
 	end
 
 	if key == "c" then --trigger cutscene for testing
-		cutsceneControl.stage = 1
+		if cutsceneControl.stage == 0 then
+			cutsceneControl.stage = 1
+		else
+			print("exit cutscene")
+			cutsceneControl.stage = 0
+			player.canMove = 1
+		end
 	end
 
 -- move between dialogue options
@@ -482,385 +497,5 @@ function love.keypressed(key)
 		battleMode = 0
 		battleGlobal.phase = 0
 		-- battleEnd(storedLocation.x, storedLocation.y)
-	end
-end
-
-
---testmap for collision testing, update using map table
-function testMap(x1, y1, x2, y2)
-	if initTable[(y1 / gridsize) + y2][(x1 / gridsize) + x2] > 0 then
-		return false
-	end
-	return true
-end
-
---test to see if npc in the way of player
-function testNPC(dir, x, y)
-	for i = 1, #npcs do
-		if currentLocation == npcs[i].location then
-			local x2 = npcs[i].act_x
-			local y2 = npcs[i].act_y
-			if dir == 1 then
-				if x == x2 and y - gridsize == y2 then
-					return true
-				end
-			elseif dir == 2 then
-				if x == x2 and y + gridsize == y2 then
-					return true
-				end
-			elseif dir == 3 then
-				if y == y2 and x - gridsize == x2 then
-					return true
-				end
-			elseif dir == 4 then
-				if y == y2 and x + gridsize == x2 then
-					return true
-				end
-			end
-		end
-	end
-	return false
-end
-
---initiate dialogue if char enters a certain square
-function DialogueTrigger(x1, y1, f)
-	if player.act_x == x1*gridsize and player.act_y == y1*gridsize then
-		player.facing = f
-		DialogueSetup(npcs, dialogueStage)
-		trigger[1] = 1
-	end
-end
---move character to another location if they enter a certain point
-function moveCharBack(x1, y1, x2, y2, d)
-	if player.act_x == x1*gridsize and player.act_y == y1*gridsize  then
-		player.grid_x = x2*gridsize
-		player.grid_y = y2*gridsize
-		player.moveDir = d
-		player.facing = d
-	else
-		trigger[1] = 0
-	end
-end
-
---change grid coordinates, up and down
-function changeGridy(char, dir, x, y, s)
-	char.facing = dir
-	if testMap(char.grid_x, char.grid_y, x, y) then
-		if testNPC(dir, char.grid_x, char.grid_y) == false then
-			if math.abs(char.grid_x - char.act_x) <= char.threshold then
-				char.act_x = char.grid_x
-				char.grid_y = char.grid_y + (s * gridsize)
-				char.moveDir = dir
-			end
-		end
-	end
-	return
-end
-
---change grid coordinates, left and right
-function changeGridx(char, dir, x, y, s)
-	char.facing = dir
-	if testMap(char.grid_x, char.grid_y, x, y) then
-		if testNPC(dir, char.grid_x, char.grid_y) == false then
-			if math.abs(char.grid_y - char.act_y) <= char.threshold then
-				char.act_y = char.grid_y
-				char.grid_x = char.grid_x + (s * gridsize)
-				char.moveDir = dir
-			end
-		end
-	end
-	return
-end
-
-
---
-function updateGrid(char)
-	if char.canMove == 1 then
-		if love.keyboard.isDown("up") and char.act_y <= char.grid_y then
-			changeGridy (char, 1, 0, -1, -1) -- char, dir, x-test, y-test, multiplier
-		elseif love.keyboard.isDown("down") and char.act_y >= char.grid_y then
-			changeGridy (char, 2, 0, 1, 1)
-		elseif love.keyboard.isDown("left") and char.act_x <= char.grid_x then
-			changeGridx (char, 3, -1, 0, -1)
-		elseif love.keyboard.isDown("right") and char.act_x >= char.grid_x then
-			changeGridx (char, 4, 1, 0, 1)
-		end
-	end
-end
-
--- test to see if player next to object, return object name
-function testObject(x, y)
-	local m = (player.grid_x / 16) + x
-	local n = (player.grid_y / 16) + y
-	for i = 1, #objects do
-		if m == objects[i][1] and n == objects[i][2] then
-			return true, objects[i][3]
-		end
-	end
-	return false, nil
-end
-
---pass object description to text, change dialogue mode
-function printObjText(b)
-	if dialogueMode == 0 then
-		dialogueMode = 1
-		text = objectText[b]
-		return
-	else
-		dialogueMode = 0
-		player.canMove = 1
-		return
-	end
-end
-
---test to see if player facing object, retrieve description
-function faceObject(dir)
-	if dir == 1 then -- up
-		local a, b = testObject(0, -1)
-		if a and b ~= nil then
-			printObjText(b)
-			return
-		end
-	elseif dir == 2 then -- down
-		local a, b = testObject(0, 1)
-		if a and b ~= nil then
-			printObjText(b)
-			return
-		end
-	elseif dir == 3 then -- left
-		local a, b = testObject(-1, 0)
-		if a and b ~= nil then
-			printObjText(b)
-			return
-		end
-	elseif dir == 4 then -- right
-		local a, b = testObject(1, 0)
-		if a and b ~= nil then
-			printObjText(b)
-			return
-		end
-	end
-end
-
-
---move character in direction of destination
-function moveChar(m, x1, x2, y1, y2, s)--moveDir, act_x, grid_x, act_y, grid_y, speed
-	if m == 1 then
-		if y1 > y2 then
-			y1 = y1 - s
-		elseif y1 < y2 then
-			y1 = y2
-		elseif y1 == y2 then
-			m = 0
-		end
-	elseif m == 2 then
-		if y1 < y2 then
-			y1 = y1 + s
-		elseif y1 > y2 then
-			y1 = y2
-		elseif y1 == y2 then
-			m = 0
-		end
-	elseif m == 3 then
-		if x1 > x2 then
-			x1 = x1 - s
-		elseif x1 < x2 then
-			x1 = x2
-		elseif x1 == x2 then
-			m = 0
-		end
-	elseif m == 4 then
-		if x1 < x2 then
-			x1 = x1 + s
-		elseif x1 > x2 then
-			x1 = x2
-		elseif x1 == x2 then
-			m = 0
-		end
-	end
-	return m, x1, y1
-end
-
---animation
-function newAnimation(image, start, length, width, height, duration)
-  local animation = {}
-  animation.spriteSheet = image;
-  animation.quads = {};
-	for y = start, start, height do
-    for x = 0, length * width - width, width do
-      table.insert(animation.quads, love.graphics.newQuad(x, y, width, height, image:getDimensions()))
-    end
-  end
-  animation.duration = duration or 1
-  animation.currentTime = 0
-  return animation
-end
-
---initiate dialogue
-function initDialogue (char)
-	if currentLocation == char.location then
-		if player.act_y == char.act_y then
-			if player.act_x == char.act_x - gridsize and player.facing == 4 then
-				char.dialogue = 1
-				char.facing = 3
-				return true
-			elseif player.act_x == char.act_x + gridsize and player.facing == 3 then
-				char.dialogue = 1
-				char.facing = 4
-				return true
-			end
-		end
-		if player.act_x == char.act_x then
-			if player.act_y == char.act_y - gridsize and player.facing == 2 then
-				char.dialogue = 1
-				char.facing = 1
-				return true
-			elseif player.act_y == char.act_y + gridsize and player.facing == 1 then
-				char.dialogue = 1
-				char.facing = 2
-				return true
-			end
-		end
-	end
-char.dialogue = 0
-return false
-end
-
-
-function textUpdate (num, currentTbl)
-	print("textUpdate triggered")
-	dialogueMode = 1
-	player.canMove = 0
-	text = currentTbl.logic.speaker .. ": " .. currentTbl.text[num]
-end
-
---dialogue off
-function dialogueOff(tbl, i, next) -- tbl = npcs
-	print("dialogueOff triggered")
-	choice.more = 0
-	dialogueMode = 0
-	player.canMove = 1
-	tbl[i].n = 1
-	tbl[i].c = next
-	tbl[i].dialogue = 0
-end
-
-
---choice text
-function choiceText(tbl, pos, total) -- tbl = NPCdialogue[name][case], pos = choice.pos, total = choice.total
-	dialogueMode = 1
-	player.canMove = 0
-	local t = {}
-	local n = 1
-	local m = 1
-	if pos == 1 then
-		n = 2
-	elseif pos == total then
-		m = 2
-	end
-	for i = pos - m, pos + n do
-		if tbl[i] ~= nil then
-			table.insert(t, tbl[i] .. "\n")
-		end
-	end
-	text = table.concat(t)
-end
-
-
-function DialogueSetup (tbl, n) -- iterate through npcs table, lookup text in NPCdialogue
-	for i = 1, #tbl do
-		if initDialogue(tbl[i]) == true then
-			local name = tbl[i].name
-			local num = tbl[i].n
-			local case = tbl[i].c
-			local dialOpt = NPCdialogue[n][name][case]
-			if dialOpt.logic.cond == true then
-				if dialOpt.logic.display == 1 then
-					if num <= #dialOpt.text then -- if there are more lines to say, advance through table
-						textUpdate(num, dialOpt)
-						tbl[i].n = num + 1
-						return
-					else -- if not then move to next segment
-						print("num > dialogue lines " .. tbl[i].n)
-						if dialOpt.logic.off == true then
-							if dialOpt.logic.spoken ~= nil then
-								dialOpt.logic.spoken = 1
-							end
-							dialogueOff(tbl, i, dialOpt.logic.next)
-							return
-						else
-							tbl[i].n = 1
-							tbl[i].c = dialOpt.logic.next
-							DialogueSetup (tbl, n)
-						end
-					end
-				end
-				if dialOpt.logic.display == 2 then
-					print("triggered display 2")
-					if choice.mode == 0 then -- if choice has not been made yet
-						choice.mode = 1
-						choice.total = #dialOpt.text
-						choice.name = name
-						choice.case = case
-						choiceText(dialOpt.text, choice.pos, choice.total) -- display dialogue options
-						tbl[i].c = dialOpt.logic.next
-						return
-					end
-				end
-				if dialOpt.logic.display == 3 then
-					if choice.mode == 1 then -- if choice has been made
-						textUpdate (choice.pos, NPCdialogue[n][name][case]) -- display response
-						if dialOpt.logic.trigger ~= nil then
-							if dialOpt.logic.trigger.choice == choice.pos then
-								if dialOpt.logic.trigger.type == "battle" then
-									battleMode = 1
-									choice.mode = 0
-									tbl[i].c = dialOpt.logic.next
-									if dialOpt.logic.spoken ~= nil then
-										dialOpt.logic.spoken = 1
-									end
-									dialogueOff(tbl, i, dialOpt.logic.next)
-									--change location to battlefield if battleMode active and dialogue finished
-									-- battleMap(battleMode, dialogueMode)
-									return
-								end
-							end
-						end
-						choice.mode = 0
-						tbl[i].c = dialOpt.logic.next
-						return
-					else
-						if dialOpt.logic.off == true then
-							if dialOpt.logic.spoken ~= nil then
-								dialOpt.logic.spoken = 1
-							end
-							dialogueOff(tbl, i, dialOpt.logic.next)
-						else
-							tbl[i].n = 1
-							tbl[i].c = dialOpt.logic.next
-							DialogueSetup (tbl, n)
-						end
-					end
-				end
-			end
-		end
-	end
-end
-
--- check if all chars spoken to
-function checkSpoken(tbl1, tbl2, num) -- npcs, NPCdialogue[stage]
-	local count = 0
-	for i = 1, #tbl1 do
-		local name = tbl1[i].name
-		for k = 1, #tbl2[name] do
-			if tbl2[name][k].logic.spoken == 1 then
-				count = count + 1
-			end
-		end
-	end
-	if count < num then
-		return false
-	else
-		return true
 	end
 end
