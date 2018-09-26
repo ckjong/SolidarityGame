@@ -90,7 +90,7 @@ function drawText(x, y)
     love.graphics.printf(text, x+6, y, width - 18)
   else
     love.graphics.setColor(93, 43, 67)
-    love.graphics.printf(text, x, y, width - 18) -- 48, 46, 112
+    love.graphics.printf(text, x, y, width - 46) -- 48, 46, 112
   end
 end
 
@@ -114,4 +114,12 @@ function drawInfo(x, y)
   love.graphics.setColor(0, 0, 0)
   love.graphics.print(currentLocation, x - 48, y - 48)
   love.graphics.print("x: " .. x/gridsize .." y: " .. y/gridsize, x - 48, y - 40)
+end
+
+--change alpha to fade out or in image, delta time, alpha, goal, rate
+function fade(dt, a, b, r)
+  if a > 0 then
+    a = a + r*dt
+  end
+  return a
 end

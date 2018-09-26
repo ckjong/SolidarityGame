@@ -24,7 +24,7 @@ NPCdialogue = {
                 logic = {next = 1, speaker = "Lark", cond = true, off = true, display = 1, spoken = 0}},
           [2] = {text = {"What do you think you're doing huh?!", "We don't pay you to stand around and chat.", "You're going to make up for this by working overtime tonight."},
                 logic = {next = 3, speaker = "Lark", cond = true, off = false, display = 1, spoken = 0}},
-          [3] = {text = {"Now GET MOVING! ... *mutters* stupid lazy mudskins."},
+          [3] = {text = {"Now GET MOVING! ... *mutters* stupid lazy mudskins..."},
                 logic = {next = 1, speaker = "Lark", cond = true, off = true, display = 1, spoken = 0}}
           -- [4] = {text = {"Hah, get ready to lose, loser.", "Too bad."},
           --       logic = {next = 1, speaker = "Lark", cond = true, off = true, display = 3, trigger = {type = "battle", choice = 1}}},

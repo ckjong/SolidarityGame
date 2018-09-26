@@ -9,7 +9,7 @@ function love.load()
 	json = require("json")
 	--pathfinding code
 
-
+	gameStage = 0
 --map
 	gridsize = 16
 	debugView = 0
@@ -71,13 +71,14 @@ function love.load()
 		animationkey = 5, -- where animations start
 		n = 1, --stage in single conversation
 		c = 1, -- dialogue case
-		battlestats = {maxhp = 2, damage = 1, moves = 3}
+		battlestats = {maxhp = 2, damage = 1, moves = 3},
+		next = {{x = 0, y = 0, f = 1, l = "overworld"}}
 		},
 		{
 			grid_x = 14*gridsize,
-			grid_y = 22*gridsize,
+			grid_y = 25*gridsize,
 			act_x = 14*gridsize,
-			act_y = 22*gridsize,
+			act_y = 25*gridsize,
 			speed = 30,
 			canMove = 0,
 			moveDir = 0,
@@ -91,7 +92,8 @@ function love.load()
 			animationkey = 9,
 			n = 1,
 			c = 1,
-			battlestats = {maxhp = 2, damage = 1, moves = 2}
+			battlestats = {maxhp = 2, damage = 1, moves = 2},
+			next = {{x = 16*gridsize, y = 22*gridsize, f = 2, l = "overworld"}}
 			},
 			{
 				grid_x = 10*gridsize,
@@ -111,7 +113,8 @@ function love.load()
 				animationkey = 13, -- where animations start
 				n = 1, --stage in single conversation
 				c = 1,
-				battlestats = {maxhp = 5, damage = 1,  moves = 2}
+				battlestats = {maxhp = 5, damage = 1,  moves = 2},
+				next = {{x = 10*gridsize, y = 27*gridsize, f = 2, l = "overworld"}}
 			},
 			{
 				grid_x = 16*gridsize,
@@ -131,7 +134,8 @@ function love.load()
 				animationkey = 17, -- where animations start
 				n = 1, --stage in single conversation
 				c = 1,
-				battlestats = {maxhp = 3, damage = 1,  moves = 1}
+				battlestats = {maxhp = 3, damage = 1,  moves = 1},
+				next = {{x = 16*gridsize, y = 21*gridsize, f = 4, l = "overworld"}}
 			}
 }
 
@@ -158,8 +162,8 @@ function love.load()
 				gardeningShed = love.graphics.newImage("images/utopia_gardeningshedbg.png"),
 				battlefield1 = love.graphics.newImage("images/solidarity_battletest.png")}
 	currentBackground = bg.overworld
+	portrait_test = love.graphics.newImage("images/solidarity_char_portraits_0.png")
 
-	spritesheet1 = love.graphics.newImage("images/utopia.png")
 	animsheet1 = love.graphics.newImage("images/solidarity_anim.png")
 	ui = {arrowright = love.graphics.newImage("images/utopiaui_0.png"),
 		arrowdown = love.graphics.newImage("images/utopiaui_5.png"),
@@ -192,16 +196,20 @@ function love.load()
 
 --cutscene
 cutsceneControl = {stage = 0, total = 1, current = 1}
+-- types: 1 = talk, 2 = changeScene
 cutsceneList ={{
 	triggered = false,
+	type = 1,
 	move = true, --does the NPC move?
 	npc = 3, --which NPC
 	target = player, -- where do they move
-	origin = {}, --where did they start?
-	facing = 1, --what direction are they facing at the end
+	facing = {1}, --what direction are they facing at the end
 	noden = 1, --what node are they walking to next
 	dialoguekey = 2,
-	path = {}
+	path = {},
+	fadeout = true,
+	goback = true,
+	skipnext = false -- do we go directly to next cutscene?
 }}
 
 --dialogue
@@ -229,6 +237,7 @@ cutsceneList ={{
 	require("scripts/dialoguefunctions")
 	require("scripts/movefunctions")
 	require("scripts/pathfinding")
+	require("scripts/cutscenefunctions")
 	-- add location of NPCs or other moving obstacles to map collision
 	updateMap(npcs)
 end
@@ -296,68 +305,32 @@ end
 
 --cutscene triggered, update map
 if cutsceneControl.stage == 1 then
-	updateMap(npcs) -- add NPC locations to map and save
-	addBlock (initTable, player.act_x, player.act_y, 2) -- add block for player location
-	local n = cutsceneControl.current
-	if cutsceneList[n].move == true then -- if npc is supposed to move
-		local i = cutsceneList[n].npc
-		local char = npcs[i]
-		local target = cutsceneList[n].target
-		local x1, y1 = target.act_x, target.act_y
-		--enable movement for npc
-		char.canMove = 1
-		--remove block from moving NPC
-		removeBlock(char.act_x/gridsize, char.act_y/gridsize)
-		--check if there is space on all sides of target, return table with x, y, and facing
-		local open = checkOpenSpace(x1, y1)
-		--find path between npc location and target location (usually player)
-		cutsceneList[n].path, cutsceneList[n].facing = checkPaths(open, char, x1, y1)
-
-	end
-	if cutsceneList[n].triggered == false then
-		cutsceneList[n].triggered = true
-	end
-	cutsceneControl.stage = 2
+	cutsceneStage1Talk()
 end
 
 --cutsecene running, move characters
 if cutsceneControl.stage == 2 then
-	player.canMove = 0
-	local n = cutsceneControl.current
-	local path = cutsceneList[n].path
-	local i = cutsceneList[n].npc
-	local char = npcs[i]
-	local target = cutsceneList[n].target
-	local t = #cutsceneList[n].path
-	if path then
-    if char.act_x == char.grid_x and char.act_y == char.grid_y then
-			if cutsceneList[n].noden < t then
-				cutsceneList[n].noden = cutsceneList[n].noden + 1
-				updateGridPosNPC(path, char, cutsceneList[n].noden)
-				print("node n:" .. cutsceneList[n].noden)
-			end
-		end
-  end
-	char.moveDir, char.act_x, char.act_y = moveChar(char.moveDir, char.act_x, char.grid_x, char.act_y, char.grid_y, (char.speed *dt))
-	if char.act_x == cutsceneList[n].path[t].x*gridsize and char.act_y == cutsceneList[n].path[t].y*gridsize then
-		char.facing = cutsceneList[n].facing
-		target.facing = changeFacing(target.act_x, target.act_y, char.act_x, char.act_y)
-		npcs[i].moveDir = 0
-		cutsceneControl.stage = 3
-	end
+	 cutsceneStage2Talk(dt)
 end
 
+--cutscene running, trigger dialogue
 if cutsceneControl.stage == 3 then
-	local n = cutsceneControl.current
-	local i = cutsceneList[n].npc
-	npcs[i].c = cutsceneList[n].dialoguekey
-	DialogueSetup(npcs, dialogueStage)
-	cutsceneControl.stage = 4
+	cutsceneStage3Talk()
 end
 
+--cutscene running, return to starting position
 if cutsceneControl.stage == 4 and dialogueMode == 0 then
+	cutsceneStage4Talk(dt)
+end
+
+--cutscene over, reset
+if cutsceneControl.stage == 5 and dialogueMode == 0 then
 	clearMap(2)
 	player.canMove = 1
+	if cutsceneControl.current < cutsceneControl.total then
+		cutsceneControl.current = cutsceneControl.current + 1
+		cutsceneControl.stage = 0
+	end
 end
 
 	--battlemode
@@ -420,10 +393,11 @@ function love.draw()
 		local boxposy = player.act_y + (height/2) - recheight + ynudge
 		--render dialogue box
 		drawBox(boxposx, boxposy, recwidth, recheight)
+		love.graphics.draw(portrait_test, boxposx +4, boxposy)
 		--draw z or arrow if more text
 		drawArrow()
 		--draw arrow for choices, shift text if arrow present
-		drawText(boxposx +6, boxposy + 4)
+		drawText(boxposx +38, boxposy + 4)
 	end
 
 	--draw UI for battles
