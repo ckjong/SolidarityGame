@@ -20,12 +20,28 @@ function drawBackground()
 	love.graphics.draw(currentBackground, 16, 16)
 end
 
---render dialogue box
-function drawBox(boxposx, boxposy, recwidth, recheight)
-  love.graphics.setColor(93, 43, 67)
-  love.graphics.rectangle("fill", boxposx, boxposy, recwidth, recheight) -- outside box (dark)
-  love.graphics.setColor(255, 247, 220)
-  love.graphics.rectangle("fill", boxposx+2, boxposy+2, recwidth-4, recheight-4) -- inside box (light colored)
+-- --render dialogue box
+-- function drawBox(boxposx, boxposy, recwidth, recheight)
+--   love.graphics.setColor(93, 43, 67)
+--   love.graphics.rectangle("fill", boxposx, boxposy, recwidth, recheight, 4, 4, 4) -- outside box (dark)
+--   love.graphics.setColor(255, 221, 163)
+--   love.graphics.rectangle("fill", boxposx+2, boxposy+2, recwidth-4, recheight-4, 3, 3, 4) -- inside box (light colored)
+-- end
+
+--render portrait
+function drawPortrait(name, x, y)
+  local k = 0
+  for i = 1, #portraitkey do
+    if name == portraitkey[i].name then
+      k =  i
+    end
+  end
+  local image = portraitsheet1
+  local s = portraitkey[k].start
+  local w = portraitkey[k].width
+  local h = portraitkey[k].height
+  local quad = love.graphics.newQuad(s, 0, w, h, image:getDimensions())
+  love.graphics.draw(portraitsheet1, quad, x + 4, y-16)
 end
 
 --render player
@@ -80,17 +96,17 @@ function drawText(x, y)
   if choice.mode == 1 then
     love.graphics.setColor(255, 255, 255)
     if choice.pos == 1 then
-        love.graphics.draw(ui.arrowright, x, y)
+        love.graphics.draw(ui.arrowright, x, y-4)
     elseif choice.pos < choice.total then
-      love.graphics.draw(ui.arrowright, x, y + 8)
+      love.graphics.draw(ui.arrowright, x, y + 4)
     elseif choice.pos == choice.total then
-      love.graphics.draw(ui.arrowright, x, y + 16)
+      love.graphics.draw(ui.arrowright, x, y + 12)
     end
     love.graphics.setColor(93, 43, 67)
-    love.graphics.printf(text, x+6, y, width - 18)
+    love.graphics.printf(text, x+6, y-4, width - 72)
   else
     love.graphics.setColor(93, 43, 67)
-    love.graphics.printf(text, x, y, width - 46) -- 48, 46, 112
+    love.graphics.printf(text, x, y, width - 66) -- 48, 46, 112
   end
 end
 

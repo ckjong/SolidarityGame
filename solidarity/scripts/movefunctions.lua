@@ -193,6 +193,7 @@ end
 function printObjText(b)
 	if dialogueMode == 0 then
 		dialogueMode = 1
+		currentspeaker = "player"
 		text = objectText[b]
 	else
 		dialogueMode = 0

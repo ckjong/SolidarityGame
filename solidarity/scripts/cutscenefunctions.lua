@@ -15,10 +15,6 @@ function cutsceneStage1Talk()
     local open = checkOpenSpace(x1, y1)
     --find path between npc location and target location (usually player)
     cutsceneList[n].path, cutsceneList[n].facing[1] = checkPaths(open, char, x1, y1)
-
-  end
-  if cutsceneList[n].triggered == false then
-    cutsceneList[n].triggered = true
   end
   cutsceneControl.stage = 2
 end
@@ -33,6 +29,7 @@ function cutsceneStage2Talk(dt)
 	local x1, y1 = target.act_x, target.act_y
 	local t = #cutsceneList[n].path
 	if path then
+    char.canMove = 1
     if char.act_x == char.grid_x and char.act_y == char.grid_y then
 			if cutsceneList[n].noden < t then
 				cutsceneList[n].noden = cutsceneList[n].noden + 1
@@ -82,6 +79,51 @@ function cutsceneStage4Talk(dt)
       cutsceneControl.stage = 5
     end
   else
+    npcs[i].canMove = 0
     cutsceneControl.stage = 5
+  end
+end
+
+function changeGameStage()
+  local n = cutsceneControl.current
+  if cutsceneList[n].nextStage == true then
+    gameStage = gameStage + 1
+    dialogueStage = dialogueStage + 1
+    print("gameStage" .. gameStage)
+    if player.next[gameStage].x ~= 0 then
+      player.grid_x = player.next[gameStage].x
+      player.act_x = player.grid_x
+    end
+    if player.next[gameStage].y ~= 0 then
+      player.grid_y = player.next[gameStage].y
+      player.act_y = player.grid_y
+    end
+    if player.next[gameStage].facing ~= 0 then
+      player.facing = player.next[gameStage].facing
+    end
+    player.location = player.next[gameStage].location
+    for i = 1, #npcs do
+      npcs[i].grid_x = npcs[i].next[gameStage].x
+      npcs[i].act_x = npcs[i].next[gameStage].x
+      npcs[i].grid_y = npcs[i].next[gameStage].y
+      npcs[i].act_y = npcs[i].next[gameStage].y
+      npcs[i].facing = npcs[i].next[gameStage].facing
+      npcs[i].start = npcs[i].facing
+      npcs[i].location = npcs[i].next[gameStage].location
+      npcs[i].c = 1
+      npcs[i].n = 1
+      npcs[i].canMove = 0
+    end
+  end
+end
+
+function changeTime()
+  print ("daytime " .. daytime)
+  if daytime == 1 then
+    daytime = 0
+    currentBackground = bg.overworldnight
+  else
+    daytime = 1
+    currentBackground = bg.overworld
   end
 end

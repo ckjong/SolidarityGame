@@ -47,7 +47,7 @@ function textUpdate (num, currentTbl)
 	print("textUpdate triggered")
 	dialogueMode = 1
 	player.canMove = 0
-	text = currentTbl.logic.speaker .. ": " .. currentTbl.text[num]
+	text = currentTbl.text[num]
 end
 
 --dialogue off
@@ -90,6 +90,7 @@ function DialogueSetup (tbl, n) -- iterate through npcs table, lookup text in NP
 			local num = tbl[i].n
 			local case = tbl[i].c
 			local dialOpt = NPCdialogue[n][name][case]
+			currentspeaker = dialOpt.logic.speaker
 			if dialOpt.logic.cond == true then
 				if dialOpt.logic.display == 1 then
 					if num <= #dialOpt.text then -- if there are more lines to say, advance through table

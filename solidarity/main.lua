@@ -17,11 +17,11 @@ function love.load()
 	mapExists = 0
 	locationTriggers = {
 										overworld = {
-											{17*gridsize, 16*gridsize, "gardeningShed", 6*gridsize, 12*gridsize}},
+											{17*gridsize, 16*gridsize, "gardeningShed", 11*gridsize, 17*gridsize, 1}}, --entrancex, entrancey, name, newplayerx, newplayery, locked (1 = yes)
 										gardeningShed = {
-											{6*gridsize, 13*gridsize, "overworld", 17*gridsize, 17*gridsize}},
+											{11*gridsize, 18*gridsize, "overworld", 17*gridsize, 17*gridsize, 0}},
 										battlefield1 = {
-											{nil, nil, "battlfield1", 3*gridsize, 6*gridsize}}
+											{nil, nil, "battlfield1", 3*gridsize, 6*gridsize, 1}}
 									}
 	currentLocation = "overworld"
 	mapPath = {overworld = {"C:\\Users\\Carolyn\\Documents\\GitHub\\SolidarityGame\\solidarity\\scripts\\map.txt",
@@ -34,6 +34,7 @@ function love.load()
 
 	mapFile1 = nil
 	mapFile2 = nil
+
 
 --characters
 	player = {
@@ -50,7 +51,8 @@ function love.load()
 		battlestats = {maxhp = 2, damage = 1, moves = 2},
 		inventory = {},
 		party = {1, 2}, -- Fennel, Mint
-		spells = {}
+		spells = {},
+		next = {{x = 0, y = 0, facing = 0, location = "overworld"}}
 	}
 
 	npcs = {{
@@ -72,7 +74,7 @@ function love.load()
 		n = 1, --stage in single conversation
 		c = 1, -- dialogue case
 		battlestats = {maxhp = 2, damage = 1, moves = 3},
-		next = {{x = 0, y = 0, f = 1, l = "overworld"}}
+		next = {{x = 0, y = 0, facing = 1, location = "overworld"}}
 		},
 		{
 			grid_x = 14*gridsize,
@@ -93,7 +95,7 @@ function love.load()
 			n = 1,
 			c = 1,
 			battlestats = {maxhp = 2, damage = 1, moves = 2},
-			next = {{x = 16*gridsize, y = 22*gridsize, f = 2, l = "overworld"}}
+			next = {{x = 20*gridsize, y = 25*gridsize, facing = 2, location = "overworld"}}
 			},
 			{
 				grid_x = 10*gridsize,
@@ -110,11 +112,11 @@ function love.load()
 				dialogue = 0,
 				name = "Lark",
 				status = "boss",
-				animationkey = 13, -- where animations start
+				animationkey = 17, -- where animations start
 				n = 1, --stage in single conversation
 				c = 1,
 				battlestats = {maxhp = 5, damage = 1,  moves = 2},
-				next = {{x = 10*gridsize, y = 27*gridsize, f = 2, l = "overworld"}}
+				next = {{x = 10*gridsize, y = 27*gridsize, facing = 4, location = "overworld"}}
 			},
 			{
 				grid_x = 16*gridsize,
@@ -131,11 +133,11 @@ function love.load()
 				dialogue = 0,
 				name = "Finch",
 				status = "boss",
-				animationkey = 17, -- where animations start
+				animationkey = 13, -- where animations start
 				n = 1, --stage in single conversation
 				c = 1,
 				battlestats = {maxhp = 3, damage = 1,  moves = 1},
-				next = {{x = 16*gridsize, y = 21*gridsize, f = 4, l = "overworld"}}
+				next = {{x = 16*gridsize, y = 21*gridsize, facing = 4, location = "overworld"}}
 			}
 }
 
@@ -159,15 +161,31 @@ function love.load()
 
 
 	bg = {overworld = love.graphics.newImage("images/solidarity_overworld.png"),
-				gardeningShed = love.graphics.newImage("images/utopia_gardeningshedbg.png"),
+				overworldnight = love.graphics.newImage("images/solidarity_overworld_night.png"),
+				gardeningShed = love.graphics.newImage("images/gardeningshedbg.png"),
 				battlefield1 = love.graphics.newImage("images/solidarity_battletest.png")}
 	currentBackground = bg.overworld
-	portrait_test = love.graphics.newImage("images/solidarity_char_portraits_0.png")
+	daytime = 1
+
+	--portraits
+	portraitsheet1 = love.graphics.newImage("images/solidarity_char_portraits.png")
+	portraitkey = {{name = "player", width = 46, height = 46, start = 0},
+								 {name = "Fennel", width = 46, height = 46, start = 1*46},
+								 {name = "Mint", width = 46, height = 46, start = 2*46},
+								 {name = "Cress", width = 46, height = 46, start = 3*46},
+								 {name = "Robin", width = 46, height = 46, start = 4*46},
+								 {name = "Agave", width = 46, height = 46, start = 5*46},
+								 {name = "Finch", width = 46, height = 46, start = 6*46},
+								 {name = "Lark", width = 46, height = 46, start = 7*46}
+								}
+	currentspeaker = "player"
 
 	animsheet1 = love.graphics.newImage("images/solidarity_anim.png")
 	ui = {arrowright = love.graphics.newImage("images/utopiaui_0.png"),
 		arrowdown = love.graphics.newImage("images/utopiaui_5.png"),
-		pressz = love.graphics.newImage("images/utopiaui_6.png")
+		pressz = love.graphics.newImage("images/utopiaui_6.png"),
+		textboxbg = love.graphics.newImage("images/solidarity_textboxfull.png"),
+		textboxbottom = love.graphics.newImage("images/solidarity_textboxbottom.png"),
 		}
 	toptiles = {gardeningShed = love.graphics.newImage("images/utopia_toptiles_0.png")}
 
@@ -208,14 +226,17 @@ cutsceneList ={{
 	dialoguekey = 2,
 	path = {},
 	fadeout = true,
-	goback = true,
-	skipnext = false -- do we go directly to next cutscene?
+	goback = true, -- npc goes back to starting position
+	skipnext = false, -- do we go directly to next cutscene?
+	nextStage = true, -- do we go to the next game scene
+	switchTime = false -- do we switch from day to night or vice versa
 }}
+
 
 --dialogue
 	font = love.graphics.setNewFont("fonts/pixel.ttf", 8)
 	dialogueMode = 0
-	dialogueStage = 1
+	dialogueStage = 0
 	choice = {mode = 0, pos = 1, total = 1, name = "", case = 0, more = 0}
 	text = nil
 	trigger = {0}
@@ -278,7 +299,9 @@ if dialogueMode == 0 then
 		DialogueTrigger(17, 21, 3)
 	end
 	if player.canMove == 1 then
-		moveCharBack(17, 21, 17, 22, 2)
+		if gameStage == 0 then
+			moveCharBack(17, 21, 17, 22, 2)
+		end
 	end
 end
 
@@ -327,9 +350,18 @@ end
 if cutsceneControl.stage == 5 and dialogueMode == 0 then
 	clearMap(2)
 	player.canMove = 1
-	if cutsceneControl.current < cutsceneControl.total then
+	if cutsceneList[cutsceneControl.current].triggered == false then
+		if cutsceneList[cutsceneControl.current].switchTime == true then
+			changeTime()
+		end
+		changeGameStage()
+		cutsceneList[cutsceneControl.current].triggered = true
+	end
+	if cutsceneControl.current < cutsceneControl.total then -- if there are more cutscenes advance to next one
 		cutsceneControl.current = cutsceneControl.current + 1
 		cutsceneControl.stage = 0
+	else
+		cutsceneControl.stage = 6
 	end
 end
 
@@ -392,12 +424,15 @@ function love.draw()
 		local boxposx = player.act_x - (width/2) + xnudge
 		local boxposy = player.act_y + (height/2) - recheight + ynudge
 		--render dialogue box
-		drawBox(boxposx, boxposy, recwidth, recheight)
-		love.graphics.draw(portrait_test, boxposx +4, boxposy)
+		love.graphics.draw(ui.textboxbg, boxposx, boxposy)
+		if dialogueMode == 1 then
+			drawPortrait(currentspeaker, boxposx-2, boxposy)
+		end
+		love.graphics.draw(ui.textboxbottom, boxposx, boxposy)
 		--draw z or arrow if more text
 		drawArrow()
 		--draw arrow for choices, shift text if arrow present
-		drawText(boxposx +38, boxposy + 4)
+		drawText(boxposx + 52, boxposy + 8)
 	end
 
 	--draw UI for battles

@@ -2,9 +2,9 @@
 -- put functions in condition to check if conditions filled
 
 NPCdialogue = {
-  [1]= {
+  [0]= {
   Fennel = {[1] = {
-                  text = {"Oh hi "..player.name..".", "The foreman's giving you the evil eye, better get back to work", "We'll talk later ok?"},
+                  text = {"Oh hi "..player.name..".", "The foreman's giving you the evil eye, better get back to work.", "We'll talk later ok?"},
                   logic = {next = 2, speaker = "Fennel", cond = true, off = true, display = 1, spoken = 0}}, -- say once
           [2] = {text = {"Not now, I'll talk to you later."},
                 logic = {next = 2, speaker = "Fennel", cond = true, off = true, display = 1, spoken = 0}} --repeat
@@ -33,6 +33,21 @@ NPCdialogue = {
                 logic = {next = 1, speaker = "Finch", cond = true, off = true, display = 1}},
            [2] = {text = {"The day's not over yet!"},
                 logic = {next = 2, speaker = "Finch", cond = true, off = true, display = 1}}
+        }
+  },
+  [1]= {
+  Fennel = {[1] = {
+                  text = {""},
+                  logic = {next = 2, speaker = "Fennel", cond = true, off = true, display = 1, spoken = 0}} -- say once
+        }, -- repeat
+  Mint = {[1] = {text = {"Oh you got in trouble too huh?"},
+                logic = {next = 1, speaker = "Mint", cond = true, off = true, display = 1, spoken = 0}} -- say once
+        },
+  Lark = {[1] = {text = {"Hope you learned your lesson."},
+                logic = {next = 1, speaker = "Lark", cond = true, off = true, display = 1, spoken = 0}}
+        },
+  Finch = {[1] = {text = {"Looks like you missed dinner, too bad for you."},
+                logic = {next = 1, speaker = "Finch", cond = true, off = true, display = 1}}
         }
   }
 }

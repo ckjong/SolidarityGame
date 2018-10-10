@@ -44,18 +44,32 @@ function locationMaps(currentLocation)
 	end
 end
 
+-- if door is locked, add block to map
+function doorLock(tbl)
+	for i = 1, #tbl do
+		if tbl[i][6] == 0 then
+			addBlock (initTable, tbl[i][1], tbl[i][2], 0)
+		elseif tbl[i][6] == 1 then
+			addBlock (initTable, tbl[i][1], tbl[i][2], 1)
+		end
+	end
+	saveMap()
+end
+
 --change location and map to match new location
 function changeMap(px, py, tbl)
   for i = 1, #tbl do
     if px == tbl[i][1] and py == tbl[i][2] then
-      currentLocation = tbl[i][3]
-      locationMaps(currentLocation)
-			changeBackground(currentLocation)
-			player.grid_x = tbl[i][4]
-			player.act_x = player.grid_x
-			player.grid_y = tbl[i][5]
-			player.act_y = player.grid_y
-			print(currentLocation)
+			if tbl[i][6] == 0 then
+	      currentLocation = tbl[i][3]
+	      locationMaps(currentLocation)
+				changeBackground(currentLocation)
+				player.grid_x = tbl[i][4]
+				player.act_x = player.grid_x
+				player.grid_y = tbl[i][5]
+				player.act_y = player.grid_y
+				print(currentLocation)
+			end
     end
   end
 end
