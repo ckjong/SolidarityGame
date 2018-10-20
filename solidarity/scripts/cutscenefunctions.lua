@@ -1,20 +1,17 @@
 function cutsceneStage1Talk()
   updateMap(npcs) -- add NPC locations to map and save
-  addBlock (initTable, player.act_x, player.act_y, 2) -- add block for player location
   local n = cutsceneControl.current
   if cutsceneList[n].move == true then -- if npc is supposed to move
     local i = cutsceneList[n].npc
     local char = npcs[i]
     local target = cutsceneList[n].target
-    local x1, y1 = target.act_x, target.act_y
+    local x1, y1 = target.grid_x, target.grid_y
     --enable movement for npc
     char.canMove = 1
     --remove block from moving NPC
     removeBlock(char.act_x/gridsize, char.act_y/gridsize)
-    --check if there is space on all sides of target, return table with x, y, and facing
-    local open = checkOpenSpace(x1, y1)
     --find path between npc location and target location (usually player)
-    cutsceneList[n].path, cutsceneList[n].facing[1] = checkPaths(open, char, x1, y1)
+    cutsceneList[n].path, cutsceneList[n].facing[1] = checkPaths(char, x1, y1)
   end
   cutsceneControl.stage = 2
 end
@@ -84,6 +81,38 @@ function cutsceneStage4Talk(dt)
   end
 end
 
+function cutsceneStage5Talk()
+  if cutsceneList[cutsceneControl.current].fadeout ~= 0 then
+    fading.type = cutsceneList[cutsceneControl.current].fadeout
+    if fading.type == 1 then
+      fading.a = 0
+    end
+    player.canMove = 0
+    keyInput = 0
+    fading.on = true
+    cutsceneControl.stage = 6
+  end
+end
+
+
+function cutsceneStage7Talk(dt)
+  clearMap(2)
+  player.canMove = 1
+  if cutsceneList[cutsceneControl.current].triggered == false then
+    if cutsceneList[cutsceneControl.current].switchTime == true then
+      changeTime()
+    end
+    changeGameStage()
+    cutsceneList[cutsceneControl.current].triggered = true
+  end
+  if cutsceneControl.current < cutsceneControl.total then -- if there are more cutscenes advance to next one
+    cutsceneControl.current = cutsceneControl.current + 1
+    cutsceneControl.stage = 0
+  else
+    cutsceneControl.stage = 8
+  end
+end
+
 function changeGameStage()
   local n = cutsceneControl.current
   if cutsceneList[n].nextStage == true then
@@ -118,7 +147,6 @@ function changeGameStage()
 end
 
 function changeTime()
-  print ("daytime " .. daytime)
   if daytime == 1 then
     daytime = 0
     currentBackground = bg.overworldnight
@@ -126,4 +154,5 @@ function changeTime()
     daytime = 1
     currentBackground = bg.overworld
   end
+  print ("daytime " .. daytime)
 end

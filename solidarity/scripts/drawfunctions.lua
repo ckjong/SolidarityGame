@@ -28,37 +28,46 @@ end
 --   love.graphics.rectangle("fill", boxposx+2, boxposy+2, recwidth-4, recheight-4, 3, 3, 4) -- inside box (light colored)
 -- end
 
+function animUpdate(tbl, dt)
+  for k, v in pairs(tbl) do
+		tbl[k][1]["currentTime"] = tbl[k][1]["currentTime"] + dt
+    if tbl[k][1]["currentTime"] >= tbl[k][1]["duration"] then
+        tbl[k][1]["currentTime"] = tbl[k][1]["currentTime"] - tbl[k][1]["duration"]
+    end
+	end
+end
+
 --render portrait
-function drawPortrait(name, x, y)
+function drawPortrait(name, x, y, sheet)
   local k = 0
   for i = 1, #portraitkey do
     if name == portraitkey[i].name then
       k =  i
     end
   end
-  local image = portraitsheet1
+  local image = sheet
   local s = portraitkey[k].start
   local w = portraitkey[k].width
   local h = portraitkey[k].height
   local quad = love.graphics.newQuad(s, 0, w, h, image:getDimensions())
-  love.graphics.draw(portraitsheet1, quad, x + 4, y-16)
+  love.graphics.draw(sheet, quad, x + 4, y-16)
 end
 
 --render player
-function drawPlayer()
+function drawPlayer(tbl)
   for i = 1, 4 do
     if player.moveDir == i then
-      local spriteNum = math.floor(animations[i][1]["currentTime"] / animations[i][1]["duration"] * #animations[i][1]["quads"]) + 1
-      love.graphics.draw(animations[i][1]["spriteSheet"], animations[i][1]["quads"][spriteNum], player.act_x, player.act_y, 0, 1)
+      local spriteNum = math.floor(tbl[i][1]["currentTime"] / tbl[i][1]["duration"] * #tbl[i][1]["quads"]) + 1
+      love.graphics.draw(tbl[i][1]["spriteSheet"], tbl[i][1]["quads"][spriteNum], player.act_x, player.act_y, 0, 1)
     elseif player.moveDir == 0 then
       if player.facing == i then
-        love.graphics.draw(animations[i][1]["spriteSheet"], animations[i][1]["quads"][1], player.act_x, player.act_y, 0, 1)
+        love.graphics.draw(tbl[i][1]["spriteSheet"], tbl[i][1]["quads"][1], player.act_x, player.act_y, 0, 1)
       end
     end
   end
 end
 
-function drawNPCs()
+function drawNPCs(tbl)
   for i = 1, #npcs do
     if currentLocation == npcs[i].location then
       local j = npcs[i].moveDir-1
@@ -66,21 +75,21 @@ function drawNPCs()
       local f = npcs[i].facing-1
       local s = npcs[i].start-1
       if npcs[i].dialogue == 1 then
-        love.graphics.draw(animations[k+f][1]["spriteSheet"], animations[k+f][1]["quads"][1], npcs[i].act_x, npcs[i].act_y, 0, 1)
+        love.graphics.draw(tbl[k+f][1]["spriteSheet"], tbl[k+f][1]["quads"][1], npcs[i].act_x, npcs[i].act_y, 0, 1)
       else
         if npcs[i].canMove == 1 then
           for v = 1, 4 do
             if npcs[i].moveDir == v then
-              local spriteNum = math.floor(animations[k+j][1]["currentTime"] / animations[k+j][1]["duration"] * #animations[k+j][1]["quads"]) + 1
-              love.graphics.draw(animations[k+j][1]["spriteSheet"], animations[k+j][1]["quads"][spriteNum], npcs[i].act_x, npcs[i].act_y, 0, 1)
+              local spriteNum = math.floor(tbl[k+j][1]["currentTime"] / tbl[k+j][1]["duration"] * #tbl[k+j][1]["quads"]) + 1
+              love.graphics.draw(tbl[k+j][1]["spriteSheet"], tbl[k+j][1]["quads"][spriteNum], npcs[i].act_x, npcs[i].act_y, 0, 1)
             elseif npcs[i].moveDir == 0 then
               if npcs[i].facing == v then
-                love.graphics.draw(animations[k+f][1]["spriteSheet"], animations[k+f][1]["quads"][1], npcs[i].act_x, npcs[i].act_y, 0, 1)
+                love.graphics.draw(tbl[k+f][1]["spriteSheet"], tbl[k+f][1]["quads"][1], npcs[i].act_x, npcs[i].act_y, 0, 1)
               end
             end
           end
         else
-          love.graphics.draw(animations[k+s][1]["spriteSheet"], animations[k+s][1]["quads"][1], npcs[i].act_x, npcs[i].act_y, 0, 1)
+          love.graphics.draw(tbl[k+s][1]["spriteSheet"], tbl[k+s][1]["quads"][1], npcs[i].act_x, npcs[i].act_y, 0, 1)
         end
       end
     end
@@ -134,8 +143,39 @@ end
 
 --change alpha to fade out or in image, delta time, alpha, goal, rate
 function fade(dt, a, b, r)
-  if a > 0 then
-    a = a + r*dt
+  if r > 0 then -- alpha going up
+    if a <= b then
+      a = a + r*dt
+      print("alpha " .. a)
+      return a, true
+    else
+      player.canMove = 1
+      keyInput = 1
+      print("fading off")
+      cutsceneControl.stage = 7
+      return a, false
+    end
+  else
+    if a >= b then
+      a = a + r*dt
+      return a, true
+    else
+      player.canMove = 1
+      keyInput = 1
+      print("fading off")
+      cutsceneControl.stage = 7
+      return a, false
+    end
   end
-  return a
+end
+
+function fadeBlack(alpha, width, height)
+  print("fadeBlack alpha " .. alpha)
+  love.graphics.setColor(50, 29, 62, alpha)
+  love.graphics.rectangle("fill", player.act_x-width/2, player.act_y-height/2, width, height)
+end
+
+function screenBlack(width, height) -- render a black square over the screen
+  love.graphics.setColor(50, 29, 62, 255)
+  love.graphics.rectangle("fill", player.act_x-width/2, player.act_y-height/2, width, height)
 end

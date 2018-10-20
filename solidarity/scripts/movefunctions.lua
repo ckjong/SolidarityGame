@@ -52,20 +52,6 @@ function checkOpenSpace(x, y)
   return open
 end
 
---check if there is a path to each open space, return path and direction npc facing at end
-function checkPaths(tbl, char, x1, y1)
-  for i = 1, #tbl do
-    local x2, y2 = tbl[i][1], tbl[i][2]
-    print("number of open spots:"..#tbl)
-    print("open coords:"..tbl[i][1], tbl[i][2])
-    local path = createPathNPC(math.floor(char.act_x/gridsize), math.floor(char.act_y/gridsize), (x1/gridsize)+x2, (y1/gridsize)+y2)
-    if path ~= nil then
-      print("path found")
-      return path, tbl[i][3]
-    end
-  end
-end
-
 --adjust char position to be facing direction based on location of other character, up down left right, or stay same
 function changeFacing(x1, y1, x2, y2, f)
   if x1 == x2 and y1 > y2 then
@@ -80,6 +66,21 @@ function changeFacing(x1, y1, x2, y2, f)
     return f
   end
 end
+
+--check if there is a path to each open space, return path and direction npc facing at end
+function checkPaths(char, x1, y1)
+  local path = createPathNPC(math.floor(char.act_x/gridsize), math.floor(char.act_y/gridsize), x1/gridsize, y1/gridsize)
+  if path ~= nil then
+    print("path found")
+		table.remove(path) -- remove last entry (player location)
+		local facing = changeFacing(path[#path].x, path[#path].y, x1, y1) -- check which direction NPC must be facing
+		return path, facing
+	else
+		error("no path found")
+	end
+end
+
+
 --update grid position for moving NPCs during cutscenes
 function updateGridPosNPC(tbl, char, n)
   total = #tbl

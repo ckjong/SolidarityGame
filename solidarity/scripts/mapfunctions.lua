@@ -76,7 +76,11 @@ end
 
 --change background to match location
 function changeBackground(l)
-	currentBackground = bg[l]
+	if l == "overworld" and daytime == 0 then
+		currentBackground = bg.overworldnight
+	else
+		currentBackground = bg[l]
+	end
 end
 
 

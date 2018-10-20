@@ -10,6 +10,7 @@ function love.load()
 	--pathfinding code
 
 	gameStage = 0
+	keyInput = 1
 --map
 	gridsize = 16
 	debugView = 0
@@ -17,7 +18,7 @@ function love.load()
 	mapExists = 0
 	locationTriggers = {
 										overworld = {
-											{17*gridsize, 16*gridsize, "gardeningShed", 11*gridsize, 17*gridsize, 1}}, --entrancex, entrancey, name, newplayerx, newplayery, locked (1 = yes)
+											{17*gridsize, 16*gridsize, "gardeningShed", 11*gridsize, 17*gridsize, 0}}, --entrancex, entrancey, name, newplayerx, newplayery, locked (1 = yes)
 										gardeningShed = {
 											{11*gridsize, 18*gridsize, "overworld", 17*gridsize, 17*gridsize, 0}},
 										battlefield1 = {
@@ -169,6 +170,7 @@ function love.load()
 
 	--portraits
 	portraitsheet1 = love.graphics.newImage("images/solidarity_char_portraits.png")
+	portraitsheet1_night = love.graphics.newImage("images/solidarity_char_portraits_night.png")
 	portraitkey = {{name = "player", width = 46, height = 46, start = 0},
 								 {name = "Fennel", width = 46, height = 46, start = 1*46},
 								 {name = "Mint", width = 46, height = 46, start = 2*46},
@@ -181,6 +183,7 @@ function love.load()
 	currentspeaker = "player"
 
 	animsheet1 = love.graphics.newImage("images/solidarity_anim.png")
+	animsheet1_night = love.graphics.newImage("images/solidarity_anim_night.png")
 	ui = {arrowright = love.graphics.newImage("images/utopiaui_0.png"),
 		arrowdown = love.graphics.newImage("images/utopiaui_5.png"),
 		pressz = love.graphics.newImage("images/utopiaui_6.png"),
@@ -211,6 +214,28 @@ function love.load()
 				 {newAnimation(animsheet1, 18*16, 4, 16, 16, .65 ), "npcs[4].walkleft"},
 				 {newAnimation(animsheet1, 19*16, 4, 16, 16, .65 ), "npcs[4].walkright"}
 			 }
+  animations_night = {{newAnimation(animsheet1_night, 0, 4, 16, 16, .6), "player.walkup"},
+				 {newAnimation(animsheet1_night, 1*16, 4, 16, 16, .6), "player.walkdown"},
+				 {newAnimation(animsheet1_night, 2*16, 4, 16, 16, .65), "player.walkleft"},
+				 {newAnimation(animsheet1_night, 3*16, 4, 16, 16, .65), "player.walkright"},
+			 	 {newAnimation(animsheet1_night, 4*16, 4, 16, 16, .6 ), "npcs[1].walkup"},
+			   {newAnimation(animsheet1_night, 5*16, 4, 16, 16, .6 ), "npcs[1].walkdown"},
+			 	 {newAnimation(animsheet1_night, 6*16, 4, 16, 16, .65 ), "npcs[1].walkleft"},
+				 {newAnimation(animsheet1_night, 7*16, 4, 16, 16, .65 ), "npcs[1].walkright"},
+				 {newAnimation(animsheet1_night, 8*16, 4, 16, 16, .6 ), "npcs[2].walkup"},
+				 {newAnimation(animsheet1_night, 9*16, 4, 16, 16, .6 ), "npcs[2].walkdown"},
+				 {newAnimation(animsheet1_night, 10*16, 4, 16, 16, .65 ), "npcs[2].walkleft"},
+				 {newAnimation(animsheet1_night, 11*16, 4, 16, 16, .65 ), "npcs[2].walkright"},
+				 {newAnimation(animsheet1_night, 12*16, 4, 16, 16, .6 ), "npcs[3].walkup"},
+				 {newAnimation(animsheet1_night, 13*16, 4, 16, 16, .6 ), "npcs[3].walkdown"},
+				 {newAnimation(animsheet1_night, 14*16, 4, 16, 16, .65 ), "npcs[3].walkleft"},
+				 {newAnimation(animsheet1_night, 15*16, 4, 16, 16, .65 ), "npcs[3].walkright"},
+				 {newAnimation(animsheet1_night, 16*16, 4, 16, 16, .6 ), "npcs[4].walkup"},
+				 {newAnimation(animsheet1_night, 17*16, 4, 16, 16, .6 ), "npcs[4].walkdown"},
+				 {newAnimation(animsheet1_night, 18*16, 4, 16, 16, .65 ), "npcs[4].walkleft"},
+				 {newAnimation(animsheet1_night, 19*16, 4, 16, 16, .65 ), "npcs[4].walkright"}
+			 }
+fading = {on = false, type = 1, a = 0} -- type 1 = fade in from 0 to 1; 2 = fade out from 1 to 0
 
 --cutscene
 cutsceneControl = {stage = 0, total = 1, current = 1}
@@ -225,11 +250,12 @@ cutsceneList ={{
 	noden = 1, --what node are they walking to next
 	dialoguekey = 2,
 	path = {},
-	fadeout = true,
+	fadeout = 1,
+	black = 1,
 	goback = true, -- npc goes back to starting position
 	skipnext = false, -- do we go directly to next cutscene?
 	nextStage = true, -- do we go to the next game scene
-	switchTime = false -- do we switch from day to night or vice versa
+	switchTime = true -- do we switch from day to night or vice versa
 }}
 
 
@@ -246,7 +272,7 @@ cutsceneList ={{
 
 --timer for blinking text/images
 	timer = {{base = .5, current = 0, trigger = 0},
-					 {base = 2, current = 0, trigger = 0}}
+					 {base = 3, current = 0, trigger = 0}}
 --editor for creating new maps and other functions
 	require("scripts/mapfunctions")
 
@@ -319,51 +345,49 @@ end
 	end
 
 	--animation time update
-	for k, v in pairs(animations) do
-		animations[k][1]["currentTime"] = animations[k][1]["currentTime"] + dt
-    if animations[k][1]["currentTime"] >= animations[k][1]["duration"] then
-        animations[k][1]["currentTime"] = animations[k][1]["currentTime"] - animations[k][1]["duration"]
-    end
-	end
-
---cutscene triggered, update map
-if cutsceneControl.stage == 1 then
-	cutsceneStage1Talk()
-end
-
---cutsecene running, move characters
-if cutsceneControl.stage == 2 then
-	 cutsceneStage2Talk(dt)
-end
-
---cutscene running, trigger dialogue
-if cutsceneControl.stage == 3 then
-	cutsceneStage3Talk()
-end
-
---cutscene running, return to starting position
-if cutsceneControl.stage == 4 and dialogueMode == 0 then
-	cutsceneStage4Talk(dt)
-end
-
---cutscene over, reset
-if cutsceneControl.stage == 5 and dialogueMode == 0 then
-	clearMap(2)
-	player.canMove = 1
-	if cutsceneList[cutsceneControl.current].triggered == false then
-		if cutsceneList[cutsceneControl.current].switchTime == true then
-			changeTime()
+	if daytime == 0 then
+		if currentLocation == "overworld" then
+			animUpdate(animations_night, dt)
+		else
+			animUpdate(animations, dt)
 		end
-		changeGameStage()
-		cutsceneList[cutsceneControl.current].triggered = true
-	end
-	if cutsceneControl.current < cutsceneControl.total then -- if there are more cutscenes advance to next one
-		cutsceneControl.current = cutsceneControl.current + 1
-		cutsceneControl.stage = 0
 	else
-		cutsceneControl.stage = 6
+		animUpdate(animations, dt)
 	end
-end
+
+	--cutscene triggered, update map
+	if cutsceneControl.stage == 1 then
+		cutsceneStage1Talk()
+	end
+
+	--cutsecene running, move characters
+	if cutsceneControl.stage == 2 then
+		 cutsceneStage2Talk(dt)
+	end
+
+	--cutscene running, trigger dialogue
+	if cutsceneControl.stage == 3 then
+		cutsceneStage3Talk()
+	end
+
+	--cutscene running, return to starting position
+	if cutsceneControl.stage == 4 and dialogueMode == 0 then
+		cutsceneStage4Talk(dt)
+	end
+
+	-- fade out
+	if cutsceneControl.stage == 5 then
+		cutsceneStage5Talk()
+	end
+
+	if cutsceneControl.stage == 6 then
+		--waiting
+	end
+
+	--cutscene over, reset
+	if cutsceneControl.stage == 7 and dialogueMode == 0 then
+		cutsceneStage7Talk()
+	end
 
 	--battlemode
 	if battleMode == 1 and battleGlobal.phase == 0 then
@@ -371,6 +395,17 @@ end
 		battleGlobal.phase = 1
 	end
 
+	if fading.on == true then
+		if fading.type == 1 then
+			fading.a, fading.on = fade(dt, fading.a, 255, 90)
+		elseif fading.type == 2 then
+			fading.a = 255
+		else
+			print("type not recognized")
+			player.canMove = 1
+			keyInput = 1
+		end
+	end
 end
 
 
@@ -403,10 +438,26 @@ function love.draw()
 
 	--render player
 	love.graphics.setColor(255, 255, 255)
-	drawPlayer()
+	if daytime == 0 then
+		if currentLocation == "overworld" then
+			drawPlayer(animations_night)
+		else
+			drawPlayer(animations)
+		end
+	else
+		drawPlayer(animations)
+	end
 
 	--render npcs
-	drawNPCs()
+	if daytime == 0 then
+		if currentLocation == "overworld" then
+			drawNPCs(animations_night)
+		else
+			drawNPCs(animations)
+		end
+	else
+		drawNPCs(animations)
+	end
 
 	-- render tiles on top of player
 	if currentLocation == "gardeningShed" then
@@ -426,7 +477,11 @@ function love.draw()
 		--render dialogue box
 		love.graphics.draw(ui.textboxbg, boxposx, boxposy)
 		if dialogueMode == 1 then
-			drawPortrait(currentspeaker, boxposx-2, boxposy)
+			if daytime == 0 and currentLocation == "overworld" then
+				drawPortrait(currentspeaker, boxposx-2, boxposy, portraitsheet1_night)
+			else
+				drawPortrait(currentspeaker, boxposx-2, boxposy, portraitsheet1)
+			end
 		end
 		love.graphics.draw(ui.textboxbottom, boxposx, boxposy)
 		--draw z or arrow if more text
@@ -439,72 +494,92 @@ function love.draw()
 	if battleMode == 1 then
 		love.graphics.print("turn: " .. battleGlobal.turn .."   phase: " .. battleGlobal.phase, player.act_x - 48, player.act_y - 40)
 	end
+
+	--fading
+	if fading.on == true then
+		fadeBlack(fading.a, width, height)
+	end
+
 	love.graphics.pop()
 end
 
 -- KEY PRESSES --
 ---------------
 function love.keypressed(key)
-
---initiate debug/map editing mode
-  if key == "p" then
-	 	if debugView == 0 then
-    	debugView = 1
-		elseif debugView == 1 then
-			debugView = 0
-		end
-  end
---print additional info about game on screen for debugging
-	if key == "i" then
-		if infoView == 0 then
-			infoView = 1
-		else
-			infoView = 0
-		end
-	end
---- interact with objects or people
-  if key == "z" then
-		DialogueSetup(npcs, dialogueStage)
-		faceObject(player.facing)
-	end
--- add block to editor
-	if key == "space" and debugView == 1 then
-		addBlock (initTable, player.grid_x, player.grid_y, 1) -- editor.lua
-	end
-
-	if key == "s" and debugView == 1 then
-		saveMap()
-	end
-
-	if key == "c" then --trigger cutscene for testing
-		if cutsceneControl.stage == 0 then
-			cutsceneControl.stage = 1
-		else
-			print("exit cutscene")
-			cutsceneControl.stage = 0
-			player.canMove = 1
-		end
-	end
-
--- move between dialogue options
-	if choice.mode == 1 then
-		if key == "down" then
-			if choice.pos >= 1 and choice.pos < choice.total then
-				choice.pos = choice.pos + 1
-				choiceText(NPCdialogue[dialogueStage][choice.name][choice.case].text, choice.pos, choice.total)
+	if keyInput == 1 then
+	--initiate debug/map editing mode
+	  if key == "p" then
+		 	if debugView == 0 then
+	    	debugView = 1
+			elseif debugView == 1 then
+				debugView = 0
 			end
-		elseif key == "up" then
-			if choice.pos > 1 then
-				choice.pos = choice.pos - 1
-				choiceText(NPCdialogue[dialogueStage][choice.name][choice.case].text, choice.pos, choice.total)
+	  end
+	--print additional info about game on screen for debugging
+		if key == "i" then
+			if infoView == 0 then
+				infoView = 1
+			else
+				infoView = 0
 			end
 		end
-	end
+	--- interact with objects or people
+	  if key == "z" then
+			DialogueSetup(npcs, dialogueStage)
+			faceObject(player.facing)
+		end
+	-- add block to editor
+		if key == "space" and debugView == 1 then
+			addBlock (initTable, player.grid_x, player.grid_y, 1) -- editor.lua
+		end
 
--- end battle
-	if battleMode == 1 and key == "escape" then
-		battleMode = 0
-		battleGlobal.phase = 0
-		-- battleEnd(storedLocation.x, storedLocation.y)
+		if key == "s" and debugView == 1 then
+			saveMap()
+		end
+
+		if key == "k" then
+			if daytime == 1 then
+				daytime = 0
+				currentBackground = bg.overworldnight
+			else
+				daytime = 1
+				currentBackground = bg.overworld
+			end
+		end
+
+		if key == "c" then --trigger cutscene for testing
+			if cutsceneControl.stage == 0 then
+				cutsceneControl.stage = 1
+			else
+				print("exit cutscene")
+				cutsceneControl.stage = 0
+				player.canMove = 1
+			end
+		end
+
+	-- move between dialogue options
+		if choice.mode == 1 then
+			if key == "down" then
+				if choice.pos >= 1 and choice.pos < choice.total then
+					choice.pos = choice.pos + 1
+					choiceText(NPCdialogue[dialogueStage][choice.name][choice.case].text, choice.pos, choice.total)
+				end
+			elseif key == "up" then
+				if choice.pos > 1 then
+					choice.pos = choice.pos - 1
+					choiceText(NPCdialogue[dialogueStage][choice.name][choice.case].text, choice.pos, choice.total)
+				end
+			end
+		end
+
+	-- end battle
+		if battleMode == 1 and key == "q" then
+			battleMode = 0
+			battleGlobal.phase = 0
+			-- battleEnd(storedLocation.x, storedLocation.y)
+		end
+	end
+	if key == "escape" then
+	 	love.event.quit()
 	end
 end
