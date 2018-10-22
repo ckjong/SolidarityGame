@@ -235,8 +235,7 @@ function love.load()
 				 {newAnimation(animsheet1_night, 18*16, 4, 16, 16, .65 ), "npcs[4].walkleft"},
 				 {newAnimation(animsheet1_night, 19*16, 4, 16, 16, .65 ), "npcs[4].walkright"}
 			 }
-fading = {on = false, type = 1, a = 0} -- type 1 = fade in from 0 to 1; 2 = fade out from 1 to 0
-
+fading = {on = false, type = 1, start = 0, goal = 0, rate = 0, a = 0, countdown = 0} -- type 1 = fade in from 0 to 255; 2 = fade out from 255 to 0
 --cutscene
 cutsceneControl = {stage = 0, total = 1, current = 1}
 -- types: 1 = talk, 2 = changeScene
@@ -320,16 +319,24 @@ function love.update(dt)
 		player.canMove = 0
 	end
 
-if dialogueMode == 0 then
-	if trigger[1] == 0 then
-		DialogueTrigger(17, 21, 3)
-	end
-	if player.canMove == 1 then
-		if gameStage == 0 then
-			moveCharBack(17, 21, 17, 22, 2)
+	-- initiate dialogue and move character back if they enter a location
+	if dialogueMode == 0 then
+		if trigger[1] == 0 then
+			DialogueTrigger(17, 21, 3)
+		end
+		if player.canMove == 1 then
+			if gameStage == 0 then
+				moveCharBack(17, 21, 17, 22, 2)
+			end
 		end
 	end
-end
+
+	--run through countdown
+	if fading.countdown > 0 then
+		fading.countdown = fading.countdown - dt
+	elseif fading.countdown < 0 then
+		fading.countdown = 0
+	end
 
 --set direction and destination position
 	if debugView == 0 then
@@ -375,13 +382,15 @@ end
 		cutsceneStage4Talk(dt)
 	end
 
-	-- fade out
+	-- start fade out
 	if cutsceneControl.stage == 5 then
 		cutsceneStage5Talk()
 	end
 
+-- waiting for fade to finish
 	if cutsceneControl.stage == 6 then
-		--waiting
+		cutsceneStage6Talk(dt)
+
 	end
 
 	--cutscene over, reset
@@ -395,17 +404,7 @@ end
 		battleGlobal.phase = 1
 	end
 
-	if fading.on == true then
-		if fading.type == 1 then
-			fading.a, fading.on = fade(dt, fading.a, 255, 90)
-		elseif fading.type == 2 then
-			fading.a = 255
-		else
-			print("type not recognized")
-			player.canMove = 1
-			keyInput = 1
-		end
-	end
+
 end
 
 
@@ -499,6 +498,11 @@ function love.draw()
 	if fading.on == true then
 		fadeBlack(fading.a, width, height)
 	end
+	
+	--black screen
+	if fading.countdown > 0 then
+		fadeBlack(255, width, height)
+	end
 
 	love.graphics.pop()
 end
@@ -552,7 +556,7 @@ function love.keypressed(key)
 				cutsceneControl.stage = 1
 			else
 				print("exit cutscene")
-				cutsceneControl.stage = 0
+				cutsceneControl.stage = 8
 				player.canMove = 1
 			end
 		end

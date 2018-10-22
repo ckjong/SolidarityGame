@@ -81,23 +81,29 @@ function cutsceneStage4Talk(dt)
   end
 end
 
+--set conditions for screen fade, or skip to stage 7 if no fade
 function cutsceneStage5Talk()
   if cutsceneList[cutsceneControl.current].fadeout ~= 0 then
     fading.type = cutsceneList[cutsceneControl.current].fadeout
-    if fading.type == 1 then
-      fading.a = 0
-    end
+    fadeControl(fading.type)
     player.canMove = 0
     keyInput = 0
     fading.on = true
     cutsceneControl.stage = 6
+  else
+    cutsceneControl.stage = 7
   end
 end
 
+function cutsceneStage6Talk(dt)
+  if fading.on == true then
+    fading.a, fading.on = fade(dt, fading.a, fading.goal, fading.rate)
+  else
+    cutsceneControl.stage = 7
+  end
+end
 
-function cutsceneStage7Talk(dt)
-  clearMap(2)
-  player.canMove = 1
+function cutsceneStage7Talk()
   if cutsceneList[cutsceneControl.current].triggered == false then
     if cutsceneList[cutsceneControl.current].switchTime == true then
       changeTime()
@@ -105,6 +111,8 @@ function cutsceneStage7Talk(dt)
     changeGameStage()
     cutsceneList[cutsceneControl.current].triggered = true
   end
+  clearMap(2)
+  saveMap()
   if cutsceneControl.current < cutsceneControl.total then -- if there are more cutscenes advance to next one
     cutsceneControl.current = cutsceneControl.current + 1
     cutsceneControl.stage = 0
@@ -155,4 +163,45 @@ function changeTime()
     currentBackground = bg.overworld
   end
   print ("daytime " .. daytime)
+end
+
+function fadeControl(t) -- arg: fading.type
+  if t == 1 then
+    fading.start = 0
+    fading.goal = 255
+    fading.rate = 140
+    fading.a = fading.start
+  elseif t == 2 then
+    fading.start = 255
+    fading.goal = 0
+    fading.rate = 140
+    fading.a = fading.start
+  end
+end
+
+--change alpha to fade out or in image, delta time, current alpha, goal, rate
+function fade(dt, a, b, r)
+  if r > 0 then -- alpha going up
+    if a <= b then
+      a = a + r*dt
+      print("alpha " .. a)
+      return a, true
+    else
+      fading.countdown = .5
+      player.canMove = 1
+      keyInput = 1
+      print("fading off")
+      return a, false
+    end
+  else
+    if a >= b then
+      a = a + r*dt
+      return a, true
+    else
+      player.canMove = 1
+      keyInput = 1
+      print("fading off")
+      return a, false
+    end
+  end
 end

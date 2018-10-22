@@ -141,41 +141,7 @@ function drawInfo(x, y)
   love.graphics.print("x: " .. x/gridsize .." y: " .. y/gridsize, x - 48, y - 40)
 end
 
---change alpha to fade out or in image, delta time, alpha, goal, rate
-function fade(dt, a, b, r)
-  if r > 0 then -- alpha going up
-    if a <= b then
-      a = a + r*dt
-      print("alpha " .. a)
-      return a, true
-    else
-      player.canMove = 1
-      keyInput = 1
-      print("fading off")
-      cutsceneControl.stage = 7
-      return a, false
-    end
-  else
-    if a >= b then
-      a = a + r*dt
-      return a, true
-    else
-      player.canMove = 1
-      keyInput = 1
-      print("fading off")
-      cutsceneControl.stage = 7
-      return a, false
-    end
-  end
-end
-
 function fadeBlack(alpha, width, height)
-  print("fadeBlack alpha " .. alpha)
-  love.graphics.setColor(50, 29, 62, alpha)
-  love.graphics.rectangle("fill", player.act_x-width/2, player.act_y-height/2, width, height)
-end
-
-function screenBlack(width, height) -- render a black square over the screen
-  love.graphics.setColor(50, 29, 62, 255)
+  love.graphics.setColor(93, 43, 67, alpha)
   love.graphics.rectangle("fill", player.act_x-width/2, player.act_y-height/2, width, height)
 end
