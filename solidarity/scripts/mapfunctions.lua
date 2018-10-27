@@ -28,19 +28,24 @@
 function locationMaps(currentLocation)
 	if currentLocation == "overworld" then
 		mapFile1 = mapPath.overworld[1]
-		mapFile2 = mapPath.overworld[2]
 		print(currentLocation)
-		mapGen (bg.overworld, mapFile1, mapFile2)
+		mapGen (bg.overworld, mapFile1)
 	elseif currentLocation == "gardeningShed" then
 		mapFile1 = mapPath.gardeningShed[1]
-		mapFile2 = mapPath.gardeningShed[2]
 		print(currentLocation)
-		mapGen (bg.gardeningShed, mapFile1, mapFile2)
+		mapGen (bg.gardeningShed, mapFile1)
 	elseif currentLocation == "battlefield1" then
 		mapFile1 = mapPath.battlefield1[1]
-		mapFile2 = mapPath.battlefield1[2]
 		print(currentLocation)
-		mapGen (bg.battlefield1, mapFile1, mapFile2)
+		mapGen (bg.battlefield1, mapFile1)
+	elseif currentLocation == "dormitory" then
+		mapFile1 = mapPath.dormitory[1]
+		print(currentLocation)
+		mapGen (bg.dormitory, mapFile1)
+	elseif currentLocation == "dininghall" then
+		mapFile1 = mapPath.dininghall[1]
+		print(currentLocation)
+		mapGen (bg.dininghall, mapFile1)
 	end
 end
 
@@ -114,11 +119,11 @@ function file_exists(name)
 end
 
 --generate map file or load current map to table
-function mapGen (img, file1, file2)
+function mapGen (img, file1)
   print(mapExists)
-	if file_exists(file2) then
+	if file_exists(file1) then
 		mapExists = 1
-		f = assert(io.open(file2, "r"))
+		f = assert(io.open(file1, "r"))
 		local content = f:read("*a")
 		initTable = json.decode(content)
 		io.close(f)
@@ -131,6 +136,7 @@ function mapGen (img, file1, file2)
 		initTableFile = json.encode(initTable)
 		f:write(initTableFile)
 		f:close(initTableFile)
+		mapExists = 1
 	end
 end
 
@@ -161,19 +167,11 @@ function addBlock (tbl, x, y, n)
 end
 
 function saveMap()
-	if mapExists == 1 then
-		print("saved over old map")
-		f = assert(io.open(mapFile2, "w"))
-		initTableFile = json.encode(initTable)
-		f:write(initTableFile)
-		f:close(initTableFile)
-	else
-		print("saved over new map")
-		f = assert(io.open(mapFile1, "w"))
-		initTableFile = json.encode(initTable)
-		f:write(initTableFile)
-		f:close(initTableFile)
-	end
+	print("saved over old map")
+	f = assert(io.open(mapFile1, "w"))
+	initTableFile = json.encode(initTable)
+	f:write(initTableFile)
+	f:close(initTableFile)
 end
 
 -- add location of NPCs or other moving obstacles to map collision

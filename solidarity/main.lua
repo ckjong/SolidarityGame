@@ -18,23 +18,32 @@ function love.load()
 	mapExists = 0
 	locationTriggers = {
 										overworld = {
-											{17*gridsize, 16*gridsize, "gardeningShed", 11*gridsize, 17*gridsize, 0}}, --entrancex, entrancey, name, newplayerx, newplayery, locked (1 = yes)
+											{17*gridsize, 16*gridsize, "gardeningShed", 11*gridsize, 17*gridsize, 0},--entrancex, entrancey, name, newplayerx, newplayery, locked (1 = yes)
+											{30*gridsize, 25*gridsize, "dormitory", 12*gridsize, 17*gridsize, 0},
+											{34*gridsize, 25*gridsize, "dormitory", 23*gridsize, 17*gridsize, 0},
+											{24*gridsize, 16*gridsize, "dininghall", 12*gridsize, 20*gridsize, 0},
+											{28*gridsize, 16*gridsize, "dininghall", 22*gridsize, 20*gridsize, 0}},
 										gardeningShed = {
 											{11*gridsize, 18*gridsize, "overworld", 17*gridsize, 17*gridsize, 0}},
 										battlefield1 = {
-											{nil, nil, "battlfield1", 3*gridsize, 6*gridsize, 1}}
+											{nil, nil, "battlfield1", 3*gridsize, 6*gridsize, 1}},
+										dormitory = {
+											{12*gridsize, 18*gridsize, "overworld", 30*gridsize, 26*gridsize, 0},
+										  {23*gridsize, 18*gridsize, "overworld", 34*gridsize, 26*gridsize, 0}},
+										dininghall = {
+											{12*gridsize, 21*gridsize, "overworld", 24*gridsize, 17*gridsize, 0},
+											{22*gridsize, 21*gridsize, "overworld", 28*gridsize, 17*gridsize, 0}},
 									}
 	currentLocation = "overworld"
-	mapPath = {overworld = {"C:\\Users\\Carolyn\\Documents\\GitHub\\SolidarityGame\\solidarity\\scripts\\map.txt",
-	"C:\\Users\\Carolyn\\Documents\\GitHub\\SolidarityGame\\solidarity\\maps\\map1.txt"},
-	gardeningShed = {"C:\\Users\\Carolyn\\Documents\\GitHub\\SolidarityGame\\solidarity\\scripts\\map.txt",
-	"C:\\Users\\Carolyn\\Documents\\GitHub\\SolidarityGame\\solidarity\\maps\\map2.txt"},
-	battlefield1 = {"C:\\Users\\Carolyn\\Documents\\GitHub\\SolidarityGame\\solidarity\\scripts\\map.txt",
-	"C:\\Users\\Carolyn\\Documents\\GitHub\\SolidarityGame\\solidarity\\maps\\map3.txt"}
+	mapPath = {overworld = {"C:\\Users\\Carolyn\\Documents\\GitHub\\SolidarityGame\\solidarity\\maps\\1overworld.txt"},
+	gardeningShed = {"C:\\Users\\Carolyn\\Documents\\GitHub\\SolidarityGame\\solidarity\\maps\\2gardeningShed.txt"},
+	battlefield1 = {"C:\\Users\\Carolyn\\Documents\\GitHub\\SolidarityGame\\solidarity\\maps\\3battlefield1.txt"},
+	dormitory = {"C:\\Users\\Carolyn\\Documents\\GitHub\\SolidarityGame\\solidarity\\maps\\4dormitory.txt"},
+	dininghall = {"C:\\Users\\Carolyn\\Documents\\GitHub\\SolidarityGame\\solidarity\\maps\\5dininghall.txt"},
+
 }
 
 	mapFile1 = nil
-	mapFile2 = nil
 
 
 --characters
@@ -139,6 +148,27 @@ function love.load()
 				c = 1,
 				battlestats = {maxhp = 3, damage = 1,  moves = 1},
 				next = {{x = 16*gridsize, y = 21*gridsize, facing = 4, location = "overworld"}}
+			},
+			{
+				grid_x = 21*gridsize,
+				grid_y = 25*gridsize,
+				act_x = 21*gridsize,
+				act_y = 25*gridsize,
+				speed = 30,
+				canMove = 0,
+				moveDir = 0,
+				threshold = 0,
+				facing = 1,
+				start = 2,
+				location = "overworld",
+				dialogue = 0,
+				name = "Cress",
+				status = "boss",
+				animationkey = 20, -- where animations start
+				n = 1, --stage in single conversation
+				c = 1,
+				battlestats = {maxhp = 3, damage = 1,  moves = 1},
+				next = {{x = 0*gridsize, y = 0*gridsize, facing = 2, location = "dormitory"}}
 			}
 }
 
@@ -153,7 +183,7 @@ function love.load()
 		{16, 17, "GardeningSign"},
 		{23, 17, "KitchenSign"},
 	 	{29, 26, "DormitorySign"},
-		{29, 34, "MixingSign"}
+		{29, 34, "StoreSign"}
 	}
 --images
 	love.graphics.setDefaultFilter("nearest", "nearest")
@@ -164,7 +194,9 @@ function love.load()
 	bg = {overworld = love.graphics.newImage("images/solidarity_overworld.png"),
 				overworldnight = love.graphics.newImage("images/solidarity_overworld_night.png"),
 				gardeningShed = love.graphics.newImage("images/gardeningshedbg.png"),
-				battlefield1 = love.graphics.newImage("images/solidarity_battletest.png")}
+				battlefield1 = love.graphics.newImage("images/solidarity_battletest.png"),
+		  	dormitory = love.graphics.newImage("images/dormitory.png"),
+				dininghall = love.graphics.newImage("images/dininghall.png"),}
 	currentBackground = bg.overworld
 	daytime = 1
 
@@ -212,7 +244,11 @@ function love.load()
 				 {newAnimation(animsheet1, 16*16, 4, 16, 16, .6 ), "npcs[4].walkup"},
 				 {newAnimation(animsheet1, 17*16, 4, 16, 16, .6 ), "npcs[4].walkdown"},
 				 {newAnimation(animsheet1, 18*16, 4, 16, 16, .65 ), "npcs[4].walkleft"},
-				 {newAnimation(animsheet1, 19*16, 4, 16, 16, .65 ), "npcs[4].walkright"}
+				 {newAnimation(animsheet1, 19*16, 4, 16, 16, .65 ), "npcs[4].walkright"},
+				 {newAnimation(animsheet1, 20*16, 4, 16, 16, .6 ), "npcs[5].walkup"},
+				 {newAnimation(animsheet1, 21*16, 4, 16, 16, .6 ), "npcs[5.walkdown"},
+				 {newAnimation(animsheet1, 22*16, 4, 16, 16, .65 ), "npcs[5].walkleft"},
+				 {newAnimation(animsheet1, 23*16, 4, 16, 16, .65 ), "npcs[5].walkright"}
 			 }
   animations_night = {{newAnimation(animsheet1_night, 0, 4, 16, 16, .6), "player.walkup"},
 				 {newAnimation(animsheet1_night, 1*16, 4, 16, 16, .6), "player.walkdown"},
@@ -254,7 +290,7 @@ cutsceneList ={{
 	goback = true, -- npc goes back to starting position
 	skipnext = false, -- do we go directly to next cutscene?
 	nextStage = true, -- do we go to the next game scene
-	switchTime = true -- do we switch from day to night or vice versa
+	switchTime = false -- do we switch from day to night or vice versa
 }}
 
 
@@ -277,8 +313,7 @@ cutsceneList ={{
 
 	--generate map
 	mapFile1 = mapPath.overworld[1]
-	mapFile2 = mapPath.overworld[2]
-	mapGen (bg.overworld, mapFile1, mapFile2)
+	mapGen (bg.overworld, mapFile1)
 	--table.save(initTable, "D:\\my game projects\\utopia\\scripts\\initTable.lua")
 	require("scripts/dialoguefunctions")
 	require("scripts/movefunctions")
@@ -291,7 +326,7 @@ end
 
 function love.update(dt)
 
-	if checkSpoken(npcs, NPCdialogue[dialogueStage], 5) == true then
+	if checkSpoken(npcs, NPCdialogue[dialogueStage], 6) == true then
 		if cutsceneControl.stage == 0 then
 			local n = cutsceneControl.current
 			if cutsceneList[n].triggered == false then
@@ -498,7 +533,7 @@ function love.draw()
 	if fading.on == true then
 		fadeBlack(fading.a, width, height)
 	end
-	
+
 	--black screen
 	if fading.countdown > 0 then
 		fadeBlack(255, width, height)

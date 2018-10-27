@@ -57,10 +57,12 @@ function cutsceneStage4Talk(dt)
   local i = cutsceneList[n].npc
   local path = cutsceneList[n].path
   local char = npcs[i]
+  print("#path " .. #path)
+  if #path == 1 then cutsceneList[n].goback = false end -- if path is empty then don't go back to starting position
   if cutsceneList[n].goback == true then -- if character needs to return to start position
-    player.canMove = 0
-    table.insert(cutsceneList[n].facing, npcs[i].start)
     if path then
+      player.canMove = 0
+      table.insert(cutsceneList[n].facing, npcs[i].start)
       if char.act_x == char.grid_x and char.act_y == char.grid_y then
         if cutsceneList[n].noden > 0 then
           cutsceneList[n].noden = cutsceneList[n].noden - 1

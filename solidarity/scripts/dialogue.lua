@@ -16,15 +16,22 @@ NPCdialogue = {
           [3] = {text = {"What's your favourite fish?"},
                 logic = {next = 4, speaker = "Mint", cond = true, off = false, display = 1}}, -- player response
           [4] = {text = {"Carp", "Trout", "Salmon", "Bass", "Perch"},
-                logic = {next = 5, speaker = "player", cond = true, off = false, display = 2}},
-          [5] = {text = {"Oh good choice.", "Me too!", "I thought so.", "Cool!", "I see."},
-                logic = {next = 2, speaker = "Mint", cond = true, off = false, display = 3, spoken = 0}} -- respond to player options
+                logic = {next = 2, offset = 4, speaker = "player", cond = true, off = false, display = 2}},
+          [5] = {text = {"Oh good choice."},
+                logic = {next = 2, speaker = "Mint", cond = true, off = false, display = 1, spoken = 0}}, -- respond to player options
+          [6] = {text = {"Me too!"},
+                logic = {next = 2, speaker = "Mint", cond = true, off = false, display = 1, spoken = 0}},
+          [7] = {text = {"I thought so."},
+                logic = {next = 2, speaker = "Mint", cond = true, off = false, display = 1, spoken = 0}},
+          [8] = {text = {"Cool!"},
+                logic = {next = 2, speaker = "Mint", cond = true, off = false, display = 1, spoken = 0}},
+          [9] = {text = {"I see..."},
+                logic = {next = 2, speaker = "Mint", cond = true, off = false, display = 1, spoken = 0}}
         },
   Lark = {[1] = {text = {"What are you looking at? Get back to work!"},
                 logic = {next = 1, speaker = "Lark", cond = true, off = true, display = 1, spoken = 0}},
-          [2] = {text = {"What do you think you're doing huh?!", "We don't pay you to stand around and chat.", "You're going to make up for this by working overtime tonight."},
-                logic = {next = 3, speaker = "Lark", cond = true, off = false, display = 1, spoken = 0}},
-          [3] = {text = {"Now GET MOVING! ... *mutters* stupid lazy mudskins..."},
+          [2] = {text = {"We don't pay you to stand around and chat.", "You're going to make up for this by working overtime tonight.",
+                "Now GET MOVING! ... *mutters* stupid lazy mudskins..."},
                 logic = {next = 1, speaker = "Lark", cond = true, off = true, display = 1, spoken = 0}}
           -- [4] = {text = {"Hah, get ready to lose, loser.", "Too bad."},
           --       logic = {next = 1, speaker = "Lark", cond = true, off = true, display = 3, trigger = {type = "battle", choice = 1}}},
@@ -33,6 +40,9 @@ NPCdialogue = {
                 logic = {next = 1, speaker = "Finch", cond = true, off = true, display = 1}},
            [2] = {text = {"The day's not over yet!"},
                 logic = {next = 2, speaker = "Finch", cond = true, off = true, display = 1}}
+        },
+  Cress = {[1] = {text = {"Can't talk now, sorry."},
+                logic = {next = 1, speaker = "Cress", cond = true, off = true, display = 1}}
         }
   },
   [1]= {
@@ -48,6 +58,9 @@ NPCdialogue = {
         },
   Finch = {[1] = {text = {"Looks like you missed dinner, too bad for you."},
                 logic = {next = 1, speaker = "Finch", cond = true, off = true, display = 1}}
+        },
+  Cress = {[1] = {text = {"Happy birthday."},
+                logic = {next = 1, speaker = "Cress", cond = true, off = true, display = 1}}
         }
   }
 }
@@ -57,4 +70,4 @@ objectText = {
   GardeningSign = "Field Supplies",
   KitchenSign = "Dining Hall",
   DormitorySign = "Dormitory",
-  MixingSign = "Potion Mixing"}
+  StoreSign = "The Shiny Coin: Your Friendly Company Store and Tavern"}

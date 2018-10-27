@@ -120,8 +120,16 @@ function DialogueSetup (tbl, n) -- iterate through npcs table, lookup text in NP
 						choice.name = name
 						choice.case = case
 						choiceText(dialOpt.text, choice.pos, choice.total) -- display dialogue options
-						tbl[i].c = dialOpt.logic.next
 						return
+					elseif choice.mode == 1 then
+						print("choice mode off case" .. case)
+						local o = dialOpt.logic.offset
+						dialOpt.logic.spoken = 1
+						dialOpt.logic.next = choice.pos + o
+						tbl[i].n = 1
+						tbl[i].c = dialOpt.logic.next
+						choice.mode = 0
+						DialogueSetup (tbl, n)
 					end
 				end
 				if dialOpt.logic.display == 3 then
