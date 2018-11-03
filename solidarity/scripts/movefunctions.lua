@@ -179,53 +179,82 @@ function updateGrid(char, c)
 end
 
 -- test to see if player next to object, return object name
-function testObject(x, y)
+function testObject(x, y, tbl)
 	local m = (player.grid_x / 16) + x
 	local n = (player.grid_y / 16) + y
-	for i = 1, #objects do
-		if m == objects[i][1] and n == objects[i][2] then
-			return true, objects[i][3]
+	if currentLocation == "overworld" then
+		for i = 1, #tbl do
+			if m*gridsize == tbl[i][2] and n*gridsize == tbl[i][3] then
+				return true, tbl[i][1], i
+			end
 		end
 	end
 	return false, nil
 end
 
 --pass object description to text, change dialogue mode
-function printObjText(b)
-	if dialogueMode == 0 then
-		dialogueMode = 1
-		currentspeaker = "player"
-		text = objectText[b]
-	else
-		dialogueMode = 0
-		player.canMove = 1
+function printObjText(b, c)
+	if actionMode == 0 then
+		if dialogueMode == 0 then
+			dialogueMode = 1
+			currentspeaker = "player"
+			text = objectText[b]
+			if b == "plantSmBerries" or b == "plantLgBerries" then
+				if b == "plantSmBerries" then
+					actions[1].k = 1
+				else
+					actions[1].k = 2
+				end
+				movingObjectData[currentLocation][c][4] = 0
+				actions[1].x = movingObjectData[currentLocation][c][2]
+				actions[1].y = movingObjectData[currentLocation][c][3]
+				actionMode = 1
+			end
+		else
+			dialogueMode = 0
+			player.canMove = 1
+		end
+	elseif actionMode == 1 then
+		if actions[1].current < actions[1].max then
+			actions[1].current = actions[1].current + actions[1].rate
+			print ("action meter: " .. actions[1].current)
+		else
+			if b == "plantSmBerries" then
+				movingObjectData[currentLocation][c][1] = "plantSm"
+			elseif b == "plantLgBerries" then
+				movingObjectData[currentLocation][c][1] = "plantLg"
+			end
+			actions[1].current = 0
+			movingObjectData[currentLocation][c][4] = 1
+			actionMode = 0
+		end
 	end
 end
 
 --test to see if player facing object, retrieve description
-function faceObject(dir)
+function faceObject(dir, tbl)
 	if dir == 1 then -- up
-		local a, b = testObject(0, -1)
+		local a, b, c = testObject(0, -1, tbl)
 		if a and b ~= nil then
-			printObjText(b)
+			printObjText(b, c)
 			return
 		end
 	elseif dir == 2 then -- down
-		local a, b = testObject(0, 1)
+		local a, b, c = testObject(0, 1, tbl)
 		if a and b ~= nil then
-			printObjText(b)
+			printObjText(b, c)
 			return
 		end
 	elseif dir == 3 then -- left
-		local a, b = testObject(-1, 0)
+		local a, b, c = testObject(-1, 0, tbl)
 		if a and b ~= nil then
-			printObjText(b)
+			printObjText(b, c)
 			return
 		end
 	elseif dir == 4 then -- right
-		local a, b = testObject(1, 0)
+		local a, b, c = testObject(1, 0, tbl)
 		if a and b ~= nil then
-			printObjText(b)
+			printObjText(b, c)
 			return
 		end
 	end

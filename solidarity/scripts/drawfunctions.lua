@@ -30,11 +30,26 @@ end
 
 function animUpdate(tbl, dt)
   for k, v in pairs(tbl) do
-		tbl[k][1]["currentTime"] = tbl[k][1]["currentTime"] + dt
-    if tbl[k][1]["currentTime"] >= tbl[k][1]["duration"] then
-        tbl[k][1]["currentTime"] = tbl[k][1]["currentTime"] - tbl[k][1]["duration"]
+		tbl[k]["anim"]["currentTime"] = tbl[k]["anim"]["currentTime"] + dt
+    if tbl[k]["anim"]["currentTime"] >= tbl[k]["anim"]["duration"] then
+      tbl[k]["anim"]["currentTime"] = tbl[k]["anim"]["currentTime"] - tbl[k]["anim"]["duration"]
+      if tbl[k].loop ~= 0 then
+        if tbl[k].running == 1 then
+          if tbl[k].current > 0 then
+            tbl[k].current = tbl[k].current - 1
+          else
+            tbl[k].current = tbl[k].loop
+            tbl[k].running = 0
+          end
+        end
+      end
     end
 	end
+end
+
+function resetAnims(tbl, k)
+  tbl[k].current = tbl[k].loop
+  tbl[k].running = 1
 end
 
 --render portrait
@@ -57,11 +72,11 @@ end
 function drawPlayer(tbl)
   for i = 1, 4 do
     if player.moveDir == i then
-      local spriteNum = math.floor(tbl[i][1]["currentTime"] / tbl[i][1]["duration"] * #tbl[i][1]["quads"]) + 1
-      love.graphics.draw(tbl[i][1]["spriteSheet"], tbl[i][1]["quads"][spriteNum], player.act_x, player.act_y, 0, 1)
+      local spriteNum = math.floor(tbl[i]["anim"]["currentTime"] / tbl[i]["anim"]["duration"] * #tbl[i]["anim"]["quads"]) + 1
+      love.graphics.draw(tbl[i]["anim"]["spriteSheet"], tbl[i]["anim"]["quads"][spriteNum], player.act_x, player.act_y, 0, 1)
     elseif player.moveDir == 0 then
       if player.facing == i then
-        love.graphics.draw(tbl[i][1]["spriteSheet"], tbl[i][1]["quads"][1], player.act_x, player.act_y, 0, 1)
+        love.graphics.draw(tbl[i]["anim"]["spriteSheet"], tbl[i]["anim"]["quads"][1], player.act_x, player.act_y, 0, 1)
       end
     end
   end
@@ -75,29 +90,45 @@ function drawNPCs(tbl)
       local f = npcs[i].facing-1
       local s = npcs[i].start-1
       if npcs[i].dialogue == 1 then
-        love.graphics.draw(tbl[k+f][1]["spriteSheet"], tbl[k+f][1]["quads"][1], npcs[i].act_x, npcs[i].act_y, 0, 1)
+        love.graphics.draw(tbl[k+f]["anim"]["spriteSheet"], tbl[k+f]["anim"]["quads"][1], npcs[i].act_x, npcs[i].act_y, 0, 1)
       else
         if npcs[i].canMove == 1 then
           for v = 1, 4 do
             if npcs[i].moveDir == v then
-              local spriteNum = math.floor(tbl[k+j][1]["currentTime"] / tbl[k+j][1]["duration"] * #tbl[k+j][1]["quads"]) + 1
-              love.graphics.draw(tbl[k+j][1]["spriteSheet"], tbl[k+j][1]["quads"][spriteNum], npcs[i].act_x, npcs[i].act_y, 0, 1)
+              local spriteNum = math.floor(tbl[k+j]["anim"]["currentTime"] / tbl[k+j]["anim"]["duration"] * #tbl[k+j]["anim"]["quads"]) + 1
+              love.graphics.draw(tbl[k+j]["anim"]["spriteSheet"], tbl[k+j]["anim"]["quads"][spriteNum], npcs[i].act_x, npcs[i].act_y, 0, 1)
             elseif npcs[i].moveDir == 0 then
               if npcs[i].facing == v then
-                love.graphics.draw(tbl[k+f][1]["spriteSheet"], tbl[k+f][1]["quads"][1], npcs[i].act_x, npcs[i].act_y, 0, 1)
+                love.graphics.draw(tbl[k+f]["anim"]["spriteSheet"], tbl[k+f]["anim"]["quads"][1], npcs[i].act_x, npcs[i].act_y, 0, 1)
               end
             end
           end
         else
-          love.graphics.draw(tbl[k+s][1]["spriteSheet"], tbl[k+s][1]["quads"][1], npcs[i].act_x, npcs[i].act_y, 0, 1)
+          love.graphics.draw(tbl[k+s]["anim"]["spriteSheet"], tbl[k+s]["anim"]["quads"][1], npcs[i].act_x, npcs[i].act_y, 0, 1)
         end
       end
     end
   end
 end
 
-function drawTop(l, tbl)
-  love.graphics.draw(toptiles[l], tbl[l][1][1], tbl[l][1][2])
+function drawTop(l, tbl, img, quad)
+  for i = 1, #tbl[l] do
+    local k = tbl[l][i][1]
+    if tbl[l][i][4] == 1 then
+      love.graphics.draw(img, quad[k], tbl[l][i][2], tbl[l][i][3])
+    end
+  end
+end
+
+function drawObjAnims(tbl, k, x, y)
+  local spriteNum = math.floor(tbl[k]["anim"]["currentTime"] / tbl[k]["anim"]["duration"] * #tbl[k]["anim"]["quads"]) + 1
+  if tbl[k].loop ~= 0 then
+    if tbl[k].running == 1 then
+      love.graphics.draw(tbl[k]["anim"]["spriteSheet"], tbl[k]["anim"]["quads"][spriteNum], x, y, 0, 1)
+    elseif tbl[k].running == 0 then
+      love.graphics.draw(tbl[k]["anim"]["spriteSheet"], tbl[k]["anim"]["quads"][1], x, y, 0, 1)
+    end
+  end
 end
 
 function drawText(x, y)
@@ -144,4 +175,11 @@ end
 function fadeBlack(alpha, width, height)
   love.graphics.setColor(93, 43, 67, alpha)
   love.graphics.rectangle("fill", player.act_x-width/2, player.act_y-height/2, width, height)
+end
+
+function multiplyLayer(width, height)
+  love.graphics.setColor(255, 255, 255, 80)
+	love.graphics.setBlendMode("alpha")
+	love.graphics.draw(overlays.evening, player.act_x-width/2, player.act_y-height/2)
+  love.graphics.setBlendMode("alpha")
 end

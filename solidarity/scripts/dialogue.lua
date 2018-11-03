@@ -43,6 +43,9 @@ NPCdialogue = {
         },
   Cress = {[1] = {text = {"Can't talk now, sorry."},
                 logic = {next = 1, speaker = "Cress", cond = true, off = true, display = 1}}
+        },
+  Agave = {[1] = {text = {"It's nice to see you, but we shouldn't talk while the foreman's watching."},
+                logic = {next = 1, speaker = "Agave", cond = true, off = true, display = 1}}
         }
   },
   [1]= {
@@ -61,6 +64,9 @@ NPCdialogue = {
         },
   Cress = {[1] = {text = {"Happy birthday."},
                 logic = {next = 1, speaker = "Cress", cond = true, off = true, display = 1}}
+        },
+  Agave = {[1] = {text = {"Don't worry I saved some dinner for you."},
+                logic = {next = 1, speaker = "Agave", cond = true, off = true, display = 1}}
         }
   }
 }
@@ -70,4 +76,9 @@ objectText = {
   GardeningSign = "Field Supplies",
   KitchenSign = "Dining Hall",
   DormitorySign = "Dormitory",
-  StoreSign = "The Shiny Coin: Your Friendly Company Store and Tavern"}
+  StoreSign = "The Shiny Coin: Your Friendly Company Store and Tavern",
+  plantSm = "The berries have already been harvested from this plant.",
+  plantSmBerries = "Press Z to Pick Berries",
+  plantLg = "The berries have already been harvested from this plant.",
+  plantLgBerries = "Press Z to Pick Berries",
+  stool = "Sit?"}

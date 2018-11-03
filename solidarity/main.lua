@@ -3,8 +3,12 @@
 
 function love.load()
 
+
+
 	--code for navigating between maps
 	require("scripts/drawfunctions")
+
+
 	--json for map files
 	json = require("json")
 	--pathfinding code
@@ -20,19 +24,19 @@ function love.load()
 										overworld = {
 											{17*gridsize, 16*gridsize, "gardeningShed", 11*gridsize, 17*gridsize, 0},--entrancex, entrancey, name, newplayerx, newplayery, locked (1 = yes)
 											{30*gridsize, 25*gridsize, "dormitory", 12*gridsize, 17*gridsize, 0},
-											{34*gridsize, 25*gridsize, "dormitory", 23*gridsize, 17*gridsize, 0},
-											{24*gridsize, 16*gridsize, "dininghall", 12*gridsize, 20*gridsize, 0},
-											{28*gridsize, 16*gridsize, "dininghall", 22*gridsize, 20*gridsize, 0}},
+											{34*gridsize, 25*gridsize, "dormitory", 25*gridsize, 17*gridsize, 0},
+											{24*gridsize, 16*gridsize, "dininghall", 13*gridsize, 20*gridsize, 0},
+											{28*gridsize, 16*gridsize, "dininghall", 23*gridsize, 20*gridsize, 0}},
 										gardeningShed = {
 											{11*gridsize, 18*gridsize, "overworld", 17*gridsize, 17*gridsize, 0}},
 										battlefield1 = {
 											{nil, nil, "battlfield1", 3*gridsize, 6*gridsize, 1}},
 										dormitory = {
 											{12*gridsize, 18*gridsize, "overworld", 30*gridsize, 26*gridsize, 0},
-										  {23*gridsize, 18*gridsize, "overworld", 34*gridsize, 26*gridsize, 0}},
+										  {25*gridsize, 18*gridsize, "overworld", 34*gridsize, 26*gridsize, 0}},
 										dininghall = {
-											{12*gridsize, 21*gridsize, "overworld", 24*gridsize, 17*gridsize, 0},
-											{22*gridsize, 21*gridsize, "overworld", 28*gridsize, 17*gridsize, 0}},
+											{13*gridsize, 21*gridsize, "overworld", 24*gridsize, 17*gridsize, 0},
+											{23*gridsize, 21*gridsize, "overworld", 28*gridsize, 17*gridsize, 0}},
 									}
 	currentLocation = "overworld"
 	mapPath = {overworld = {"C:\\Users\\Carolyn\\Documents\\GitHub\\SolidarityGame\\solidarity\\maps\\1overworld.txt"},
@@ -163,33 +167,59 @@ function love.load()
 				location = "overworld",
 				dialogue = 0,
 				name = "Cress",
-				status = "boss",
-				animationkey = 20, -- where animations start
+				status = "worker",
+				animationkey = 21, -- where animations start
 				n = 1, --stage in single conversation
 				c = 1,
 				battlestats = {maxhp = 3, damage = 1,  moves = 1},
-				next = {{x = 0*gridsize, y = 0*gridsize, facing = 2, location = "dormitory"}}
+				next = {{x = 10*gridsize, y = 9*gridsize, facing = 2, location = "dormitory"}}
+			},
+			{
+				grid_x = 17*gridsize,
+				grid_y = 16*gridsize,
+				act_x = 17*gridsize,
+				act_y = 16*gridsize,
+				speed = 30,
+				canMove = 0,
+				moveDir = 0,
+				threshold = 0,
+				facing = 1,
+				start = 2,
+				location = "dininghall",
+				dialogue = 0,
+				name = "Agave",
+				status = "worker",
+				animationkey = 25, -- where animations start
+				n = 1, --stage in single conversation
+				c = 1,
+				battlestats = {maxhp = 3, damage = 1,  moves = 1},
+				next = {{x = 17*gridsize, y = 16*gridsize, facing = 2, location = "dininghall"}}
 			}
 }
 
 	storedLocation = {x = 0, y = 0}
+
+-- actions
+	actionMode = 0
+	actions = {{current = 0, max = 100, rate = 10, x = 0, y = 0, k = 0}
+						}
 --battle
 	battleMode = 0
 	battleGlobal = {maxmoves = #player.party + 2, movesTaken = 0, turn = 0, phase = 0}
 
 	require("scripts/battle")
-	--objects
-	objects = {
-		{16, 17, "GardeningSign"},
-		{23, 17, "KitchenSign"},
-	 	{29, 26, "DormitorySign"},
-		{29, 34, "StoreSign"}
+	--object text index
+	objects = {overworld = {
+		{"GardeningSign", 16*gridsize, 17*gridsize},
+		{"KitchenSign", 23*gridsize, 17*gridsize},
+	 	{"DormitorySign", 29*gridsize, 26*gridsize},
+		{"StoreSign", 29*gridsize, 34*gridsize}}
 	}
+
 --images
 	love.graphics.setDefaultFilter("nearest", "nearest")
 	love.graphics.setColor(0, 0, 0)
 	love.graphics.setBackgroundColor(255,255,255)
-
 
 	bg = {overworld = love.graphics.newImage("images/solidarity_overworld.png"),
 				overworldnight = love.graphics.newImage("images/solidarity_overworld_night.png"),
@@ -198,7 +228,9 @@ function love.load()
 		  	dormitory = love.graphics.newImage("images/dormitory.png"),
 				dininghall = love.graphics.newImage("images/dininghall.png"),}
 	currentBackground = bg.overworld
-	daytime = 1
+	daytime = 1 -- 1 = day, 2 = evening, 3 = night
+
+	overlays = {evening = love.graphics.newImage("images/evening_overlay.png")}
 
 	--portraits
 	portraitsheet1 = love.graphics.newImage("images/solidarity_char_portraits.png")
@@ -222,76 +254,135 @@ function love.load()
 		textboxbg = love.graphics.newImage("images/solidarity_textboxfull.png"),
 		textboxbottom = love.graphics.newImage("images/solidarity_textboxbottom.png"),
 		}
-	toptiles = {gardeningShed = love.graphics.newImage("images/utopia_toptiles_0.png")}
+
+	-- objects that are not part of static background
+	movingObjectSheet = love.graphics.newImage("images/solidarity_objects.png")
+	movingObjectQuads = {stool = love.graphics.newQuad(0, 0, 16, 16, movingObjectSheet:getDimensions()),
+											 platefull = love.graphics.newQuad(1*gridsize, 0, 16, 16, movingObjectSheet:getDimensions()),
+											 plantSm = love.graphics.newQuad(2*gridsize, 0, 16, 16, movingObjectSheet:getDimensions()),
+											 plantSmBerries = love.graphics.newQuad(3*gridsize, 0, 16, 16, movingObjectSheet:getDimensions()),
+											 plantLg = love.graphics.newQuad(4*gridsize, 0, 16, 16, movingObjectSheet:getDimensions()),
+											 plantLgBerries = love.graphics.newQuad(5*gridsize, 0, 16, 16, movingObjectSheet:getDimensions())
+											}
+	movingObjectData = {overworld = {{"plantSmBerries", 11*gridsize, 23*gridsize, 1},
+																		{"plantSmBerries", 12*gridsize, 23*gridsize, 1},
+																		{"plantSmBerries", 13*gridsize, 23*gridsize, 1},
+																		{"plantSmBerries", 14*gridsize, 23*gridsize, 1},
+																		{"plantSmBerries", 15*gridsize, 23*gridsize, 1},
+																		{"plantSmBerries", 18*gridsize, 23*gridsize, 1},
+																		{"plantSmBerries", 19*gridsize, 23*gridsize, 1},
+																		{"plantSmBerries", 20*gridsize, 23*gridsize, 1},
+																		{"plantSmBerries", 21*gridsize, 23*gridsize, 1},
+																		{"plantSmBerries", 22*gridsize, 23*gridsize, 1},
+																		{"plantSmBerries", 11*gridsize, 26*gridsize, 1},
+																		{"plantSmBerries", 12*gridsize, 26*gridsize, 1},
+																		{"plantSmBerries", 13*gridsize, 26*gridsize, 1},
+																		{"plantSmBerries", 14*gridsize, 26*gridsize, 1},
+																		{"plantSmBerries", 15*gridsize, 26*gridsize, 1},
+																		{"plantSmBerries", 18*gridsize, 26*gridsize, 1},
+																		{"plantSmBerries", 19*gridsize, 26*gridsize, 1},
+																		{"plantSmBerries", 20*gridsize, 26*gridsize, 1},
+																		{"plantSmBerries", 21*gridsize, 26*gridsize, 1},
+																		{"plantSmBerries", 22*gridsize, 26*gridsize, 1},
+																		{"plantLgBerries", 11*gridsize, 29*gridsize, 1},
+																		{"plantLgBerries", 12*gridsize, 29*gridsize, 1},
+																		{"plantLgBerries", 13*gridsize, 29*gridsize, 1},
+																		{"plantLgBerries", 14*gridsize, 29*gridsize, 1},
+																		{"plantLgBerries", 15*gridsize, 29*gridsize, 1},
+																		{"plantLgBerries", 18*gridsize, 29*gridsize, 1},
+																		{"plantLgBerries", 19*gridsize, 29*gridsize, 1},
+																		{"plantLgBerries", 20*gridsize, 29*gridsize, 1},
+																		{"plantLgBerries", 21*gridsize, 29*gridsize, 1},
+																		{"plantLgBerries", 22*gridsize, 29*gridsize, 1},
+																		{"plantLgBerries", 11*gridsize, 32*gridsize, 1},
+																		{"plantLgBerries", 12*gridsize, 32*gridsize, 1},
+																		{"plantLgBerries", 13*gridsize, 32*gridsize, 1},
+																		{"plantLgBerries", 14*gridsize, 32*gridsize, 1},
+																		{"plantLgBerries", 15*gridsize, 32*gridsize, 1},
+																		{"plantLgBerries", 18*gridsize, 32*gridsize, 1},
+																		{"plantLgBerries", 19*gridsize, 32*gridsize, 1},
+																		{"plantLgBerries", 20*gridsize, 32*gridsize, 1},
+																		{"plantLgBerries", 21*gridsize, 32*gridsize, 1},
+																		{"plantLgBerries", 22*gridsize, 32*gridsize, 1}
+																	 },
+											 dininghall = {{"stool", 12*gridsize, 16*gridsize, 1},
+											 							{"stool", 13*gridsize, 16*gridsize, 1}
+																		}
+											}
+
+	-- tiles that are rendered on top of the player and npcs
+	toptilesSheet = love.graphics.newImage("images/solidarity_toptiles.png")
+	toptiles = {doorway = love.graphics.newQuad(0, 0, 16, 16, toptilesSheet:getDimensions()),
+							black = love.graphics.newQuad(1*gridsize, 0, 16, 16, toptilesSheet:getDimensions())
+							}
+	toptileData = {gardeningShed = {{"doorway", locationTriggers.gardeningShed[1][1], locationTriggers.gardeningShed[1][2], 1}
+																 },
+								dormitory = {{"doorway", locationTriggers.dormitory[1][1], locationTriggers.dormitory[1][2], 1},
+														 {"doorway", locationTriggers.dormitory[2][1], locationTriggers.dormitory[2][2], 1}
+													 	},
+							  dininghall = {{"doorway", locationTriggers.dininghall[1][1], locationTriggers.dininghall[1][2], 1},
+														  {"doorway", locationTriggers.dininghall[2][1], locationTriggers.dininghall[2][2], 1}
+													 	 }
+								}
+
+--- animated objects
+	animsheet2 = love.graphics.newImage("images/solidarity_object_anim.png")
+	objectAnimations = {{anim = newAnimation(animsheet2, 0, 4, 16, 16, .4), "plantSmBerries", loop = 1, current = 0, running = 0},
+				 							{anim = newAnimation(animsheet2, 1*16, 4, 16, 16, .4), "plantLgBerries", loop = 1, current = 0, running = 0}}
+
 
 --spritesheet, number of tiles in animation, starting position, length, width, height, duration
-	animations = {{newAnimation(animsheet1, 0, 4, 16, 16, .6), "player.walkup"},
-				 {newAnimation(animsheet1, 1*16, 4, 16, 16, .6), "player.walkdown"},
-				 {newAnimation(animsheet1, 2*16, 4, 16, 16, .65), "player.walkleft"},
-				 {newAnimation(animsheet1, 3*16, 4, 16, 16, .65), "player.walkright"},
-			 	 {newAnimation(animsheet1, 4*16, 4, 16, 16, .6 ), "npcs[1].walkup"},
-			   {newAnimation(animsheet1, 5*16, 4, 16, 16, .6 ), "npcs[1].walkdown"},
-			 	 {newAnimation(animsheet1, 6*16, 4, 16, 16, .65 ), "npcs[1].walkleft"},
-				 {newAnimation(animsheet1, 7*16, 4, 16, 16, .65 ), "npcs[1].walkright"},
-				 {newAnimation(animsheet1, 8*16, 4, 16, 16, .6 ), "npcs[2].walkup"},
-				 {newAnimation(animsheet1, 9*16, 4, 16, 16, .6 ), "npcs[2].walkdown"},
-				 {newAnimation(animsheet1, 10*16, 4, 16, 16, .65 ), "npcs[2].walkleft"},
-				 {newAnimation(animsheet1, 11*16, 4, 16, 16, .65 ), "npcs[2].walkright"},
-				 {newAnimation(animsheet1, 12*16, 4, 16, 16, .6 ), "npcs[3].walkup"},
-				 {newAnimation(animsheet1, 13*16, 4, 16, 16, .6 ), "npcs[3].walkdown"},
-				 {newAnimation(animsheet1, 14*16, 4, 16, 16, .65 ), "npcs[3].walkleft"},
-				 {newAnimation(animsheet1, 15*16, 4, 16, 16, .65 ), "npcs[3].walkright"},
-				 {newAnimation(animsheet1, 16*16, 4, 16, 16, .6 ), "npcs[4].walkup"},
-				 {newAnimation(animsheet1, 17*16, 4, 16, 16, .6 ), "npcs[4].walkdown"},
-				 {newAnimation(animsheet1, 18*16, 4, 16, 16, .65 ), "npcs[4].walkleft"},
-				 {newAnimation(animsheet1, 19*16, 4, 16, 16, .65 ), "npcs[4].walkright"},
-				 {newAnimation(animsheet1, 20*16, 4, 16, 16, .6 ), "npcs[5].walkup"},
-				 {newAnimation(animsheet1, 21*16, 4, 16, 16, .6 ), "npcs[5.walkdown"},
-				 {newAnimation(animsheet1, 22*16, 4, 16, 16, .65 ), "npcs[5].walkleft"},
-				 {newAnimation(animsheet1, 23*16, 4, 16, 16, .65 ), "npcs[5].walkright"}
+	animations = {{anim = newAnimation(animsheet1, 0, 4, 16, 16, .6), name = "player.walkup", loop = 0}, -- loop = 0 is infinite loop
+				 {anim = newAnimation(animsheet1, 1*16, 4, 16, 16, .6), name = "player.walkdown", loop = 0},
+				 {anim = newAnimation(animsheet1, 2*16, 4, 16, 16, .65), name = "player.walkleft", loop = 0},
+				 {anim = newAnimation(animsheet1, 3*16, 4, 16, 16, .65), name = "player.walkright", loop = 0},
+			 	 {anim = newAnimation(animsheet1, 4*16, 4, 16, 16, .6 ), name = "npcs[1].walkup", loop = 0},
+			   {anim = newAnimation(animsheet1, 5*16, 4, 16, 16, .6 ), name = "npcs[1].walkdown", loop = 0},
+			 	 {anim = newAnimation(animsheet1, 6*16, 4, 16, 16, .65 ), name = "npcs[1].walkleft", loop = 0},
+				 {anim = newAnimation(animsheet1, 7*16, 4, 16, 16, .65 ), name = "npcs[1].walkright", loop = 0},
+				 {anim = newAnimation(animsheet1, 8*16, 4, 16, 16, .6 ), name = "npcs[2].walkup", loop = 0},
+				 {anim = newAnimation(animsheet1, 9*16, 4, 16, 16, .6 ), name = "npcs[2].walkdown", loop = 0},
+				 {anim = newAnimation(animsheet1, 10*16, 4, 16, 16, .65 ), name = "npcs[2].walkleft", loop = 0},
+				 {anim = newAnimation(animsheet1, 11*16, 4, 16, 16, .65 ), name = "npcs[2].walkright", loop = 0},
+				 {anim = newAnimation(animsheet1, 12*16, 4, 16, 16, .6 ), name = "npcs[3].walkup", loop = 0},
+				 {anim = newAnimation(animsheet1, 13*16, 4, 16, 16, .6 ), name = "npcs[3].walkdown", loop = 0},
+				 {anim = newAnimation(animsheet1, 14*16, 4, 16, 16, .65 ), name = "npcs[3].walkleft", loop = 0},
+				 {anim = newAnimation(animsheet1, 15*16, 4, 16, 16, .65 ), name = "npcs[3].walkright", loop = 0},
+				 {anim = newAnimation(animsheet1, 16*16, 4, 16, 16, .6 ), name = "npcs[4].walkup", loop = 0},
+				 {anim = newAnimation(animsheet1, 17*16, 4, 16, 16, .6 ), name = "npcs[4].walkdown", loop = 0},
+				 {anim = newAnimation(animsheet1, 18*16, 4, 16, 16, .65 ), name = "npcs[4].walkleft", loop = 0},
+				 {anim = newAnimation(animsheet1, 19*16, 4, 16, 16, .65 ), name = "npcs[4].walkright", loop = 0},
+				 {anim = newAnimation(animsheet1, 20*16, 4, 16, 16, .6 ), name = "npcs[5].walkup", loop = 0},
+				 {anim = newAnimation(animsheet1, 21*16, 4, 16, 16, .6 ), name = "npcs[5].walkdown", loop = 0},
+				 {anim = newAnimation(animsheet1, 22*16, 4, 16, 16, .65 ), name = "npcs[5].walkleft", loop = 0},
+				 {anim = newAnimation(animsheet1, 23*16, 4, 16, 16, .65 ), name = "npcs[5].walkright", loop = 0},
+				 {anim = newAnimation(animsheet1, 24*16, 4, 16, 16, .6 ), name = "npcs[6].walkup", loop = 0},
+				 {anim = newAnimation(animsheet1, 25*16, 4, 16, 16, .6 ), name = "npcs[6].walkdown", loop = 0},
+				 {anim = newAnimation(animsheet1, 26*16, 4, 16, 16, .65 ), name = "npcs[6].walkleft", loop = 0},
+				 {anim = newAnimation(animsheet1, 27*16, 4, 16, 16, .65 ), name = "npcs[6].walkright", loop = 0}
 			 }
-  animations_night = {{newAnimation(animsheet1_night, 0, 4, 16, 16, .6), "player.walkup"},
-				 {newAnimation(animsheet1_night, 1*16, 4, 16, 16, .6), "player.walkdown"},
-				 {newAnimation(animsheet1_night, 2*16, 4, 16, 16, .65), "player.walkleft"},
-				 {newAnimation(animsheet1_night, 3*16, 4, 16, 16, .65), "player.walkright"},
-			 	 {newAnimation(animsheet1_night, 4*16, 4, 16, 16, .6 ), "npcs[1].walkup"},
-			   {newAnimation(animsheet1_night, 5*16, 4, 16, 16, .6 ), "npcs[1].walkdown"},
-			 	 {newAnimation(animsheet1_night, 6*16, 4, 16, 16, .65 ), "npcs[1].walkleft"},
-				 {newAnimation(animsheet1_night, 7*16, 4, 16, 16, .65 ), "npcs[1].walkright"},
-				 {newAnimation(animsheet1_night, 8*16, 4, 16, 16, .6 ), "npcs[2].walkup"},
-				 {newAnimation(animsheet1_night, 9*16, 4, 16, 16, .6 ), "npcs[2].walkdown"},
-				 {newAnimation(animsheet1_night, 10*16, 4, 16, 16, .65 ), "npcs[2].walkleft"},
-				 {newAnimation(animsheet1_night, 11*16, 4, 16, 16, .65 ), "npcs[2].walkright"},
-				 {newAnimation(animsheet1_night, 12*16, 4, 16, 16, .6 ), "npcs[3].walkup"},
-				 {newAnimation(animsheet1_night, 13*16, 4, 16, 16, .6 ), "npcs[3].walkdown"},
-				 {newAnimation(animsheet1_night, 14*16, 4, 16, 16, .65 ), "npcs[3].walkleft"},
-				 {newAnimation(animsheet1_night, 15*16, 4, 16, 16, .65 ), "npcs[3].walkright"},
-				 {newAnimation(animsheet1_night, 16*16, 4, 16, 16, .6 ), "npcs[4].walkup"},
-				 {newAnimation(animsheet1_night, 17*16, 4, 16, 16, .6 ), "npcs[4].walkdown"},
-				 {newAnimation(animsheet1_night, 18*16, 4, 16, 16, .65 ), "npcs[4].walkleft"},
-				 {newAnimation(animsheet1_night, 19*16, 4, 16, 16, .65 ), "npcs[4].walkright"}
-			 }
-fading = {on = false, type = 1, start = 0, goal = 0, rate = 0, a = 0, countdown = 0} -- type 1 = fade in from 0 to 255; 2 = fade out from 255 to 0
---cutscene
-cutsceneControl = {stage = 0, total = 1, current = 1}
--- types: 1 = talk, 2 = changeScene
-cutsceneList ={{
-	triggered = false,
-	type = 1,
-	move = true, --does the NPC move?
-	npc = 3, --which NPC
-	target = player, -- where do they move
-	facing = {1}, --what direction are they facing at the end
-	noden = 1, --what node are they walking to next
-	dialoguekey = 2,
-	path = {},
-	fadeout = 1,
-	black = 1,
-	goback = true, -- npc goes back to starting position
-	skipnext = false, -- do we go directly to next cutscene?
-	nextStage = true, -- do we go to the next game scene
-	switchTime = false -- do we switch from day to night or vice versa
-}}
+	--fading
+	fading = {on = false, type = 1, start = 0, goal = 0, rate = 0, a = 0, countdown = 0, triggered = 0} -- type 1 = fade in from 0 to 255; 2 = fade out from 255 to 0
+	--cutscene
+	cutsceneControl = {stage = 0, total = 1, current = 1}
+	-- types: 1 = talk, 2 = changeScene
+	cutsceneList ={{
+		triggered = false,
+		type = 1,
+		move = true, --does the NPC move?
+		npc = 3, --which NPC
+		target = player, -- where do they move
+		facing = {1}, --what direction are they facing at the end
+		noden = 1, --what node are they walking to next
+		dialoguekey = 2,
+		path = {},
+		fadeout = 1,
+		black = 1,
+		goback = true, -- npc goes back to starting position
+		skipnext = false, -- do we go directly to next cutscene?
+		nextStage = true, -- do we go to the next game scene
+		switchTime = 1 -- what time of day is it after the end
+	}}
 
 
 --dialogue
@@ -319,6 +410,7 @@ cutsceneList ={{
 	require("scripts/movefunctions")
 	require("scripts/pathfinding")
 	require("scripts/cutscenefunctions")
+	require("scripts/actionfunctions")
 	-- add location of NPCs or other moving obstacles to map collision
 	updateMap(npcs)
 end
@@ -367,11 +459,7 @@ function love.update(dt)
 	end
 
 	--run through countdown
-	if fading.countdown > 0 then
-		fading.countdown = fading.countdown - dt
-	elseif fading.countdown < 0 then
-		fading.countdown = 0
-	end
+	fadeCountdown(dt)
 
 --set direction and destination position
 	if debugView == 0 then
@@ -387,15 +475,9 @@ function love.update(dt)
 	end
 
 	--animation time update
-	if daytime == 0 then
-		if currentLocation == "overworld" then
-			animUpdate(animations_night, dt)
-		else
-			animUpdate(animations, dt)
-		end
-	else
-		animUpdate(animations, dt)
-	end
+	animUpdate(animations, dt)
+	animUpdate(objectAnimations, dt)
+
 
 	--cutscene triggered, update map
 	if cutsceneControl.stage == 1 then
@@ -452,6 +534,7 @@ function love.draw()
 	local scale = {x=4, y=4}
 	local translate = {x = (width - gridsize*scale.x) / 2, y = (height - gridsize*scale.y) /2}
 	love.graphics.push()
+	love.graphics.setBlendMode("alpha")
 	--camera move and scale
 	love.graphics.translate(-player.act_x*scale.x + translate.x, -player.act_y*scale.y + translate.y)
 	love.graphics.scale( scale.x, scale.y )
@@ -465,6 +548,11 @@ function love.draw()
 		drawEditor (initTable)
 	end
 
+	drawTop(currentLocation, movingObjectData, movingObjectSheet, movingObjectQuads)
+	if actionMode == 1 then
+		drawObjAnims(objectAnimations, actions[1].k, actions[1].x, actions[1].y)
+	end
+
 	--draw extra infoView
 	if infoView == 1 then
 		drawInfo(player.act_x, player.act_y)
@@ -472,34 +560,23 @@ function love.draw()
 
 	--render player
 	love.graphics.setColor(255, 255, 255)
-	if daytime == 0 then
-		if currentLocation == "overworld" then
-			drawPlayer(animations_night)
-		else
-			drawPlayer(animations)
-		end
-	else
-		drawPlayer(animations)
-	end
+	drawPlayer(animations)
+
 
 	--render npcs
-	if daytime == 0 then
-		if currentLocation == "overworld" then
-			drawNPCs(animations_night)
-		else
-			drawNPCs(animations)
-		end
-	else
-		drawNPCs(animations)
+	drawNPCs(animations)
+	-- render tiles on top of player
+	if currentLocation ~= "overworld" then
+		drawTop(currentLocation, toptileData, toptilesSheet, toptiles)
 	end
 
-	-- render tiles on top of player
-	if currentLocation == "gardeningShed" then
-		drawTop(currentLocation, locationTriggers)
-	end
+	-- add multiply screen for evening
+ 	-- multiplyLayer(width, height)
+
 
 	--render dialogue box and text
 	if text ~= nil and dialogueMode == 1 then
+		love.graphics.setColor(255, 255, 255)
 		local width = love.graphics.getWidth( )/4
 		local height = love.graphics.getHeight( )/4
 		local recheight = 32
@@ -565,7 +642,11 @@ function love.keypressed(key)
 	--- interact with objects or people
 	  if key == "z" then
 			DialogueSetup(npcs, dialogueStage)
-			faceObject(player.facing)
+			faceObject(player.facing, objects.overworld)
+			faceObject(player.facing, movingObjectData[currentLocation])
+			if actionMode == 1 then
+				resetAnims(objectAnimations, actions[1].k)
+			end
 		end
 	-- add block to editor
 		if key == "space" and debugView == 1 then
@@ -578,7 +659,7 @@ function love.keypressed(key)
 
 		if key == "k" then
 			if daytime == 1 then
-				daytime = 0
+				daytime = 3
 				currentBackground = bg.overworldnight
 			else
 				daytime = 1
@@ -594,6 +675,11 @@ function love.keypressed(key)
 				cutsceneControl.stage = 8
 				player.canMove = 1
 			end
+		end
+
+		if key == "l" then
+			changeGameStage()
+			print("gameStage: " .. gameStage)
 		end
 
 	-- move between dialogue options

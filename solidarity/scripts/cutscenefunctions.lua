@@ -107,9 +107,7 @@ end
 
 function cutsceneStage7Talk()
   if cutsceneList[cutsceneControl.current].triggered == false then
-    if cutsceneList[cutsceneControl.current].switchTime == true then
-      changeTime()
-    end
+    changeTime(cutsceneList[cutsceneControl.current].switchTime)
     changeGameStage()
     cutsceneList[cutsceneControl.current].triggered = true
   end
@@ -156,12 +154,10 @@ function changeGameStage()
   end
 end
 
-function changeTime()
-  if daytime == 1 then
-    daytime = 0
+function changeTime(t)
+  if t == 3 then
     currentBackground = bg.overworldnight
-  else
-    daytime = 1
+  elseif t == 1 then
     currentBackground = bg.overworld
   end
   print ("daytime " .. daytime)
@@ -190,7 +186,7 @@ function fade(dt, a, b, r)
       return a, true
     else
       fading.countdown = .5
-      player.canMove = 1
+      fading.triggered = 1
       keyInput = 1
       print("fading off")
       return a, false
@@ -204,6 +200,19 @@ function fade(dt, a, b, r)
       keyInput = 1
       print("fading off")
       return a, false
+    end
+  end
+end
+
+function fadeCountdown(dt)
+  if fading.countdown > 0 then
+    fading.countdown = fading.countdown - dt
+  elseif fading.countdown < 0 then
+    fading.countdown = 0
+  elseif fading.countdown == 0 then
+    if fading.triggered == 1 then
+      fading.triggered = 0
+      player.canMove = 1
     end
   end
 end
