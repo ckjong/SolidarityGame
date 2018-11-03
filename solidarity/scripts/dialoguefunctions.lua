@@ -11,6 +11,39 @@ function DialogueTrigger(x1, y1, f)
 	end
 end
 
+function inputWait(dt)
+	if wait.current > 0 then
+		wait.current = wait.current - wait.rate*dt
+		if keyInput == 1 then
+			keyInput = 0
+		end
+	else
+		keyInput = 1
+		wait.triggered = 0
+	end
+end
+
+function timerBlink(dt, i)
+	if timer[i].current > 0 then
+		timer[i].current = timer[i].current - dt
+	else
+		if timer[i].trigger == 0 then
+			timer[i].trigger = 1
+		else
+		 timer[i].trigger = 0
+		end
+		timer[i].current = timer[i].base
+	end
+end
+
+function timerText(dt, i)
+	timer[i].current = timer[i].current + dt
+	while timer[i].current > timer[i].base do
+	 textn = textn + 1
+	 timer[i].current = timer[i].current - timer[i].base
+	end
+end
+
 
 --initiate dialogue
 function initDialogue (char)
@@ -59,6 +92,7 @@ function dialogueOff(tbl, i, next) -- tbl = npcs
 	tbl[i].n = 1
 	tbl[i].c = next
 	tbl[i].dialogue = 0
+	wait.triggered = 0
 end
 
 
@@ -86,6 +120,8 @@ end
 function DialogueSetup (tbl, n) -- iterate through npcs table, lookup text in NPCdialogue
 	for i = 1, #tbl do
 		if initDialogue(tbl[i]) == true then
+			wait.current = wait.start
+			wait.triggered = 1
 			local name = tbl[i].name
 			local num = tbl[i].n
 			local case = tbl[i].c

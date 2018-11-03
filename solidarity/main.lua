@@ -175,17 +175,17 @@ function love.load()
 				next = {{x = 10*gridsize, y = 9*gridsize, facing = 2, location = "dormitory"}}
 			},
 			{
-				grid_x = 17*gridsize,
-				grid_y = 16*gridsize,
-				act_x = 17*gridsize,
-				act_y = 16*gridsize,
+				grid_x = 13*gridsize,
+				grid_y = 31*gridsize,
+				act_x = 13*gridsize,
+				act_y = 31*gridsize,
 				speed = 30,
 				canMove = 0,
 				moveDir = 0,
 				threshold = 0,
 				facing = 1,
 				start = 2,
-				location = "dininghall",
+				location = "overworld",
 				dialogue = 0,
 				name = "Agave",
 				status = "worker",
@@ -239,10 +239,16 @@ function love.load()
 								 {name = "Fennel", width = 46, height = 46, start = 1*46},
 								 {name = "Mint", width = 46, height = 46, start = 2*46},
 								 {name = "Cress", width = 46, height = 46, start = 3*46},
-								 {name = "Robin", width = 46, height = 46, start = 4*46},
+								 {name = "Tarragon", width = 46, height = 46, start = 4*46},
 								 {name = "Agave", width = 46, height = 46, start = 5*46},
 								 {name = "Finch", width = 46, height = 46, start = 6*46},
-								 {name = "Lark", width = 46, height = 46, start = 7*46}
+								 {name = "Lark", width = 46, height = 46, start = 7*46},
+								 {name = "Robin", width = 46, height = 46, start = 8*46},
+								 {name = "Durian", width = 46, height = 46, start = 9*46},
+								 {name = "Brier", width = 46, height = 46, start = 10*46},
+								 {name = "Yarrow", width = 46, height = 46, start = 11*46},
+								 {name = "Kousa", width = 46, height = 46, start = 12*46},
+								 {name = "Tulsi", width = 46, height = 46, start = 14*46}
 								}
 	currentspeaker = "player"
 
@@ -277,25 +283,25 @@ function love.load()
 																		{"plantSmBerries", 11*gridsize, 26*gridsize, 1},
 																		{"plantSmBerries", 12*gridsize, 26*gridsize, 1},
 																		{"plantSmBerries", 13*gridsize, 26*gridsize, 1},
-																		{"plantSmBerries", 14*gridsize, 26*gridsize, 1},
+																		{"plantSm", 14*gridsize, 26*gridsize, 1},
 																		{"plantSmBerries", 15*gridsize, 26*gridsize, 1},
 																		{"plantSmBerries", 18*gridsize, 26*gridsize, 1},
 																		{"plantSmBerries", 19*gridsize, 26*gridsize, 1},
 																		{"plantSmBerries", 20*gridsize, 26*gridsize, 1},
 																		{"plantSmBerries", 21*gridsize, 26*gridsize, 1},
-																		{"plantSmBerries", 22*gridsize, 26*gridsize, 1},
+																		{"plantSm", 22*gridsize, 26*gridsize, 1},
 																		{"plantLgBerries", 11*gridsize, 29*gridsize, 1},
 																		{"plantLgBerries", 12*gridsize, 29*gridsize, 1},
 																		{"plantLgBerries", 13*gridsize, 29*gridsize, 1},
 																		{"plantLgBerries", 14*gridsize, 29*gridsize, 1},
-																		{"plantLgBerries", 15*gridsize, 29*gridsize, 1},
+																		{"plantLg", 15*gridsize, 29*gridsize, 1},
 																		{"plantLgBerries", 18*gridsize, 29*gridsize, 1},
 																		{"plantLgBerries", 19*gridsize, 29*gridsize, 1},
 																		{"plantLgBerries", 20*gridsize, 29*gridsize, 1},
 																		{"plantLgBerries", 21*gridsize, 29*gridsize, 1},
 																		{"plantLgBerries", 22*gridsize, 29*gridsize, 1},
 																		{"plantLgBerries", 11*gridsize, 32*gridsize, 1},
-																		{"plantLgBerries", 12*gridsize, 32*gridsize, 1},
+																		{"plantLg", 12*gridsize, 32*gridsize, 1},
 																		{"plantLgBerries", 13*gridsize, 32*gridsize, 1},
 																		{"plantLgBerries", 14*gridsize, 32*gridsize, 1},
 																		{"plantLgBerries", 15*gridsize, 32*gridsize, 1},
@@ -305,9 +311,21 @@ function love.load()
 																		{"plantLgBerries", 21*gridsize, 32*gridsize, 1},
 																		{"plantLgBerries", 22*gridsize, 32*gridsize, 1}
 																	 },
-											 dininghall = {{"stool", 12*gridsize, 16*gridsize, 1},
-											 							{"stool", 13*gridsize, 16*gridsize, 1}
-																		}
+											dininghall = {{"stool", 12*gridsize, 12*gridsize, 1},
+																		{"stool", 14*gridsize, 12*gridsize, 1},
+																		{"stool", 17*gridsize, 12*gridsize, 1},
+																		{"stool", 18*gridsize, 12*gridsize, 1},
+																		{"stool", 19*gridsize, 12*gridsize, 1},
+																		{"stool", 23*gridsize, 12*gridsize, 1},
+																		{"stool", 24*gridsize, 12*gridsize, 1},
+																		{"stool", 12*gridsize, 16*gridsize, 1},
+											 							{"stool", 13*gridsize, 16*gridsize, 1},
+																		{"stool", 14*gridsize, 16*gridsize, 1},
+																		{"stool", 18*gridsize, 16*gridsize, 1},
+																		{"stool", 19*gridsize, 16*gridsize, 1},
+																		{"stool", 22*gridsize, 16*gridsize, 1},
+																		{"stool", 23*gridsize, 16*gridsize, 1}
+																	}
 											}
 
 	-- tiles that are rendered on top of the player and npcs
@@ -391,14 +409,17 @@ function love.load()
 	dialogueStage = 0
 	choice = {mode = 0, pos = 1, total = 1, name = "", case = 0, more = 0}
 	text = nil
+	textsub = ""
+	textn = 0
 	trigger = {0}
+	wait = {start = 1, rate = 1, current = 0, triggered = 0}
 
 	--dialogue and object descriptions
 	require("scripts/dialogue")
 
 --timer for blinking text/images
 	timer = {{base = .5, current = 0, trigger = 0},
-					 {base = 3, current = 0, trigger = 0}}
+					 {base = .05, current = 0, trigger = 0}}
 --editor for creating new maps and other functions
 	require("scripts/mapfunctions")
 
@@ -428,19 +449,13 @@ function love.update(dt)
 		end
 	end
 
---run timers for blinking text, patrol, etc.
-	for i = 1, #timer do
-		if timer[i].current > 0 then
-			timer[i].current = timer[i].current - dt
-		else
-			if timer[i].trigger == 0 then
-				timer[i].trigger = 1
-			else
-			 timer[i].trigger = 0
-			end
-			timer[i].current = timer[i].base
-		end
-	end
+--run timers for blinking text
+if dialogueMode == 1 then
+	timerBlink(dt, 1)
+
+-- run timer for scrolling text
+	timerText(dt, 2)
+end
 	--immobilize player if dialoguemode active
 	if dialogueMode == 1 then
 		player.canMove = 0
@@ -460,7 +475,9 @@ function love.update(dt)
 
 	--run through countdown
 	fadeCountdown(dt)
-
+	if wait.triggered == 1 then
+		inputWait(dt)
+	end
 --set direction and destination position
 	if debugView == 0 then
 		updateGrid(player, 1)
@@ -641,6 +658,7 @@ function love.keypressed(key)
 		end
 	--- interact with objects or people
 	  if key == "z" then
+			textn = 0
 			DialogueSetup(npcs, dialogueStage)
 			faceObject(player.facing, objects.overworld)
 			faceObject(player.facing, movingObjectData[currentLocation])

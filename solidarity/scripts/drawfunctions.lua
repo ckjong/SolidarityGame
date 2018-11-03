@@ -112,10 +112,12 @@ function drawNPCs(tbl)
 end
 
 function drawTop(l, tbl, img, quad)
-  for i = 1, #tbl[l] do
-    local k = tbl[l][i][1]
-    if tbl[l][i][4] == 1 then
-      love.graphics.draw(img, quad[k], tbl[l][i][2], tbl[l][i][3])
+  if tbl[l] ~= nil then
+    for i = 1, #tbl[l] do
+      local k = tbl[l][i][1]
+      if tbl[l][i][4] == 1 then
+        love.graphics.draw(img, quad[k], tbl[l][i][2], tbl[l][i][3])
+      end
     end
   end
 end
@@ -133,6 +135,7 @@ end
 
 function drawText(x, y)
   local width = love.graphics.getWidth( )/4
+  local c = text:sub(1, textn)
   if choice.mode == 1 then
     love.graphics.setColor(255, 255, 255)
     if choice.pos == 1 then
@@ -143,10 +146,10 @@ function drawText(x, y)
       love.graphics.draw(ui.arrowright, x, y + 12)
     end
     love.graphics.setColor(93, 43, 67)
-    love.graphics.printf(text, x+6, y-4, width - 72)
+    love.graphics.printf(c, x+6, y-4, width - 72)
   else
     love.graphics.setColor(93, 43, 67)
-    love.graphics.printf(text, x, y, width - 66) -- 48, 46, 112
+    love.graphics.printf(c, x, y, width - 66) -- 48, 46, 112
   end
 end
 
