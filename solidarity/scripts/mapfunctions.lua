@@ -46,6 +46,10 @@ function locationMaps(currentLocation)
 		mapFile1 = mapPath.dininghall[1]
 		print(currentLocation)
 		mapGen (bg.dininghall, mapFile1)
+	elseif currentLocation == "store" then
+		mapFile1 = mapPath.store[1]
+		print(currentLocation)
+		mapGen (bg.store, mapFile1)
 	end
 end
 

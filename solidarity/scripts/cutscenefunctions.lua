@@ -111,8 +111,6 @@ function cutsceneStage7Talk()
     changeGameStage()
     cutsceneList[cutsceneControl.current].triggered = true
   end
-  clearMap(2)
-  saveMap()
   if cutsceneControl.current < cutsceneControl.total then -- if there are more cutscenes advance to next one
     cutsceneControl.current = cutsceneControl.current + 1
     cutsceneControl.stage = 0
@@ -124,9 +122,12 @@ end
 function changeGameStage()
   local n = cutsceneControl.current
   if cutsceneList[n].nextStage == true then
+    clearMap(2)
+    saveMap()
     gameStage = gameStage + 1
     dialogueStage = dialogueStage + 1
     print("gameStage" .. gameStage)
+    gameStageControl(gameStage)
     if player.next[gameStage].x ~= 0 then
       player.grid_x = player.next[gameStage].x
       player.act_x = player.grid_x
@@ -151,6 +152,15 @@ function changeGameStage()
       npcs[i].n = 1
       npcs[i].canMove = 0
     end
+  end
+end
+
+function gameStageControl(g)
+  if g == 1 then
+    freeze.action = 0
+    -- --turn off static text for barrels
+    -- staticObjects.overworld[5].off = 1
+    -- staticObjects.overworld[6].off = 1
   end
 end
 

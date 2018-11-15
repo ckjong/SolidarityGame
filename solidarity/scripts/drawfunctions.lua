@@ -1,10 +1,69 @@
+--form box
+function formBox(w, h)
+  if w >= 32 and h >= 32 then
+    love.graphics.setCanvas(canvas)
+    love.graphics.setColor(255, 255, 255)
+    local xTiles = math.floor(w/16)
+    local yTiles = math.floor(h/16)
+    for k = 1, yTiles do
+      for i = 1, xTiles do
+        if i == 1 then
+          if k == 1 then
+            love.graphics.draw(boxTilesSheet, boxTilesQuads.fill[1][1], 0, 0)
+            table.insert(boxMap, {1,1})
+          elseif k > 1 and k < yTiles then
+            love.graphics.draw(boxTilesSheet, boxTilesQuads.fill[2][1], 0, (k-1)*16)
+            table.insert(boxMap, {2,1})
+          elseif k == yTiles then
+            love.graphics.draw(boxTilesSheet, boxTilesQuads.fill[3][1], 0, (k-1)*16)
+            table.insert(boxMap, {3,1})
+          end
+        elseif i > 1 and i < xTiles then
+          if k == 1 then
+            love.graphics.draw(boxTilesSheet, boxTilesQuads.fill[1][2], (i-1)*16, 0)
+            table.insert(boxMap, {1,2})
+          elseif k > 1 and k < yTiles then
+            love.graphics.draw(boxTilesSheet, boxTilesQuads.fill[2][2], (i-1)*16, (k-1)*16)
+            table.insert(boxMap, {2,2})
+          elseif k == yTiles then
+            love.graphics.draw(boxTilesSheet, boxTilesQuads.fill[3][2], (i-1)*16, (k-1)*16)
+            table.insert(boxMap, {3,2})
+          end
+        elseif i == xTiles then
+          if k == 1 then
+            love.graphics.draw(boxTilesSheet, boxTilesQuads.fill[1][3], (i-1)*16, (k-1)*16)
+            table.insert(boxMap, {1,3})
+          elseif k > 1 and k < yTiles then
+            love.graphics.draw(boxTilesSheet, boxTilesQuads.fill[2][3], (i-1)*16, (k-1)*16)
+            table.insert(boxMap, {2,3})
+          elseif k == yTiles then
+            love.graphics.draw(boxTilesSheet, boxTilesQuads.fill[3][3], (i-1)*16, (k-1)*16)
+            table.insert(boxMap, {3,3})
+          end
+        end
+      end
+    end
+    love.graphics.setCanvas()
+  else
+    print("box not big enough")
+  end
+end
+
+function drawCustomBox(x, y, tbl)
+  for i = 1, #boxMap do
+    local k = boxMap[i][1]
+    local v = boxMap[i][2]
+    love.graphics.draw(boxTilesSheet, boxTilesQuads[k][v], x)
+  end
+end
+
 --animation
-function newAnimation(image, start, length, width, height, duration)
+function newAnimation(image, start, length, width, height, duration, startx)
   local animation = {}
   animation.spriteSheet = image;
   animation.quads = {};
 	for y = start, start, height do
-    for x = 0, length * width - width, width do
+    for x = startx or 0, length * width - width, width do
       table.insert(animation.quads, love.graphics.newQuad(x, y, width, height, image:getDimensions()))
     end
   end
@@ -33,22 +92,24 @@ function animUpdate(tbl, dt)
 		tbl[k]["anim"]["currentTime"] = tbl[k]["anim"]["currentTime"] + dt
     if tbl[k]["anim"]["currentTime"] >= tbl[k]["anim"]["duration"] then
       tbl[k]["anim"]["currentTime"] = tbl[k]["anim"]["currentTime"] - tbl[k]["anim"]["duration"]
-      if tbl[k].loop ~= 0 then
-        if tbl[k].running == 1 then
-          if tbl[k].current > 0 then
-            tbl[k].current = tbl[k].current - 1
-          else
-            tbl[k].current = tbl[k].loop
-            tbl[k].running = 0
-          end
-        end
-      end
+      tbl[k].running = 0
+      -- if tbl[k].loop ~= 0 then
+      --   if tbl[k].running == 1 then
+      --     if tbl[k].current > 0 then
+      --       print("tbl[k].current " .. tbl[k].current)
+      --       tbl[k].current = tbl[k].current - 1
+      --     else
+      --       tbl[k].current = tbl[k].loop
+      --       tbl[k].running = 0
+      --     end
+      --   end
+      -- end
     end
 	end
 end
 
 function resetAnims(tbl, k)
-  tbl[k].current = tbl[k].loop
+  print("reset triggered")
   tbl[k].running = 1
 end
 
@@ -76,7 +137,9 @@ function drawPlayer(tbl)
       love.graphics.draw(tbl[i]["anim"]["spriteSheet"], tbl[i]["anim"]["quads"][spriteNum], player.act_x, player.act_y, 0, 1)
     elseif player.moveDir == 0 then
       if player.facing == i then
-        love.graphics.draw(tbl[i]["anim"]["spriteSheet"], tbl[i]["anim"]["quads"][1], player.act_x, player.act_y, 0, 1)
+        if actionMode == 0 then
+          love.graphics.draw(tbl[i]["anim"]["spriteSheet"], tbl[i]["anim"]["quads"][1], player.act_x, player.act_y, 0, 1)
+        end
       end
     end
   end
@@ -122,7 +185,7 @@ function drawTop(l, tbl, img, quad)
   end
 end
 
-function drawObjAnims(tbl, k, x, y)
+function drawActAnims(tbl, k, x, y)
   local spriteNum = math.floor(tbl[k]["anim"]["currentTime"] / tbl[k]["anim"]["duration"] * #tbl[k]["anim"]["quads"]) + 1
   if tbl[k].loop ~= 0 then
     if tbl[k].running == 1 then
@@ -131,6 +194,16 @@ function drawObjAnims(tbl, k, x, y)
       love.graphics.draw(tbl[k]["anim"]["spriteSheet"], tbl[k]["anim"]["quads"][1], x, y, 0, 1)
     end
   end
+end
+
+function drawMeters(x, y)
+  love.graphics.setColor(255, 255, 255)
+  love.graphics.draw(ui.energytextbgsmleft, x, y)
+  love.graphics.draw(ui.energytextbgcircle, x, y)
+  love.graphics.draw(ui.energyboltsm, x, y)
+  love.graphics.draw(ui.energytextbgsmright, x+gridsize, y)
+  love.graphics.setColor(93, 43, 67)
+  love.graphics.print(player.energy, x + gridsize, y+5)
 end
 
 function drawText(x, y)
@@ -143,7 +216,11 @@ function drawText(x, y)
     elseif choice.pos < choice.total then
       love.graphics.draw(ui.arrowright, x, y + 4)
     elseif choice.pos == choice.total then
-      love.graphics.draw(ui.arrowright, x, y + 12)
+      if choice.total == 2 then
+        love.graphics.draw(ui.arrowright, x, y + 4)
+      else
+        love.graphics.draw(ui.arrowright, x, y + 12)
+      end
     end
     love.graphics.setColor(93, 43, 67)
     love.graphics.printf(c, x+6, y-4, width - 72)
@@ -173,6 +250,34 @@ function drawInfo(x, y)
   love.graphics.setColor(0, 0, 0)
   love.graphics.print(currentLocation, x - 48, y - 48)
   love.graphics.print("x: " .. x/gridsize .." y: " .. y/gridsize, x - 48, y - 40)
+end
+
+function drawMenu(x, y)
+  local menuText = ""
+  local objectText = ""
+  local items = {}
+  local offset = {x= 106, y = 56}
+  love.graphics.setColor(255, 255, 255)
+  love.graphics.draw(canvas, player.act_x-offset.x, player.act_y-offset.y)
+  for i = 1, #player.inventory do
+    local n = player.inventory[i].icon
+    local objectText = ""
+    love.graphics.setColor(93, 43, 67)
+    love.graphics.rectangle("line",  x - offset.x + 6, y - offset.y + 18 + (i-1)*(28), 16, 16 )
+    love.graphics.setColor(255, 255, 255)
+    love.graphics.draw(movingObjectSheet, movingObjectQuads[n], x - offset.x + 6, y - offset.y + 18 + (i-1)*(28))
+    objectText = tostring(player.inventory[i].amount .. " " .. player.inventory[i].item)
+    love.graphics.setColor(93, 43, 67)
+    love.graphics.print(objectText, x - offset.x + 6 , y - offset.y + 36 + (i-1)*(28))
+  end
+  if #player.inventory > 0 then
+    menuText = "Inventory\n\n"
+    objectText = table.concat(items, "\n\n\n", 1, #items)
+  else
+    menuText = "Inventory\n\nEmpty\n"
+  end
+  love.graphics.setColor(93, 43, 67)
+  love.graphics.print(menuText, x -100, y - 48)
 end
 
 function fadeBlack(alpha, width, height)

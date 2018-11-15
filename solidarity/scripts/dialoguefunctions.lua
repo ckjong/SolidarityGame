@@ -19,6 +19,7 @@ function inputWait(dt)
 		end
 	else
 		keyInput = 1
+		wait.current = 0
 		wait.triggered = 0
 	end
 end
@@ -84,13 +85,24 @@ function textUpdate (num, currentTbl)
 end
 
 --dialogue off
-function dialogueOff(tbl, i, next) -- tbl = npcs
+function dialogueOff(tbl, i, dialOpt) -- tbl = npcs
+	if dialOpt.logic.spoken == 0 then
+		if player.energy > 0 then
+			player.energy = player.energy - 1
+		end
+		if dialOpt.logic.func ~= nil then
+			dialOpt.logic.func(unpack(dialOpt.logic.par))
+			dialOpt.logic.spoken = 1
+			return
+		end
+		dialOpt.logic.spoken = 1
+	end
 	print("dialogueOff triggered")
 	choice.more = 0
 	dialogueMode = 0
 	player.canMove = 1
 	tbl[i].n = 1
-	tbl[i].c = next
+	tbl[i].c = dialOpt.logic.next
 	tbl[i].dialogue = 0
 	wait.triggered = 0
 end
@@ -136,10 +148,7 @@ function DialogueSetup (tbl, n) -- iterate through npcs table, lookup text in NP
 					else -- if not then move to next segment
 						print("num > dialogue lines " .. tbl[i].n)
 						if dialOpt.logic.off == true then
-							if dialOpt.logic.spoken ~= nil then
-								dialOpt.logic.spoken = 1
-							end
-							dialogueOff(tbl, i, dialOpt.logic.next)
+							dialogueOff(tbl, i, dialOpt)
 							return
 						else
 							tbl[i].n = 1
@@ -168,41 +177,38 @@ function DialogueSetup (tbl, n) -- iterate through npcs table, lookup text in NP
 						DialogueSetup (tbl, n)
 					end
 				end
-				if dialOpt.logic.display == 3 then
-					if choice.mode == 1 then -- if choice has been made
-						textUpdate (choice.pos, NPCdialogue[n][name][case]) -- display response
-						if dialOpt.logic.trigger ~= nil then
-							if dialOpt.logic.trigger.choice == choice.pos then
-								if dialOpt.logic.trigger.type == "battle" then
-									battleMode = 1
-									choice.mode = 0
-									tbl[i].c = dialOpt.logic.next
-									if dialOpt.logic.spoken ~= nil then
-										dialOpt.logic.spoken = 1
-									end
-									dialogueOff(tbl, i, dialOpt.logic.next)
-									--change location to battlefield if battleMode active and dialogue finished
-									-- battleMap(battleMode, dialogueMode)
-									return
-								end
-							end
-						end
-						choice.mode = 0
-						tbl[i].c = dialOpt.logic.next
-						return
-					else
-						if dialOpt.logic.off == true then
-							if dialOpt.logic.spoken ~= nil then
-								dialOpt.logic.spoken = 1
-							end
-							dialogueOff(tbl, i, dialOpt.logic.next)
-						else
-							tbl[i].n = 1
-							tbl[i].c = dialOpt.logic.next
-							DialogueSetup (tbl, n)
-						end
-					end
-				end
+				-- if dialOpt.logic.display == 3 then
+				-- 	if choice.mode == 1 then -- if choice has been made
+				-- 		textUpdate (choice.pos, NPCdialogue[n][name][case]) -- display response
+				-- 		if dialOpt.logic.trigger ~= nil then
+				-- 			if dialOpt.logic.trigger.choice == choice.pos then
+				-- 				if dialOpt.logic.trigger.type == "battle" then
+				-- 					battleMode = 1
+				-- 					choice.mode = 0
+				-- 					tbl[i].c = dialOpt.logic.next
+				-- 					if dialOpt.logic.spoken ~= nil then
+				-- 						dialOpt.logic.spoken = 1
+				-- 					end
+				-- 					dialogueOff(tbl, i, dialOpt)
+				-- 					--change location to battlefield if battleMode active and dialogue finished
+				-- 					-- battleMap(battleMode, dialogueMode)
+				-- 					return
+				-- 				end
+				-- 			end
+				-- 		end
+				-- 		choice.mode = 0
+				-- 		tbl[i].c = dialOpt.logic.next
+				-- 		return
+					-- else
+					-- 	if dialOpt.logic.off == true then
+					-- 		dialogueOff(tbl, i, dialOpt)
+					-- 	else
+					-- 		tbl[i].n = 1
+					-- 		tbl[i].c = dialOpt.logic.next
+					-- 		DialogueSetup (tbl, n)
+					-- 	end
+					-- end
+				-- end
 			end
 		end
 	end
@@ -213,9 +219,11 @@ function checkSpoken(tbl1, tbl2, num) -- npcs, NPCdialogue[stage]
 	local count = 0
 	for i = 1, #tbl1 do
 		local name = tbl1[i].name
-		for k = 1, #tbl2[name] do
-			if tbl2[name][k].logic.spoken == 1 then
-				count = count + 1
+		if tbl2[name] ~= nil then
+			for k = 1, #tbl2[name] do
+				if tbl2[name][k].logic.spoken == 1 then
+					count = count + 1
+				end
 			end
 		end
 	end
@@ -224,4 +232,13 @@ function checkSpoken(tbl1, tbl2, num) -- npcs, NPCdialogue[stage]
 	else
 		return true
 	end
+end
+
+function charGivesObject(a, b, c, d)
+	currentspeaker = "player"
+	addRemoveItem(a, b, c, d)
+	if player.energy > 0 then
+		player.energy = player.energy - 1
+	end
+	return
 end

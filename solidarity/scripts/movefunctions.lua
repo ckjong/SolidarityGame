@@ -80,6 +80,14 @@ function checkPaths(char, x1, y1)
 	end
 end
 
+function areaCheck(x1, y1, x2, y2, char)
+	local x1, y1, x2, y2 = x1*gridsize, y1*gridsize, x2*gridsize, y2*gridsize
+	if char.grid_x >= x1 and char.grid_x <= x2 and char.grid_y >= y1 and char.grid_y <= y2 then
+		return true
+	else
+		return false
+	end
+end
 
 --update grid position for moving NPCs during cutscenes
 function updateGridPosNPC(tbl, char, n)
