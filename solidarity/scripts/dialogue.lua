@@ -64,7 +64,7 @@ NPCdialogue = {
   Lark = {[1] = {text = {"Hope you learned your lesson."},
                 logic = {next = 1, speaker = "Lark", cond = true, off = true, display = 1, spoken = 0}}
         },
-  Finch = {[1] = {text = {"Boss says if you pick 60 berries you\ncan leave.", "Make sure you drop them in the barrels\nor it won't count."},
+  Finch = {[1] = {text = {"Boss says if you pick 60 berries you\ncan leave.", "Make sure you drop them in the barrels or it won't count."},
                 logic = {next = 2, speaker = "Finch", cond = true, off = true, display = 1}},
            [2] = {text = {"You haven't filled your quota yet."},
                 logic = {next = 1, speaker = "Finch", cond = true, off = true, display = 1}},
@@ -73,19 +73,21 @@ NPCdialogue = {
            [4] = {text = {"Those berries don't belong to you.", "Better drop them in the barrels or\nyou'll be in biiig trouble."},
                 logic = {next = 4, speaker = "Finch", cond = true, off = true, display = 1}}
         },
-  Cress = {[1] = {text = {"Happy birthday " ..player.name.. ". Sorry\nthey made you work late."},
+  Cress = {[1] = {text = {"Oh, uh, hi " ..player.name.. ", happy birthday. Sorry they made you work late."},
                 logic = {next = 2, speaker = "Cress", cond = true, off = false, display = 1}},
-           [2] = {text = {"It's not your fault.", "Yeah it was terrible."},
+          [2] = {text = {"It's not your fault.", "Lark is the worst."},
                 logic = {next = 3, offset = 2, speaker = "player", cond = true, off = false, display = 2}},
-           [3] = {text = {"I know, but I still feel bad."},
-                logic = {next = 4, speaker = "Cress", cond = true, off = false, display = 1, spoken = 0}},
-           [4] = {text = {"Hopefully tomorrow will be better."},
+          [3] = {text = {"I know, but I still feel bad."},
+                logic = {next = 5, speaker = "Cress", cond = true, off = false, display = 1, spoken = 0}},
+          [4] = {text = {"Yeah..."},
+                logic = {next = 5, speaker = "Cress", cond = true, off = true, display = 1, spoken = 0}},
+          [5] = {text = {"Hopefully tomorrow will be better."},
                 logic = {next = 4, speaker = "Cress", cond = true, off = true, display = 1, spoken = 0}},
         },
   Agave = {[1] = {text = {"Oh there you are! I was worried they'd\nkeep you all night.", "Don't worry we saved some dinner for\nyou. And Mint too."},
-                logic = {next = 2, speaker = "Agave", cond = true, off = true, display = 1, spoken = 0, func = charGivesObject, par = {"I got 1 Rat Soup", "Rat Soup", 1, "platefull"}}},
+                logic = {next = 2, speaker = "Agave", cond = true, off = true, display = 1, spoken = 0, func = charGivesObject, par = {"I got 1 Rat Soup.", "Rat Soup", 1, "platefull"}}},
            [2] = {text = {"You need to eat at least one meal a\nday to keep your strength up!", "Try not to get in trouble too often or\nyou'll go hungry."},
-                        logic = {next = 2, speaker = "Agave", cond = true, off = true, display = 1, spoken = 0}}
+                logic = {next = 2, speaker = "Agave", cond = true, off = true, display = 1, spoken = 0}}
         },
   Tarragon = {[1] = {text = {"Leave me alone, I'm busy."},
                   logic = {next = 1, speaker = "Tarragon", cond = true, off = true, display = 1, spoken = 0}}
@@ -109,3 +111,7 @@ objectText = {
   barrelLgBerries = {"Press Z to drop the Rose Berries in the Barrel"},
   stool = {"Sit?"}
   }
+
+journalText = {[1]= {"Day 1 - Lark made me stay late today. He's such a jerk."}
+
+}

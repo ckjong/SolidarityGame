@@ -4,7 +4,6 @@
 function love.load()
 
 
-
 	--code for navigating between maps
 	require("scripts/drawfunctions")
 
@@ -24,11 +23,11 @@ function love.load()
 	mapExists = 0
 	locationTriggers = {
 										overworld = {
-											{17*gridsize, 16*gridsize, "gardeningShed", 11*gridsize, 17*gridsize, 0},--entrancex, entrancey, name, newplayerx, newplayery, locked (1 = yes)
+											{17*gridsize, 16*gridsize, "gardeningShed", 11*gridsize, 17*gridsize, 1},--entrancex, entrancey, name, newplayerx, newplayery, locked (1 = yes)
 											{30*gridsize, 25*gridsize, "dormitory", 12*gridsize, 17*gridsize, 0},
 											{34*gridsize, 25*gridsize, "dormitory", 25*gridsize, 17*gridsize, 0},
-											{24*gridsize, 16*gridsize, "dininghall", 13*gridsize, 20*gridsize, 0},
-											{28*gridsize, 16*gridsize, "dininghall", 23*gridsize, 20*gridsize, 0},
+											{24*gridsize, 16*gridsize, "dininghall", 13*gridsize, 20*gridsize, 1},
+											{28*gridsize, 16*gridsize, "dininghall", 23*gridsize, 20*gridsize, 1},
 											{30*gridsize, 33*gridsize, "store", 17*gridsize, 19*gridsize, 0}},
 										gardeningShed = {
 											{11*gridsize, 18*gridsize, "overworld", 17*gridsize, 17*gridsize, 0}},
@@ -79,9 +78,9 @@ function love.load()
 
 	npcs = {{
 		grid_x = 18*gridsize,
-		grid_y = 31*gridsize,
+		grid_y = 30*gridsize,
 		act_x = 18*gridsize,
-		act_y = 31*gridsize,
+		act_y = 30*gridsize,
 		speed = 30,
 		canMove = 0,
 		moveDir = 0,
@@ -99,10 +98,10 @@ function love.load()
 		next = {{x = 0, y = 0, facing = 1, location = "overworld"}}
 		},
 		{
-			grid_x = 14*gridsize,
-			grid_y = 26*gridsize,
-			act_x = 14*gridsize,
-			act_y = 26*gridsize,
+			grid_x = 13*gridsize,
+			grid_y = 23*gridsize,
+			act_x = 13*gridsize,
+			act_y = 23*gridsize,
 			speed = 30,
 			canMove = 0,
 			moveDir = 0,
@@ -117,13 +116,13 @@ function love.load()
 			n = 1,
 			c = 1,
 			battlestats = {maxhp = 2, damage = 1, moves = 2},
-			next = {{x = 20*gridsize, y = 25*gridsize, facing = 1, location = "overworld"}}
+			next = {{x = 21*gridsize, y = 23*gridsize, facing = 2, location = "overworld"}}
 			},
 			{
 				grid_x = 10*gridsize,
-				grid_y = 28*gridsize,
+				grid_y = 27*gridsize,
 				act_x = 10*gridsize,
-				act_y = 28*gridsize,
+				act_y = 27*gridsize,
 				speed = 30,
 				canMove = 0,
 				moveDir = 0,
@@ -171,7 +170,7 @@ function love.load()
 				moveDir = 0,
 				threshold = 0,
 				facing = 1,
-				start = 2,
+				start = 1,
 				location = "overworld",
 				dialogue = 0,
 				name = "Cress",
@@ -184,9 +183,9 @@ function love.load()
 			},
 			{
 				grid_x = 13*gridsize,
-				grid_y = 32*gridsize,
+				grid_y = 31*gridsize,
 				act_x = 13*gridsize,
-				act_y = 32*gridsize,
+				act_y = 31*gridsize,
 				speed = 30,
 				canMove = 0,
 				moveDir = 0,
@@ -204,16 +203,16 @@ function love.load()
 				next = {{x = 17*gridsize, y = 16*gridsize, facing = 2, location = "dininghall"}}
 			},
 			{
-				grid_x = 14*gridsize,
-				grid_y = 34*gridsize,
-				act_x = 14*gridsize,
-				act_y = 34*gridsize,
+				grid_x = 21*gridsize,
+				grid_y = 31*gridsize,
+				act_x = 21*gridsize,
+				act_y = 31*gridsize,
 				speed = 30,
 				canMove = 0,
 				moveDir = 0,
 				threshold = 0,
 				facing = 1,
-				start = 1,
+				start = 2,
 				location = "overworld",
 				dialogue = 0,
 				name = "Tarragon",
@@ -288,9 +287,11 @@ function love.load()
 	currentspeaker = "player"
 
 	animsheet1 = love.graphics.newImage("images/solidarity_anim.png")
-	ui = {arrowright = love.graphics.newImage("images/utopiaui_0.png"),
-		arrowdown = love.graphics.newImage("images/utopiaui_5.png"),
-		pressz = love.graphics.newImage("images/utopiaui_6.png"),
+	ui = {arrowup = love.graphics.newImage("images/solidarity_ui_0.png"),
+		arrowdown = love.graphics.newImage("images/solidarity_ui_1.png"),
+		arrowright = love.graphics.newImage("images/solidarity_ui_2.png"),
+		arrowleft = love.graphics.newImage("images/solidarity_ui_3.png"),
+		pressz = love.graphics.newImage("images/solidarity_ui_4.png"),
 		textboxbg = love.graphics.newImage("images/solidarity_textboxfull.png"),
 		textboxbottom = love.graphics.newImage("images/solidarity_textboxbottom.png"),
 		energyicon = love.graphics.newImage("images/solidarityui_16x16_0.png"),
@@ -328,6 +329,8 @@ function love.load()
 
 	boxMap = {}
 
+	menu = {currentTab = "inventory", allTabs = {"inventory", "journal", "map1", "map2"}}
+
 	-- objects that are not part of static background
 	movingObjectSheet = love.graphics.newImage("images/solidarity_objects.png")
 	movingObjectQuads = {stool = love.graphics.newQuad(0, 0, 16, 16, movingObjectSheet:getDimensions()),
@@ -349,36 +352,36 @@ function love.load()
 																		{"plantSmBerries", 20*gridsize, 24*gridsize, 1},
 																		{"plantSmBerries", 21*gridsize, 24*gridsize, 1},
 																		{"plantSmBerries", 22*gridsize, 24*gridsize, 1},
-																		{"plantSmBerries", 11*gridsize, 27*gridsize, 1},
-																		{"plantSmBerries", 12*gridsize, 27*gridsize, 1},
-																		{"plantSmBerries", 13*gridsize, 27*gridsize, 1},
-																		{"plantSm", 14*gridsize, 27*gridsize, 1},
-																		{"plantSmBerries", 15*gridsize, 27*gridsize, 1},
-																		{"plantSmBerries", 18*gridsize, 27*gridsize, 1},
-																		{"plantSmBerries", 19*gridsize, 27*gridsize, 1},
-																		{"plantSmBerries", 20*gridsize, 27*gridsize, 1},
-																		{"plantSmBerries", 21*gridsize, 27*gridsize, 1},
-																		{"plantSm", 22*gridsize, 27*gridsize, 1},
-																		{"plantLgBerries", 11*gridsize, 30*gridsize, 1},
-																		{"plantLgBerries", 12*gridsize, 30*gridsize, 1},
-																		{"plantLgBerries", 13*gridsize, 30*gridsize, 1},
-																		{"plantLgBerries", 14*gridsize, 30*gridsize, 1},
-																		{"plantLg", 15*gridsize, 30*gridsize, 1},
-																		{"plantLgBerries", 18*gridsize, 30*gridsize, 1},
-																		{"plantLgBerries", 19*gridsize, 30*gridsize, 1},
-																		{"plantLgBerries", 20*gridsize, 30*gridsize, 1},
-																		{"plantLgBerries", 21*gridsize, 30*gridsize, 1},
-																		{"plantLgBerries", 22*gridsize, 30*gridsize, 1},
-																		{"plantLgBerries", 11*gridsize, 33*gridsize, 1},
-																		{"plantLg", 12*gridsize, 33*gridsize, 1},
-																		{"plantLgBerries", 13*gridsize, 33*gridsize, 1},
-																		{"plantLgBerries", 14*gridsize, 33*gridsize, 1},
-																		{"plantLgBerries", 15*gridsize, 33*gridsize, 1},
-																		{"plantLgBerries", 18*gridsize, 33*gridsize, 1},
-																		{"plantLgBerries", 19*gridsize, 33*gridsize, 1},
-																		{"plantLgBerries", 20*gridsize, 33*gridsize, 1},
-																		{"plantLgBerries", 21*gridsize, 33*gridsize, 1},
-																		{"plantLgBerries", 22*gridsize, 33*gridsize, 1},
+																		{"plantSmBerries", 11*gridsize, 25*gridsize, 1},
+																		{"plantSmBerries", 12*gridsize, 25*gridsize, 1},
+																		{"plantSmBerries", 13*gridsize, 25*gridsize, 1},
+																		{"plantSm", 14*gridsize, 25*gridsize, 1},
+																		{"plantSmBerries", 15*gridsize, 25*gridsize, 1},
+																		{"plantSmBerries", 18*gridsize, 25*gridsize, 1},
+																		{"plantSmBerries", 19*gridsize, 25*gridsize, 1},
+																		{"plantSmBerries", 20*gridsize, 25*gridsize, 1},
+																		{"plantSmBerries", 21*gridsize, 25*gridsize, 1},
+																		{"plantSm", 22*gridsize, 25*gridsize, 1},
+																		{"plantLgBerries", 11*gridsize, 28*gridsize, 1},
+																		{"plantLgBerries", 12*gridsize, 28*gridsize, 1},
+																		{"plantLgBerries", 13*gridsize, 28*gridsize, 1},
+																		{"plantLgBerries", 14*gridsize, 28*gridsize, 1},
+																		{"plantLg", 15*gridsize, 28*gridsize, 1},
+																		{"plantLgBerries", 18*gridsize, 28*gridsize, 1},
+																		{"plantLgBerries", 19*gridsize, 28*gridsize, 1},
+																		{"plantLgBerries", 20*gridsize, 28*gridsize, 1},
+																		{"plantLgBerries", 21*gridsize, 28*gridsize, 1},
+																		{"plantLgBerries", 22*gridsize, 28*gridsize, 1},
+																		{"plantLgBerries", 11*gridsize, 29*gridsize, 1},
+																		{"plantLg", 12*gridsize, 29*gridsize, 1},
+																		{"plantLgBerries", 13*gridsize, 29*gridsize, 1},
+																		{"plantLgBerries", 14*gridsize, 29*gridsize, 1},
+																		{"plantLgBerries", 15*gridsize, 29*gridsize, 1},
+																		{"plantLgBerries", 18*gridsize, 29*gridsize, 1},
+																		{"plantLgBerries", 19*gridsize, 29*gridsize, 1},
+																		{"plantLgBerries", 20*gridsize, 29*gridsize, 1},
+																		{"plantLgBerries", 21*gridsize, 29*gridsize, 1},
+																		{"plantLgBerries", 22*gridsize, 29*gridsize, 1},
 																		{"barrelSmBerries", 15*gridsize, 22*gridsize, 1},
 																		{"barrelLgBerries", 18*gridsize, 22*gridsize, 1}
 																	 },
@@ -519,31 +522,36 @@ function love.load()
 
 	-- add location of NPCs or other moving obstacles to map collision
 	updateMap(npcs)
-	canvas = love.graphics.newCanvas(80, 80)
-	formBox(80, 80)
+	menuW, menuH = 14*gridsize, 7*gridsize
+	canvas = love.graphics.newCanvas(menuW, menuH)
+	formBox(menuW, menuH)
 end
 
 
 function love.update(dt)
-if gameStage == 0 then
-	if checkSpoken(npcs, NPCdialogue[dialogueStage], 6) == true then
-		if cutsceneControl.stage == 0 then
-			local n = cutsceneControl.current
-			if cutsceneList[n].triggered == false then
-				print("spoken to everyone")
-				cutsceneControl.stage = 1
+	if gameStage == 0 then
+		if checkSpoken(npcs, NPCdialogue[dialogueStage], 6) == true then
+			if cutsceneControl.stage == 0 then
+				local n = cutsceneControl.current
+				if cutsceneList[n].triggered == false then
+					print("spoken to everyone")
+					cutsceneControl.stage = 1
+				end
 			end
 		end
 	end
-end
 
---run timers for blinking text
-if dialogueMode == 1 then
-	timerBlink(dt, 1)
+	--run timers for blinking text
+	if dialogueMode == 1 then
+		timerBlink(dt, 1)
 
--- run timer for scrolling text
-	timerText(dt, 2)
-end
+	-- run timer for scrolling text
+		timerText(dt, 2)
+	end
+
+	if menuView == 1 then
+		timerBlink(dt, 1)
+	end
 	--immobilize player if dialoguemode active
 	if dialogueMode == 1 then
 		player.canMove = 0
@@ -676,6 +684,7 @@ function love.draw()
 	local width = love.graphics.getWidth()
 	local height = love.graphics.getHeight()
 	local scale = {x=4, y=4}
+	scale.x, scale.y = getScale()
 	local translate = {x = (width - gridsize*scale.x) / 2, y = (height - gridsize*scale.y) /2}
 	love.graphics.push()
 	love.graphics.setBlendMode("alpha")
@@ -721,19 +730,18 @@ function love.draw()
 	-- add multiply screen for evening
  	-- multiplyLayer(width, height)
 	if menuView == 1 then
-		drawMenu(player.act_x, player.act_y)
+		drawMenu(player.act_x, player.act_y, menu.currentTab)
 	end
 	--render dialogue box and text
 	if text ~= nil and dialogueMode == 1 then
 		love.graphics.setColor(255, 255, 255)
-		local width = love.graphics.getWidth( )/4
-		local height = love.graphics.getHeight( )/4
 		local recheight = 32
-		local recwidth = width-8
-		local xnudge = 12
-		local ynudge = 2
-		local boxposx = player.act_x - (width/2) + xnudge
-		local boxposy = player.act_y + (height/2) - recheight + ynudge
+		local recwidth = 232
+		local xnudge = width/2
+		local ynudge = 1*scale.y
+		local boxposx = player.act_x + gridsize/2 - recwidth/2
+		local boxposy = player.act_y + gridsize/2 + (height/scale.y)/2 - recheight - ynudge
+		 -- - recheight + ynudge
 		--render dialogue box
 		love.graphics.draw(ui.textboxbg, boxposx, boxposy)
 		if dialogueMode == 1 then
@@ -741,9 +749,9 @@ function love.draw()
 		end
 		love.graphics.draw(ui.textboxbottom, boxposx, boxposy)
 		--draw z or arrow if more text
-		drawArrow()
+		drawArrow(boxposx, boxposy, scale.y, recwidth)
 		--draw arrow for choices, shift text if arrow present
-		drawText(boxposx + 52, boxposy + 8)
+		drawText(boxposx + 52, boxposy + 8, scale.x, recwidth)
 	end
 
 	--draw UI for battles
@@ -785,29 +793,37 @@ function love.keypressed(key)
 	  end
 	--print additional info about game on screen for debugging
 		if key == "i" then
-			if menuView == 0 then
-				menuView = 1
-			else
-				menuView = 0
+			if dialogueMode == 0 then
+				if menuView == 0 then
+					player.canMove = 0
+					menuView = 1
+				else
+					player.canMove = 1
+					menuView = 0
+				end
 			end
 		end
 	--- interact with objects or people
 	  if key == "z" then
 			textn = 0
 			if freeze.dialogue == 0 then
-				DialogueSetup(npcs, dialogueStage)
+				if menuView == 0 then
+					DialogueSetup(npcs, dialogueStage)
+				end
 			elseif freeze.dialogue == 1 then
 				if dialogueMode == 1 then
 					DialogueSetup(npcs, dialogueStage)
 				end
 			end
-			faceObject(player.facing, staticObjects.overworld) -- still objects
-			faceObject(player.facing, movingObjectData[currentLocation])
-			if actionMode == 1 then
-				if actions[1].k ~= 0 then
-					resetAnims(objectAnimations, actions[1].k)
+			if menuView == 0 then
+				faceObject(player.facing, staticObjects[currentLocation]) -- still objects
+				faceObject(player.facing, movingObjectData[currentLocation])
+				if actionMode == 1 then
+					if actions[1].k ~= 0 then
+						resetAnims(objectAnimations, actions[1].k)
+					end
+					resetAnims(anim_act, player.facing)
 				end
-				resetAnims(anim_act, player.facing)
 			end
 		end
 
@@ -851,20 +867,35 @@ function love.keypressed(key)
 			print("gameStage: " .. gameStage)
 		end
 
-	-- move between dialogue options
+	-- move between dialogue or menu options
+
+	if key == "up" then
 		if choice.mode == 1 then
-			if key == "down" then
-				if choice.pos >= 1 and choice.pos < choice.total then
-					choice.pos = choice.pos + 1
-					choiceText(NPCdialogue[dialogueStage][choice.name][choice.case].text, choice.pos, choice.total)
-				end
-			elseif key == "up" then
-				if choice.pos > 1 then
-					choice.pos = choice.pos - 1
-					choiceText(NPCdialogue[dialogueStage][choice.name][choice.case].text, choice.pos, choice.total)
-				end
+			if choice.pos > 1 then
+				choice.pos = choice.pos - 1
+				choiceText(NPCdialogue[dialogueStage][choice.name][choice.case].text, choice.pos, choice.total)
 			end
 		end
+	end
+	if key == "down" then
+		if choice.mode == 1 then
+			if choice.pos >= 1 and choice.pos < choice.total then
+				choice.pos = choice.pos + 1
+				choiceText(NPCdialogue[dialogueStage][choice.name][choice.case].text, choice.pos, choice.total)
+			end
+		end
+	end
+	if key == "left" then
+		if menuView == 1 then
+			menu.currentTab = switchTabs(key)
+		end
+	end
+	if key == "right" then
+		if menuView == 1 then
+			menu.currentTab = switchTabs(key)
+		end
+	end
+
 
 	-- end battle
 		if battleMode == 1 and key == "q" then
@@ -873,7 +904,20 @@ function love.keypressed(key)
 			-- battleEnd(storedLocation.x, storedLocation.y)
 		end
 	end
+	if key == "f11" then
+		local fullscreen, fstype = love.window.getFullscreen( )
+		if fullscreen == false then
+			love.window.setFullscreen(true, "exclusive")
+		else
+			love.window.setFullscreen(false, "exclusive")
+		end
+	end
 	if key == "escape" then
-	 	love.event.quit()
+		if menuView == 0 then
+	 		love.event.quit()
+		else
+			menuView = 0
+			player.canMove = 1
+		end
 	end
 end

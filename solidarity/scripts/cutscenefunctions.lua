@@ -18,6 +18,7 @@ end
 
 function cutsceneStage2Talk(dt)
   player.canMove = 0
+  keyInput = 0
 	local n = cutsceneControl.current
 	local path = cutsceneList[n].path
 	local i = cutsceneList[n].npc
@@ -165,11 +166,6 @@ function gameStageControl(g)
 end
 
 function changeTime(t)
-  if t == 3 then
-    currentBackground = bg.overworldnight
-  elseif t == 1 then
-    currentBackground = bg.overworld
-  end
   print ("daytime " .. daytime)
 end
 

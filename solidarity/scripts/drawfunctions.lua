@@ -1,3 +1,19 @@
+function getScale()
+  local baseW = 260
+  local baseH = 180
+  local windowW = love.graphics.getWidth()
+  local windowH = love.graphics.getHeight()
+  local scalex = math.floor(windowW/baseW)
+  local scaley = math.floor(windowH/baseH)
+  if scalex < scaley then
+    scalex = scaley
+  elseif scaley < scalex then
+    scaley = scalex
+  end
+  return scalex, scaley
+
+end
+
 --form box
 function formBox(w, h)
   if w >= 32 and h >= 32 then
@@ -206,8 +222,8 @@ function drawMeters(x, y)
   love.graphics.print(player.energy, x + gridsize, y+5)
 end
 
-function drawText(x, y)
-  local width = love.graphics.getWidth( )/4
+function drawText(x, y, scalex, recwidth)
+  local width = love.graphics.getWidth( )/scalex
   local c = text:sub(1, textn)
   if choice.mode == 1 then
     love.graphics.setColor(255, 255, 255)
@@ -223,23 +239,22 @@ function drawText(x, y)
       end
     end
     love.graphics.setColor(93, 43, 67)
-    love.graphics.printf(c, x+6, y-4, width - 72)
+    love.graphics.printf(c, x+6, y-4, recwidth - 60)
   else
     love.graphics.setColor(93, 43, 67)
-    love.graphics.printf(c, x, y, width - 66) -- 48, 46, 112
+    love.graphics.printf(c, x, y, recwidth - 66) -- 48, 46, 112
   end
 end
 
 
-function drawArrow()
-  local width = (love.graphics.getWidth( )/4)/2 - 8
-  local height = (love.graphics.getHeight( )/4)/2 - 8
+function drawArrow(x, y, scaley, recwidth)
+  local height = (love.graphics.getHeight( )/scaley)/2 - 6
   if timer[1].trigger == 1 then
     love.graphics.setColor(255, 255, 255)
     if choice.more ~= 2 then
-      love.graphics.draw(ui.pressz, player.act_x + width, player.act_y + height)
+      love.graphics.draw(ui.pressz, x + recwidth - 12, player.act_y + height)
     else
-      love.graphics.draw(ui.arrowdown, player.act_x + width, player.act_y + height)
+      love.graphics.draw(ui.arrowdown, x + recwidth - 12, player.act_y + height)
     end
   end
 end
@@ -252,32 +267,57 @@ function drawInfo(x, y)
   love.graphics.print("x: " .. x/gridsize .." y: " .. y/gridsize, x - 48, y - 40)
 end
 
-function drawMenu(x, y)
+function drawMenu(x, y, tab)
   local menuText = ""
-  local objectText = ""
-  local items = {}
   local offset = {x= 106, y = 56}
+  local boxX = x + gridsize/2 - menuW/2
+  local textW = menuW
+  local textX = x + gridsize/2 - textW/2
+  local textY = y-offset.y+6
+  local width, height = love.graphics.getDimensions()
+  love.graphics.setColor(198, 200, 84)
+  love.graphics.rectangle("fill", x - width/2, y - height/2, width, height)
   love.graphics.setColor(255, 255, 255)
-  love.graphics.draw(canvas, player.act_x-offset.x, player.act_y-offset.y)
-  for i = 1, #player.inventory do
-    local n = player.inventory[i].icon
-    local objectText = ""
-    love.graphics.setColor(93, 43, 67)
-    love.graphics.rectangle("line",  x - offset.x + 6, y - offset.y + 18 + (i-1)*(28), 16, 16 )
-    love.graphics.setColor(255, 255, 255)
-    love.graphics.draw(movingObjectSheet, movingObjectQuads[n], x - offset.x + 6, y - offset.y + 18 + (i-1)*(28))
-    objectText = tostring(player.inventory[i].amount .. " " .. player.inventory[i].item)
-    love.graphics.setColor(93, 43, 67)
-    love.graphics.print(objectText, x - offset.x + 6 , y - offset.y + 36 + (i-1)*(28))
+  love.graphics.draw(canvas, boxX, y-offset.y)
+  if tab == "inventory" then
+    menuText = drawInventory(x, y, offset.x, offset.y)
+  elseif tab == "journal" then
+    menuText = "Journal"
+  elseif tab == "map1" then
+    menuText = "Social Map"
+  elseif tab == "map2" then
+    menuText = "Island Map"
   end
-  if #player.inventory > 0 then
-    menuText = "Inventory\n\n"
-    objectText = table.concat(items, "\n\n\n", 1, #items)
-  else
-    menuText = "Inventory\n\nEmpty\n"
+  if timer[1].trigger == 1 then
+    love.graphics.setColor(255, 255, 255)
+    love.graphics.draw(ui.arrowleft, boxX+32, textY)
+    love.graphics.draw(ui.arrowright, boxX + menuW - 32, textY)
   end
   love.graphics.setColor(93, 43, 67)
-  love.graphics.print(menuText, x -100, y - 48)
+  love.graphics.printf(menuText, boxX, textY, textW, "center")
+end
+
+function drawInventory(x, y, offX, offY)
+  local txt = "Inventory"
+  local items = {}
+  local objText = ""
+  for i = 1, #player.inventory do
+    local n = player.inventory[i].icon
+    if i > 8 then
+      offY = offY - 24
+    end
+    love.graphics.setColor(93, 43, 67)
+    love.graphics.rectangle("line",  x - offX + 10 + (i-1)*(28), y - offY + 18, 16, 16)
+    love.graphics.setColor(255, 255, 255)
+    love.graphics.draw(movingObjectSheet, movingObjectQuads[n], x - offX + 10 + (i-1)*(28), y - offY + 18)
+    objText = tostring(player.inventory[i].amount)
+    love.graphics.setColor(93, 43, 67)
+    love.graphics.printf(objText, x - offX + 10 + (i-1)*(28), y - offY + 36, 16, "center")
+  end
+  if #player.inventory > 0 then
+    -- objText = table.concat(items, "\n\n\n", 1, #items)
+  end
+  return txt
 end
 
 function fadeBlack(alpha, width, height)
@@ -290,4 +330,28 @@ function multiplyLayer(width, height)
 	love.graphics.setBlendMode("alpha")
 	love.graphics.draw(overlays.evening, player.act_x-width/2, player.act_y-height/2)
   love.graphics.setBlendMode("alpha")
+end
+
+function switchTabs(key)
+  for i = 1, #menu.allTabs do
+    if menu.currentTab == menu.allTabs[i] then
+      if key == "right" then
+        if i < #menu.allTabs then
+          i = i + 1
+          return menu.allTabs[i]
+        else
+          i = 1
+          return menu.allTabs[i]
+        end
+      elseif key == "left" then
+        if i > 1 then
+          i = i - 1
+          return menu.allTabs[i]
+        else
+          i = #menu.allTabs
+          return menu.allTabs[i]
+        end
+      end
+    end
+  end
 end

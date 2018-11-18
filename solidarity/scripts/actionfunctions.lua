@@ -1,8 +1,14 @@
+function lockDialogue(tbl)
+	for i = 1, #tbl do
+		
+	end
+end
+
 -- test to see if player next to object, return object name
 function testObject(x, y, tbl)
-	local m = (player.grid_x / 16) + x
-	local n = (player.grid_y / 16) + y
-	if currentLocation == "overworld" then
+	if tbl ~= nil then
+		local m = (player.grid_x / 16) + x
+		local n = (player.grid_y / 16) + y
 		for i = 1, #tbl do
 			if m*gridsize == tbl[i][2] and n*gridsize == tbl[i][3] then
 				if tbl[i].off ~= nil then
@@ -15,8 +21,9 @@ function testObject(x, y, tbl)
 				return true, tbl[i][1], i
 			end
 		end
+	else
+		return false, nil
 	end
-	return false, nil
 end
 
 function inventoryFull(m)
@@ -144,12 +151,12 @@ function printObjText(b, c)
 			print("player energy: " .. player.energy)
 		else
 			if b == "plantSmBerries" then
-				addRemoveItem("I got 10 Plum Berries", "Plum Berries", 10, b)
+				addRemoveItem("I got 10 Plum Berries.", "Plum Berries", 10, b)
 				movingObjectData[currentLocation][c][1] = "plantSm"
         movingObjectData[currentLocation][c][4] = 1
         actions[1].k = 0
 			elseif b == "plantLgBerries" then
-				addRemoveItem("I got 10 Rose Berries", "Rose Berries", 10, b)
+				addRemoveItem("I got 10 Rose Berries.", "Rose Berries", 10, b)
 				movingObjectData[currentLocation][c][1] = "plantLg"
         movingObjectData[currentLocation][c][4] = 1
         actions[1].k = 0
@@ -202,11 +209,11 @@ end
 -- berry harvest
 function BerryHarvestStart(b, c)
   if b == "plantSmBerries" then
-    actions[1].rate = 15
+    actions[1].rate = 10
     actions[1].k = 1
     -- k = key for object animation
   elseif b == "plantLgBerries" then
-    actions[1].rate = 10
+    actions[1].rate = 15
     actions[1].k = 2
   elseif b == "barrelSmBerries" then
     actions[1].k = 3
@@ -255,5 +262,9 @@ function startAction(b, n)
 	wait.triggered = 1
 	dialogueMode = 1
 	currentspeaker = "player"
-	text = objectText[b][n]
+	print ("no object: " .. b)
+	print("n: " .. n)
+	if objectText[b][n]~= nil then
+		text = objectText[b][n]
+	end
 end

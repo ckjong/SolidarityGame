@@ -131,11 +131,13 @@ function mapGen (img, file1)
 		local content = f:read("*a")
 		initTable = json.decode(content)
 		io.close(f)
+		doorLock(locationTriggers[currentLocation])
 		initTableFile = json.encode(initTable)
 	else
 		mapExists = 0
 		initTable = mapSize (img, gridsize)
 		fillEdges(initTable)
+		doorLock(locationTriggers[currentLocation])
 		f = assert(io.open(file1, "w"))
 		initTableFile = json.encode(initTable)
 		f:write(initTableFile)
