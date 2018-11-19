@@ -23,24 +23,24 @@ function love.load()
 	mapExists = 0
 	locationTriggers = {
 										overworld = {
-											{17*gridsize, 16*gridsize, "gardeningShed", 11*gridsize, 17*gridsize, 1},--entrancex, entrancey, name, newplayerx, newplayery, locked (1 = yes)
-											{30*gridsize, 25*gridsize, "dormitory", 12*gridsize, 17*gridsize, 0},
-											{34*gridsize, 25*gridsize, "dormitory", 25*gridsize, 17*gridsize, 0},
-											{24*gridsize, 16*gridsize, "dininghall", 13*gridsize, 20*gridsize, 1},
-											{28*gridsize, 16*gridsize, "dininghall", 23*gridsize, 20*gridsize, 1},
-											{30*gridsize, 33*gridsize, "store", 17*gridsize, 19*gridsize, 0}},
+											{x = 17*gridsize, y = 16*gridsize, name = "gardeningShed", x2 = 11*gridsize, y2 = 17*gridsize, locked = 1},--entrancex, entrancey, name, newplayerx, newplayery, locked (1 = yes)
+											{x = 30*gridsize, y = 25*gridsize, name = "dormitory", x2 = 12*gridsize, y2 = 17*gridsize, locked = 0},
+											{x = 34*gridsize, y = 25*gridsize, name = "dormitory", x2 = 25*gridsize, y2 = 17*gridsize, locked = 0},
+											{x = 24*gridsize, y = 16*gridsize, name = "dininghall", x2 = 13*gridsize, y2 = 20*gridsize, locked = 1},
+											{x = 28*gridsize, y = 16*gridsize, name = "dininghall", x2 = 23*gridsize, y2 = 20*gridsize, locked = 1},
+											{x = 30*gridsize, y = 33*gridsize, name = "store", x2 = 17*gridsize, y2 = 19*gridsize, locked = 0}},
 										gardeningShed = {
-											{11*gridsize, 18*gridsize, "overworld", 17*gridsize, 17*gridsize, 0}},
+											{x = 11*gridsize, y = 18*gridsize, name = "overworld", x2 = 17*gridsize, y2 = 17*gridsize, locked = 0}},
 										battlefield1 = {
-											{nil, nil, "battlfield1", 3*gridsize, 6*gridsize, 1}},
+											{x = nil, y = nil, name = "battlfield1", x2 = 3*gridsize, y2 = 6*gridsize, locked = 1}},
 										dormitory = {
-											{12*gridsize, 18*gridsize, "overworld", 30*gridsize, 26*gridsize, 0},
-										  {25*gridsize, 18*gridsize, "overworld", 34*gridsize, 26*gridsize, 0}},
+											{x = 12*gridsize, y = 18*gridsize, name = "overworld", x2 = 30*gridsize, y2 = 26*gridsize, locked = 0},
+										  {x = 25*gridsize, y = 18*gridsize, name = "overworld", x2 = 34*gridsize, y2 = 26*gridsize, locked = 0}},
 										dininghall = {
-											{13*gridsize, 21*gridsize, "overworld", 24*gridsize, 17*gridsize, 0},
-											{23*gridsize, 21*gridsize, "overworld", 28*gridsize, 17*gridsize, 0}},
+											{x = 13*gridsize, y = 21*gridsize, name = "overworld", x2 = 24*gridsize, y2 = 17*gridsize, locked = 0},
+											{x = 23*gridsize, y = 21*gridsize, name = "overworld", x2 = 28*gridsize, y2 = 17*gridsize, locked = 0}},
 										store = {
-												{17*gridsize, 20*gridsize, "overworld", 30*gridsize, 34*gridsize, 0}}
+												{x = 17*gridsize, y = 20*gridsize, name = "overworld", x2 = 30*gridsize, y2 = 34*gridsize, locked = 0}}
 									}
 	currentLocation = "overworld"
 	mapPath = {overworld = {"C:\\Users\\Carolyn\\Documents\\GitHub\\SolidarityGame\\solidarity\\maps\\1overworld.txt"},
@@ -239,10 +239,10 @@ function love.load()
 	require("scripts/battle")
 	--object text index for background objects
 	staticObjects = {overworld = {
-		{"GardeningSign", 16*gridsize, 17*gridsize},
-		{"KitchenSign", 23*gridsize, 17*gridsize},
-	 	{"DormitorySign", 29*gridsize, 26*gridsize},
-		{"StoreSign", 29*gridsize, 34*gridsize}
+		{name = "GardeningSign", x = 16*gridsize, y = 17*gridsize},
+		{name = "KitchenSign",  x = 23*gridsize, y = 17*gridsize},
+	 	{name = "DormitorySign",  x = 29*gridsize, y = 26*gridsize},
+		{name = "StoreSign",  x = 29*gridsize, y = 34*gridsize}
 		-- {"barrelSmBerriesStatic", 15*gridsize, 34*gridsize, off = 0},
 		-- {"barrelLgBerriesStatic", 19*gridsize, 34*gridsize, off = 0}
 		}
@@ -342,63 +342,63 @@ function love.load()
 											 barrelSmBerries = love.graphics.newQuad(6*gridsize, 0, 16, 16, movingObjectSheet:getDimensions()),
 											 barrelLgBerries = love.graphics.newQuad(7*gridsize, 0, 16, 16, movingObjectSheet:getDimensions()),
 											}
-	movingObjectData = {overworld = {{"plantSmBerries", 11*gridsize, 24*gridsize, 1},
-																		{"plantSmBerries", 12*gridsize, 24*gridsize, 1},
-																		{"plantSmBerries", 13*gridsize, 24*gridsize, 1},
-																		{"plantSmBerries", 14*gridsize, 24*gridsize, 1},
-																		{"plantSmBerries", 15*gridsize, 24*gridsize, 1},
-																		{"plantSmBerries", 18*gridsize, 24*gridsize, 1},
-																		{"plantSmBerries", 19*gridsize, 24*gridsize, 1},
-																		{"plantSmBerries", 20*gridsize, 24*gridsize, 1},
-																		{"plantSmBerries", 21*gridsize, 24*gridsize, 1},
-																		{"plantSmBerries", 22*gridsize, 24*gridsize, 1},
-																		{"plantSmBerries", 11*gridsize, 25*gridsize, 1},
-																		{"plantSmBerries", 12*gridsize, 25*gridsize, 1},
-																		{"plantSmBerries", 13*gridsize, 25*gridsize, 1},
-																		{"plantSm", 14*gridsize, 25*gridsize, 1},
-																		{"plantSmBerries", 15*gridsize, 25*gridsize, 1},
-																		{"plantSmBerries", 18*gridsize, 25*gridsize, 1},
-																		{"plantSmBerries", 19*gridsize, 25*gridsize, 1},
-																		{"plantSmBerries", 20*gridsize, 25*gridsize, 1},
-																		{"plantSmBerries", 21*gridsize, 25*gridsize, 1},
-																		{"plantSm", 22*gridsize, 25*gridsize, 1},
-																		{"plantLgBerries", 11*gridsize, 28*gridsize, 1},
-																		{"plantLgBerries", 12*gridsize, 28*gridsize, 1},
-																		{"plantLgBerries", 13*gridsize, 28*gridsize, 1},
-																		{"plantLgBerries", 14*gridsize, 28*gridsize, 1},
-																		{"plantLg", 15*gridsize, 28*gridsize, 1},
-																		{"plantLgBerries", 18*gridsize, 28*gridsize, 1},
-																		{"plantLgBerries", 19*gridsize, 28*gridsize, 1},
-																		{"plantLgBerries", 20*gridsize, 28*gridsize, 1},
-																		{"plantLgBerries", 21*gridsize, 28*gridsize, 1},
-																		{"plantLgBerries", 22*gridsize, 28*gridsize, 1},
-																		{"plantLgBerries", 11*gridsize, 29*gridsize, 1},
-																		{"plantLg", 12*gridsize, 29*gridsize, 1},
-																		{"plantLgBerries", 13*gridsize, 29*gridsize, 1},
-																		{"plantLgBerries", 14*gridsize, 29*gridsize, 1},
-																		{"plantLgBerries", 15*gridsize, 29*gridsize, 1},
-																		{"plantLgBerries", 18*gridsize, 29*gridsize, 1},
-																		{"plantLgBerries", 19*gridsize, 29*gridsize, 1},
-																		{"plantLgBerries", 20*gridsize, 29*gridsize, 1},
-																		{"plantLgBerries", 21*gridsize, 29*gridsize, 1},
-																		{"plantLgBerries", 22*gridsize, 29*gridsize, 1},
-																		{"barrelSmBerries", 15*gridsize, 22*gridsize, 1},
-																		{"barrelLgBerries", 18*gridsize, 22*gridsize, 1}
+	movingObjectData = {overworld = {{name = "plantSmBerries", x = 11*gridsize, y = 24*gridsize, visible = 1},
+																		{name = "plantSmBerries", x = 12*gridsize, y = 24*gridsize, visible = 1},
+																		{name = "plantSmBerries", x = 13*gridsize, y = 24*gridsize, visible = 1},
+																		{name = "plantSmBerries", x = 14*gridsize, y = 24*gridsize, visible = 1},
+																		{name = "plantSmBerries", x = 15*gridsize, y = 24*gridsize, visible = 1},
+																		{name = "plantSmBerries", x = 18*gridsize, y = 24*gridsize, visible = 1},
+																		{name = "plantSmBerries", x = 19*gridsize, y = 24*gridsize, visible = 1},
+																		{name = "plantSmBerries", x = 20*gridsize, y = 24*gridsize, visible = 1},
+																		{name = "plantSmBerries", x = 21*gridsize, y = 24*gridsize, visible = 1},
+																		{name = "plantSmBerries", x = 22*gridsize, y = 24*gridsize, visible = 1},
+																		{name = "plantSmBerries", x = 11*gridsize, y = 25*gridsize, visible = 1},
+																		{name = "plantSmBerries", x = 12*gridsize, y = 25*gridsize, visible = 1},
+																		{name = "plantSmBerries", x = 13*gridsize, y = 25*gridsize, visible = 1},
+																		{name = "plantSm", x = 14*gridsize, y = 25*gridsize, visible = 1},
+																		{name = "plantSmBerries", x = 15*gridsize, y = 25*gridsize, visible = 1},
+																		{name = "plantSmBerries", x = 18*gridsize, y = 25*gridsize, visible = 1},
+																		{name = "plantSmBerries", x = 19*gridsize, y = 25*gridsize, visible = 1},
+																		{name = "plantSmBerries", x = 20*gridsize, y = 25*gridsize, visible = 1},
+																		{name = "plantSmBerries", x = 21*gridsize, y = 25*gridsize, visible = 1},
+																		{name = "plantSm", x = 22*gridsize, y = 25*gridsize, visible = 1},
+																		{name = "plantLgBerries", x = 11*gridsize, y = 28*gridsize, visible = 1},
+																		{name = "plantLgBerries", x = 12*gridsize, y = 28*gridsize, visible = 1},
+																		{name = "plantLgBerries", x = 13*gridsize, y = 28*gridsize, visible = 1},
+																		{name = "plantLgBerries", x = 14*gridsize, y = 28*gridsize, visible = 1},
+																		{name = "plantLg", x = 15*gridsize, y = 28*gridsize, visible = 1},
+																		{name = "plantLgBerries", x = 18*gridsize, y = 28*gridsize, visible = 1},
+																		{name = "plantLgBerries", x = 19*gridsize, y = 28*gridsize, visible = 1},
+																		{name = "plantLgBerries", x = 20*gridsize, y = 28*gridsize, visible = 1},
+																		{name = "plantLgBerries", x = 21*gridsize, y = 28*gridsize, visible = 1},
+																		{name = "plantLgBerries", x = 22*gridsize, y = 28*gridsize, visible = 1},
+																		{name = "plantLgBerries", x = 11*gridsize, y = 29*gridsize, visible = 1},
+																		{name = "plantLg", x = 12*gridsize, y = 29*gridsize, visible = 1},
+																		{name = "plantLgBerries", x = 13*gridsize, y = 29*gridsize, visible = 1},
+																		{name = "plantLgBerries", x = 14*gridsize, y = 29*gridsize, visible = 1},
+																		{name = "plantLgBerries", x = 15*gridsize, y = 29*gridsize, visible = 1},
+																		{name = "plantLgBerries", x = 18*gridsize, y = 29*gridsize, visible = 1},
+																		{name = "plantLgBerries", x = 19*gridsize, y = 29*gridsize, visible = 1},
+																		{name = "plantLgBerries", x = 20*gridsize, y = 29*gridsize, visible = 1},
+																		{name = "plantLgBerries", x = 21*gridsize, y = 29*gridsize, visible = 1},
+																		{name = "plantLgBerries", x = 22*gridsize, y = 29*gridsize, visible = 1},
+																		{name = "barrelSmBerries", x = 15*gridsize, y = 22*gridsize, visible = 1},
+																		{name = "barrelLgBerries", x = 18*gridsize, y = 22*gridsize, visible = 1}
 																	 },
-											dininghall = {{"stool", 12*gridsize, 12*gridsize, 1},
-																		{"stool", 14*gridsize, 12*gridsize, 1},
-																		{"stool", 17*gridsize, 12*gridsize, 1},
-																		{"stool", 18*gridsize, 12*gridsize, 1},
-																		{"stool", 19*gridsize, 12*gridsize, 1},
-																		{"stool", 23*gridsize, 12*gridsize, 1},
-																		{"stool", 24*gridsize, 12*gridsize, 1},
-																		{"stool", 12*gridsize, 16*gridsize, 1},
-											 							{"stool", 13*gridsize, 16*gridsize, 1},
-																		{"stool", 14*gridsize, 16*gridsize, 1},
-																		{"stool", 18*gridsize, 16*gridsize, 1},
-																		{"stool", 19*gridsize, 16*gridsize, 1},
-																		{"stool", 22*gridsize, 16*gridsize, 1},
-																		{"stool", 23*gridsize, 16*gridsize, 1}
+											dininghall = {{name = "stool", x = 12*gridsize, y = 12*gridsize, visible = 1},
+																		{name = "stool", x = 14*gridsize, y = 12*gridsize, visible = 1},
+																		{name = "stool", x = 17*gridsize, y = 12*gridsize, visible = 1},
+																		{name = "stool", x = 18*gridsize, y = 12*gridsize, visible = 1},
+																		{name = "stool", x = 19*gridsize, y = 12*gridsize, visible = 1},
+																		{name = "stool", x = 23*gridsize, y = 12*gridsize, visible = 1},
+																		{name = "stool", x = 24*gridsize, y = 12*gridsize, visible = 1},
+																		{name = "stool", x = 12*gridsize, y = 16*gridsize, visible = 1},
+											 							{name = "stool", x = 13*gridsize, y = 16*gridsize, visible = 1},
+																		{name = "stool", x = 14*gridsize, y = 16*gridsize, visible = 1},
+																		{name = "stool", x = 18*gridsize, y = 16*gridsize, visible = 1},
+																		{name = "stool", x = 19*gridsize, y = 16*gridsize, visible = 1},
+																		{name = "stool", x = 22*gridsize, y = 16*gridsize, visible = 1},
+																		{name = "stool", x = 23*gridsize, y = 16*gridsize, visible = 1}
 																	}
 											}
 
@@ -407,14 +407,16 @@ function love.load()
 	toptiles = {doorway = love.graphics.newQuad(0, 0, 16, 16, toptilesSheet:getDimensions()),
 							black = love.graphics.newQuad(1*gridsize, 0, 16, 16, toptilesSheet:getDimensions())
 							}
-	toptileData = {gardeningShed = {{"doorway", locationTriggers.gardeningShed[1][1], locationTriggers.gardeningShed[1][2], 1}
+	toptileData = {gardeningShed = {{name = "doorway", x = locationTriggers.gardeningShed[1].x, y = locationTriggers.gardeningShed[1].y, visible = 1}
 																 },
-								dormitory = {{"doorway", locationTriggers.dormitory[1][1], locationTriggers.dormitory[1][2], 1},
-														 {"doorway", locationTriggers.dormitory[2][1], locationTriggers.dormitory[2][2], 1}
+								dormitory = {{name = "doorway", x= locationTriggers.dormitory[1].x, y = locationTriggers.dormitory[1].y, visible = 1},
+														 {name = "doorway", x= locationTriggers.dormitory[2].x, y = locationTriggers.dormitory[2].y, visible = 1}
 													 	},
-							  dininghall = {{"doorway", locationTriggers.dininghall[1][1], locationTriggers.dininghall[1][2], 1},
-														  {"doorway", locationTriggers.dininghall[2][1], locationTriggers.dininghall[2][2], 1}
-													 	 }
+							  dininghall = {{name = "doorway", x= locationTriggers.dininghall[1].x, y = locationTriggers.dininghall[1].y, visible = 1},
+														  {name = "doorway", x= locationTriggers.dininghall[2].x, y = locationTriggers.dininghall[2].y, visible = 1}
+														},
+								store = {{name = "doorway", x= locationTriggers.store[1].x, y = locationTriggers.store[1].y, visible = 1}
+																							 }
 								}
 
 --- animated objects
@@ -525,6 +527,7 @@ function love.load()
 	menuW, menuH = 14*gridsize, 7*gridsize
 	canvas = love.graphics.newCanvas(menuW, menuH)
 	formBox(menuW, menuH)
+	lockDialogue(locationTriggers[currentLocation])
 end
 
 
@@ -702,7 +705,7 @@ function love.draw()
 	end
 
 	-- draw tiles on top of player
-	drawTop(currentLocation, movingObjectData, movingObjectSheet, movingObjectQuads)
+	drawStillObjects(currentLocation, movingObjectData, movingObjectSheet, movingObjectQuads)
 	if actions[1].k ~= 0 then
 		drawActAnims(objectAnimations, actions[1].k, actions[1].x, actions[1].y)
 	end
@@ -724,7 +727,7 @@ function love.draw()
 	drawNPCs(animations)
 	-- render tiles on top of player
 	if currentLocation ~= "overworld" then
-		drawTop(currentLocation, toptileData, toptilesSheet, toptiles)
+		drawStillObjects(currentLocation, toptileData, toptilesSheet, toptiles)
 	end
 
 	-- add multiply screen for evening
@@ -818,6 +821,7 @@ function love.keypressed(key)
 			if menuView == 0 then
 				faceObject(player.facing, staticObjects[currentLocation]) -- still objects
 				faceObject(player.facing, movingObjectData[currentLocation])
+				faceObject(player.facing, locationTriggers[currentLocation])
 				if actionMode == 1 then
 					if actions[1].k ~= 0 then
 						resetAnims(objectAnimations, actions[1].k)

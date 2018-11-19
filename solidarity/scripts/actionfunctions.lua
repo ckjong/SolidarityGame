@@ -1,6 +1,10 @@
 function lockDialogue(tbl)
 	for i = 1, #tbl do
-		
+		if tbl[i].locked == 1 then
+			tbl[i].off = 0
+		elseif tbl[i].locked == 0 then
+			tbl[i].off = 1
+		end
 	end
 end
 
@@ -10,15 +14,15 @@ function testObject(x, y, tbl)
 		local m = (player.grid_x / 16) + x
 		local n = (player.grid_y / 16) + y
 		for i = 1, #tbl do
-			if m*gridsize == tbl[i][2] and n*gridsize == tbl[i][3] then
+			if m*gridsize == tbl[i].x and n*gridsize == tbl[i].y then
 				if tbl[i].off ~= nil then
 					if tbl[i].off == 0 then
-						return true, tbl[i][1], i
+						return true, tbl[i].name, i
 					else
 						return false, nil
 					end
 				end
-				return true, tbl[i][1], i
+				return true, tbl[i].name, i
 			end
 		end
 	else
@@ -152,13 +156,13 @@ function printObjText(b, c)
 		else
 			if b == "plantSmBerries" then
 				addRemoveItem("I got 10 Plum Berries.", "Plum Berries", 10, b)
-				movingObjectData[currentLocation][c][1] = "plantSm"
-        movingObjectData[currentLocation][c][4] = 1
+				movingObjectData[currentLocation][c].name = "plantSm"
+        movingObjectData[currentLocation][c].visible = 1
         actions[1].k = 0
 			elseif b == "plantLgBerries" then
 				addRemoveItem("I got 10 Rose Berries.", "Rose Berries", 10, b)
-				movingObjectData[currentLocation][c][1] = "plantLg"
-        movingObjectData[currentLocation][c][4] = 1
+				movingObjectData[currentLocation][c].name = "plantLg"
+        movingObjectData[currentLocation][c].visible = 1
         actions[1].k = 0
       elseif b == "barrelSmBerries" then
         BerryBarrel(b, c, "Plum Berries")
@@ -222,9 +226,9 @@ function BerryHarvestStart(b, c)
     actions[1].k = 4
     actions[1].current = actions[1].max
   end
-  movingObjectData[currentLocation][c][4] = 0 -- hide still sprite
-  actions[1].x = movingObjectData[currentLocation][c][2]
-  actions[1].y = movingObjectData[currentLocation][c][3]
+  movingObjectData[currentLocation][c].visible = 0 -- hide still sprite
+  actions[1].x = movingObjectData[currentLocation][c].x
+  actions[1].y = movingObjectData[currentLocation][c].y
   actionMode = 1
 end
 
@@ -239,7 +243,7 @@ function BerryBarrel(b, c, sub)
     text = "I don't have any " .. sub .. "\nThere are " .. objectInventory[b] .. " berries in the barrel."
     wait.current = wait.start
     wait.triggered = 1
-    movingObjectData[currentLocation][c][4] = 1
+    movingObjectData[currentLocation][c].visible = 1
     actions[1].current = 0
     actions[1].k = 0
     actionMode = 0
@@ -248,7 +252,7 @@ end
 
 function exitAction()
 	if actionMode == 1 then
-		movingObjectData[currentLocation][storedIndex][4] = 1
+		movingObjectData[currentLocation][storedIndex].visible = 1
 		actions[1].k = 0
 		actions[1].current = 0
 		player.canMove = 1

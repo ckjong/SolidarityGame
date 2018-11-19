@@ -190,12 +190,12 @@ function drawNPCs(tbl)
   end
 end
 
-function drawTop(l, tbl, img, quad)
+function drawStillObjects(l, tbl, img, quad)
   if tbl[l] ~= nil then
     for i = 1, #tbl[l] do
-      local k = tbl[l][i][1]
-      if tbl[l][i][4] == 1 then
-        love.graphics.draw(img, quad[k], tbl[l][i][2], tbl[l][i][3])
+      local k = tbl[l][i].name
+      if tbl[l][i].visible == 1 then
+        love.graphics.draw(img, quad[k], tbl[l][i].x, tbl[l][i].y)
       end
     end
   end

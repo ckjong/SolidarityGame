@@ -56,10 +56,11 @@ end
 -- if door is locked, add block to map
 function doorLock(tbl)
 	for i = 1, #tbl do
-		if tbl[i][6] == 0 then
-			addBlock (initTable, tbl[i][1], tbl[i][2], 0)
-		elseif tbl[i][6] == 1 then
-			addBlock (initTable, tbl[i][1], tbl[i][2], 1)
+		if tbl[i].locked == 0 then
+			addBlock (initTable, tbl[i].x, tbl[i].y, 0)
+		elseif tbl[i].locked == 1 then
+			print("adding blocks " .. tbl[i].x, tbl[i].y)
+			addBlock (initTable, tbl[i].x, tbl[i].y, 1)
 		end
 	end
 	saveMap()
@@ -68,14 +69,14 @@ end
 --change location and map to match new location
 function changeMap(px, py, tbl)
   for i = 1, #tbl do
-    if px == tbl[i][1] and py == tbl[i][2] then
-			if tbl[i][6] == 0 then
-	      currentLocation = tbl[i][3]
+    if px == tbl[i].x and py == tbl[i].y then
+			if tbl[i].locked == 0 then
+	      currentLocation = tbl[i].name
 	      locationMaps(currentLocation)
 				changeBackground(currentLocation)
-				player.grid_x = tbl[i][4]
+				player.grid_x = tbl[i].x2
 				player.act_x = player.grid_x
-				player.grid_y = tbl[i][5]
+				player.grid_y = tbl[i].y2
 				player.act_y = player.grid_y
 				print(currentLocation)
 			end
@@ -165,11 +166,17 @@ function addBlock (tbl, x, y, n)
   print("triggered addblock")
   local k = math.floor(x/gridsize)
   local v = math.floor(y/gridsize)
-  if tbl[v][k] == 0 then
-    tbl[v][k] = n
-  elseif tbl[v][k] == n then
-    tbl[v][k] = 0
-  end
+	if debugView == 1 then
+	  if tbl[v][k] == 0 then
+	    tbl[v][k] = n
+	  elseif tbl[v][k] == n then
+	    tbl[v][k] = 0
+	  end
+	else
+		if tbl[v][k] ~= n then
+			tbl[v][k] = n
+		end
+	end
 end
 
 function saveMap()
