@@ -86,11 +86,7 @@ end
 
 --change background to match location
 function changeBackground(l)
-	if l == "overworld" and daytime == 0 then
-		currentBackground = bg.overworldnight
-	else
-		currentBackground = bg[l]
-	end
+	currentBackground = bg[l]
 end
 
 
@@ -191,17 +187,25 @@ end
 function updateMap(tbl)
 	clearMap(2)
 	for i = 1, #tbl do
-		addBlock (initTable, tbl[i].grid_x, tbl[i].grid_y, 2)
+		if tbl == npcs then
+			if tbl[i].location == currentLocation then
+				addBlock (initTable, tbl[i].grid_x, tbl[i].grid_y, 2)
+			end
+		else
+			addBlock (initTable, tbl[i].grid_x, tbl[i].grid_y, 2)
+		end
 	end
 	saveMap()
 end
 
 --remove block from location
 function removeBlock(x, y)
-	if initTable[y][x] == 2 then
-		initTable[y][x] = 0
+	if initTable[y][x] ~= nil then
+		if initTable[y][x] == 2 then
+			initTable[y][x] = 0
+		end
+		saveMap()
 	end
-	saveMap()
 end
 
 --remove block from all nodes with value corresponding to n

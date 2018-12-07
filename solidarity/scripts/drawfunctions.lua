@@ -103,25 +103,50 @@ end
 --   love.graphics.rectangle("fill", boxposx+2, boxposy+2, recwidth-4, recheight-4, 3, 3, 4) -- inside box (light colored)
 -- end
 
-function animUpdate(tbl, dt)
-  for k, v in pairs(tbl) do
-		tbl[k]["anim"]["currentTime"] = tbl[k]["anim"]["currentTime"] + dt
+function animUpdate(tbl, dt, k)
+  if k then
+    tbl[k]["anim"]["currentTime"] = tbl[k]["anim"]["currentTime"] + dt
     if tbl[k]["anim"]["currentTime"] >= tbl[k]["anim"]["duration"] then
       tbl[k]["anim"]["currentTime"] = tbl[k]["anim"]["currentTime"] - tbl[k]["anim"]["duration"]
-      tbl[k].running = 0
-      -- if tbl[k].loop ~= 0 then
-      --   if tbl[k].running == 1 then
-      --     if tbl[k].current > 0 then
-      --       print("tbl[k].current " .. tbl[k].current)
-      --       tbl[k].current = tbl[k].current - 1
-      --     else
-      --       tbl[k].current = tbl[k].loop
-      --       tbl[k].running = 0
-      --     end
-      --   end
-      -- end
+      if tbl[k].loop ~= 0 then
+        tbl[k].count = tbl[k].count + 1
+        if tbl[k].count == tbl[k].loop then
+          print("count:" .. tbl[k].count)
+          if tbl[k].running == 1 then
+            tbl[k].running = 0
+            tbl[k].count = 0
+            animFinish(movingObjectData[currentLocation])
+          end
+        end
+      end
     end
-	end
+  else
+    for k, v in pairs(tbl) do
+  		tbl[k]["anim"]["currentTime"] = tbl[k]["anim"]["currentTime"] + dt
+      if tbl[k]["anim"]["currentTime"] >= tbl[k]["anim"]["duration"] then
+        tbl[k]["anim"]["currentTime"] = tbl[k]["anim"]["currentTime"] - tbl[k]["anim"]["duration"]
+        if tbl[k].running == 1 then
+          tbl[k].running = 0
+        end
+        -- if tbl[k].loop ~= 0 then
+        --   if tbl[k].running == 1 then
+        --     if tbl[k].current > 0 then
+        --       print("tbl[k].current " .. tbl[k].current)
+        --       tbl[k].current = tbl[k].current - 1
+        --     else
+        --       tbl[k].current = tbl[k].loop
+        --       tbl[k].running = 0
+        --     end
+        --   end
+        -- end
+      end
+  	end
+  end
+end
+
+function animFinish(tbl)
+  tbl[storedIndex].visible = 1
+  actions[1].k = 0
 end
 
 function resetAnims(tbl, k)
@@ -222,6 +247,26 @@ function drawMeters(x, y)
   love.graphics.print(player.energy, x + gridsize, y+5)
 end
 
+function drawTime(x, y)
+  local txt = ""
+  love.graphics.setColor(255, 255, 255)
+  love.graphics.draw(ui.energytextbgsmleft, x, y)
+  love.graphics.draw(ui.energytextbgsmright, x+gridsize, y)
+  love.graphics.setColor(93, 43, 67)
+  love.graphics.printf("Day " .. day, x, y+5, 32, "center")
+  love.graphics.setColor(255, 255, 255)
+  if time == 1 then
+    love.graphics.draw(ui.timeiconbgday, x - 16, y)
+    love.graphics.draw(ui.timeiconday, x - 16, y)
+  elseif time == 2 then
+    love.graphics.draw(ui.timeiconbgevening, x - 16, y)
+    love.graphics.draw(ui.timeiconevening, x - 16, y)
+  elseif time == 3 then
+    love.graphics.draw(ui.timeiconbgnight, x - 16, y)
+    love.graphics.draw(ui.timeiconnight, x - 16, y)
+  end
+end
+
 function drawText(x, y, scalex, recwidth)
   local width = love.graphics.getWidth( )/scalex
   local c = text:sub(1, textn)
@@ -280,18 +325,21 @@ function drawMenu(x, y, tab)
   love.graphics.setColor(255, 255, 255)
   love.graphics.draw(canvas, boxX, y-offset.y)
   if tab == "inventory" then
-    menuText = drawInventory(x, y, offset.x, offset.y)
+    menuText = drawInventory(x, y, offset.x - 14, offset.y - 22)
   elseif tab == "journal" then
     menuText = "Journal"
   elseif tab == "map1" then
     menuText = "Social Map"
   elseif tab == "map2" then
     menuText = "Island Map"
+    drawMap2(x + gridsize/2, y-offset.y +16)
   end
-  if timer[1].trigger == 1 then
-    love.graphics.setColor(255, 255, 255)
-    love.graphics.draw(ui.arrowleft, boxX+32, textY)
-    love.graphics.draw(ui.arrowright, boxX + menuW - 32, textY)
+  if menu.position[1] == 1 then
+    if timer[1].trigger == 1 then
+      love.graphics.setColor(255, 255, 255)
+      love.graphics.draw(ui.arrowleft, boxX+32, textY)
+      love.graphics.draw(ui.arrowright, boxX + menuW - 32, textY)
+    end
   end
   love.graphics.setColor(93, 43, 67)
   love.graphics.printf(menuText, boxX, textY, textW, "center")
@@ -301,23 +349,79 @@ function drawInventory(x, y, offX, offY)
   local txt = "Inventory"
   local items = {}
   local objText = ""
+  local selectText = ""
+  for i = 1, player.maxInventory do
+    love.graphics.setColor(255, 255, 255)
+    love.graphics.draw(ui.itembg, x - offX + (i-1)*(26), y - offY)
+  end
   for i = 1, #player.inventory do
     local n = player.inventory[i].icon
     if i > 8 then
       offY = offY - 24
     end
     love.graphics.setColor(93, 43, 67)
-    love.graphics.rectangle("line",  x - offX + 10 + (i-1)*(28), y - offY + 18, 16, 16)
+    love.graphics.rectangle("line",  x - offX + (i-1)*(26), y - offY, 16, 16)
     love.graphics.setColor(255, 255, 255)
-    love.graphics.draw(movingObjectSheet, movingObjectQuads[n], x - offX + 10 + (i-1)*(28), y - offY + 18)
+    love.graphics.draw(movingObjectSheet, movingObjectQuads[n], x - offX + (i-1)*(26), y - offY)
     objText = tostring(player.inventory[i].amount)
     love.graphics.setColor(93, 43, 67)
-    love.graphics.printf(objText, x - offX + 10 + (i-1)*(28), y - offY + 36, 16, "center")
+    love.graphics.printf(objText, x - offX + (i-1)*(26), y - offY + 18, 16, "center")
   end
-  if #player.inventory > 0 then
-    -- objText = table.concat(items, "\n\n\n", 1, #items)
+  if menu.position[1] == 2 then
+    local i = menu.position[2]
+    if #player.inventory > 0 then
+      selectText = player.inventory[i].item
+      love.graphics.printf(selectText, x + gridsize/2 - menuW/2, y - offY + menuH - 36, menuW, "center")
+    end
+    if timer[1].trigger == 1 then
+      love.graphics.setColor(255, 255, 255)
+      love.graphics.draw(ui.cornerLTop, x - offX - 4 + (i-1)*(26), y - offY - 4)
+      love.graphics.draw(ui.cornerRTop, x - offX + gridsize + (i-1)*(26), y - offY - 4)
+      love.graphics.draw(ui.cornerLBottom, x - offX - 4 + (i-1)*(26), y - offY + gridsize)
+      love.graphics.draw(ui.cornerRBottom, x - offX + gridsize + (i-1)*(26), y - offY + gridsize)
+    end
+  elseif menu.position[1] == 3 then
+    local i = menu.position[2]
+    local a = 0
+    local b = 0
+    local width, height = love.graphics.getDimensions()
+    local recheight = 32
+		local recwidth = 232
+		local xnudge = width/2
+		local ynudge = 1*scale.y
+		local boxposx = player.act_x + gridsize/2 - recwidth/2
+		local boxposy = player.act_y + gridsize/2 + (height/scale.y)/2 - recheight - ynudge
+    love.graphics.setColor(255, 255, 255)
+    love.graphics.draw(ui.cornerLTop, x - offX - 4 + (i-1)*(26), y - offY - 4)
+    love.graphics.draw(ui.cornerRTop, x - offX + gridsize + (i-1)*(26), y - offY - 4)
+    love.graphics.draw(ui.cornerLBottom, x - offX - 4 + (i-1)*(26), y - offY + gridsize)
+    love.graphics.draw(ui.cornerRBottom, x - offX + gridsize + (i-1)*(26), y - offY + gridsize)
+    if #player.inventory > 0 then
+      selectText = player.inventory[i].item
+      love.graphics.setColor(93, 43, 67)
+      love.graphics.printf(selectText, x + gridsize/2 - menuW/2, y - offY + menuH - 36, menuW, "center")
+    end
+    love.graphics.setColor(255, 255, 255)
+    love.graphics.draw(ui.textboxbg, boxposx, boxposy)
+    love.graphics.draw(ui.textboxbottom, boxposx, boxposy)
+    if menu.position[3] == 1 then
+      love.graphics.draw(ui.arrowright, boxposx + 8, boxposy + 8)
+      a = 6
+    elseif menu.position[3] == 2 then
+      love.graphics.draw(ui.arrowright, boxposx + 8, boxposy + 16)
+      b = 6
+    end
+    love.graphics.setColor(93, 43, 67)
+    love.graphics.print("Use", boxposx + 8 + a, boxposy + 8)
+    love.graphics.print("Drop", boxposx + 8 + b, boxposy + 16)
   end
   return txt
+end
+
+function drawMap2(x, y)
+  local width = worldmap1:getWidth( )
+  love.graphics.setColor(255, 255, 255)
+  love.graphics.draw(worldmap1, x - width/2, y)
 end
 
 function fadeBlack(alpha, width, height)
@@ -330,28 +434,4 @@ function multiplyLayer(width, height)
 	love.graphics.setBlendMode("alpha")
 	love.graphics.draw(overlays.evening, player.act_x-width/2, player.act_y-height/2)
   love.graphics.setBlendMode("alpha")
-end
-
-function switchTabs(key)
-  for i = 1, #menu.allTabs do
-    if menu.currentTab == menu.allTabs[i] then
-      if key == "right" then
-        if i < #menu.allTabs then
-          i = i + 1
-          return menu.allTabs[i]
-        else
-          i = 1
-          return menu.allTabs[i]
-        end
-      elseif key == "left" then
-        if i > 1 then
-          i = i - 1
-          return menu.allTabs[i]
-        else
-          i = #menu.allTabs
-          return menu.allTabs[i]
-        end
-      end
-    end
-  end
 end

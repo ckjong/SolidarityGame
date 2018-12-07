@@ -1,3 +1,5 @@
+
+
 function lockDialogue(tbl)
 	for i = 1, #tbl do
 		if tbl[i].locked == 1 then
@@ -31,33 +33,33 @@ function testObject(x, y, tbl)
 end
 
 function inventoryFull(m)
-	local total = 0
-	if #player.inventory > 0 then
-		for k = 1, #player.inventory do
-			total = total + player.inventory[k].amount
-			if total >= m then
-				return true
-			end
-		end
-		return false
+	if #player.inventory >= m then
+		return true
 	else
 		return false
 	end
+	-- local total = 0
+	-- if #player.inventory > 0 then
+	-- 	for k = 1, #player.inventory do
+	-- 		total = total + player.inventory[k].amount
+	-- 		if total >= m then
+	-- 			return true
+	-- 		end
+	-- 	end
+	-- 	return false
+	-- else
+	-- 	return false
+	-- end
 end
 
-function checkInventory(i)
-  print("checking " .. i)
+function checkInventory(i) -- i = player.inventory[k].item
   if #player.inventory > 0 then
-    print("#player.inventory " .. #player.inventory)
     for k = 1, #player.inventory do
       if player.inventory[k].item == i then
         -- check if item already in the inventory
-        print("key " .. k)
-        print(player.inventory[k].amount .. i .. " present")
         return 1, k
       end
     end
-    print(i .. " not present")
     return 0
   else
     print("inventory empty")
@@ -66,22 +68,33 @@ function checkInventory(i)
 end
 
 
-function addRemoveItem(txt, i, a, b) -- text to display, item, amount, icon name
-  wait.current = wait.start
-  wait.triggered = 1
+function addRemoveItem(txt, i, a, b, w) -- text to display, item, amount, icon name, wait
+	if w == true then
+		wait.triggered = 1
+	  wait.n = string.len(txt)
+	end
   text = txt
   local present, k = checkInventory(i)
   if present == 1 then
-    player.inventory[k].amount = player.inventory[k].amount + a
-    print(player.inventory[k].amount .. i .. "new amount present")
-    if player.inventory[k].amount <= 0 then
-      print(player.inventory[k].amount .. i .. "amount removed")
-      player.inventory[k] = nil
-      table.remove(player.inventory, k)
-    end
+		if itemStats[b].unique == 0 then
+			--change amount of existing item
+	    player.inventory[k].amount = player.inventory[k].amount + a
+	    if player.inventory[k].amount <= 0 then
+	      --all items removed
+	      player.inventory[k] = nil
+	      table.remove(player.inventory, k)
+	    end
+		else
+			if a > 0 then
+				if inventoryFull (player.maxInventory) == false then
+					table.insert(player.inventory, {item = i, amount = a, icon = b})
+				end
+			else
+				table.remove(player.inventory, k)
+			end
+		end
   elseif present == 0 then
     if a > 0 then
-      print(a .. i .. " added")
       -- if item not there, create new entry
       table.insert(player.inventory, {item = i, amount = a, icon = b})
     end
@@ -90,7 +103,6 @@ end
 
 --pass object description to text, change dialogue mode
 function printObjText(b, c)
-  print("object " .. b)
 	if actionMode == 0 then
 		if dialogueMode == 0 then
       if b == "plantSmBerries" then
@@ -126,12 +138,12 @@ function printObjText(b, c)
 			elseif b == "barrelSmBerries" then
 				startAction(b, 1)
         BerryHarvestStart(b, c)
-        BerryBarrel(b, c, "Plum Berries")
+        BerryBarrel(b, c, "Plum Berries", "plantSmBerries")
         return
       elseif b == "barrelLgBerries" then
 				startAction(b, 1)
         BerryHarvestStart(b, c)
-        BerryBarrel(b, c, "Rose Berries")
+        BerryBarrel(b, c, "Rose Berries", "plantLgBerries")
         return
 			else
 				startAction(b, 1)
@@ -142,7 +154,10 @@ function printObjText(b, c)
       wait.triggered = 0
 		end
 	elseif actionMode == 1 then
+		print("actions[1].current " ..  actions[1].current)
+		print("actions[1].max " ..  actions[1].max)
 		if actions[1].current < actions[1].max then
+			BerryHarvestStart(b, c)
 			actions[1].current = actions[1].current + actions[1].rate
 			print ("action meter: " .. actions[1].current)
       text = objectText[b][2]
@@ -155,12 +170,12 @@ function printObjText(b, c)
 			print("player energy: " .. player.energy)
 		else
 			if b == "plantSmBerries" then
-				addRemoveItem("I got 10 Plum Berries.", "Plum Berries", 10, b)
+				addRemoveItem("I got 10 Plum Berries.", "Plum Berries", 10, b, true)
 				movingObjectData[currentLocation][c].name = "plantSm"
         movingObjectData[currentLocation][c].visible = 1
         actions[1].k = 0
 			elseif b == "plantLgBerries" then
-				addRemoveItem("I got 10 Rose Berries.", "Rose Berries", 10, b)
+				addRemoveItem("I got 10 Rose Berries.", "Rose Berries", 10, b, true)
 				movingObjectData[currentLocation][c].name = "plantLg"
         movingObjectData[currentLocation][c].visible = 1
         actions[1].k = 0
@@ -171,6 +186,7 @@ function printObjText(b, c)
         BerryBarrel(b, c, "Rose Berries")
         return
       end
+			print("Current = max")
 			actions[1].current = 0
 			actionMode = 0
 		end
@@ -232,17 +248,18 @@ function BerryHarvestStart(b, c)
   actionMode = 1
 end
 
-function BerryBarrel(b, c, sub)
+function BerryBarrel(b, c, sub, icon)
   local present, k = checkInventory(sub)
   if present == 1 then
-		objectInventory[b] = objectInventory[b] + 10
-    addRemoveItem("Dropped 10 " .. sub .. "\nThere are " .. objectInventory[b] .. " berries in the barrel.", sub, -10, b)
-    wait.current = wait.start
-    wait.triggered = 1
+		objectInventory[b] = objectInventory[b] + player.inventory[k].amount
+    addRemoveItem("Dropped " .. player.inventory[k].amount .. " " .. sub .. "\nBerries in barrel: " .. objectInventory[b], sub, -player.inventory[k].amount, icon, true)
+		actionMode = 0
+		actions[1].current = 0
+		return
   else
-    text = "I don't have any " .. sub .. "\nThere are " .. objectInventory[b] .. " berries in the barrel."
-    wait.current = wait.start
+    text = "I don't have any " .. sub .. ".\nBerries in barrel: " .. objectInventory[b]
     wait.triggered = 1
+		wait.n = string.len(text)
     movingObjectData[currentLocation][c].visible = 1
     actions[1].current = 0
     actions[1].k = 0
@@ -250,9 +267,22 @@ function BerryBarrel(b, c, sub)
   end
 end
 
+function startAction(b, n)
+	dialogueMode = 1
+	currentspeaker = "player"
+	print("n: " .. n)
+	if objectText[b][n]~= nil then
+		text = objectText[b][n]
+		wait.triggered = 1
+		wait.n = string.len(text)
+	end
+end
+
 function exitAction()
 	if actionMode == 1 then
-		movingObjectData[currentLocation][storedIndex].visible = 1
+		if storedIndex then
+			movingObjectData[currentLocation][storedIndex].visible = 1
+		end
 		actions[1].k = 0
 		actions[1].current = 0
 		player.canMove = 1
@@ -261,14 +291,47 @@ function exitAction()
 	end
 end
 
-function startAction(b, n)
-	wait.current = wait.start
-	wait.triggered = 1
-	dialogueMode = 1
-	currentspeaker = "player"
-	print ("no object: " .. b)
-	print("n: " .. n)
-	if objectText[b][n]~= nil then
-		text = objectText[b][n]
+function freezeControl()
+	if player.energy <= 0 then
+		if freeze.action ~= 2 then
+			freeze.action = 1
+		end
+		freeze.dialogue = 1
+	else
+		if freeze.action == 1 then
+			freeze.action = 0
+		end
+		if freeze.dialogue == 1 then
+			freeze.dialogue = 0
+		end
 	end
 end
+
+function energyMod(a)
+	print("energized")
+	player.energy = player.energy + a
+	if player.energy > 100 then
+		player.energy = 100
+	elseif player.energy < 0 then
+		player.energy = 0
+	end
+end
+
+
+function useItem(i)
+	local text = ""
+	if itemEffects[i] ~= nil then
+		print("can do action")
+		print(itemEffects[i].text)
+		itemEffects[i].func(unpack(itemEffects[i].par))
+		menuView = 0
+		startAction(i, itemEffects[i].text)
+	else
+		print("no action possible")
+		text = "I can't use that item."
+		return false, text
+	end
+end
+
+itemEffects = {platefull2 = {type = "once", description = "Restores Energy", text = 1, func = energyMod, par = {100}}
+							}

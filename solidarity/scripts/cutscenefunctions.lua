@@ -6,10 +6,10 @@ function cutsceneStage1Talk()
     local char = npcs[i]
     local target = cutsceneList[n].target
     local x1, y1 = target.grid_x, target.grid_y
+    --remove block from moving NPC
+    removeBlock(char.grid_x/gridsize, char.grid_y/gridsize)
     --enable movement for npc
     char.canMove = 1
-    --remove block from moving NPC
-    removeBlock(char.act_x/gridsize, char.act_y/gridsize)
     --find path between npc location and target location (usually player)
     cutsceneList[n].path, cutsceneList[n].facing[1] = checkPaths(char, x1, y1)
   end
@@ -108,7 +108,6 @@ end
 
 function cutsceneStage7Talk()
   if cutsceneList[cutsceneControl.current].triggered == false then
-    changeTime(cutsceneList[cutsceneControl.current].switchTime)
     changeGameStage()
     cutsceneList[cutsceneControl.current].triggered = true
   end
@@ -123,6 +122,7 @@ end
 function changeGameStage()
   local n = cutsceneControl.current
   if cutsceneList[n].nextStage == true then
+    changeTime(cutsceneList[cutsceneControl.current].switchTime)
     clearMap(2)
     saveMap()
     gameStage = gameStage + 1
@@ -142,12 +142,20 @@ function changeGameStage()
     end
     player.location = player.next[gameStage].location
     for i = 1, #npcs do
-      npcs[i].grid_x = npcs[i].next[gameStage].x
-      npcs[i].act_x = npcs[i].next[gameStage].x
-      npcs[i].grid_y = npcs[i].next[gameStage].y
-      npcs[i].act_y = npcs[i].next[gameStage].y
-      npcs[i].facing = npcs[i].next[gameStage].facing
-      npcs[i].start = npcs[i].facing
+      if npcs[i].next[gameStage].location ~= "offscreen" then
+        if npcs[i].next[gameStage].x ~= 0 then
+          npcs[i].grid_x = npcs[i].next[gameStage].x
+          npcs[i].act_x = npcs[i].next[gameStage].x
+        end
+        if npcs[i].next[gameStage].y ~= 0 then
+          npcs[i].grid_y = npcs[i].next[gameStage].y
+          npcs[i].act_y = npcs[i].next[gameStage].y
+        end
+        if npcs[i].next[gameStage].facing ~= 0 then
+          npcs[i].facing = npcs[i].next[gameStage].facing
+          npcs[i].start = npcs[i].facing
+        end
+      end
       npcs[i].location = npcs[i].next[gameStage].location
       npcs[i].c = 1
       npcs[i].n = 1
@@ -166,7 +174,8 @@ function gameStageControl(g)
 end
 
 function changeTime(t)
-  print ("daytime " .. daytime)
+  time = t
+  print("time " .. time)
 end
 
 function fadeControl(t) -- arg: fading.type
@@ -221,4 +230,8 @@ function fadeCountdown(dt)
       player.canMove = 1
     end
   end
+end
+
+function addJournal(a, b) -- entry
+	table.insert(currentJournal, journalText[a][b])
 end
