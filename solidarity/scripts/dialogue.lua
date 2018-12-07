@@ -32,7 +32,7 @@ NPCdialogue = {
         },
   Lark = {[1] = {text = {"What are you looking at? Get back to \nwork!"},
                 logic = {next = 1, speaker = "Lark", cond = true, off = true, display = 1, spoken = 0, energy = 1}},
-          [2] = {text = {"We don't pay you to stand around and chat.", "You're going to make up for this by \nworking overtime tonight.",
+          [2] = {text = {"Why aren't you working?", "We don't pay you to stand around and chat.", "You're going to make up for this by \nworking overtime tonight.",
                 "Now GET MOVING! ... stupid lazy\nmudskins..."},
                 logic = {next = 1, speaker = "Lark", cond = true, off = true, display = 1, spoken = 0}}
           -- [4] = {text = {"Hah, get ready to lose, loser.", "Too bad."},

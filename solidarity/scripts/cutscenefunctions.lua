@@ -1,3 +1,39 @@
+function cutsceneTrigger()
+  if gameStage == 0 then
+    if checkSpoken(npcs, NPCdialogue[dialogueStage], 6) == true then
+      if cutsceneControl.stage == 0 then
+        local n = cutsceneControl.current
+        if cutsceneList[n].triggered == false then
+          print("spoken to everyone, cutscene 1 triggered")
+          cutsceneControl.stage = 1
+        end
+      end
+    end
+    if player.energy == 0 then
+      if text == "I'm too tired to work." and dialogueMode == 0 then
+        if cutsceneControl.stage == 0 then
+          local n = cutsceneControl.current
+          if cutsceneList[n].triggered == false then
+            print("out of energy, cutscene 1 triggered")
+            cutsceneControl.stage = 1
+          end
+        end
+      end
+    end
+  elseif gameStage == 1 then
+    if currentLocation == "dininghall" then
+      if cutsceneControl.stage == 0 then
+        local n = cutsceneControl.current
+        if cutsceneList[n].triggered == false then
+          print("Agave approaches, cutscene 2 triggered")
+          player.canMove = 0
+          cutsceneControl.stage = 1
+        end
+      end
+    end
+  end
+end
+
 function cutsceneStage1Talk()
   updateMap(npcs) -- add NPC locations to map and save
   local n = cutsceneControl.current
@@ -94,6 +130,7 @@ function cutsceneStage5Talk()
     fading.on = true
     cutsceneControl.stage = 6
   else
+    player.canMove = 1
     cutsceneControl.stage = 7
   end
 end

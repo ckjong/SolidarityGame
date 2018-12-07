@@ -26,9 +26,9 @@ function love.load()
 											{x = 17*gridsize, y = 16*gridsize, name = "gardeningShed", x2 = 11*gridsize, y2 = 17*gridsize, locked = 1},--entrancex, entrancey, name, newplayerx, newplayery, locked (1 = yes)
 											{x = 30*gridsize, y = 25*gridsize, name = "dormitory", x2 = 12*gridsize, y2 = 17*gridsize, locked = 0},
 											{x = 34*gridsize, y = 25*gridsize, name = "dormitory", x2 = 25*gridsize, y2 = 17*gridsize, locked = 0},
-											{x = 24*gridsize, y = 16*gridsize, name = "dininghall", x2 = 13*gridsize, y2 = 20*gridsize, locked = 1},
-											{x = 28*gridsize, y = 16*gridsize, name = "dininghall", x2 = 23*gridsize, y2 = 20*gridsize, locked = 1},
-											{x = 30*gridsize, y = 33*gridsize, name = "store", x2 = 17*gridsize, y2 = 19*gridsize, locked = 0}},
+											{x = 24*gridsize, y = 16*gridsize, name = "dininghall", x2 = 13*gridsize, y2 = 20*gridsize, locked = 0},
+											{x = 28*gridsize, y = 16*gridsize, name = "dininghall", x2 = 23*gridsize, y2 = 20*gridsize, locked = 0},
+											{x = 30*gridsize, y = 33*gridsize, name = "store", x2 = 17*gridsize, y2 = 19*gridsize, locked = 1}},
 										gardeningShed = {
 											{x = 11*gridsize, y = 18*gridsize, name = "overworld", x2 = 17*gridsize, y2 = 17*gridsize, locked = 0}},
 										battlefield1 = {
@@ -43,6 +43,8 @@ function love.load()
 												{x = 17*gridsize, y = 20*gridsize, name = "overworld", x2 = 30*gridsize, y2 = 34*gridsize, locked = 0}}
 									}
 	currentLocation = "overworld"
+	currentJournal = {}
+
 	mapPath = {overworld = {"C:\\Users\\Carolyn\\Documents\\GitHub\\SolidarityGame\\solidarity\\maps\\1overworld.txt"},
 	gardeningShed = {"C:\\Users\\Carolyn\\Documents\\GitHub\\SolidarityGame\\solidarity\\maps\\2gardeningShed.txt"},
 	battlefield1 = {"C:\\Users\\Carolyn\\Documents\\GitHub\\SolidarityGame\\solidarity\\maps\\3battlefield1.txt"},
@@ -69,11 +71,12 @@ function love.load()
 		name = "Saffron",
 		battlestats = {maxhp = 2, damage = 1, moves = 2},
 		inventory = {},
-		maxInventory = 60,
+		maxInventory = 8,
 		party = {1, 2}, -- Fennel, Mint
 		spells = {},
 		energy = 100,
-		next = {{x = 0, y = 0, facing = 0, location = "overworld"}}
+		next = {{x = 0, y = 0, facing = 0, location = "overworld"},
+						{x = 0, y = 0, facing = 0, location = "dininghall"}}
 	}
 
 	npcs = {{
@@ -95,7 +98,8 @@ function love.load()
 		n = 1, --stage in single conversation
 		c = 1, -- dialogue case
 		battlestats = {maxhp = 2, damage = 1, moves = 3},
-		next = {{x = 0, y = 0, facing = 1, location = "overworld"}}
+		next = {{x = 0, y = 0, facing = 1, location = "offscreen"},
+						{x = 0, y = 0, facing = 1, location = "offscreen"}}
 		},
 		{
 			grid_x = 13*gridsize,
@@ -116,7 +120,8 @@ function love.load()
 			n = 1,
 			c = 1,
 			battlestats = {maxhp = 2, damage = 1, moves = 2},
-			next = {{x = 21*gridsize, y = 23*gridsize, facing = 2, location = "overworld"}}
+			next = {{x = 21*gridsize, y = 23*gridsize, facing = 2, location = "overworld"},
+							{x = 26*gridsize, y = 9*gridsize, facing = 2, location = "dormitory"}}
 			},
 			{
 				grid_x = 10*gridsize,
@@ -137,7 +142,8 @@ function love.load()
 				n = 1, --stage in single conversation
 				c = 1,
 				battlestats = {maxhp = 5, damage = 1,  moves = 2},
-				next = {{x = 10*gridsize, y = 28*gridsize, facing = 4, location = "overworld"}}
+				next = {{x = 10*gridsize, y = 27*gridsize, facing = 4, location = "overworld"},
+								{x = 0, y = 0, facing = 0, location = "offscreen"}}
 			},
 			{
 				grid_x = 16*gridsize,
@@ -158,7 +164,8 @@ function love.load()
 				n = 1, --stage in single conversation
 				c = 1,
 				battlestats = {maxhp = 3, damage = 1,  moves = 1},
-				next = {{x = 16*gridsize, y = 21*gridsize, facing = 4, location = "overworld"}}
+				next = {{x = 16*gridsize, y = 21*gridsize, facing = 4, location = "overworld"},
+								{x = 0, y = 0, facing = 0, location = "offscreen"}}
 			},
 			{
 				grid_x = 21*gridsize,
@@ -179,7 +186,8 @@ function love.load()
 				n = 1, --stage in single conversation
 				c = 1,
 				battlestats = {maxhp = 3, damage = 1,  moves = 1},
-				next = {{x = 10*gridsize, y = 9*gridsize, facing = 2, location = "dormitory"}}
+				next = {{x = 10*gridsize, y = 9*gridsize, facing = 2, location = "dormitory"},
+								{x = 10*gridsize, y = 9*gridsize, facing = 2, location = "dormitory"}}
 			},
 			{
 				grid_x = 13*gridsize,
@@ -200,7 +208,8 @@ function love.load()
 				n = 1, --stage in single conversation
 				c = 1,
 				battlestats = {maxhp = 3, damage = 1,  moves = 1},
-				next = {{x = 17*gridsize, y = 16*gridsize, facing = 2, location = "dininghall"}}
+				next = {{x = 17*gridsize, y = 16*gridsize, facing = 2, location = "dininghall"},
+								{x = 0, y = 0, facing = 0, location = "dininghall"}}
 			},
 			{
 				grid_x = 21*gridsize,
@@ -221,15 +230,18 @@ function love.load()
 				n = 1, --stage in single conversation
 				c = 1,
 				battlestats = {maxhp = 3, damage = 1,  moves = 1},
-				next = {{x = 26*gridsize, y = 16*gridsize, facing = 2, location = "dormitory"}}
+				next = {{x = 26*gridsize, y = 16*gridsize, facing = 2, location = "dormitory"},
+								{x = 26*gridsize, y = 16*gridsize, facing = 2, location = "dormitory"}}
 			}
 }
 
 	storedLocation = {x = 0, y = 0}
 	storedIndex = 0
+	specialCoords = {{stage = 1, x = 16*gridsize, y = 19*gridsize, char = player, triggered = 0}}
 
 -- actions
 	actionMode = 0
+	playObjectAnim = 0
 	actions = {{current = 0, max = 100, rate = 10, x = 0, y = 0, k = 0}
 						}
 --battle
@@ -249,10 +261,19 @@ function love.load()
 	}
 
 	objectInventory = {barrelSmBerries = 0, barrelLgBerries = 0}
+
+	itemStats = {plantSmBerries = {max = 60, unique = 0},
+							plantLgBerries = {max = 60, unique = 0},
+							platefull2 = {max = 60, unique = 1}
+							}
+
 --images
 	love.graphics.setDefaultFilter("nearest", "nearest")
 	love.graphics.setColor(0, 0, 0)
 	love.graphics.setBackgroundColor(255,255,255)
+
+	-- scale for graphics
+	scale = {x=4, y=4}
 
 	bg = {overworld = love.graphics.newImage("images/solidarity_overworld.png"),
 				overworldnight = love.graphics.newImage("images/solidarity_overworld_night.png"),
@@ -263,8 +284,10 @@ function love.load()
 				store = love.graphics.newImage("images/store.png"),
 			}
 	currentBackground = bg.overworld
-	daytime = 1 -- 1 = day, 2 = evening, 3 = night
+	time = 1 -- 1 = day, 2 = evening, 3 = night
+	day = 1
 
+	worldmap1 = love.graphics.newImage("images/solidarity_map2.png")
 	overlays = {evening = love.graphics.newImage("images/evening_overlay.png")}
 
 	--portraits
@@ -287,21 +310,32 @@ function love.load()
 	currentspeaker = "player"
 
 	animsheet1 = love.graphics.newImage("images/solidarity_anim.png")
-	ui = {arrowup = love.graphics.newImage("images/solidarity_ui_0.png"),
-		arrowdown = love.graphics.newImage("images/solidarity_ui_1.png"),
-		arrowright = love.graphics.newImage("images/solidarity_ui_2.png"),
-		arrowleft = love.graphics.newImage("images/solidarity_ui_3.png"),
-		pressz = love.graphics.newImage("images/solidarity_ui_4.png"),
+	ui = {arrowup = love.graphics.newImage("images/solidarity_ui_00.png"),
+		arrowdown = love.graphics.newImage("images/solidarity_ui_01.png"),
+		arrowright = love.graphics.newImage("images/solidarity_ui_02.png"),
+		arrowleft = love.graphics.newImage("images/solidarity_ui_03.png"),
+		pressz = love.graphics.newImage("images/solidarity_ui_04.png"),
+		cornerLTop = love.graphics.newImage("images/solidarity_ui_09.png"),
+		cornerRTop = love.graphics.newImage("images/solidarity_ui_10.png"),
+		cornerLBottom = love.graphics.newImage("images/solidarity_ui_11.png"),
+		cornerRBottom = love.graphics.newImage("images/solidarity_ui_12.png"),
+	 	itembg = love.graphics.newImage("images/solidarityui_16x16_14.png"),
 		textboxbg = love.graphics.newImage("images/solidarity_textboxfull.png"),
 		textboxbottom = love.graphics.newImage("images/solidarity_textboxbottom.png"),
-		energyicon = love.graphics.newImage("images/solidarityui_16x16_0.png"),
-		energytextbg = love.graphics.newImage("images/solidarityui_16x16_1.png"),
-		energytextbground = love.graphics.newImage("images/solidarityui_16x16_2.png"),
-		energyboltlg = love.graphics.newImage("images/solidarityui_16x16_3.png"),
-		energyboltsm = love.graphics.newImage("images/solidarityui_16x16_4.png"),
-		energytextbgcircle = love.graphics.newImage("images/solidarityui_16x16_5.png"),
-		energytextbgsmleft = love.graphics.newImage("images/solidarityui_16x16_6.png"),
-		energytextbgsmright = love.graphics.newImage("images/solidarityui_16x16_7.png")
+		energyicon = love.graphics.newImage("images/solidarityui_16x16_00.png"),
+		energytextbg = love.graphics.newImage("images/solidarityui_16x16_01.png"),
+		energytextbground = love.graphics.newImage("images/solidarityui_16x16_02.png"),
+		energyboltlg = love.graphics.newImage("images/solidarityui_16x16_03.png"),
+		energyboltsm = love.graphics.newImage("images/solidarityui_16x16_04.png"),
+		energytextbgcircle = love.graphics.newImage("images/solidarityui_16x16_05.png"),
+		energytextbgsmleft = love.graphics.newImage("images/solidarityui_16x16_06.png"),
+		energytextbgsmright = love.graphics.newImage("images/solidarityui_16x16_07.png"),
+		timeiconbgday = love.graphics.newImage("images/solidarityui_16x16_08.png"),
+		timeiconbgevening = love.graphics.newImage("images/solidarityui_16x16_09.png"),
+		timeiconbgnight = love.graphics.newImage("images/solidarityui_16x16_10.png"),
+		timeiconday = love.graphics.newImage("images/solidarityui_16x16_11.png"),
+		timeiconevening = love.graphics.newImage("images/solidarityui_16x16_12.png"),
+		timeiconnight = love.graphics.newImage("images/solidarityui_16x16_13.png"),
 		}
 	boxTilesSheet = love.graphics.newImage("images/solidarity_box_tiles.png")
 
@@ -329,7 +363,7 @@ function love.load()
 
 	boxMap = {}
 
-	menu = {currentTab = "inventory", allTabs = {"inventory", "journal", "map1", "map2"}}
+	menu = {currentTab = "inventory", allTabs = {"inventory", "map2", "journal", "map1", }, position = {1, 1, 1}, total = 3, tabNum = 2}
 
 	-- objects that are not part of static background
 	movingObjectSheet = love.graphics.newImage("images/solidarity_objects.png")
@@ -341,6 +375,9 @@ function love.load()
 											 plantLgBerries = love.graphics.newQuad(5*gridsize, 0, 16, 16, movingObjectSheet:getDimensions()),
 											 barrelSmBerries = love.graphics.newQuad(6*gridsize, 0, 16, 16, movingObjectSheet:getDimensions()),
 											 barrelLgBerries = love.graphics.newQuad(7*gridsize, 0, 16, 16, movingObjectSheet:getDimensions()),
+											 platefull2 = love.graphics.newQuad(8*gridsize, 0, 16, 16, movingObjectSheet:getDimensions()),
+											 fenceopenL = love.graphics.newQuad(9*gridsize, 0, 16, 16, movingObjectSheet:getDimensions()),
+											 fenceopenR = love.graphics.newQuad(10*gridsize, 0, 16, 16, movingObjectSheet:getDimensions())
 											}
 	movingObjectData = {overworld = {{name = "plantSmBerries", x = 11*gridsize, y = 24*gridsize, visible = 1},
 																		{name = "plantSmBerries", x = 12*gridsize, y = 24*gridsize, visible = 1},
@@ -384,23 +421,29 @@ function love.load()
 																		{name = "plantLgBerries", x = 22*gridsize, y = 29*gridsize, visible = 1},
 																		{name = "barrelSmBerries", x = 15*gridsize, y = 22*gridsize, visible = 1},
 																		{name = "barrelLgBerries", x = 18*gridsize, y = 22*gridsize, visible = 1}
-																	 },
-											dininghall = {{name = "stool", x = 12*gridsize, y = 12*gridsize, visible = 1},
-																		{name = "stool", x = 14*gridsize, y = 12*gridsize, visible = 1},
-																		{name = "stool", x = 17*gridsize, y = 12*gridsize, visible = 1},
-																		{name = "stool", x = 18*gridsize, y = 12*gridsize, visible = 1},
-																		{name = "stool", x = 19*gridsize, y = 12*gridsize, visible = 1},
-																		{name = "stool", x = 23*gridsize, y = 12*gridsize, visible = 1},
-																		{name = "stool", x = 24*gridsize, y = 12*gridsize, visible = 1},
-																		{name = "stool", x = 12*gridsize, y = 16*gridsize, visible = 1},
-											 							{name = "stool", x = 13*gridsize, y = 16*gridsize, visible = 1},
-																		{name = "stool", x = 14*gridsize, y = 16*gridsize, visible = 1},
-																		{name = "stool", x = 18*gridsize, y = 16*gridsize, visible = 1},
-																		{name = "stool", x = 19*gridsize, y = 16*gridsize, visible = 1},
-																		{name = "stool", x = 22*gridsize, y = 16*gridsize, visible = 1},
-																		{name = "stool", x = 23*gridsize, y = 16*gridsize, visible = 1}
-																	}
+																	 }
 											}
+
+	nonInteractiveObjects = {overworld = {{name = "fenceopenL", x = 16*gridsize, y = 21*gridsize, visible = 1},
+																				{name = "fenceopenR", x = 17*gridsize, y = 21*gridsize, visible = 1}
+																			},
+													dininghall = {{name = "stool", x = 12*gridsize, y = 12*gridsize, visible = 1},
+																				{name = "stool", x = 14*gridsize, y = 12*gridsize, visible = 1},
+																				{name = "stool", x = 17*gridsize, y = 12*gridsize, visible = 1},
+																				{name = "stool", x = 18*gridsize, y = 12*gridsize, visible = 1},
+																				{name = "stool", x = 19*gridsize, y = 12*gridsize, visible = 1},
+																				{name = "stool", x = 23*gridsize, y = 12*gridsize, visible = 1},
+																				{name = "stool", x = 24*gridsize, y = 12*gridsize, visible = 1},
+																				{name = "stool", x = 12*gridsize, y = 16*gridsize, visible = 1},
+																				{name = "stool", x = 13*gridsize, y = 16*gridsize, visible = 1},
+																				{name = "stool", x = 14*gridsize, y = 16*gridsize, visible = 1},
+																				{name = "stool", x = 18*gridsize, y = 16*gridsize, visible = 1},
+																				{name = "stool", x = 19*gridsize, y = 16*gridsize, visible = 1},
+																				{name = "stool", x = 22*gridsize, y = 16*gridsize, visible = 1},
+																				{name = "stool", x = 23*gridsize, y = 16*gridsize, visible = 1}
+																			}
+													}
+
 
 	-- tiles that are rendered on top of the player and npcs
 	toptilesSheet = love.graphics.newImage("images/solidarity_toptiles.png")
@@ -421,10 +464,10 @@ function love.load()
 
 --- animated objects
 	animsheet2 = love.graphics.newImage("images/solidarity_object_anim.png")
-	objectAnimations = {{anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), "plantSmBerries", loop = 1, current = 0, running = 0},
-				 							{anim = newAnimation(animsheet2, 1*16, 3, 16, 16, .3), "plantLgBerries", loop = 1, current = 0, running = 0},
-										  {anim = newAnimation(animsheet2, 2*16, 4, 16, 16, .3), "barrelSmBerries", loop = 1, current = 0, running = 0},
-											{anim = newAnimation(animsheet2, 3*16, 4, 16, 16, .3), "barrelLgBerries", loop = 1, current = 0, running = 0}
+	objectAnimations = {{anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), "plantSmBerries", loop = 1, current = 0, running = 0, count = 0},
+				 							{anim = newAnimation(animsheet2, 1*16, 3, 16, 16, .3), "plantLgBerries", loop = 1, current = 0, running = 0, count = 0},
+										  {anim = newAnimation(animsheet2, 2*16, 4, 16, 16, .3), "barrelSmBerries", loop = 2, current = 0, running = 0, count = 0},
+											{anim = newAnimation(animsheet2, 3*16, 4, 16, 16, .3), "barrelLgBerries", loop = 2, current = 0, running = 0, count = 0}
 										}
 
 	animsheet_act = love.graphics.newImage("images/solidarity_anim_act.png")
@@ -464,16 +507,17 @@ function love.load()
 			 }
 
 
-	anim_act = {{anim = newAnimation(animsheet_act, 0, 4, 16, 16, .6), name = "player.actup", loop = 1, current = 0, running = 0},
-				{anim = newAnimation(animsheet_act, 1*16, 4, 16, 16, .6), name = "player.actdown", loop = 1, current = 0, running = 0},
-				{anim = newAnimation(animsheet_act, 2*16, 4, 16, 16, .6), name = "player.actleft", loop = 1, current = 0, running = 0},
-				{anim = newAnimation(animsheet_act, 3*16, 4, 16, 16, .6), name = "player.actright", loop = 1, current = 0, running = 0}}
+	anim_act = {{anim = newAnimation(animsheet_act, 0, 4, 16, 16, .6), name = "player.actup", loop = 1, current = 0, running = 0, count = 0},
+				{anim = newAnimation(animsheet_act, 1*16, 4, 16, 16, .6), name = "player.actdown", loop = 1, current = 0, running = 0, count = 0},
+				{anim = newAnimation(animsheet_act, 2*16, 4, 16, 16, .6), name = "player.actleft", loop = 1, current = 0, running = 0, count = 0},
+				{anim = newAnimation(animsheet_act, 3*16, 4, 16, 16, .6), name = "player.actright", loop = 1, current = 0, running = 0, count = 0}}
 	--fading
 	fading = {on = false, type = 1, start = 0, goal = 0, rate = 0, a = 0, countdown = 0, triggered = 0} -- type 1 = fade in from 0 to 255; 2 = fade out from 255 to 0
 	--cutscene
-	cutsceneControl = {stage = 0, total = 1, current = 1}
+	cutsceneControl = {stage = 0, total = 2, current = 1}
 	-- types: 1 = talk, 2 = changeScene
 	cutsceneList ={{
+		setup = 0,
 		triggered = false,
 		type = 1,
 		move = true, --does the NPC move?
@@ -488,7 +532,24 @@ function love.load()
 		goback = true, -- npc goes back to starting position
 		skipnext = false, -- do we go directly to next cutscene?
 		nextStage = true, -- do we go to the next game scene
-		switchTime = 1 -- what time of day is it after the end
+		switchTime = 2 -- what time of day is it after the end
+	},
+	{
+		triggered = false,
+		type = 1,
+		move = true, --does the NPC move?
+		npc = 6, --which NPC
+		target = player, -- where do they move
+		facing = {1}, --what direction are they facing at the end
+		noden = 1, --what node are they walking to next
+		dialoguekey = 1,
+		path = {},
+		fadeout = 0,
+		black = 0,
+		goback = true, -- npc goes back to starting position
+		skipnext = false, -- do we go directly to next cutscene?
+		nextStage = false, -- do we go to the next game scene
+		switchTime = 2 -- what time of day is it after the end
 	}}
 
 
@@ -501,19 +562,24 @@ function love.load()
 	textsub = ""
 	textn = 0
 	trigger = {0}
-	wait = {start = .8, rate = 1, current = 0, triggered = 0}
+	wait = {start = .8, rate = 1, current = 0, triggered = 0, n = 0}
+
+	--timer for blinking text/images
+		timer = {{base = .5, current = 0, trigger = 0}, -- blinking arrow
+						 {base = .03, current = 0, trigger = 0}} --unrolling text
 
 	--dialogue and object descriptions
 	require("scripts/dialoguefunctions")
+
+	-- other scripts
 	require("scripts/movefunctions")
 	require("scripts/pathfinding")
 	require("scripts/cutscenefunctions")
 	require("scripts/actionfunctions")
 	require("scripts/dialogue")
+	require("scripts/menufunctions")
 
---timer for blinking text/images
-	timer = {{base = .5, current = 0, trigger = 0}, -- blinking arrow
-					 {base = .03, current = 0, trigger = 0}} --unrolling text
+
 --editor for creating new maps and other functions
 	require("scripts/mapfunctions")
 
@@ -524,6 +590,8 @@ function love.load()
 
 	-- add location of NPCs or other moving obstacles to map collision
 	updateMap(npcs)
+
+
 	menuW, menuH = 14*gridsize, 7*gridsize
 	canvas = love.graphics.newCanvas(menuW, menuH)
 	formBox(menuW, menuH)
@@ -532,17 +600,7 @@ end
 
 
 function love.update(dt)
-	if gameStage == 0 then
-		if checkSpoken(npcs, NPCdialogue[dialogueStage], 6) == true then
-			if cutsceneControl.stage == 0 then
-				local n = cutsceneControl.current
-				if cutsceneList[n].triggered == false then
-					print("spoken to everyone")
-					cutsceneControl.stage = 1
-				end
-			end
-		end
-	end
+	cutsceneTrigger()
 
 	--run timers for blinking text
 	if dialogueMode == 1 then
@@ -565,6 +623,8 @@ function love.update(dt)
 		if trigger[1] == 0 then
 			DialogueTrigger(17, 21, 3)
 		end
+	end
+	if dialogueMode == 0 then
 		if player.canMove == 1 and currentLocation == "overworld" then
 			if gameStage == 0 then
 				moveCharBack(17, 21, 17, 22, 2)
@@ -592,7 +652,7 @@ function love.update(dt)
 	fadeCountdown(dt)
 	-- turn of key inputs
 	if wait.triggered == 1 then
-		inputWait(dt)
+		inputWait(wait.n, dt)
 	end
 --set direction and destination position
 	if debugView == 0 then
@@ -609,30 +669,19 @@ function love.update(dt)
 
 	--animation time update
 	animUpdate(animations, dt)
-	if actionMode == 1 then
-		if actions[1].k ~= 0 then
-			if objectAnimations[actions[1].k].running == 1 then
-				animUpdate(objectAnimations, dt)
-			end
+
+	if actions[1].k ~= 0 then
+		if objectAnimations[actions[1].k].running == 1 then
+			animUpdate(objectAnimations, dt, actions[1].k)
 		end
+	end
+	if actionMode == 1 then
 		if anim_act[player.facing].running == 1 then
 			animUpdate(anim_act, dt)
 		end
 	end
 
-	if player.energy <= 0 then
-		if freeze.action ~= 2 then
-			freeze.action = 1
-		end
-		freeze.dialogue = 1
-	else
-		if freeze.action == 1 then
-			freeze.action = 0
-		end
-		if freeze.dialogue == 1 then
-			freeze.dialogue = 0
-		end
-	end
+	freezeControl()
 
 	--cutscene triggered, update map
 	if cutsceneControl.stage == 1 then
@@ -686,8 +735,6 @@ end
 function love.draw()
 	local width = love.graphics.getWidth()
 	local height = love.graphics.getHeight()
-	local scale = {x=4, y=4}
-	scale.x, scale.y = getScale()
 	local translate = {x = (width - gridsize*scale.x) / 2, y = (height - gridsize*scale.y) /2}
 	love.graphics.push()
 	love.graphics.setBlendMode("alpha")
@@ -706,6 +753,7 @@ function love.draw()
 
 	-- draw tiles on top of player
 	drawStillObjects(currentLocation, movingObjectData, movingObjectSheet, movingObjectQuads)
+	drawStillObjects(currentLocation, nonInteractiveObjects, movingObjectSheet, movingObjectQuads)
 	if actions[1].k ~= 0 then
 		drawActAnims(objectAnimations, actions[1].k, actions[1].x, actions[1].y)
 	end
@@ -762,8 +810,8 @@ function love.draw()
 		love.graphics.print("turn: " .. battleGlobal.turn .."   phase: " .. battleGlobal.phase, player.act_x - 48, player.act_y - 40)
 	end
 
-	drawMeters(player.act_x-106, player.act_y-76)
-
+	drawMeters(player.act_x - width/scale.x/2 + 16, player.act_y-76)
+	drawTime(player.act_x + width/scale.x/2 - 32, player.act_y-76)
 	--fading
 	if fading.on == true then
 		fadeBlack(fading.a, width, height)
@@ -808,32 +856,25 @@ function love.keypressed(key)
 		end
 	--- interact with objects or people
 	  if key == "z" then
+			print("pressed z")
 			textn = 0
-			if freeze.dialogue == 0 then
-				if menuView == 0 then
-					DialogueSetup(npcs, dialogueStage)
-				end
-			elseif freeze.dialogue == 1 then
-				if dialogueMode == 1 then
-					DialogueSetup(npcs, dialogueStage)
-				end
-			end
 			if menuView == 0 then
+				DialogueSetup(npcs, dialogueStage)
 				faceObject(player.facing, staticObjects[currentLocation]) -- still objects
 				faceObject(player.facing, movingObjectData[currentLocation])
 				faceObject(player.facing, locationTriggers[currentLocation])
+				if actions[1].k ~= 0 then
+					resetAnims(objectAnimations, actions[1].k)
+				end
 				if actionMode == 1 then
-					if actions[1].k ~= 0 then
-						resetAnims(objectAnimations, actions[1].k)
-					end
 					resetAnims(anim_act, player.facing)
 				end
+			else
+				 menuHierarchy(key)
 			end
+			print("dialogueMode after z" .. dialogueMode)
 		end
 
-		if key == "x" then
-			exitAction()
-		end
 	-- add block to editor
 		if key == "space" and debugView == 1 then
 			addBlock (initTable, player.grid_x, player.grid_y, 1) -- editor.lua
@@ -868,35 +909,35 @@ function love.keypressed(key)
 
 		if key == "l" then
 			changeGameStage()
+			cutsceneControl.current = cutsceneControl.current + 1
+			cutsceneControl.stage = 0
 			print("gameStage: " .. gameStage)
 		end
 
 	-- move between dialogue or menu options
 
-	if key == "up" then
-		if choice.mode == 1 then
-			if choice.pos > 1 then
-				choice.pos = choice.pos - 1
-				choiceText(NPCdialogue[dialogueStage][choice.name][choice.case].text, choice.pos, choice.total)
+	if key == "down" or key == "up" then
+		if menuView ~= 1 then
+			if choice.mode == 1 then
+				choiceChange(key)
+			end
+		else
+			if menu.position[1] == 3 then
+				if menu.currentTab == "inventory" then
+					inventorySelect(key)
+				end
 			end
 		end
 	end
-	if key == "down" then
-		if choice.mode == 1 then
-			if choice.pos >= 1 and choice.pos < choice.total then
-				choice.pos = choice.pos + 1
-				choiceText(NPCdialogue[dialogueStage][choice.name][choice.case].text, choice.pos, choice.total)
+	if key == "left" or key == "right" then
+		if menuView == 1 then
+			if menu.position[1] == 1 then
+				menu.currentTab = switchTabs(key)
+			elseif menu.position[1] == 2 then
+				if menu.currentTab == "inventory" then
+					inventorySelect(key)
+				end
 			end
-		end
-	end
-	if key == "left" then
-		if menuView == 1 then
-			menu.currentTab = switchTabs(key)
-		end
-	end
-	if key == "right" then
-		if menuView == 1 then
-			menu.currentTab = switchTabs(key)
 		end
 	end
 
@@ -908,12 +949,29 @@ function love.keypressed(key)
 			-- battleEnd(storedLocation.x, storedLocation.y)
 		end
 	end
+	--end keyInput, keys below can be pressed any time
+
+	if key == "x" then
+		if menuView == 0 then
+			exitAction()
+			if dialogueMode == 1 then
+				print("textn " .. textn)
+				textn = 200
+				keyInput = 1
+			end
+		else
+			menuHierarchy(key)
+		end
+	end
+
 	if key == "f11" then
 		local fullscreen, fstype = love.window.getFullscreen( )
 		if fullscreen == false then
 			love.window.setFullscreen(true, "exclusive")
+			scale.x, scale.y = getScale()
 		else
 			love.window.setFullscreen(false, "exclusive")
+			scale.x, scale.y = getScale()
 		end
 	end
 	if key == "escape" then
@@ -921,6 +979,7 @@ function love.keypressed(key)
 	 		love.event.quit()
 		else
 			menuView = 0
+			menu.position[2] = 1
 			player.canMove = 1
 		end
 	end

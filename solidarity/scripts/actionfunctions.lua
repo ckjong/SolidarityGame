@@ -13,8 +13,8 @@ end
 -- test to see if player next to object, return object name
 function testObject(x, y, tbl)
 	if tbl ~= nil then
-		local m = (player.grid_x / 16) + x
-		local n = (player.grid_y / 16) + y
+		local m = (player.act_x / 16) + x
+		local n = (player.act_y / 16) + y
 		for i = 1, #tbl do
 			if m*gridsize == tbl[i].x and n*gridsize == tbl[i].y then
 				if tbl[i].off ~= nil then
@@ -24,6 +24,7 @@ function testObject(x, y, tbl)
 						return false, nil
 					end
 				end
+				print("object name for testObject: " .. tbl[i].name)
 				return true, tbl[i].name, i
 			end
 		end
@@ -149,6 +150,7 @@ function printObjText(b, c)
 				startAction(b, 1)
       end
 		else
+			print("printObjText set dialogueMode to 0")
 			dialogueMode = 0
 			player.canMove = 1
       wait.triggered = 0
@@ -199,6 +201,7 @@ function faceObject(dir, tbl)
 		local a, b, c = testObject(0, -1, tbl)
 		if a and b ~= nil then
       storedIndex = c
+			print("dir 1")
 			printObjText(b, c)
 			return
 		end
@@ -206,6 +209,7 @@ function faceObject(dir, tbl)
 		local a, b, c = testObject(0, 1, tbl)
 		if a and b ~= nil then
       storedIndex = c
+			print("dir 2")
 			printObjText(b, c)
 			return
 		end
@@ -213,6 +217,7 @@ function faceObject(dir, tbl)
 		local a, b, c = testObject(-1, 0, tbl)
 		if a and b ~= nil then
       storedIndex = c
+			print("dir 3")
 			printObjText(b, c)
 			return
 		end
@@ -220,6 +225,7 @@ function faceObject(dir, tbl)
 		local a, b, c = testObject(1, 0, tbl)
 		if a and b ~= nil then
       storedIndex = c
+			print("dir 4")
 			printObjText(b, c)
 			return
 		end
@@ -287,6 +293,7 @@ function exitAction()
 		actions[1].current = 0
 		player.canMove = 1
 		actionMode = 0
+		print("exitAction set dialogueMode to 0")
 		dialogueMode = 0
 	end
 end

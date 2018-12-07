@@ -118,7 +118,7 @@ function moveCharBack(x1, y1, x2, y2, d)
 		player.grid_y = y2*gridsize
 		player.moveDir = d
 		player.facing = d
-	else
+	elseif player.act_x == x2*gridsize and player.act_y == y2*gridsize then
     if trigger[1] == 1 then
       print("trigger reset")
 		  trigger[1] = 0

@@ -159,17 +159,23 @@ function choiceChange(key)
 end
 
 function DialogueSetup(tbl, n) -- iterate through npcs table, lookup text in NPCdialogue
+	print("dialogue setup triggered")
 	for i = 1, #tbl do
 		if initDialogue(tbl[i]) == true then
+			local name = tbl[i].name
+			local num = tbl[i].n
+			local case = tbl[i].c
+			local dialOpt = NPCdialogue[n][name][case]
+			local canSpeak = 1
 			if freeze.dialogue == 1 then
-				dialogueFreeze(tbl[i])
-			elseif freeze.dialogue == 0 then
+				if dialOpt.logic.energy ~= nil then
+					canSpeak = 0
+					dialogueFreeze(tbl[i])
+				end
+			end
+			if canSpeak == 1 then
 				print("tbl[i].n " .. tbl[i].n)
 				wait.triggered = 1
-				local name = tbl[i].name
-				local num = tbl[i].n
-				local case = tbl[i].c
-				local dialOpt = NPCdialogue[n][name][case]
 				currentspeaker = dialOpt.logic.speaker
 				if dialOpt.logic.cond == true then
 					if dialOpt.logic.display == 1 then
@@ -178,8 +184,10 @@ function DialogueSetup(tbl, n) -- iterate through npcs table, lookup text in NPC
 							textUpdate(num, dialOpt)
 							tbl[i].n = num + 1
 							print("tbl[i].n " .. tbl[i].n)
+							print("dialogueMode " .. dialogueMode)
 							return
 						else -- if not then move to next segment
+							print("turnning off dialogue")
 							if dialOpt.logic.off == true then
 								dialogueOff(tbl, i, dialOpt)
 								return
@@ -226,6 +234,7 @@ function dialogueFreeze(tbl)
 		currentspeaker = "player"
 		text = "I'm too tired to talk."
 	else
+		print("dialogueFreeze set dialogueMode to 0")
 		tbl.dialogue = 0
 		dialogueMode = 0
 		player.canMove = 1
