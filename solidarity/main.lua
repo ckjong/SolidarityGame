@@ -21,6 +21,12 @@ function love.load()
 	infoView = 0
 	menuView = 0
 	mapExists = 0
+	tempBlocks = {overworld = {
+														{x = 17, y = 20, on = 1},
+														{x = 16, y = 21, on = 0},
+														{x = 17, y = 21, on = 0}
+													}
+			}
 	locationTriggers = {
 										overworld = {
 											{x = 17*gridsize, y = 16*gridsize, name = "gardeningShed", x2 = 11*gridsize, y2 = 17*gridsize, locked = 1},--entrancex, entrancey, name, newplayerx, newplayery, locked (1 = yes)
@@ -42,6 +48,7 @@ function love.load()
 										store = {
 												{x = 17*gridsize, y = 20*gridsize, name = "overworld", x2 = 30*gridsize, y2 = 34*gridsize, locked = 0}}
 									}
+	locationList = {"overworld", "gardeningShed", "dormitory", "dininghall", "store"}
 	currentLocation = "overworld"
 	currentJournal = {}
 
@@ -121,7 +128,7 @@ function love.load()
 			c = 1,
 			battlestats = {maxhp = 2, damage = 1, moves = 2},
 			next = {{x = 21*gridsize, y = 23*gridsize, facing = 2, location = "overworld"},
-							{x = 26*gridsize, y = 9*gridsize, facing = 2, location = "dormitory"}}
+							{x = 21*gridsize, y = 15*gridsize, facing = 4, location = "dormitory"}}
 			},
 			{
 				grid_x = 10*gridsize,
@@ -165,7 +172,7 @@ function love.load()
 				c = 1,
 				battlestats = {maxhp = 3, damage = 1,  moves = 1},
 				next = {{x = 16*gridsize, y = 21*gridsize, facing = 4, location = "overworld"},
-								{x = 0, y = 0, facing = 0, location = "offscreen"}}
+								{x = 16*gridsize, y = 20*gridsize, facing = 4, location = "overworld"}}
 			},
 			{
 				grid_x = 21*gridsize,
@@ -208,7 +215,7 @@ function love.load()
 				n = 1, --stage in single conversation
 				c = 1,
 				battlestats = {maxhp = 3, damage = 1,  moves = 1},
-				next = {{x = 17*gridsize, y = 16*gridsize, facing = 2, location = "dininghall"},
+				next = {{x = 18*gridsize, y = 19*gridsize, facing = 2, location = "dininghall"},
 								{x = 0, y = 0, facing = 0, location = "dininghall"}}
 			},
 			{
@@ -232,16 +239,60 @@ function love.load()
 				battlestats = {maxhp = 3, damage = 1,  moves = 1},
 				next = {{x = 26*gridsize, y = 16*gridsize, facing = 2, location = "dormitory"},
 								{x = 26*gridsize, y = 16*gridsize, facing = 2, location = "dormitory"}}
+			},
+			{
+				grid_x = 18*gridsize,
+				grid_y = 27*gridsize,
+				act_x = 18*gridsize,
+				act_y = 27*gridsize,
+				speed = 30,
+				canMove = 0,
+				moveDir = 0,
+				threshold = 0,
+				facing = 1,
+				start = 2,
+				location = "overworld",
+				dialogue = 0,
+				name = "Robin",
+				status = "worker",
+				animationkey = 33, -- where animations start
+				n = 1, --stage in single conversation
+				c = 1,
+				battlestats = {maxhp = 3, damage = 1,  moves = 1},
+				next = {{x = 28*gridsize, y = 13*gridsize, facing = 2, location = "dormitory"},
+								{x = 28*gridsize, y = 13*gridsize, facing = 2, location = "dormitory"}}
+			},
+			{
+				grid_x = 0*gridsize,
+				grid_y = 0*gridsize,
+				act_x = 0*gridsize,
+				act_y = 0*gridsize,
+				speed = 30,
+				canMove = 0,
+				moveDir = 0,
+				threshold = 0,
+				facing = 1,
+				start = 2,
+				location = "offscreen",
+				dialogue = 0,
+				name = "Durian",
+				status = "worker",
+				animationkey = 37, -- where animations start
+				n = 1, --stage in single conversation
+				c = 1,
+				battlestats = {maxhp = 3, damage = 1,  moves = 1},
+				next = {{x = 27*gridsize, y = 14*gridsize, facing = 4, location = "dormitory"},
+								{x = 27*gridsize, y = 14*gridsize, facing = 4, location = "dormitory"}}
 			}
 }
 
 	storedLocation = {x = 0, y = 0}
 	storedIndex = 0
-	specialCoords = {{stage = 1, x = 16*gridsize, y = 19*gridsize, char = player, triggered = 0}}
+	specialCoords = {{stage = 1, x = 17*gridsize, y = 20*gridsize, char = player, triggered = 0}}
 
 -- actions
 	actionMode = 0
-	playObjectAnim = 0
+	usedItem = 0
 	actions = {{current = 0, max = 100, rate = 10, x = 0, y = 0, k = 0}
 						}
 --battle
@@ -251,20 +302,23 @@ function love.load()
 	require("scripts/battle")
 	--object text index for background objects
 	staticObjects = {overworld = {
-		{name = "GardeningSign", x = 16*gridsize, y = 17*gridsize},
-		{name = "KitchenSign",  x = 23*gridsize, y = 17*gridsize},
-	 	{name = "DormitorySign",  x = 29*gridsize, y = 26*gridsize},
-		{name = "StoreSign",  x = 29*gridsize, y = 34*gridsize}
+		{name = "gardeningSign", x = 16*gridsize, y = 17*gridsize},
+		{name = "kitchenSign",  x = 23*gridsize, y = 17*gridsize},
+	 	{name = "dormitorySign",  x = 29*gridsize, y = 26*gridsize},
+		{name = "storeSign",  x = 29*gridsize, y = 34*gridsize}
 		-- {"barrelSmBerriesStatic", 15*gridsize, 34*gridsize, off = 0},
 		-- {"barrelLgBerriesStatic", 19*gridsize, 34*gridsize, off = 0}
+		},
+		dormitory = {
+			{name = "playerBed", x = 15*gridsize, y = 16*gridsize}
 		}
 	}
 
 	objectInventory = {barrelSmBerries = 0, barrelLgBerries = 0}
 
-	itemStats = {plantSmBerries = {max = 60, unique = 0},
-							plantLgBerries = {max = 60, unique = 0},
-							platefull2 = {max = 60, unique = 1}
+	itemStats = {plantSmBerries = {max = 60, stackable = 1, dropNum = 10},
+							plantLgBerries = {max = 60, stackable = 1, dropNum = 10},
+							platefull2 = {max = 60, stackable = 0, dropNum = 1}
 							}
 
 --images
@@ -377,7 +431,9 @@ function love.load()
 											 barrelLgBerries = love.graphics.newQuad(7*gridsize, 0, 16, 16, movingObjectSheet:getDimensions()),
 											 platefull2 = love.graphics.newQuad(8*gridsize, 0, 16, 16, movingObjectSheet:getDimensions()),
 											 fenceopenL = love.graphics.newQuad(9*gridsize, 0, 16, 16, movingObjectSheet:getDimensions()),
-											 fenceopenR = love.graphics.newQuad(10*gridsize, 0, 16, 16, movingObjectSheet:getDimensions())
+											 fenceopenR = love.graphics.newQuad(10*gridsize, 0, 16, 16, movingObjectSheet:getDimensions()),
+											 fenceclosedL = love.graphics.newQuad(11*gridsize, 0, 16, 16, movingObjectSheet:getDimensions()),
+											 fenceclosedR = love.graphics.newQuad(12*gridsize, 0, 16, 16, movingObjectSheet:getDimensions())
 											}
 	movingObjectData = {overworld = {{name = "plantSmBerries", x = 11*gridsize, y = 24*gridsize, visible = 1},
 																		{name = "plantSmBerries", x = 12*gridsize, y = 24*gridsize, visible = 1},
@@ -425,7 +481,9 @@ function love.load()
 											}
 
 	nonInteractiveObjects = {overworld = {{name = "fenceopenL", x = 16*gridsize, y = 21*gridsize, visible = 1},
-																				{name = "fenceopenR", x = 17*gridsize, y = 21*gridsize, visible = 1}
+																				{name = "fenceopenR", x = 17*gridsize, y = 21*gridsize, visible = 1},
+																				{name = "fenceclosedL", x = 16*gridsize, y = 21*gridsize, visible = 0},
+																				{name = "fenceclosedR", x = 17*gridsize, y = 21*gridsize, visible = 0}
 																			},
 													dininghall = {{name = "stool", x = 12*gridsize, y = 12*gridsize, visible = 1},
 																				{name = "stool", x = 14*gridsize, y = 12*gridsize, visible = 1},
@@ -504,6 +562,14 @@ function love.load()
 				{anim = newAnimation(animsheet1, 29*16, 4, 16, 16, .6 ), name = "npcs[7].walkdown", loop = 0},
 				{anim = newAnimation(animsheet1, 30*16, 4, 16, 16, .65 ), name = "npcs[7].walkleft", loop = 0},
 				{anim = newAnimation(animsheet1, 31*16, 4, 16, 16, .65 ), name = "npcs[7].walkright", loop = 0},
+				{anim = newAnimation(animsheet1, 32*16, 4, 16, 16, .6 ), name = "npcs[8].walkup", loop = 0},
+				{anim = newAnimation(animsheet1, 33*16, 4, 16, 16, .6 ), name = "npcs[8].walkdown", loop = 0},
+				{anim = newAnimation(animsheet1, 34*16, 4, 16, 16, .65 ), name = "npcs[8].walkleft", loop = 0},
+				{anim = newAnimation(animsheet1, 35*16, 4, 16, 16, .65 ), name = "npcs[8].walkright", loop = 0},
+				{anim = newAnimation(animsheet1, 36*16, 4, 16, 16, .6 ), name = "npcs[9].walkup", loop = 0},
+				{anim = newAnimation(animsheet1, 37*16, 4, 16, 16, .6 ), name = "npcs[9].walkdown", loop = 0},
+				{anim = newAnimation(animsheet1, 38*16, 4, 16, 16, .65 ), name = "npcs[9].walkleft", loop = 0},
+				{anim = newAnimation(animsheet1, 39*16, 4, 16, 16, .65 ), name = "npcs[9].walkright", loop = 0}
 			 }
 
 
@@ -548,7 +614,7 @@ function love.load()
 		black = 0,
 		goback = true, -- npc goes back to starting position
 		skipnext = false, -- do we go directly to next cutscene?
-		nextStage = false, -- do we go to the next game scene
+		nextStage = true, -- do we go to the next game scene
 		switchTime = 2 -- what time of day is it after the end
 	}}
 
@@ -619,6 +685,38 @@ function love.update(dt)
 	end
 
 	-- initiate dialogue and move character back if they enter a location
+	if gameStage == 1 then
+		local i = getCharIndex("Finch")
+		if objectInventory.barrelSmBerries + objectInventory.barrelLgBerries >= 60 then
+			if areaCheck(16, 21, 17, 22, player) then
+				local bool1, k = checkInventory("Plum Berries")
+				local bool2, k = checkInventory("Rose Berries")
+				if bool1 == 0 and bool2 == 0 then
+					if npcs[i].c ~= 3 then
+						removeTempBlocks(currentLocation, 1)
+						npcs[i].c = 3
+					end
+				else
+					if npcs[i].c ~= 4 then
+						npcs[i].c = 4
+						print("npcs[i].c " ..  npcs[i].c)
+					end
+				end
+			end
+		end
+	elseif gameStage == 2 then
+		local i = getCharIndex("Finch")
+		if tempBlocks.overworld[2].on == 0 then
+			tempBlocks.overworld[2].on = 1
+			tempBlocks.overworld[3].on = 1
+			nonInteractiveObjects.overworld[1].visible = 0
+			nonInteractiveObjects.overworld[2].visible = 0
+			nonInteractiveObjects.overworld[3].visible = 1
+			nonInteractiveObjects.overworld[4].visible = 1
+			addTempBlocks(initTable)
+			saveMap()
+		end
+	end
 	if dialogueMode == 0 then
 		if trigger[1] == 0 then
 			DialogueTrigger(17, 21, 3)
@@ -632,21 +730,15 @@ function love.update(dt)
 				if objectInventory.barrelSmBerries + objectInventory.barrelLgBerries < 60 then
 					moveCharBack(17, 21, 17, 22, 2)
 				else
-					if areaCheck(16, 21, 17, 22, player) then
-						local bool1, k = checkInventory("Plum Berries")
-						local bool2, k = checkInventory("Rose Berries")
-						print("bool1 and 2 " .. bool1 .. bool2)
-						if bool1 == 0 and bool2 == 0 then
-							npcs[4].c = 3
-						else
-							npcs[4].c = 4
-							moveCharBack(17, 21, 17, 22, 2)
-						end
+					local i = getCharIndex("Finch")
+					if npcs[i].c == 4 then
+						moveCharBack(17, 21, 17, 22, 2)
 					end
 				end
 			end
 		end
 	end
+
 
 	--run through countdown
 	fadeCountdown(dt)
@@ -828,6 +920,7 @@ end
 -- KEY PRESSES --
 ---------------
 function love.keypressed(key)
+	print("key pressed, keyInput = " .. keyInput)
 	if keyInput == 1 then
 	--initiate debug/map editing mode
 	  if key == "p" then
@@ -859,6 +952,9 @@ function love.keypressed(key)
 			print("pressed z")
 			textn = 0
 			if menuView == 0 then
+				if usedItem == 1 then
+					afterItemUse()
+				end
 				DialogueSetup(npcs, dialogueStage)
 				faceObject(player.facing, staticObjects[currentLocation]) -- still objects
 				faceObject(player.facing, movingObjectData[currentLocation])
@@ -976,6 +1072,8 @@ function love.keypressed(key)
 	end
 	if key == "escape" then
 		if menuView == 0 then
+			removeTempBlocks("overworld", 2)
+			saveMap()
 	 		love.event.quit()
 		else
 			menuView = 0

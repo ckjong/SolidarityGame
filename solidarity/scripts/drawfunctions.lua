@@ -272,6 +272,9 @@ function drawText(x, y, scalex, recwidth)
   local c = text:sub(1, textn)
   if choice.mode == 1 then
     love.graphics.setColor(255, 255, 255)
+    if choice.total == 2 then
+      y = y + 4
+    end
     if choice.pos == 1 then
         love.graphics.draw(ui.arrowright, x, y-4)
     elseif choice.pos < choice.total then
@@ -296,10 +299,15 @@ function drawArrow(x, y, scaley, recwidth)
   local height = (love.graphics.getHeight( )/scaley)/2 - 6
   if timer[1].trigger == 1 then
     love.graphics.setColor(255, 255, 255)
-    if choice.more ~= 2 then
-      love.graphics.draw(ui.pressz, x + recwidth - 12, player.act_y + height)
+    if choice.mode == 1 then
+      if choice.pos < choice.total then
+        love.graphics.draw(ui.arrowdown, x + recwidth - 12, player.act_y + height)
+      end
+      if choice.pos > 1 then
+        love.graphics.draw(ui.arrowup, x + recwidth - 12, player.act_y + height - 20)
+      end
     else
-      love.graphics.draw(ui.arrowdown, x + recwidth - 12, player.act_y + height)
+      love.graphics.draw(ui.pressz, x + recwidth - 12, player.act_y + height)
     end
   end
 end

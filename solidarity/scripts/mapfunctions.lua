@@ -113,6 +113,39 @@ function fillEdges(tbl)
 	end
 end
 
+function addTempBlocks(tbl)
+	if tempBlocks[currentLocation] ~= nil then
+		for i = 1, #tempBlocks[currentLocation] do
+			if tempBlocks[currentLocation][i].on == 1 then
+				local x = tempBlocks[currentLocation][i].x
+				local y = tempBlocks[currentLocation][i].y
+				tbl[y][x] = 1
+			end
+		end
+	end
+end
+
+function removeTempBlocks(l, i) -- currentLocation, index
+	if tempBlocks[l] ~= nil then
+		if tempBlocks[l][i].on == 1 then
+			tempBlocks[l][i].on = 0
+			removeBlock(tempBlocks[l][i].x, tempBlocks[l][i].y)
+		end
+	end
+end
+
+function clearTempBlocks()
+	for j = 1, #locationList do
+		local l = locationList[j]
+		if tempBlocks[l] ~= nil then
+			for i = 1, #tempBlocks[l] do
+				if tempBlocks[l][i].on == 0 then
+					removeBlock(tempBlocks[l][i].x, tempBlocks[l][i].y)
+				end
+			end
+		end
+	end
+end
 -- check if a file exists
 function file_exists(name)
 	 local f=io.open(name,"r")
@@ -128,12 +161,16 @@ function mapGen (img, file1)
 		local content = f:read("*a")
 		initTable = json.decode(content)
 		io.close(f)
+		addTempBlocks(initTable)
+		clearTempBlocks()
 		doorLock(locationTriggers[currentLocation])
-		initTableFile = json.encode(initTable)
+		saveMap()
 	else
 		mapExists = 0
 		initTable = mapSize (img, gridsize)
 		fillEdges(initTable)
+		addTempBlocks(initTable)
+		clearTempBlocks()
 		doorLock(locationTriggers[currentLocation])
 		f = assert(io.open(file1, "w"))
 		initTableFile = json.encode(initTable)
@@ -201,9 +238,7 @@ end
 --remove block from location
 function removeBlock(x, y)
 	if initTable[y][x] ~= nil then
-		if initTable[y][x] == 2 then
-			initTable[y][x] = 0
-		end
+		initTable[y][x] = 0
 		saveMap()
 	end
 end

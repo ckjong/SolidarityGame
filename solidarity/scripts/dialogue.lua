@@ -30,7 +30,7 @@ NPCdialogue = {
           [10] = {text = {"Ok back to work I guess."},
                 logic = {next = 10, speaker = "Mint", cond = true, off = true, display = 1, spoken = 0, energy = 1}},
         },
-  Lark = {[1] = {text = {"What are you looking at? Get back to \nwork!"},
+  Lark = {[1] = {text = {"What are you looking at, huh?"},
                 logic = {next = 1, speaker = "Lark", cond = true, off = true, display = 1, spoken = 0, energy = 1}},
           [2] = {text = {"Why aren't you working?", "We don't pay you to stand around and chat.", "You're going to make up for this by \nworking overtime tonight.",
                 "Now GET MOVING! ... stupid lazy\nmudskins..."},
@@ -51,15 +51,20 @@ NPCdialogue = {
         },
   Tarragon = {[1] = {text = {"Go away."},
                 logic = {next = 1, speaker = "Tarragon", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
+        },
+  Robin = {[1] = {text = {"Shouldn't you be working?"},
+                logic = {next = 1, speaker = "Robin", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
         }
   },
   [1]= {
-  Fennel = {[1] = {
-                  text = {""},
-                  logic = {next = 2, speaker = "Fennel", cond = true, off = true, display = 1, spoken = 0, energy = 1}} -- say once
-        }, -- repeat
+  -- Fennel = {[1] = {
+  --                 text = {""},
+  --                 logic = {next = 2, speaker = "Fennel", cond = true, off = true, display = 1, spoken = 0, energy = 1}} -- say once
+  --       }, -- repeat
   Mint = {[1] = {text = {"Oh you got in trouble too huh?", "Guess this means we both missed\nsupper. Too bad.", "If only these berries weren't\npoisonous..."},
-                logic = {next = 1, speaker = "Mint", cond = true, off = true, display = 1, spoken = 0, energy = 1}} -- say once
+                logic = {next = 2, speaker = "Mint", cond = true, off = true, display = 1, spoken = 0, energy = 1}}, -- say once
+          [2] = {text = {"Ugh, I'm so hungry..."},
+               logic = {next = 1, speaker = "Mint", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
         },
   Lark = {[1] = {text = {"Hope you learned your lesson."},
                 logic = {next = 1, speaker = "Lark", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
@@ -72,10 +77,10 @@ NPCdialogue = {
                 logic = {next = 3, speaker = "Finch", cond = true, off = true, display = 1}},
            [4] = {text = {"Those berries don't belong to you.", "Better drop them in the barrels or\nyou'll be in biiig trouble."},
                 logic = {next = 4, speaker = "Finch", cond = true, off = true, display = 1}},
-           [5] = {text = {"I already told you you're done.", "Go back to whatever hole you crawled out of."},
+           [5] = {text = {"Day's over. Go back to whatever hole you crawled out of."},
                logic = {next = 5, speaker = "Finch", cond = true, off = true, display = 1}}
         },
-  Cress = {[1] = {text = {"Oh, uh, hi " ..player.name.. ", happy birthday. Sorry they made you work late."},
+  Cress = {[1] = {text = {"Oh, uh, hi " ..player.name.. ". Happy birthday. Sorry they made you work late."},
                 logic = {next = 2, speaker = "Cress", cond = true, off = false, display = 1, spoken = 0}},
           [2] = {text = {"It's not your fault.", "Lark is the worst."},
                 logic = {next = 3, offset = 2, speaker = "player", cond = true, off = false, display = 2}},
@@ -88,26 +93,68 @@ NPCdialogue = {
         },
   Agave = {[1] = {text = {"Oh there you are! I was worried they'd keep you all night.", "Don't worry we saved some dinner for you. And Mint too."},
                 logic = {next = 2, speaker = "Agave", cond = true, off = false, display = 1, spoken = 0,}},
-          [2] = {text = {"Wow, thank you! How did you manage that?", "They're usually so strict with food."},
+          [2] = {text = {"Wow, thank you! How did you get extra food though?", "They're usually so strict."},
                 logic = {next = 3, speaker = "player", cond = true, off = false, display = 1, spoken = 0}},
           [3] = {text = {"Let's just say it was a group effort.", "You need to eat at least one meal a day to keep your strength up!", "Try not to get in trouble too often or you'll go hungry."},
                 logic = {next = 4, speaker = "Agave", cond = true, off = true, display = 1, spoken = 0, func = charGivesObject, par = {"I got 1 Rat Soup.\n(Press I to open inventory.)", "Rat Soup", 1, "platefull2", false}}},
-          [4] = {text = {"You need to eat at least one meal a day to keep your strength up!", "Try not to get in trouble too often or you'll go hungry."},
+          [4] = {text = {"You need to eat at least one meal a day to keep your strength up!"},
                 logic = {next = 4, speaker = "Agave", cond = true, off = true, display = 1, spoken = 0}}
           },
   Tarragon = {[1] = {text = {"Leave me alone, I'm busy."},
                   logic = {next = 1, speaker = "Tarragon", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
+        },
+  Robin = {[1] = {text = {"Whatever it is, I'm not interested."},
+                logic = {next = 1, speaker = "Robin", cond = true, off = true, display = 1, spoken = 0}}
+        },
+  Durian = {[1] = {text = {"Another admirer huh?", "Oh, it's just Piss-head. Hah, never mind."},
+                logic = {next = 1, speaker = "Durian", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
+        }
+  },
+  [2]= {
+  -- Fennel = {[1] = {
+  --                 text = {""},
+  --                 logic = {next = 2, speaker = "Fennel", cond = true, off = true, display = 1, spoken = 0, energy = 1}} -- say once
+  --       }, -- repeat
+  Mint = {[1] = {text = {"I don't think Lark likes me very much." , "He makes me work overtime almost every day."},
+                logic = {next = 1, speaker = "Mint", cond = true, off = true, display = 1, spoken = 0, energy = 1}} -- say once
+        },
+  Finch = {[1] = {text = {"Day's over. Go back to whatever hole you crawled out of."},
+               logic = {next = 1, speaker = "Finch", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
+        },
+  Cress = {[1] = {text = {"You must be hungry after such a long day."," Were you able to get something to eat?"},
+                logic = {next = 2, speaker = "Cress", cond = true, off = false, display = 1, spoken = 0}},
+          [2] = {text = {"Yeah Agave saved some food for me."},
+                logic = {next = 3, offset = 2, speaker = "player", cond = true, off = false, display = 1}},
+          [3] = {text = {"Oh good, I'm glad."},
+                logic = {next = 3, speaker = "Cress", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
+        },
+  Agave = {[1] = {text = {"You should probably get to the dormitory.", "If they catch you hanging around here after clean-up they might ask questions."},
+                logic = {next = 2, speaker = "Agave", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
+          },
+  Tarragon = {[1] = {text = {"..."},
+                  logic = {next = 1, speaker = "Tarragon", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
+        },
+  Robin = {[1] = {text = {"What are you doing on the men's side?", " Go hang out with the girls and braid your hair", "or whatever it is females do with their spare time."},
+                logic = {next = 2, speaker = "Robin", cond = true, off = false, display = 1, spoken = 0}},
+          [2] = {text = {"Females...? You've got to be kidding."},
+                logic = {next = 3, speaker = "player", cond = true, off = false, display = 1, spoken = 0}},
+          [3] = {text = {"It's what you are isn't it?"},
+                logic = {next = 1, speaker = "Robin", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
+        },
+  Durian = {[1] = {text = {"Oh look it's another loser. Get out of here.", "Can't you see the adults are talking?"},
+                logic = {next = 1, speaker = "Durian", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
         }
   }
 }
 
 
 objectText = {
-  GardeningSign = {"Field Supplies"},
-  KitchenSign = {"Dining Hall"},
-  DormitorySign = {"Dormitory"},
-  StoreSign = {"The Shiny Coin: Your Friendly Company Store and Tavern"},
+  gardeningSign = {"Field Supplies"},
+  kitchenSign = {"Dining Hall"},
+  dormitorySign = {"Dormitory"},
+  storeSign = {"The Shiny Coin: Your Friendly Company Store and Tavern"},
   gardeningShed = {"It's locked."},
+  playerBed = {"It's my bed.", "I still have things to do."},
   dormitory = {"It's locked."},
   dininghall = {"It's locked."},
   store = {"It's locked."},

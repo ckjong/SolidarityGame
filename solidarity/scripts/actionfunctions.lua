@@ -76,30 +76,33 @@ function addRemoveItem(txt, i, a, b, w) -- text to display, item, amount, icon n
 	end
   text = txt
   local present, k = checkInventory(i)
-  if present == 1 then
-		if itemStats[b].unique == 0 then
-			--change amount of existing item
-	    player.inventory[k].amount = player.inventory[k].amount + a
-	    if player.inventory[k].amount <= 0 then
-	      --all items removed
-	      player.inventory[k] = nil
-	      table.remove(player.inventory, k)
-	    end
-		else
-			if a > 0 then
-				if inventoryFull (player.maxInventory) == false then
-					table.insert(player.inventory, {item = i, amount = a, icon = b})
-				end
+  -- if present == 1 then
+		-- if itemStats[b].unique == 0 then
+		-- 	--change amount of existing item
+	  --   player.inventory[k].amount = player.inventory[k].amount + a
+	  --   if player.inventory[k].amount <= 0 then
+	  --     --all items removed
+	  --     player.inventory[k] = nil
+	  --     table.remove(player.inventory, k)
+	  --   end
+		-- else
+		if a > 0 then
+			if inventoryFull (player.maxInventory) == false then
+				table.insert(player.inventory, {item = i, amount = a, icon = b})
 			else
-				table.remove(player.inventory, k)
+				text = "My inventory is full."
 			end
+		else
+			player.inventory[k] = nil
+			table.remove(player.inventory, k)
 		end
-  elseif present == 0 then
-    if a > 0 then
-      -- if item not there, create new entry
-      table.insert(player.inventory, {item = i, amount = a, icon = b})
-    end
-  end
+	-- 	end
+  -- elseif present == 0 then
+  --   if a > 0 then
+  --     -- if item not there, create new entry
+  --     table.insert(player.inventory, {item = i, amount = a, icon = b})
+  --   end
+  -- end
 end
 
 --pass object description to text, change dialogue mode
@@ -274,6 +277,7 @@ function BerryBarrel(b, c, sub, icon)
 end
 
 function startAction(b, n)
+	print("startAction set dialogueMode to 1")
 	dialogueMode = 1
 	currentspeaker = "player"
 	print("n: " .. n)
@@ -295,6 +299,8 @@ function exitAction()
 		actionMode = 0
 		print("exitAction set dialogueMode to 0")
 		dialogueMode = 0
+		wait.triggered = 0
+		keyInput = 1
 	end
 end
 
@@ -324,15 +330,29 @@ function energyMod(a)
 	end
 end
 
+function afterItemUse()
+	print("used Item, dialogueMode set to 0")
+	player.canMove = 1
+	dialogueMode = 0
+	actionMode = 0
+	usedItem = 0
+	return
+end
 
-function useItem(i)
+
+function useItem(i, item)
 	local text = ""
 	if itemEffects[i] ~= nil then
 		print("can do action")
 		print(itemEffects[i].text)
 		itemEffects[i].func(unpack(itemEffects[i].par))
 		menuView = 0
+		usedItem = 1
 		startAction(i, itemEffects[i].text)
+		if itemEffects[i].type == "once" then
+			print("remove used item")
+			addRemoveItem(objectText[i][itemEffects[i].text], item, -1, i, false)
+		end
 	else
 		print("no action possible")
 		text = "I can't use that item."

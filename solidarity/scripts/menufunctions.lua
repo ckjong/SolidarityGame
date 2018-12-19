@@ -88,7 +88,7 @@ function itemMenu()
 	if menu.position[1] == 3 and menu.currentTab == "inventory" then
 		if menu.position[3] == 1 then
 			print("menu position[1]: " .. menu.position[1])
-			useItem(player.inventory[menu.position[2]].icon)
+			useItem(player.inventory[menu.position[2]].icon, player.inventory[menu.position[2]].item)
 			menu.position[1] = 2
 			menu.position[3] = 1
 			if player.inventory[i] == nil then

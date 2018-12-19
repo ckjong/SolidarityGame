@@ -59,6 +59,35 @@ function timerText(dt, i)
 	end
 end
 
+function getCharIndex(name)
+	for i = 1, #npcs do
+		if npcs[i].name == name then
+			return i
+		end
+	end
+	print("no character found in getCharIndex")
+end
+
+function checkAdjacent(char)
+	if currentLocation == char.location then
+		if player.act_y == char.act_y then
+			if player.act_x == char.act_x - gridsize then
+				return true
+			elseif player.act_x == char.act_x + gridsize then
+				return true
+			end
+		end
+		if player.act_x == char.act_x then
+			if player.act_y == char.act_y - gridsize then
+				return true
+			elseif player.act_y == char.act_y + gridsize then
+				return true
+			end
+		end
+	end
+return false
+end
+
 
 --initiate dialogue
 function initDialogue (char)
@@ -165,58 +194,61 @@ function DialogueSetup(tbl, n) -- iterate through npcs table, lookup text in NPC
 			local name = tbl[i].name
 			local num = tbl[i].n
 			local case = tbl[i].c
-			local dialOpt = NPCdialogue[n][name][case]
-			local canSpeak = 1
-			if freeze.dialogue == 1 then
-				if dialOpt.logic.energy ~= nil then
-					canSpeak = 0
-					dialogueFreeze(tbl[i])
+			if NPCdialogue[n][name] ~= nil then
+				local dialOpt = NPCdialogue[n][name][case]
+				local canSpeak = 1
+				if freeze.dialogue == 1 then
+					if dialOpt.logic.energy ~= nil then
+						canSpeak = 0
+						dialogueFreeze(tbl[i])
+					end
 				end
-			end
-			if canSpeak == 1 then
-				print("tbl[i].n " .. tbl[i].n)
-				wait.triggered = 1
-				currentspeaker = dialOpt.logic.speaker
-				if dialOpt.logic.cond == true then
-					if dialOpt.logic.display == 1 then
-						if num <= #dialOpt.text then -- if there are more lines to say, advance through table
-							print("advance " .. num .. #dialOpt.text)
-							textUpdate(num, dialOpt)
-							tbl[i].n = num + 1
-							print("tbl[i].n " .. tbl[i].n)
-							print("dialogueMode " .. dialogueMode)
-							return
-						else -- if not then move to next segment
-							print("turnning off dialogue")
-							if dialOpt.logic.off == true then
-								dialogueOff(tbl, i, dialOpt)
+				if canSpeak == 1 then
+					print("tbl[i].n " .. tbl[i].n)
+					wait.triggered = 1
+					currentspeaker = dialOpt.logic.speaker
+					if dialOpt.logic.cond == true then
+						if dialOpt.logic.display == 1 then
+							if num <= #dialOpt.text then -- if there are more lines to say, advance through table
+								print("advance " .. num .. #dialOpt.text)
+								textUpdate(num, dialOpt)
+								tbl[i].n = num + 1
+								print("tbl[i].n " .. tbl[i].n)
+								print("dialogueMode " .. dialogueMode)
 								return
-							else
-								tbl[i].n = 1
-								tbl[i].c = dialOpt.logic.next
-								DialogueSetup(tbl, n)
+							else -- if not then move to next segment
+								print("turnning off dialogue")
+								if dialOpt.logic.off == true then
+									dialogueOff(tbl, i, dialOpt)
+									return
+								else
+									tbl[i].n = 1
+									tbl[i].c = dialOpt.logic.next
+									DialogueSetup(tbl, n)
+								end
 							end
 						end
-					end
-					if dialOpt.logic.display == 2 then
-						print("triggered choice display")
-						if choice.mode == 0 then -- if choice has not been made yet
-							wait.current = wait.start
-							choice.mode = 1
-							choice.total = #dialOpt.text
-							choice.name = name
-							choice.case = case
-							choiceText(dialOpt.text, choice.pos, choice.total) -- display dialogue options
-							return
-						elseif choice.mode == 1 then
-							print("choice mode off case" .. case)
-							local o = dialOpt.logic.offset
-							dialOpt.logic.spoken = 1
-							dialOpt.logic.next = choice.pos + o
-							tbl[i].n = 1
-							tbl[i].c = dialOpt.logic.next
-							choice.mode = 0
-							DialogueSetup(tbl, n)
+						if dialOpt.logic.display == 2 then
+							print("triggered choice display")
+							if choice.mode == 0 then -- if choice has not been made yet
+								wait.current = wait.start
+								choice.mode = 1
+								choice.total = #dialOpt.text
+								choice.name = name
+								choice.case = case
+								choiceText(dialOpt.text, choice.pos, choice.total) -- display dialogue options
+								return
+							elseif choice.mode == 1 then
+								print("choice mode off case" .. case)
+								local o = dialOpt.logic.offset
+								dialOpt.logic.spoken = 1
+								dialOpt.logic.next = choice.pos + o
+								tbl[i].n = 1
+								tbl[i].c = dialOpt.logic.next
+								choice.mode = 0
+								choice.pos = 0
+								DialogueSetup(tbl, n)
+							end
 						end
 					end
 				end

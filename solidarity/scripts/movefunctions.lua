@@ -67,6 +67,19 @@ function changeFacing(x1, y1, x2, y2, f)
   end
 end
 
+--make char face random directions every x seconds, ct = current time
+function randomFacing(char, x, ct, dt)
+	if ct > x then
+		local r = math.random(4)
+		char.facing = r
+		ct = ct - x
+		return ct
+	else
+		ct = ct + dt
+		return ct
+	end
+end
+
 --check if there is a path to each open space, return path and direction npc facing at end
 function checkPaths(char, x1, y1)
   local path = createPathNPC(math.floor(char.act_x/gridsize), math.floor(char.act_y/gridsize), x1/gridsize, y1/gridsize)
@@ -83,6 +96,14 @@ end
 function areaCheck(x1, y1, x2, y2, char)
 	local x1, y1, x2, y2 = x1*gridsize, y1*gridsize, x2*gridsize, y2*gridsize
 	if char.grid_x >= x1 and char.grid_x <= x2 and char.grid_y >= y1 and char.grid_y <= y2 then
+		return true
+	else
+		return false
+	end
+end
+
+function positionCheck(x, y, char)
+	if (char.act_x - x) <= 0.05 and (char.act_y - y) <= 0.05 then
 		return true
 	else
 		return false
