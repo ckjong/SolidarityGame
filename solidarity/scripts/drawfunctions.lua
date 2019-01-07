@@ -167,21 +167,20 @@ function drawPortrait(name, x, y, sheet)
   local w = portraitkey[k].width
   local h = portraitkey[k].height
   local quad = love.graphics.newQuad(s, 0, w, h, image:getDimensions())
+  love.graphics.setColor(255, 255, 255)
   love.graphics.draw(sheet, quad, x + 4, y-16)
 end
 
 --render player
 function drawPlayer(tbl)
-  for i = 1, 4 do
-    if player.moveDir == i then
-      local spriteNum = math.floor(tbl[i]["anim"]["currentTime"] / tbl[i]["anim"]["duration"] * #tbl[i]["anim"]["quads"]) + 1
-      love.graphics.draw(tbl[i]["anim"]["spriteSheet"], tbl[i]["anim"]["quads"][spriteNum], player.act_x, player.act_y, 0, 1)
-    elseif player.moveDir == 0 then
-      if player.facing == i then
-        if actionMode == 0 then
-          love.graphics.draw(tbl[i]["anim"]["spriteSheet"], tbl[i]["anim"]["quads"][1], player.act_x, player.act_y, 0, 1)
-        end
-      end
+  local i = player.moveDir
+  if player.moveDir ~= 0 then
+    local spriteNum = math.floor(tbl[i]["anim"]["currentTime"] / tbl[i]["anim"]["duration"] * #tbl[i]["anim"]["quads"]) + 1
+    love.graphics.draw(tbl[i]["anim"]["spriteSheet"], tbl[i]["anim"]["quads"][spriteNum], player.act_x, player.act_y, 0, 1)
+  elseif player.moveDir == 0 then
+    i = player.facing
+    if actionMode == 0 then
+      love.graphics.draw(tbl[i]["anim"]["spriteSheet"], tbl[i]["anim"]["quads"][1], player.act_x, player.act_y, 0, 1)
     end
   end
 end
@@ -197,15 +196,11 @@ function drawNPCs(tbl)
         love.graphics.draw(tbl[k+f]["anim"]["spriteSheet"], tbl[k+f]["anim"]["quads"][1], npcs[i].act_x, npcs[i].act_y, 0, 1)
       else
         if npcs[i].canMove == 1 then
-          for v = 1, 4 do
-            if npcs[i].moveDir == v then
-              local spriteNum = math.floor(tbl[k+j]["anim"]["currentTime"] / tbl[k+j]["anim"]["duration"] * #tbl[k+j]["anim"]["quads"]) + 1
-              love.graphics.draw(tbl[k+j]["anim"]["spriteSheet"], tbl[k+j]["anim"]["quads"][spriteNum], npcs[i].act_x, npcs[i].act_y, 0, 1)
-            elseif npcs[i].moveDir == 0 then
-              if npcs[i].facing == v then
-                love.graphics.draw(tbl[k+f]["anim"]["spriteSheet"], tbl[k+f]["anim"]["quads"][1], npcs[i].act_x, npcs[i].act_y, 0, 1)
-              end
-            end
+          if npcs[i].moveDir ~= 0 then
+            local spriteNum = math.floor(tbl[k+j]["anim"]["currentTime"] / tbl[k+j]["anim"]["duration"] * #tbl[k+j]["anim"]["quads"]) + 1
+            love.graphics.draw(tbl[k+j]["anim"]["spriteSheet"], tbl[k+j]["anim"]["quads"][spriteNum], npcs[i].act_x, npcs[i].act_y, 0, 1)
+          elseif npcs[i].moveDir == 0 then
+            love.graphics.draw(tbl[k+f]["anim"]["spriteSheet"], tbl[k+f]["anim"]["quads"][1], npcs[i].act_x, npcs[i].act_y, 0, 1)
           end
         else
           love.graphics.draw(tbl[k+s]["anim"]["spriteSheet"], tbl[k+s]["anim"]["quads"][1], npcs[i].act_x, npcs[i].act_y, 0, 1)
@@ -264,6 +259,33 @@ function drawTime(x, y)
   elseif time == 3 then
     love.graphics.draw(ui.timeiconbgnight, x - 16, y)
     love.graphics.draw(ui.timeiconnight, x - 16, y)
+  end
+end
+
+function drawName(boxposx, boxposy)
+  local nameposx = boxposx + 48
+  local nameposy = boxposy - 12
+  local l = string.len(currentspeaker)
+  if currentspeaker == "player" then
+    l = string.len(player.name)
+  end
+  local n = 16
+  if l < 5 then
+    n = 6
+  elseif l >= 5 and l < 7 then
+    n = 10
+  elseif l >= 7 then
+    n = 16
+  end
+  love.graphics.setColor(255, 255, 255)
+  love.graphics.draw(ui.namebgL, nameposx, nameposy)
+  love.graphics.draw(ui.namebgM, nameposx + n, nameposy)
+  love.graphics.draw(ui.namebgR, nameposx + 2 * n, nameposy)
+  love.graphics.setColor(93, 43, 67)
+  if currentspeaker ~= "player" then
+    love.graphics.printf(currentspeaker, nameposx, nameposy+4, n+n+17, "center")
+  else
+    love.graphics.printf(player.name, nameposx, nameposy+4, n+n+17, "center")
   end
 end
 

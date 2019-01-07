@@ -38,16 +38,16 @@ end
 function checkOpenSpace(x, y)
   local open = {}
   if testMap(x, y, 0, -1) then
-    table.insert(open, {0, -1, 2}) --x2, y2, direction NPC facing
+    table.insert(open, 1) --x2, y2, direction NPC facing
   end
   if testMap(x, y, 0, 1) then
-    table.insert(open, {0, 1, 1})
+    table.insert(open, 2)
   end
   if testMap(x, y, -1, 0) then
-    table.insert(open, {-1, 0, 4})
+    table.insert(open, 3)
   end
   if testMap(x, y, 1, 0) then
-    table.insert(open, {1, 0, 3})
+    table.insert(open, 4)
   end
   return open
 end
@@ -67,11 +67,17 @@ function changeFacing(x1, y1, x2, y2, f)
   end
 end
 
---make char face random directions every x seconds, ct = current time
+
+
+--make char face different directions every x seconds, ct = current time
 function randomFacing(char, x, ct, dt)
 	if ct > x then
-		local r = math.random(4)
-		char.facing = r
+		local tbl = checkOpenSpace(char.grid_x, char.grid_y)
+		local i = math.random(#tbl)
+		char.facing = tbl[i]
+		print(char.name .. " now facing " .. char.facing)
+		char.timer.mt = math.random(3, 7)
+		print(char.name .. " next turn " .. char.timer.mt)
 		ct = ct - x
 		return ct
 	else

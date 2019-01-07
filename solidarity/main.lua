@@ -97,6 +97,9 @@ function love.load()
 		threshold = 0,
 		facing = 1, --direction currently facing
 		start = 1, --direction facing when starting
+		randomturn = 0, --randomly faces different directions
+		working = 1, -- use action anims
+		timer = {ct = 0, mt = 0}, -- timer for direction changes, etc.
 		location = "overworld",
 		dialogue = 0,
 		name = "Fennel",
@@ -119,6 +122,9 @@ function love.load()
 			threshold = 0,
 			facing = 1,
 			start = 2,
+			randomturn = 0, --randomly faces different directions
+			working = 1, -- use action anims
+			timer = {ct = 0, mt = 0}, -- timer for direction changes, etc.
 			location = "overworld",
 			dialogue = 0,
 			name = "Mint",
@@ -136,11 +142,14 @@ function love.load()
 				act_x = 10*gridsize,
 				act_y = 27*gridsize,
 				speed = 30,
-				canMove = 0,
+				canMove = 1,
 				moveDir = 0,
 				threshold = 0,
 				facing = 1,
 				start = 4,
+				randomturn = 1,
+				working = 0,
+				timer = {ct = 0, mt = 0}, -- timer for direction changes, etc.
 				location = "overworld",
 				dialogue = 0,
 				name = "Lark",
@@ -163,6 +172,9 @@ function love.load()
 				threshold = 0,
 				facing = 1,
 				start = 4,
+				randomturn = 0,
+				working = 0,
+				timer = {ct = 0, mt = 0}, -- timer for direction changes, etc.
 				location = "overworld",
 				dialogue = 0,
 				name = "Finch",
@@ -185,6 +197,9 @@ function love.load()
 				threshold = 0,
 				facing = 1,
 				start = 1,
+				randomturn = 0,
+				working = 0,
+				timer = {ct = 0, mt = 0}, -- timer for direction changes, etc.
 				location = "overworld",
 				dialogue = 0,
 				name = "Cress",
@@ -207,6 +222,9 @@ function love.load()
 				threshold = 0,
 				facing = 1,
 				start = 2,
+				randomturn = 0,
+				working = 0,
+				timer = {ct = 0, mt = 0}, -- timer for direction changes, etc.
 				location = "overworld",
 				dialogue = 0,
 				name = "Agave",
@@ -229,6 +247,9 @@ function love.load()
 				threshold = 0,
 				facing = 1,
 				start = 2,
+				randomturn = 0,
+				working = 0,
+				timer = {ct = 0, mt = 0}, -- timer for direction changes, etc.
 				location = "overworld",
 				dialogue = 0,
 				name = "Tarragon",
@@ -241,9 +262,9 @@ function love.load()
 								{x = 26*gridsize, y = 16*gridsize, facing = 2, location = "dormitory"}}
 			},
 			{
-				grid_x = 18*gridsize,
+				grid_x = 14*gridsize,
 				grid_y = 27*gridsize,
-				act_x = 18*gridsize,
+				act_x = 14*gridsize,
 				act_y = 27*gridsize,
 				speed = 30,
 				canMove = 0,
@@ -251,6 +272,9 @@ function love.load()
 				threshold = 0,
 				facing = 1,
 				start = 2,
+				randomturn = 0,
+				working = 0,
+				timer = {ct = 0, mt = 0}, -- timer for direction changes, etc.
 				location = "overworld",
 				dialogue = 0,
 				name = "Robin",
@@ -273,6 +297,9 @@ function love.load()
 				threshold = 0,
 				facing = 1,
 				start = 2,
+				randomturn = 0,
+				working = 0,
+				timer = {ct = 0, mt = 0}, -- timer for direction changes, etc.
 				location = "offscreen",
 				dialogue = 0,
 				name = "Durian",
@@ -390,6 +417,9 @@ function love.load()
 		timeiconday = love.graphics.newImage("images/solidarityui_16x16_11.png"),
 		timeiconevening = love.graphics.newImage("images/solidarityui_16x16_12.png"),
 		timeiconnight = love.graphics.newImage("images/solidarityui_16x16_13.png"),
+		namebgL = love.graphics.newImage("images/solidarityui_16x16_15.png"),
+		namebgM = love.graphics.newImage("images/solidarityui_16x16_16.png"),
+		namebgR = love.graphics.newImage("images/solidarityui_16x16_17.png"),
 		}
 	boxTilesSheet = love.graphics.newImage("images/solidarity_box_tiles.png")
 
@@ -758,6 +788,18 @@ function love.update(dt)
 	if player.canMove == 1 then
 		changeMap(player.act_x, player.act_y, locationTriggers[currentLocation])
 	end
+	if dialogueMode == 0 and menuView == 0 then
+		if cutsceneControl.stage < 1 then
+			if time == 1 and currentLocation == "overworld" then
+				for i = 1, #npcs do
+					if npcs[i].location == "overworld" and npcs[i].randomturn == 1 then
+						npcs[i].timer.ct = randomFacing(npcs[i], npcs[i].timer.mt, npcs[i].timer.ct, dt)
+					end
+				end
+			end
+		end
+	end
+
 
 	--animation time update
 	animUpdate(animations, dt)
@@ -885,8 +927,15 @@ function love.draw()
 		local boxposx = player.act_x + gridsize/2 - recwidth/2
 		local boxposy = player.act_y + gridsize/2 + (height/scale.y)/2 - recheight - ynudge
 		 -- - recheight + ynudge
+
+
 		--render dialogue box
+		love.graphics.setColor(255, 255, 255)
 		love.graphics.draw(ui.textboxbg, boxposx, boxposy)
+
+		--draw name of character speaking and text box
+		drawName(boxposx, boxposy)
+
 		if dialogueMode == 1 then
 			drawPortrait(currentspeaker, boxposx-2, boxposy, portraitsheet1)
 		end
