@@ -194,6 +194,7 @@ function changeGameStage()
         end
       end
       npcs[i].location = npcs[i].next[gameStage].location
+      npcs[i].working = npcs[i].next[gameStage].working
       npcs[i].c = 1
       npcs[i].n = 1
       npcs[i].canMove = 0

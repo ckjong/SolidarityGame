@@ -95,8 +95,13 @@ function itemMenu()
 				menu.position[2] = 1
 			end
 		elseif menu.position[3] == 2 then
-			addRemoveItem("Dropped " .. player.inventory[i].item, player.inventory[i].item, -1, player.inventory[i].icon, false)
-			print("removing item done")
+      if itemStats[player.inventory[i].icon].dropNum ~= nil then
+  			addRemoveItem("Dropped " .. player.inventory[i].item, player.inventory[i].item, -itemStats[player.inventory[i].icon].dropNum, player.inventory[i].icon, false)
+  			print("removing item done")
+      else
+        itemText = "You can't drop that."
+        print("can't drop item")
+      end
 			menu.position[1] = 2
 			menu.position[3] = 1
 			if player.inventory[i] == nil then

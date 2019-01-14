@@ -127,14 +127,14 @@ function love.load()
 			timer = {ct = 0, mt = 0}, -- timer for direction changes, etc.
 			location = "overworld",
 			dialogue = 0,
-			name = "Mint",
+			name = "Mint", --2
 			status = "worker",
 			animationkey = 9,
 			n = 1,
 			c = 1,
 			battlestats = {maxhp = 2, damage = 1, moves = 2},
-			next = {{x = 21*gridsize, y = 23*gridsize, facing = 2, location = "overworld"},
-							{x = 21*gridsize, y = 15*gridsize, facing = 4, location = "dormitory"}}
+			next = {{x = 21*gridsize, y = 23*gridsize, facing = 2, location = "overworld", working = 1},
+							{x = 21*gridsize, y = 15*gridsize, facing = 4, location = "dormitory", working = 0}}
 			},
 			{
 				grid_x = 10*gridsize,
@@ -152,14 +152,14 @@ function love.load()
 				timer = {ct = 0, mt = 0}, -- timer for direction changes, etc.
 				location = "overworld",
 				dialogue = 0,
-				name = "Lark",
+				name = "Lark", -- 3
 				status = "boss",
 				animationkey = 17, -- where animations start
 				n = 1, --stage in single conversation
 				c = 1,
 				battlestats = {maxhp = 5, damage = 1,  moves = 2},
-				next = {{x = 10*gridsize, y = 27*gridsize, facing = 4, location = "overworld"},
-								{x = 0, y = 0, facing = 0, location = "offscreen"}}
+				next = {{x = 10*gridsize, y = 27*gridsize, facing = 4, location = "overworld", working = 0},
+								{x = 0, y = 0, facing = 0, location = "offscreen", working = 0}}
 			},
 			{
 				grid_x = 16*gridsize,
@@ -177,14 +177,14 @@ function love.load()
 				timer = {ct = 0, mt = 0}, -- timer for direction changes, etc.
 				location = "overworld",
 				dialogue = 0,
-				name = "Finch",
+				name = "Finch", --4
 				status = "boss",
 				animationkey = 13, -- where animations start
 				n = 1, --stage in single conversation
 				c = 1,
 				battlestats = {maxhp = 3, damage = 1,  moves = 1},
-				next = {{x = 16*gridsize, y = 21*gridsize, facing = 4, location = "overworld"},
-								{x = 16*gridsize, y = 20*gridsize, facing = 4, location = "overworld"}}
+				next = {{x = 16*gridsize, y = 21*gridsize, facing = 4, location = "overworld", working = 0},
+								{x = 16*gridsize, y = 20*gridsize, facing = 4, location = "overworld", working = 0}}
 			},
 			{
 				grid_x = 21*gridsize,
@@ -202,14 +202,14 @@ function love.load()
 				timer = {ct = 0, mt = 0}, -- timer for direction changes, etc.
 				location = "overworld",
 				dialogue = 0,
-				name = "Cress",
+				name = "Cress", -- 5
 				status = "worker",
 				animationkey = 21, -- where animations start
 				n = 1, --stage in single conversation
 				c = 1,
 				battlestats = {maxhp = 3, damage = 1,  moves = 1},
-				next = {{x = 10*gridsize, y = 9*gridsize, facing = 2, location = "dormitory"},
-								{x = 10*gridsize, y = 9*gridsize, facing = 2, location = "dormitory"}}
+				next = {{x = 10*gridsize, y = 9*gridsize, facing = 2, location = "dormitory", working = 0},
+								{x = 10*gridsize, y = 9*gridsize, facing = 2, location = "dormitory", working = 0}}
 			},
 			{
 				grid_x = 13*gridsize,
@@ -227,14 +227,14 @@ function love.load()
 				timer = {ct = 0, mt = 0}, -- timer for direction changes, etc.
 				location = "overworld",
 				dialogue = 0,
-				name = "Agave",
+				name = "Agave", --6
 				status = "worker",
 				animationkey = 25, -- where animations start
 				n = 1, --stage in single conversation
 				c = 1,
 				battlestats = {maxhp = 3, damage = 1,  moves = 1},
-				next = {{x = 18*gridsize, y = 19*gridsize, facing = 2, location = "dininghall"},
-								{x = 0, y = 0, facing = 0, location = "dininghall"}}
+				next = {{x = 18*gridsize, y = 19*gridsize, facing = 2, location = "dininghall", working = 0},
+								{x = 0, y = 0, facing = 0, location = "dininghall", working = 0}}
 			},
 			{
 				grid_x = 21*gridsize,
@@ -252,14 +252,14 @@ function love.load()
 				timer = {ct = 0, mt = 0}, -- timer for direction changes, etc.
 				location = "overworld",
 				dialogue = 0,
-				name = "Tarragon",
+				name = "Tarragon", --7
 				status = "worker",
 				animationkey = 29, -- where animations start
 				n = 1, --stage in single conversation
 				c = 1,
 				battlestats = {maxhp = 3, damage = 1,  moves = 1},
-				next = {{x = 26*gridsize, y = 16*gridsize, facing = 2, location = "dormitory"},
-								{x = 26*gridsize, y = 16*gridsize, facing = 2, location = "dormitory"}}
+				next = {{x = 26*gridsize, y = 16*gridsize, facing = 2, location = "dormitory", working = 0},
+								{x = 26*gridsize, y = 16*gridsize, facing = 2, location = "dormitory", working = 0}}
 			},
 			{
 				grid_x = 14*gridsize,
@@ -277,14 +277,14 @@ function love.load()
 				timer = {ct = 0, mt = 0}, -- timer for direction changes, etc.
 				location = "overworld",
 				dialogue = 0,
-				name = "Robin",
+				name = "Robin", --8
 				status = "worker",
 				animationkey = 33, -- where animations start
 				n = 1, --stage in single conversation
 				c = 1,
 				battlestats = {maxhp = 3, damage = 1,  moves = 1},
-				next = {{x = 28*gridsize, y = 13*gridsize, facing = 2, location = "dormitory"},
-								{x = 28*gridsize, y = 13*gridsize, facing = 2, location = "dormitory"}}
+				next = {{x = 28*gridsize, y = 13*gridsize, facing = 2, location = "dormitory", working = 0},
+								{x = 28*gridsize, y = 13*gridsize, facing = 2, location = "dormitory", working = 0}}
 			},
 			{
 				grid_x = 0*gridsize,
@@ -302,14 +302,14 @@ function love.load()
 				timer = {ct = 0, mt = 0}, -- timer for direction changes, etc.
 				location = "offscreen",
 				dialogue = 0,
-				name = "Durian",
+				name = "Durian", --9
 				status = "worker",
 				animationkey = 37, -- where animations start
 				n = 1, --stage in single conversation
 				c = 1,
 				battlestats = {maxhp = 3, damage = 1,  moves = 1},
-				next = {{x = 27*gridsize, y = 14*gridsize, facing = 4, location = "dormitory"},
-								{x = 27*gridsize, y = 14*gridsize, facing = 4, location = "dormitory"}}
+				next = {{x = 27*gridsize, y = 14*gridsize, facing = 4, location = "dormitory", working = 0},
+								{x = 27*gridsize, y = 14*gridsize, facing = 4, location = "dormitory", working = 0}}
 			}
 }
 
@@ -347,6 +347,7 @@ function love.load()
 							plantLgBerries = {max = 60, stackable = 1, dropNum = 10},
 							platefull2 = {max = 60, stackable = 0, dropNum = 1}
 							}
+	itemText = ""
 
 --images
 	love.graphics.setDefaultFilter("nearest", "nearest")
@@ -606,7 +607,40 @@ function love.load()
 	anim_act = {{anim = newAnimation(animsheet_act, 0, 4, 16, 16, .6), name = "player.actup", loop = 1, current = 0, running = 0, count = 0},
 				{anim = newAnimation(animsheet_act, 1*16, 4, 16, 16, .6), name = "player.actdown", loop = 1, current = 0, running = 0, count = 0},
 				{anim = newAnimation(animsheet_act, 2*16, 4, 16, 16, .6), name = "player.actleft", loop = 1, current = 0, running = 0, count = 0},
-				{anim = newAnimation(animsheet_act, 3*16, 4, 16, 16, .6), name = "player.actright", loop = 1, current = 0, running = 0, count = 0}}
+				{anim = newAnimation(animsheet_act, 3*16, 4, 16, 16, .6), name = "player.actright", loop = 1, current = 0, running = 0, count = 0},
+				{anim = newAnimation(animsheet_act, 4*16, 4, 16, 16, .6), name = "npcs[1].actup", loop = 0, current = 0, running = 0, count = 0},
+				{anim = newAnimation(animsheet_act, 5*16, 4, 16, 16, .6), name = "npcs[1].actdown", loop = 0, current = 0, running = 0, count = 0},
+				{anim = newAnimation(animsheet_act, 6*16, 4, 16, 16, .6), name = "npcs[1].actleft", loop = 0, current = 0, running = 0, count = 0},
+				{anim = newAnimation(animsheet_act, 7*16, 4, 16, 16, .6), name = "npcs[1].actright", loop = 0, current = 0, running = 0, count = 0},
+				{anim = newAnimation(animsheet_act, 8*16, 4, 16, 16, .6), name = "npcs[2].actup", loop = 0, current = 0, running = 0, count = 0},
+				{anim = newAnimation(animsheet_act, 9*16, 4, 16, 16, .6), name = "npcs[2].actdown", loop = 0, current = 0, running = 0, count = 0},
+				{anim = newAnimation(animsheet_act, 10*16, 4, 16, 16, .6), name = "npcs[2].actleft", loop = 0, current = 0, running = 0, count = 0},
+				{anim = newAnimation(animsheet_act, 11*16, 4, 16, 16, .6), name = "npcs[2].actright", loop = 0, current = 0, running = 0, count = 0},
+				{anim = newAnimation(animsheet_act, 12*16, 4, 16, 16, .6), name = "npcs[3].actup", loop = 0, current = 0, running = 0, count = 0},
+				{anim = newAnimation(animsheet_act, 13*16, 4, 16, 16, .6), name = "npcs[3].actdown", loop = 0, current = 0, running = 0, count = 0},
+				{anim = newAnimation(animsheet_act, 14*16, 4, 16, 16, .6), name = "npcs[3].actleft", loop = 0, current = 0, running = 0, count = 0},
+				{anim = newAnimation(animsheet_act, 15*16, 4, 16, 16, .6), name = "npcs[3].actright", loop = 0, current = 0, running = 0, count = 0},
+				{anim = newAnimation(animsheet_act, 16*16, 4, 16, 16, .6), name = "npcs[4].actup", loop = 0, current = 0, running = 0, count = 0},
+				{anim = newAnimation(animsheet_act, 17*16, 4, 16, 16, .6), name = "npcs[4].actdown", loop = 0, current = 0, running = 0, count = 0},
+				{anim = newAnimation(animsheet_act, 18*16, 4, 16, 16, .6), name = "npcs[4].actleft", loop = 0, current = 0, running = 0, count = 0},
+				{anim = newAnimation(animsheet_act, 19*16, 4, 16, 16, .6), name = "npcs[4].actright", loop = 0, current = 0, running = 0, count = 0},
+				{anim = newAnimation(animsheet_act, 20*16, 4, 16, 16, .6), name = "npcs[5].actup", loop = 0, current = 0, running = 0, count = 0},
+				{anim = newAnimation(animsheet_act, 21*16, 4, 16, 16, .6), name = "npcs[5].actdown", loop = 0, current = 0, running = 0, count = 0},
+				{anim = newAnimation(animsheet_act, 22*16, 4, 16, 16, .6), name = "npcs[5].actleft", loop = 0, current = 0, running = 0, count = 0},
+				{anim = newAnimation(animsheet_act, 23*16, 4, 16, 16, .6), name = "npcs[5].actright", loop = 0, current = 0, running = 0, count = 0},
+				{anim = newAnimation(animsheet_act, 24*16, 4, 16, 16, .6), name = "npcs[6].actup", loop = 0, current = 0, running = 0, count = 0},
+				{anim = newAnimation(animsheet_act, 25*16, 4, 16, 16, .6), name = "npcs[6].actdown", loop = 0, current = 0, running = 0, count = 0},
+				{anim = newAnimation(animsheet_act, 26*16, 4, 16, 16, .6), name = "npcs[6].actleft", loop = 0, current = 0, running = 0, count = 0},
+				{anim = newAnimation(animsheet_act, 27*16, 4, 16, 16, .6), name = "npcs[6].actright", loop = 0, current = 0, running = 0, count = 0},
+				{anim = newAnimation(animsheet_act, 28*16, 4, 16, 16, .6), name = "npcs[7].actup", loop = 0, current = 0, running = 0, count = 0},
+				{anim = newAnimation(animsheet_act, 29*16, 4, 16, 16, .6), name = "npcs[7].actdown", loop = 0, current = 0, running = 0, count = 0},
+				{anim = newAnimation(animsheet_act, 30*16, 4, 16, 16, .6), name = "npcs[7].actleft", loop = 0, current = 0, running = 0, count = 0},
+				{anim = newAnimation(animsheet_act, 31*16, 4, 16, 16, .6), name = "npcs[7].actright", loop = 0, current = 0, running = 0, count = 0},
+				{anim = newAnimation(animsheet_act, 32*16, 4, 16, 16, .6), name = "npcs[8].actup", loop = 0, current = 0, running = 0, count = 0},
+				{anim = newAnimation(animsheet_act, 33*16, 4, 16, 16, .6), name = "npcs[8].actdown", loop = 0, current = 0, running = 0, count = 0},
+				{anim = newAnimation(animsheet_act, 34*16, 4, 16, 16, .6), name = "npcs[8].actleft", loop = 0, current = 0, running = 0, count = 0},
+				{anim = newAnimation(animsheet_act, 35*16, 4, 16, 16, .6), name = "npcs[8].actright", loop = 0, current = 0, running = 0, count = 0}
+			}
 	--fading
 	fading = {on = false, type = 1, start = 0, goal = 0, rate = 0, a = 0, countdown = 0, triggered = 0} -- type 1 = fade in from 0 to 255; 2 = fade out from 255 to 0
 	--cutscene
@@ -811,7 +845,13 @@ function love.update(dt)
 	end
 	if actionMode == 1 then
 		if anim_act[player.facing].running == 1 then
-			animUpdate(anim_act, dt)
+			animUpdate(anim_act, dt, player.facing)
+		end
+	end
+	for i = 1, #npcs do
+		if npcs[i].working == 1 then
+			local k = npcs[i].animationkey + npcs[i].start - 1
+			animUpdate(anim_act, dt, k)
 		end
 	end
 

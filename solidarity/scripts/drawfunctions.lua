@@ -107,6 +107,7 @@ function animUpdate(tbl, dt, k)
   if k then
     tbl[k]["anim"]["currentTime"] = tbl[k]["anim"]["currentTime"] + dt
     if tbl[k]["anim"]["currentTime"] >= tbl[k]["anim"]["duration"] then
+      print("npc act anim reset")
       tbl[k]["anim"]["currentTime"] = tbl[k]["anim"]["currentTime"] - tbl[k]["anim"]["duration"]
       if tbl[k].loop ~= 0 then
         tbl[k].count = tbl[k].count + 1
@@ -115,7 +116,9 @@ function animUpdate(tbl, dt, k)
           if tbl[k].running == 1 then
             tbl[k].running = 0
             tbl[k].count = 0
-            animFinish(movingObjectData[currentLocation])
+            if tbl == objectAnimations then
+              animFinish(movingObjectData[currentLocation])
+            end
           end
         end
       end
@@ -203,7 +206,12 @@ function drawNPCs(tbl)
             love.graphics.draw(tbl[k+f]["anim"]["spriteSheet"], tbl[k+f]["anim"]["quads"][1], npcs[i].act_x, npcs[i].act_y, 0, 1)
           end
         else
-          love.graphics.draw(tbl[k+s]["anim"]["spriteSheet"], tbl[k+s]["anim"]["quads"][1], npcs[i].act_x, npcs[i].act_y, 0, 1)
+          if npcs[i].working == 1 then
+            drawActAnims(anim_act, npcs[i].animationkey+s, npcs[i].act_x, npcs[i].act_y)
+          else
+            tbl = animations
+            love.graphics.draw(tbl[k+s]["anim"]["spriteSheet"], tbl[k+s]["anim"]["quads"][1], npcs[i].act_x, npcs[i].act_y, 0, 1)
+          end
         end
       end
     end
@@ -229,6 +237,9 @@ function drawActAnims(tbl, k, x, y)
     elseif tbl[k].running == 0 then
       love.graphics.draw(tbl[k]["anim"]["spriteSheet"], tbl[k]["anim"]["quads"][1], x, y, 0, 1)
     end
+  else
+    print ("spriteNum " .. spriteNum)
+    love.graphics.draw(tbl[k]["anim"]["spriteSheet"], tbl[k]["anim"]["quads"][spriteNum], x, y, 0, 1)
   end
 end
 

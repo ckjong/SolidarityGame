@@ -104,7 +104,7 @@ NPCdialogue = {
   Robin = {[1] = {text = {"Whatever it is, I'm not interested."},
                 logic = {next = 1, speaker = "Robin", cond = true, off = true, display = 1, spoken = 0}}
         },
-  Durian = {[1] = {text = {"Another admirer huh?", "Oh, it's just Pisshead. Hah, never mind."},
+  Durian = {[1] = {text = {"Another admirer huh?", "Oh, it's just you. Hah, never mind."},
                 logic = {next = 1, speaker = "Durian", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
         }
   },
@@ -126,19 +126,29 @@ NPCdialogue = {
           [3] = {text = {"Oh good, I'm glad."},
                 logic = {next = 3, speaker = "Cress", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
         },
-  Agave = {[1] = {text = {"You should probably get to the dormitory.", "Don't let them catch you hanging around here after clean-up."},
+  Agave = {[1] = {text = {"You should probably get to the dormitory.", "Don't let them catch you hanging around here after clean-up.", "You know how they are about loitering..."},
                 logic = {next = 1, speaker = "Agave", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
           },
   Tarragon = {[1] = {text = {"..."},
                   logic = {next = 1, speaker = "Tarragon", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
         },
-  Robin = {[1] = {text = {"What are you doing on the men's side?", "Go hang out with the girls and braid your hair", "or whatever it is females do with their spare time."},
+  Robin = {[1] = {text = {"What are you doing on the men's side?", "Go hang out with the girls and play with your dolls", "or whatever it is females do with their spare time."},
                 logic = {next = 2, speaker = "Robin", cond = true, off = false, display = 1, spoken = 0}},
           [2] = {text = {"Females...? You've got to be kidding."},
                 logic = {next = 3, speaker = "player", cond = true, off = false, display = 1, spoken = 0}},
-          [3] = {text = {"It's what you are isn't it?"},
-                logic = {next = 1, speaker = "Robin", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
-        },
+          [3] = {text = {"What? It's what you are isn't it?"},
+                logic = {next = 4, speaker = "Robin", cond = true, off = true, display = 1, spoken = 0, energy = 1}},
+          [4] = {text = {"You know what, I'm not going to bother.", "I'm not an animal...", "That's it, you're going down."},
+                logic = {next = 5, offset = 4, speaker = "player", cond = true, off = false, display = 2}},
+          [5] = {text = {"Running away huh? Typical."},
+                logic = {next = 8, speaker = "Robin", cond = true, off = true, display = 1, spoken = 0, energy = 1}}, -- respond to player options
+          [6] = {text = {"Really? Could have fooled me."},
+                logic = {next = 8, speaker = "Durian", cond = true, off = true, display = 1, spoken = 0, energy = 1}}, -- respond to player options
+          [7] = {text = {"."},
+                logic = {next = 8, speaker = "Durian", cond = true, off = true, display = 1, spoken = 0, energy = 1}}, -- respond to player options
+          [8] = {text = {"Ugh women are so chatty."},
+                logic = {next = 8, speaker = "Robin", cond = true, off = true, display = 1, spoken = 0, energy = 1}}, -- respond to player options
+      },
   Durian = {[1] = {text = {"Oh look it's another loser. Get out of here.", "Can't you see the adults are talking?"},
                 logic = {next = 1, speaker = "Durian", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
         }
