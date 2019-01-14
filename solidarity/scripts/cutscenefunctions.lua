@@ -194,10 +194,11 @@ function changeGameStage()
         end
       end
       npcs[i].location = npcs[i].next[gameStage].location
-      npcs[i].working = npcs[i].next[gameStage].working
+      npcs[i].canWork = npcs[i].next[gameStage].canWork
       npcs[i].c = 1
       npcs[i].n = 1
       npcs[i].canMove = 0
+      npcActSetup()
     end
   end
 end
@@ -268,6 +269,44 @@ function fadeCountdown(dt)
       player.canMove = 1
     end
   end
+end
+
+function runCutscene(dt)
+  --cutscene triggered, update map
+	if cutsceneControl.stage == 1 then
+		cutsceneStage1Talk()
+	end
+
+	--cutsecene running, move characters
+	if cutsceneControl.stage == 2 then
+		 cutsceneStage2Talk(dt)
+	end
+
+	--cutscene running, trigger dialogue
+	if cutsceneControl.stage == 3 then
+		cutsceneStage3Talk()
+	end
+
+	--cutscene running, return to starting position
+	if cutsceneControl.stage == 4 and dialogueMode == 0 then
+		cutsceneStage4Talk(dt)
+	end
+
+	-- start fade out
+	if cutsceneControl.stage == 5 then
+		cutsceneStage5Talk()
+	end
+
+-- waiting for fade to finish
+	if cutsceneControl.stage == 6 then
+		cutsceneStage6Talk(dt)
+
+	end
+
+	--cutscene over, reset
+	if cutsceneControl.stage == 7 and dialogueMode == 0 then
+		cutsceneStage7Talk()
+	end
 end
 
 function addJournal(a, b) -- entry

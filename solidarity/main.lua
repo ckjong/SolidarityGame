@@ -99,7 +99,8 @@ function love.load()
 		start = 1, --direction facing when starting
 		randomturn = 0, --randomly faces different directions
 		working = 1, -- use action anims
-		timer = {ct = 0, mt = 0}, -- timer for direction changes, etc.
+		canWork = 1,
+		timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc.
 		location = "overworld",
 		dialogue = 0,
 		name = "Fennel",
@@ -124,7 +125,8 @@ function love.load()
 			start = 2,
 			randomturn = 0, --randomly faces different directions
 			working = 1, -- use action anims
-			timer = {ct = 0, mt = 0}, -- timer for direction changes, etc.
+			canWork = 1,
+			timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc.
 			location = "overworld",
 			dialogue = 0,
 			name = "Mint", --2
@@ -133,8 +135,8 @@ function love.load()
 			n = 1,
 			c = 1,
 			battlestats = {maxhp = 2, damage = 1, moves = 2},
-			next = {{x = 21*gridsize, y = 23*gridsize, facing = 2, location = "overworld", working = 1},
-							{x = 21*gridsize, y = 15*gridsize, facing = 4, location = "dormitory", working = 0}}
+			next = {{x = 21*gridsize, y = 23*gridsize, facing = 2, location = "overworld", canWork = 1},
+							{x = 21*gridsize, y = 15*gridsize, facing = 4, location = "dormitory", canWork = 0}}
 			},
 			{
 				grid_x = 10*gridsize,
@@ -149,7 +151,8 @@ function love.load()
 				start = 4,
 				randomturn = 1,
 				working = 0,
-				timer = {ct = 0, mt = 0}, -- timer for direction changes, etc.
+				canWork = 0,
+				timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc.
 				location = "overworld",
 				dialogue = 0,
 				name = "Lark", -- 3
@@ -158,8 +161,8 @@ function love.load()
 				n = 1, --stage in single conversation
 				c = 1,
 				battlestats = {maxhp = 5, damage = 1,  moves = 2},
-				next = {{x = 10*gridsize, y = 27*gridsize, facing = 4, location = "overworld", working = 0},
-								{x = 0, y = 0, facing = 0, location = "offscreen", working = 0}}
+				next = {{x = 10*gridsize, y = 27*gridsize, facing = 4, location = "overworld", canWork = 0},
+								{x = 0, y = 0, facing = 0, location = "offscreen", canWork = 0}}
 			},
 			{
 				grid_x = 16*gridsize,
@@ -174,7 +177,8 @@ function love.load()
 				start = 4,
 				randomturn = 0,
 				working = 0,
-				timer = {ct = 0, mt = 0}, -- timer for direction changes, etc.
+				canWork = 0,
+				timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc.
 				location = "overworld",
 				dialogue = 0,
 				name = "Finch", --4
@@ -183,8 +187,8 @@ function love.load()
 				n = 1, --stage in single conversation
 				c = 1,
 				battlestats = {maxhp = 3, damage = 1,  moves = 1},
-				next = {{x = 16*gridsize, y = 21*gridsize, facing = 4, location = "overworld", working = 0},
-								{x = 16*gridsize, y = 20*gridsize, facing = 4, location = "overworld", working = 0}}
+				next = {{x = 16*gridsize, y = 21*gridsize, facing = 4, location = "overworld", canWork = 0},
+								{x = 16*gridsize, y = 20*gridsize, facing = 4, location = "overworld", canWork = 0}}
 			},
 			{
 				grid_x = 21*gridsize,
@@ -199,7 +203,8 @@ function love.load()
 				start = 1,
 				randomturn = 0,
 				working = 0,
-				timer = {ct = 0, mt = 0}, -- timer for direction changes, etc.
+				canWork = 0,
+				timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc.
 				location = "overworld",
 				dialogue = 0,
 				name = "Cress", -- 5
@@ -208,8 +213,8 @@ function love.load()
 				n = 1, --stage in single conversation
 				c = 1,
 				battlestats = {maxhp = 3, damage = 1,  moves = 1},
-				next = {{x = 10*gridsize, y = 9*gridsize, facing = 2, location = "dormitory", working = 0},
-								{x = 10*gridsize, y = 9*gridsize, facing = 2, location = "dormitory", working = 0}}
+				next = {{x = 10*gridsize, y = 9*gridsize, facing = 2, location = "dormitory", canWork = 0},
+								{x = 10*gridsize, y = 9*gridsize, facing = 2, location = "dormitory", canWork = 0}}
 			},
 			{
 				grid_x = 13*gridsize,
@@ -224,7 +229,8 @@ function love.load()
 				start = 2,
 				randomturn = 0,
 				working = 0,
-				timer = {ct = 0, mt = 0}, -- timer for direction changes, etc.
+				canWork = 0,
+				timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc.
 				location = "overworld",
 				dialogue = 0,
 				name = "Agave", --6
@@ -233,8 +239,8 @@ function love.load()
 				n = 1, --stage in single conversation
 				c = 1,
 				battlestats = {maxhp = 3, damage = 1,  moves = 1},
-				next = {{x = 18*gridsize, y = 19*gridsize, facing = 2, location = "dininghall", working = 0},
-								{x = 0, y = 0, facing = 0, location = "dininghall", working = 0}}
+				next = {{x = 18*gridsize, y = 19*gridsize, facing = 2, location = "dininghall", canWork = 0},
+								{x = 0, y = 0, facing = 0, location = "dininghall", canWork = 0}}
 			},
 			{
 				grid_x = 21*gridsize,
@@ -249,7 +255,8 @@ function love.load()
 				start = 2,
 				randomturn = 0,
 				working = 0,
-				timer = {ct = 0, mt = 0}, -- timer for direction changes, etc.
+				canWork = 0,
+				timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc.
 				location = "overworld",
 				dialogue = 0,
 				name = "Tarragon", --7
@@ -258,8 +265,8 @@ function love.load()
 				n = 1, --stage in single conversation
 				c = 1,
 				battlestats = {maxhp = 3, damage = 1,  moves = 1},
-				next = {{x = 26*gridsize, y = 16*gridsize, facing = 2, location = "dormitory", working = 0},
-								{x = 26*gridsize, y = 16*gridsize, facing = 2, location = "dormitory", working = 0}}
+				next = {{x = 26*gridsize, y = 16*gridsize, facing = 2, location = "dormitory", canWork = 0},
+								{x = 26*gridsize, y = 16*gridsize, facing = 2, location = "dormitory", canWork = 0}}
 			},
 			{
 				grid_x = 14*gridsize,
@@ -274,7 +281,8 @@ function love.load()
 				start = 2,
 				randomturn = 0,
 				working = 0,
-				timer = {ct = 0, mt = 0}, -- timer for direction changes, etc.
+				canWork = 0,
+				timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc.
 				location = "overworld",
 				dialogue = 0,
 				name = "Robin", --8
@@ -283,8 +291,8 @@ function love.load()
 				n = 1, --stage in single conversation
 				c = 1,
 				battlestats = {maxhp = 3, damage = 1,  moves = 1},
-				next = {{x = 28*gridsize, y = 13*gridsize, facing = 2, location = "dormitory", working = 0},
-								{x = 28*gridsize, y = 13*gridsize, facing = 2, location = "dormitory", working = 0}}
+				next = {{x = 28*gridsize, y = 13*gridsize, facing = 2, location = "dormitory", canWork = 0},
+								{x = 28*gridsize, y = 13*gridsize, facing = 2, location = "dormitory", canWork = 0}}
 			},
 			{
 				grid_x = 0*gridsize,
@@ -299,7 +307,8 @@ function love.load()
 				start = 2,
 				randomturn = 0,
 				working = 0,
-				timer = {ct = 0, mt = 0}, -- timer for direction changes, etc.
+				canWork = 0,
+				timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc., current time, max time, wait time
 				location = "offscreen",
 				dialogue = 0,
 				name = "Durian", --9
@@ -308,8 +317,8 @@ function love.load()
 				n = 1, --stage in single conversation
 				c = 1,
 				battlestats = {maxhp = 3, damage = 1,  moves = 1},
-				next = {{x = 27*gridsize, y = 14*gridsize, facing = 4, location = "dormitory", working = 0},
-								{x = 27*gridsize, y = 14*gridsize, facing = 4, location = "dormitory", working = 0}}
+				next = {{x = 27*gridsize, y = 14*gridsize, facing = 4, location = "dormitory", canWork = 0},
+								{x = 27*gridsize, y = 14*gridsize, facing = 4, location = "dormitory", canWork = 0}}
 			}
 }
 
@@ -720,6 +729,7 @@ function love.load()
 
 	-- add location of NPCs or other moving obstacles to map collision
 	updateMap(npcs)
+	npcActSetup()
 
 
 	menuW, menuH = 14*gridsize, 7*gridsize
@@ -834,7 +844,7 @@ function love.update(dt)
 		end
 	end
 
-
+	npcActUpdate(dt)
 	--animation time update
 	animUpdate(animations, dt)
 
@@ -856,42 +866,8 @@ function love.update(dt)
 	end
 
 	freezeControl()
+	runCutscene(dt)
 
-	--cutscene triggered, update map
-	if cutsceneControl.stage == 1 then
-		cutsceneStage1Talk()
-	end
-
-	--cutsecene running, move characters
-	if cutsceneControl.stage == 2 then
-		 cutsceneStage2Talk(dt)
-	end
-
-	--cutscene running, trigger dialogue
-	if cutsceneControl.stage == 3 then
-		cutsceneStage3Talk()
-	end
-
-	--cutscene running, return to starting position
-	if cutsceneControl.stage == 4 and dialogueMode == 0 then
-		cutsceneStage4Talk(dt)
-	end
-
-	-- start fade out
-	if cutsceneControl.stage == 5 then
-		cutsceneStage5Talk()
-	end
-
--- waiting for fade to finish
-	if cutsceneControl.stage == 6 then
-		cutsceneStage6Talk(dt)
-
-	end
-
-	--cutscene over, reset
-	if cutsceneControl.stage == 7 and dialogueMode == 0 then
-		cutsceneStage7Talk()
-	end
 
 	--battlemode
 	if battleMode == 1 and battleGlobal.phase == 0 then

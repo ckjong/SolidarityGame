@@ -88,6 +88,39 @@ function newAnimation(image, start, length, width, height, duration, startx)
   return animation
 end
 
+--control npc act animations
+
+function npcActSetup()
+  local off = 1
+  for i = 1, #npcs do
+    if npcs[i].canWork == 1 then
+      off = off + math.random(1, 3)
+      local a = math.random(2, 5)
+      local b = math.random(off, 8)
+      npcs[i].timer.mt = a
+      npcs[i].timer.wt = b
+    end
+  end
+end
+
+function npcActUpdate(dt)
+  for i = 1, #npcs do
+    if npcs[i].canWork == 1 then
+      npcs[i].timer.ct = npcs[i].timer.ct + dt
+      if npcs[i].working == 1 then
+        if npcs[i].timer.ct >= npcs[i].timer.mt then
+          npcs[i].timer.ct = 0
+          npcs[i].working = 0
+        end
+      else
+        if npcs[i].timer.ct >= npcs[i].timer.wt then
+          npcs[i].timer.ct = 0
+          npcs[i].working = 1
+        end
+      end
+    end
+  end
+end
 --draw background
 function drawBackground()
   love.graphics.setBackgroundColor(93, 43, 67)
@@ -107,7 +140,6 @@ function animUpdate(tbl, dt, k)
   if k then
     tbl[k]["anim"]["currentTime"] = tbl[k]["anim"]["currentTime"] + dt
     if tbl[k]["anim"]["currentTime"] >= tbl[k]["anim"]["duration"] then
-      print("npc act anim reset")
       tbl[k]["anim"]["currentTime"] = tbl[k]["anim"]["currentTime"] - tbl[k]["anim"]["duration"]
       if tbl[k].loop ~= 0 then
         tbl[k].count = tbl[k].count + 1
@@ -153,7 +185,6 @@ function animFinish(tbl)
 end
 
 function resetAnims(tbl, k)
-  print("reset triggered")
   tbl[k].running = 1
 end
 
@@ -238,7 +269,6 @@ function drawActAnims(tbl, k, x, y)
       love.graphics.draw(tbl[k]["anim"]["spriteSheet"], tbl[k]["anim"]["quads"][1], x, y, 0, 1)
     end
   else
-    print ("spriteNum " .. spriteNum)
     love.graphics.draw(tbl[k]["anim"]["spriteSheet"], tbl[k]["anim"]["quads"][spriteNum], x, y, 0, 1)
   end
 end
