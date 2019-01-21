@@ -91,14 +91,15 @@ end
 --control npc act animations
 
 function npcActSetup()
-  local off = 1
   for i = 1, #npcs do
     if npcs[i].canWork == 1 then
-      off = off + math.random(1, 3)
-      local a = math.random(2, 5)
-      local b = math.random(off, 8)
+      math.randomseed(i)
+      local a = math.random(2, 6)
+      local b = math.random(4, 12)
       npcs[i].timer.mt = a
       npcs[i].timer.wt = b
+      print(npcs[i].name .. " mt " .. npcs[i].timer.mt)
+      print(npcs[i].name .. " wt " .. npcs[i].timer.wt)
     end
   end
 end
@@ -148,7 +149,7 @@ function animUpdate(tbl, dt, k)
           if tbl[k].running == 1 then
             tbl[k].running = 0
             tbl[k].count = 0
-            if tbl == objectAnimations then
+            if tbl == objectAnimations and actions[1].k ~= 0 then
               animFinish(movingObjectData[currentLocation])
             end
           end
@@ -180,7 +181,7 @@ function animUpdate(tbl, dt, k)
 end
 
 function animFinish(tbl)
-  tbl[storedIndex].visible = 1
+  tbl[storedIndex[1]].visible = 1
   actions[1].k = 0
 end
 
@@ -208,6 +209,7 @@ end
 --render player
 function drawPlayer(tbl)
   local i = player.moveDir
+  love.graphics.setColor(255, 255, 255)
   if player.moveDir ~= 0 then
     local spriteNum = math.floor(tbl[i]["anim"]["currentTime"] / tbl[i]["anim"]["duration"] * #tbl[i]["anim"]["quads"]) + 1
     love.graphics.draw(tbl[i]["anim"]["spriteSheet"], tbl[i]["anim"]["quads"][spriteNum], player.act_x, player.act_y, 0, 1)
@@ -215,34 +217,45 @@ function drawPlayer(tbl)
     i = player.facing
     if actionMode == 0 then
       love.graphics.draw(tbl[i]["anim"]["spriteSheet"], tbl[i]["anim"]["quads"][1], player.act_x, player.act_y, 0, 1)
+    else
+      drawActAnims(player.animations.act, player.facing, player.act_x, player.act_y)
     end
   end
 end
 
-function drawNPCs(tbl)
-  for i = 1, #npcs do
-    if currentLocation == npcs[i].location then
-      local j = npcs[i].moveDir-1
-      local k = npcs[i].animationkey
-      local f = npcs[i].facing-1
-      local s = npcs[i].start-1
-      if npcs[i].dialogue == 1 then
-        love.graphics.draw(tbl[k+f]["anim"]["spriteSheet"], tbl[k+f]["anim"]["quads"][1], npcs[i].act_x, npcs[i].act_y, 0, 1)
+function drawNPCs(tbl, i)
+  love.graphics.setColor(255, 255, 255)
+  if currentLocation == npcs[i].location then
+    local j = npcs[i].moveDir
+    local f = npcs[i].facing
+    local s = npcs[i].start
+    if npcs[i].dialogue == 1 then
+      love.graphics.draw(tbl[f]["anim"]["spriteSheet"], tbl[f]["anim"]["quads"][1], npcs[i].act_x, npcs[i].act_y, 0, 1)
+    else
+      if npcs[i].canMove == 1 then
+        if npcs[i].moveDir ~= 0 then
+          local spriteNum = math.floor(tbl[j]["anim"]["currentTime"] / tbl[j]["anim"]["duration"] * #tbl[j]["anim"]["quads"]) + 1
+          love.graphics.draw(tbl[j]["anim"]["spriteSheet"], tbl[j]["anim"]["quads"][spriteNum], npcs[i].act_x, npcs[i].act_y, 0, 1)
+        elseif npcs[i].moveDir == 0 then
+          love.graphics.draw(tbl[f]["anim"]["spriteSheet"], tbl[f]["anim"]["quads"][1], npcs[i].act_x, npcs[i].act_y, 0, 1)
+        end
       else
-        if npcs[i].canMove == 1 then
-          if npcs[i].moveDir ~= 0 then
-            local spriteNum = math.floor(tbl[k+j]["anim"]["currentTime"] / tbl[k+j]["anim"]["duration"] * #tbl[k+j]["anim"]["quads"]) + 1
-            love.graphics.draw(tbl[k+j]["anim"]["spriteSheet"], tbl[k+j]["anim"]["quads"][spriteNum], npcs[i].act_x, npcs[i].act_y, 0, 1)
-          elseif npcs[i].moveDir == 0 then
-            love.graphics.draw(tbl[k+f]["anim"]["spriteSheet"], tbl[k+f]["anim"]["quads"][1], npcs[i].act_x, npcs[i].act_y, 0, 1)
+        if npcs[i].working == 1 then
+          drawActAnims(npcs[i].animations.act, s, npcs[i].act_x, npcs[i].act_y)
+          local x, y, n =  testNpcObject(npcs[i].facing, npcs[i].act_x, npcs[i].act_y, movingObjectData[currentLocation])
+          for k = 1, #objectAnimations do
+            if objectAnimations[k].name == n then
+              print("object next to NPC " .. objectAnimations[k].name)
+              if objectAnimations[k].running == 0 then
+                objectAnimations[k].running = 1
+                storedIndex[2] = k
+              end
+              drawActAnims(objectAnimations, k, x, y)
+            end
           end
         else
-          if npcs[i].working == 1 then
-            drawActAnims(anim_act, npcs[i].animationkey+s, npcs[i].act_x, npcs[i].act_y)
-          else
-            tbl = animations
-            love.graphics.draw(tbl[k+s]["anim"]["spriteSheet"], tbl[k+s]["anim"]["quads"][1], npcs[i].act_x, npcs[i].act_y, 0, 1)
-          end
+          tbl = npcs[i].animations.walk
+          love.graphics.draw(tbl[s]["anim"]["spriteSheet"], tbl[s]["anim"]["quads"][1], npcs[i].act_x, npcs[i].act_y, 0, 1)
         end
       end
     end
@@ -250,6 +263,7 @@ function drawNPCs(tbl)
 end
 
 function drawStillObjects(l, tbl, img, quad)
+  love.graphics.setColor(255, 255, 255)
   if tbl[l] ~= nil then
     for i = 1, #tbl[l] do
       local k = tbl[l][i].name
@@ -264,6 +278,8 @@ function drawActAnims(tbl, k, x, y)
   local spriteNum = math.floor(tbl[k]["anim"]["currentTime"] / tbl[k]["anim"]["duration"] * #tbl[k]["anim"]["quads"]) + 1
   if tbl[k].loop ~= 0 then
     if tbl[k].running == 1 then
+      print("tbl[k].running == 1 x = " .. x/16 .. "  y = " .. y/16)
+      print("spriteNum " .. spriteNum)
       love.graphics.draw(tbl[k]["anim"]["spriteSheet"], tbl[k]["anim"]["quads"][spriteNum], x, y, 0, 1)
     elseif tbl[k].running == 0 then
       love.graphics.draw(tbl[k]["anim"]["spriteSheet"], tbl[k]["anim"]["quads"][1], x, y, 0, 1)
@@ -416,11 +432,39 @@ function drawMenu(x, y, tab)
   love.graphics.printf(menuText, boxX, textY, textW, "center")
 end
 
+
+local function drawMenuBottom(x, y, offX, offY)
+  local i = menu.position[2]
+  local selectText = ""
+  local descriptionText = ""
+  if #player.inventory > 0 then
+    local k = player.inventory[i].icon
+    local textposx = x + gridsize/2 - menuW/2
+    local textposy = y - offY + menuH
+    local n = 16
+    selectText = player.inventory[i].item
+    if itemDescription[k] ~= nil then
+      descriptionText = itemDescription[k]
+    else
+      print("no item description found")
+    end
+    love.graphics.setColor(255, 255, 255)
+    love.graphics.draw(ui.namebgL, textposx + 80, textposy - 68)
+    love.graphics.draw(ui.namebgM, textposx + 80 + n, textposy - 68)
+    love.graphics.draw(ui.namebgM, textposx + 80 + 2 * n, textposy - 68)
+    love.graphics.draw(ui.namebgR, textposx + 80 + 3 * n, textposy - 68)
+    love.graphics.setColor(93, 43, 67)
+    love.graphics.printf(selectText, textposx, textposy - 64, menuW, "center")
+    love.graphics.printf(descriptionText, textposx +4, textposy - 46, menuW - 6, "center")
+  end
+end
+
 function drawInventory(x, y, offX, offY)
   local txt = "Inventory"
   local items = {}
   local objText = ""
   local selectText = ""
+  local descriptionText = ""
   for i = 1, player.maxInventory do
     love.graphics.setColor(255, 255, 255)
     love.graphics.draw(ui.itembg, x - offX + (i-1)*(26), y - offY)
@@ -441,8 +485,7 @@ function drawInventory(x, y, offX, offY)
   if menu.position[1] == 2 then
     local i = menu.position[2]
     if #player.inventory > 0 then
-      selectText = player.inventory[i].item
-      love.graphics.printf(selectText, x + gridsize/2 - menuW/2, y - offY + menuH - 36, menuW, "center")
+      drawMenuBottom(x, y, offX, offY)
     end
     if timer[1].trigger == 1 then
       love.graphics.setColor(255, 255, 255)
@@ -468,9 +511,7 @@ function drawInventory(x, y, offX, offY)
     love.graphics.draw(ui.cornerLBottom, x - offX - 4 + (i-1)*(26), y - offY + gridsize)
     love.graphics.draw(ui.cornerRBottom, x - offX + gridsize + (i-1)*(26), y - offY + gridsize)
     if #player.inventory > 0 then
-      selectText = player.inventory[i].item
-      love.graphics.setColor(93, 43, 67)
-      love.graphics.printf(selectText, x + gridsize/2 - menuW/2, y - offY + menuH - 36, menuW, "center")
+      drawMenuBottom(x, y, offX, offY)
     end
     love.graphics.setColor(255, 255, 255)
     love.graphics.draw(ui.textboxbg, boxposx, boxposy)
@@ -488,6 +529,7 @@ function drawInventory(x, y, offX, offY)
   end
   return txt
 end
+
 
 function drawMap2(x, y)
   local width = worldmap1:getWidth( )

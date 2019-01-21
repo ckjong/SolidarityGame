@@ -64,6 +64,126 @@ function love.load()
 	mapFile1 = nil
 
 
+	--images
+		love.graphics.setDefaultFilter("nearest", "nearest")
+		love.graphics.setColor(0, 0, 0)
+		love.graphics.setBackgroundColor(255,255,255)
+
+		-- scale for graphics
+		scale = {x=4, y=4}
+
+		bg = {overworld = love.graphics.newImage("images/solidarity_overworld.png"),
+					overworldnight = love.graphics.newImage("images/solidarity_overworld_night.png"),
+					gardeningShed = love.graphics.newImage("images/gardeningshedbg.png"),
+					battlefield1 = love.graphics.newImage("images/solidarity_battletest.png"),
+			  	dormitory = love.graphics.newImage("images/dormitory.png"),
+					dininghall = love.graphics.newImage("images/dininghall.png"),
+					store = love.graphics.newImage("images/store.png"),
+				}
+		currentBackground = bg.overworld
+		time = 1 -- 1 = day, 2 = evening, 3 = night
+		day = 1
+
+		worldmap1 = love.graphics.newImage("images/solidarity_map2.png")
+		overlays = {evening = love.graphics.newImage("images/evening_overlay.png")}
+
+		--portraits
+		portraitsheet1 = love.graphics.newImage("images/solidarity_char_portraits.png")
+		portraitkey = {{name = "player", width = 46, height = 46, start = 0},
+									 {name = "Fennel", width = 46, height = 46, start = 1*46},
+									 {name = "Mint", width = 46, height = 46, start = 2*46},
+									 {name = "Cress", width = 46, height = 46, start = 3*46},
+									 {name = "Tarragon", width = 46, height = 46, start = 4*46},
+									 {name = "Agave", width = 46, height = 46, start = 5*46},
+									 {name = "Finch", width = 46, height = 46, start = 6*46},
+									 {name = "Lark", width = 46, height = 46, start = 7*46},
+									 {name = "Robin", width = 46, height = 46, start = 8*46},
+									 {name = "Durian", width = 46, height = 46, start = 9*46},
+									 {name = "Brier", width = 46, height = 46, start = 10*46},
+									 {name = "Yarrow", width = 46, height = 46, start = 11*46},
+									 {name = "Kousa", width = 46, height = 46, start = 12*46},
+									 {name = "Tulsi", width = 46, height = 46, start = 14*46}
+									}
+		currentspeaker = "player"
+
+
+		ui = {arrowup = love.graphics.newImage("images/solidarity_ui_00.png"),
+			arrowdown = love.graphics.newImage("images/solidarity_ui_01.png"),
+			arrowright = love.graphics.newImage("images/solidarity_ui_02.png"),
+			arrowleft = love.graphics.newImage("images/solidarity_ui_03.png"),
+			pressz = love.graphics.newImage("images/solidarity_ui_04.png"),
+			cornerLTop = love.graphics.newImage("images/solidarity_ui_09.png"),
+			cornerRTop = love.graphics.newImage("images/solidarity_ui_10.png"),
+			cornerLBottom = love.graphics.newImage("images/solidarity_ui_11.png"),
+			cornerRBottom = love.graphics.newImage("images/solidarity_ui_12.png"),
+		 	itembg = love.graphics.newImage("images/solidarityui_16x16_14.png"),
+			textboxbg = love.graphics.newImage("images/solidarity_textboxfull.png"),
+			textboxbottom = love.graphics.newImage("images/solidarity_textboxbottom.png"),
+			energyicon = love.graphics.newImage("images/solidarityui_16x16_00.png"),
+			energytextbg = love.graphics.newImage("images/solidarityui_16x16_01.png"),
+			energytextbground = love.graphics.newImage("images/solidarityui_16x16_02.png"),
+			energyboltlg = love.graphics.newImage("images/solidarityui_16x16_03.png"),
+			energyboltsm = love.graphics.newImage("images/solidarityui_16x16_04.png"),
+			energytextbgcircle = love.graphics.newImage("images/solidarityui_16x16_05.png"),
+			energytextbgsmleft = love.graphics.newImage("images/solidarityui_16x16_06.png"),
+			energytextbgsmright = love.graphics.newImage("images/solidarityui_16x16_07.png"),
+			timeiconbgday = love.graphics.newImage("images/solidarityui_16x16_08.png"),
+			timeiconbgevening = love.graphics.newImage("images/solidarityui_16x16_09.png"),
+			timeiconbgnight = love.graphics.newImage("images/solidarityui_16x16_10.png"),
+			timeiconday = love.graphics.newImage("images/solidarityui_16x16_11.png"),
+			timeiconevening = love.graphics.newImage("images/solidarityui_16x16_12.png"),
+			timeiconnight = love.graphics.newImage("images/solidarityui_16x16_13.png"),
+			namebgL = love.graphics.newImage("images/solidarityui_16x16_15.png"),
+			namebgM = love.graphics.newImage("images/solidarityui_16x16_16.png"),
+			namebgR = love.graphics.newImage("images/solidarityui_16x16_17.png"),
+			}
+		boxTilesSheet = love.graphics.newImage("images/solidarity_box_tiles.png")
+
+		boxTilesQuads = {fill = {{love.graphics.newQuad(0, 0, 16, 16, boxTilesSheet:getDimensions()),
+															love.graphics.newQuad(1*16, 0, 16, 16, boxTilesSheet:getDimensions()),
+															love.graphics.newQuad(2*16, 0, 16, 16, boxTilesSheet:getDimensions())},
+															{love.graphics.newQuad(0, 1*16, 16, 16, boxTilesSheet:getDimensions()),
+															love.graphics.newQuad(1*16, 1*16, 16, 16, boxTilesSheet:getDimensions()),
+															love.graphics.newQuad(2*16, 1*16, 16, 16, boxTilesSheet:getDimensions())},
+															{love.graphics.newQuad(0, 2*16, 16, 16, boxTilesSheet:getDimensions()),
+															love.graphics.newQuad(1*16, 2*16, 16, 16, boxTilesSheet:getDimensions()),
+															love.graphics.newQuad(2*16, 2*16, 16, 16, boxTilesSheet:getDimensions())}
+														},
+										line = {{love.graphics.newQuad(0, 3*16, 16, 16, boxTilesSheet:getDimensions()),
+														love.graphics.newQuad(1*16, 3*16, 16, 16, boxTilesSheet:getDimensions()),
+														love.graphics.newQuad(2*16, 3*16, 16, 16, boxTilesSheet:getDimensions())},
+														{love.graphics.newQuad(0, 4*16, 16, 16, boxTilesSheet:getDimensions()),
+														love.graphics.newQuad(1*16, 4*16, 16, 16, boxTilesSheet:getDimensions()),
+														love.graphics.newQuad(2*16, 4*16, 16, 16, boxTilesSheet:getDimensions())},
+														{love.graphics.newQuad(0, 2*16, 5*16, 16, boxTilesSheet:getDimensions()),
+														love.graphics.newQuad(1*16, 5*16, 16, 16, boxTilesSheet:getDimensions()),
+														love.graphics.newQuad(2*16, 5*16, 16, 16, boxTilesSheet:getDimensions())}
+													}
+										}
+
+		boxMap = {}
+
+		menu = {currentTab = "inventory", allTabs = {"inventory", "map2", "journal", "map1", }, position = {1, 1, 1}, total = 3, tabNum = 2}
+
+		-- objects that are not part of static background
+		movingObjectSheet = love.graphics.newImage("images/solidarity_objects.png")
+		movingObjectQuads = {stool = love.graphics.newQuad(0, 0, 16, 16, movingObjectSheet:getDimensions()),
+												 platefull = love.graphics.newQuad(1*gridsize, 0, 16, 16, movingObjectSheet:getDimensions()),
+												 plantSm = love.graphics.newQuad(2*gridsize, 0, 16, 16, movingObjectSheet:getDimensions()),
+												 plantSmBerries = love.graphics.newQuad(3*gridsize, 0, 16, 16, movingObjectSheet:getDimensions()),
+												 plantLg = love.graphics.newQuad(4*gridsize, 0, 16, 16, movingObjectSheet:getDimensions()),
+												 plantLgBerries = love.graphics.newQuad(5*gridsize, 0, 16, 16, movingObjectSheet:getDimensions()),
+												 barrelSmBerries = love.graphics.newQuad(6*gridsize, 0, 16, 16, movingObjectSheet:getDimensions()),
+												 barrelLgBerries = love.graphics.newQuad(7*gridsize, 0, 16, 16, movingObjectSheet:getDimensions()),
+												 platefull2 = love.graphics.newQuad(8*gridsize, 0, 16, 16, movingObjectSheet:getDimensions()),
+												 fenceopenL = love.graphics.newQuad(9*gridsize, 0, 16, 16, movingObjectSheet:getDimensions()),
+												 fenceopenR = love.graphics.newQuad(10*gridsize, 0, 16, 16, movingObjectSheet:getDimensions()),
+												 fenceclosedL = love.graphics.newQuad(11*gridsize, 0, 16, 16, movingObjectSheet:getDimensions()),
+												 fenceclosedR = love.graphics.newQuad(12*gridsize, 0, 16, 16, movingObjectSheet:getDimensions())
+												}
+
+animsheet1 = love.graphics.newImage("images/solidarity_anim.png")
+animsheet_act = love.graphics.newImage("images/solidarity_anim_act.png")
 --characters
 	player = {
 		grid_x = 17*gridsize,
@@ -83,7 +203,16 @@ function love.load()
 		spells = {},
 		energy = 100,
 		next = {{x = 0, y = 0, facing = 0, location = "overworld"},
-						{x = 0, y = 0, facing = 0, location = "dininghall"}}
+						{x = 0, y = 0, facing = 0, location = "dininghall"}},
+		animations = {walk = {{anim = newAnimation(animsheet1, 0, 4, 16, 16, .6), name = "up", loop = 0},
+													{anim = newAnimation(animsheet1, 1*16, 4, 16, 16, .6), name = "down", loop = 0},
+													{anim = newAnimation(animsheet1, 2*16, 4, 16, 16, .65), name = "left", loop = 0},
+													{anim = newAnimation(animsheet1, 3*16, 4, 16, 16, .65), name = "right", loop = 0}},
+					act = {{anim = newAnimation(animsheet_act, 0, 4, 16, 16, .6), name = "up", loop = 1, current = 0, running = 0, count = 0},
+								{anim = newAnimation(animsheet_act, 1*16, 4, 16, 16, .6), name = "down", loop = 1, current = 0, running = 0, count = 0},
+								{anim = newAnimation(animsheet_act, 2*16, 4, 16, 16, .6), name = "left", loop = 1, current = 0, running = 0, count = 0},
+								{anim = newAnimation(animsheet_act, 3*16, 4, 16, 16, .6), name = "right", loop = 1, current = 0, running = 0, count = 0}}
+				}
 	}
 
 	npcs = {{
@@ -109,8 +238,17 @@ function love.load()
 		n = 1, --stage in single conversation
 		c = 1, -- dialogue case
 		battlestats = {maxhp = 2, damage = 1, moves = 3},
-		next = {{x = 0, y = 0, facing = 1, location = "offscreen"},
-						{x = 0, y = 0, facing = 1, location = "offscreen"}}
+		next = {{x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
+						{x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0}},
+		animations = {walk = {{anim = newAnimation(animsheet1, 4*16, 4, 16, 16, .6 ), name = "up", loop = 0},
+													{anim = newAnimation(animsheet1, 5*16, 4, 16, 16, .6 ), name = "down", loop = 0},
+													{anim = newAnimation(animsheet1, 6*16, 4, 16, 16, .65 ), name = "left", loop = 0},
+													{anim = newAnimation(animsheet1, 7*16, 4, 16, 16, .65 ), name = "right", loop = 0}},
+						act = {{anim = newAnimation(animsheet_act, 4*16, 4, 16, 16, .6), name = "up", loop = 0, current = 0, running = 0, count = 0},
+						{anim = newAnimation(animsheet_act, 5*16, 4, 16, 16, .6), name = "down", loop = 0, current = 0, running = 0, count = 0},
+						{anim = newAnimation(animsheet_act, 6*16, 4, 16, 16, .6), name = "left", loop = 0, current = 0, running = 0, count = 0},
+						{anim = newAnimation(animsheet_act, 7*16, 4, 16, 16, .6), name = "right", loop = 0, current = 0, running = 0, count = 0}}
+					}
 		},
 		{
 			grid_x = 13*gridsize,
@@ -136,33 +274,16 @@ function love.load()
 			c = 1,
 			battlestats = {maxhp = 2, damage = 1, moves = 2},
 			next = {{x = 21*gridsize, y = 23*gridsize, facing = 2, location = "overworld", canWork = 1},
-							{x = 21*gridsize, y = 15*gridsize, facing = 4, location = "dormitory", canWork = 0}}
-			},
-			{
-				grid_x = 10*gridsize,
-				grid_y = 27*gridsize,
-				act_x = 10*gridsize,
-				act_y = 27*gridsize,
-				speed = 30,
-				canMove = 1,
-				moveDir = 0,
-				threshold = 0,
-				facing = 1,
-				start = 4,
-				randomturn = 1,
-				working = 0,
-				canWork = 0,
-				timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc.
-				location = "overworld",
-				dialogue = 0,
-				name = "Lark", -- 3
-				status = "boss",
-				animationkey = 17, -- where animations start
-				n = 1, --stage in single conversation
-				c = 1,
-				battlestats = {maxhp = 5, damage = 1,  moves = 2},
-				next = {{x = 10*gridsize, y = 27*gridsize, facing = 4, location = "overworld", canWork = 0},
-								{x = 0, y = 0, facing = 0, location = "offscreen", canWork = 0}}
+							{x = 21*gridsize, y = 15*gridsize, facing = 4, location = "dormitory", canWork = 0}},
+			animations = {walk = {{anim = newAnimation(animsheet1, 8*16, 4, 16, 16, .6 ), name = "up", loop = 0},
+														{anim = newAnimation(animsheet1, 9*16, 4, 16, 16, .6 ), name = "down", loop = 0},
+														{anim = newAnimation(animsheet1, 10*16, 4, 16, 16, .65 ), name = "left", loop = 0},
+														{anim = newAnimation(animsheet1, 11*16, 4, 16, 16, .65 ), name = "right", loop = 0}},
+							act = {{anim = newAnimation(animsheet_act, 8*16, 4, 16, 16, .6), name = "up", loop = 0, current = 0, running = 0, count = 0},
+							{anim = newAnimation(animsheet_act, 9*16, 4, 16, 16, .6), name = "down", loop = 0, current = 0, running = 0, count = 0},
+							{anim = newAnimation(animsheet_act, 10*16, 4, 16, 16, .6), name = "left", loop = 0, current = 0, running = 0, count = 0},
+							{anim = newAnimation(animsheet_act, 11*16, 4, 16, 16, .6), name = "right", loop = 0, current = 0, running = 0, count = 0}}
+						}
 			},
 			{
 				grid_x = 16*gridsize,
@@ -188,7 +309,51 @@ function love.load()
 				c = 1,
 				battlestats = {maxhp = 3, damage = 1,  moves = 1},
 				next = {{x = 16*gridsize, y = 21*gridsize, facing = 4, location = "overworld", canWork = 0},
-								{x = 16*gridsize, y = 20*gridsize, facing = 4, location = "overworld", canWork = 0}}
+								{x = 16*gridsize, y = 20*gridsize, facing = 4, location = "overworld", canWork = 0}},
+				animations = {walk = {{anim = newAnimation(animsheet1, 12*16, 4, 16, 16, .6 ), name = "up", loop = 0},
+															{anim = newAnimation(animsheet1, 13*16, 4, 16, 16, .6 ), name = "down", loop = 0},
+															{anim = newAnimation(animsheet1, 14*16, 4, 16, 16, .65 ), name = "left", loop = 0},
+															{anim = newAnimation(animsheet1, 15*16, 4, 16, 16, .65 ), name = "right", loop = 0}},
+								act = {{anim = newAnimation(animsheet_act, 12*16, 4, 16, 16, .6), name = "up", loop = 0, current = 0, running = 0, count = 0},
+								{anim = newAnimation(animsheet_act, 13*16, 4, 16, 16, .6), name = "down", loop = 0, current = 0, running = 0, count = 0},
+								{anim = newAnimation(animsheet_act, 14*16, 4, 16, 16, .6), name = "left", loop = 0, current = 0, running = 0, count = 0},
+								{anim = newAnimation(animsheet_act, 15*16, 4, 16, 16, .6), name = "right", loop = 0, current = 0, running = 0, count = 0}}
+							}
+			},
+			{
+				grid_x = 10*gridsize,
+				grid_y = 27*gridsize,
+				act_x = 10*gridsize,
+				act_y = 27*gridsize,
+				speed = 30,
+				canMove = 1,
+				moveDir = 0,
+				threshold = 0,
+				facing = 1,
+				start = 4,
+				randomturn = 1,
+				working = 0,
+				canWork = 0,
+				timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc.
+				location = "overworld",
+				dialogue = 0,
+				name = "Lark", -- 3
+				status = "boss",
+				animationkey = 17, -- where animations start
+				n = 1, --stage in single conversation
+				c = 1,
+				battlestats = {maxhp = 5, damage = 1,  moves = 2},
+				next = {{x = 10*gridsize, y = 27*gridsize, facing = 4, location = "overworld", canWork = 0},
+								{x = 0, y = 0, facing = 0, location = "offscreen", canWork = 0}},
+				animations = {walk = {{anim = newAnimation(animsheet1, 16*16, 4, 16, 16, .6 ), name = "up", loop = 0},
+															{anim = newAnimation(animsheet1, 17*16, 4, 16, 16, .6 ), name = "down", loop = 0},
+															{anim = newAnimation(animsheet1, 18*16, 4, 16, 16, .65 ), name = "left", loop = 0},
+															{anim = newAnimation(animsheet1, 19*16, 4, 16, 16, .65 ), name = "right", loop = 0}},
+								act = {{anim = newAnimation(animsheet_act, 16*16, 4, 16, 16, .6), name = "up", loop = 0, current = 0, running = 0, count = 0},
+								{anim = newAnimation(animsheet_act, 17*16, 4, 16, 16, .6), name = "down", loop = 0, current = 0, running = 0, count = 0},
+								{anim = newAnimation(animsheet_act, 18*16, 4, 16, 16, .6), name = "left", loop = 0, current = 0, running = 0, count = 0},
+								{anim = newAnimation(animsheet_act, 19*16, 4, 16, 16, .6), name = "right", loop = 0, current = 0, running = 0, count = 0}}
+							}
 			},
 			{
 				grid_x = 21*gridsize,
@@ -214,7 +379,16 @@ function love.load()
 				c = 1,
 				battlestats = {maxhp = 3, damage = 1,  moves = 1},
 				next = {{x = 10*gridsize, y = 9*gridsize, facing = 2, location = "dormitory", canWork = 0},
-								{x = 10*gridsize, y = 9*gridsize, facing = 2, location = "dormitory", canWork = 0}}
+								{x = 10*gridsize, y = 9*gridsize, facing = 2, location = "dormitory", canWork = 0}},
+				animations = {walk = {{anim = newAnimation(animsheet1, 20*16, 4, 16, 16, .6 ), name = "up", loop = 0},
+															{anim = newAnimation(animsheet1, 21*16, 4, 16, 16, .6 ), name = "down", loop = 0},
+															{anim = newAnimation(animsheet1, 22*16, 4, 16, 16, .65 ), name = "left", loop = 0},
+															{anim = newAnimation(animsheet1, 23*16, 4, 16, 16, .65 ), name = "right", loop = 0}},
+								act = {{anim = newAnimation(animsheet_act, 20*16, 4, 16, 16, .6), name = "up", loop = 0, current = 0, running = 0, count = 0},
+								{anim = newAnimation(animsheet_act, 21*16, 4, 16, 16, .6), name = "down", loop = 0, current = 0, running = 0, count = 0},
+								{anim = newAnimation(animsheet_act, 22*16, 4, 16, 16, .6), name = "left", loop = 0, current = 0, running = 0, count = 0},
+								{anim = newAnimation(animsheet_act, 23*16, 4, 16, 16, .6), name = "right", loop = 0, current = 0, running = 0, count = 0}}
+							}
 			},
 			{
 				grid_x = 13*gridsize,
@@ -240,7 +414,16 @@ function love.load()
 				c = 1,
 				battlestats = {maxhp = 3, damage = 1,  moves = 1},
 				next = {{x = 18*gridsize, y = 19*gridsize, facing = 2, location = "dininghall", canWork = 0},
-								{x = 0, y = 0, facing = 0, location = "dininghall", canWork = 0}}
+								{x = 0, y = 0, facing = 0, location = "dininghall", canWork = 0}},
+				animations = {walk = {{anim = newAnimation(animsheet1, 24*16, 4, 16, 16, .6 ), name = "up", loop = 0},
+															{anim = newAnimation(animsheet1, 25*16, 4, 16, 16, .6 ), name = "down", loop = 0},
+															{anim = newAnimation(animsheet1, 26*16, 4, 16, 16, .65 ), name = "left", loop = 0},
+															{anim = newAnimation(animsheet1, 27*16, 4, 16, 16, .65 ), name = "right", loop = 0}},
+								act = {{anim = newAnimation(animsheet_act, 24*16, 4, 16, 16, .6), name = "up", loop = 0, current = 0, running = 0, count = 0},
+								{anim = newAnimation(animsheet_act, 25*16, 4, 16, 16, .6), name = "down", loop = 0, current = 0, running = 0, count = 0},
+								{anim = newAnimation(animsheet_act, 26*16, 4, 16, 16, .6), name = "left", loop = 0, current = 0, running = 0, count = 0},
+								{anim = newAnimation(animsheet_act, 27*16, 4, 16, 16, .6), name = "right", loop = 0, current = 0, running = 0, count = 0}}
+							}
 			},
 			{
 				grid_x = 21*gridsize,
@@ -266,7 +449,16 @@ function love.load()
 				c = 1,
 				battlestats = {maxhp = 3, damage = 1,  moves = 1},
 				next = {{x = 26*gridsize, y = 16*gridsize, facing = 2, location = "dormitory", canWork = 0},
-								{x = 26*gridsize, y = 16*gridsize, facing = 2, location = "dormitory", canWork = 0}}
+								{x = 26*gridsize, y = 16*gridsize, facing = 2, location = "dormitory", canWork = 0}},
+				animations = {walk = {{anim = newAnimation(animsheet1, 28*16, 4, 16, 16, .6 ), name = "up", loop = 0},
+															{anim = newAnimation(animsheet1, 29*16, 4, 16, 16, .6 ), name = "down", loop = 0},
+															{anim = newAnimation(animsheet1, 30*16, 4, 16, 16, .65 ), name = "left", loop = 0},
+															{anim = newAnimation(animsheet1, 31*16, 4, 16, 16, .65 ), name = "right", loop = 0}},
+								act = {{anim = newAnimation(animsheet_act, 28*16, 4, 16, 16, .6), name = "up", loop = 0, current = 0, running = 0, count = 0},
+								{anim = newAnimation(animsheet_act, 29*16, 4, 16, 16, .6), name = "down", loop = 0, current = 0, running = 0, count = 0},
+								{anim = newAnimation(animsheet_act, 30*16, 4, 16, 16, .6), name = "left", loop = 0, current = 0, running = 0, count = 0},
+								{anim = newAnimation(animsheet_act, 31*16, 4, 16, 16, .6), name = "right", loop = 0, current = 0, running = 0, count = 0}}
+							}
 			},
 			{
 				grid_x = 14*gridsize,
@@ -292,7 +484,16 @@ function love.load()
 				c = 1,
 				battlestats = {maxhp = 3, damage = 1,  moves = 1},
 				next = {{x = 28*gridsize, y = 13*gridsize, facing = 2, location = "dormitory", canWork = 0},
-								{x = 28*gridsize, y = 13*gridsize, facing = 2, location = "dormitory", canWork = 0}}
+								{x = 28*gridsize, y = 13*gridsize, facing = 2, location = "dormitory", canWork = 0}},
+				animations = {walk = {{anim = newAnimation(animsheet1, 32*16, 4, 16, 16, .6 ), name = "up", loop = 0},
+															{anim = newAnimation(animsheet1, 33*16, 4, 16, 16, .6 ), name = "down", loop = 0},
+															{anim = newAnimation(animsheet1, 34*16, 4, 16, 16, .65 ), name = "left", loop = 0},
+															{anim = newAnimation(animsheet1, 35*16, 4, 16, 16, .65 ), name = "right", loop = 0}},
+								act = {{anim = newAnimation(animsheet_act, 32*16, 4, 16, 16, .6), name = "up", loop = 0, current = 0, running = 0, count = 0},
+								{anim = newAnimation(animsheet_act, 33*16, 4, 16, 16, .6), name = "down", loop = 0, current = 0, running = 0, count = 0},
+								{anim = newAnimation(animsheet_act, 34*16, 4, 16, 16, .6), name = "left", loop = 0, current = 0, running = 0, count = 0},
+								{anim = newAnimation(animsheet_act, 35*16, 4, 16, 16, .6), name = "right", loop = 0, current = 0, running = 0, count = 0}}
+							}
 			},
 			{
 				grid_x = 0*gridsize,
@@ -318,12 +519,21 @@ function love.load()
 				c = 1,
 				battlestats = {maxhp = 3, damage = 1,  moves = 1},
 				next = {{x = 27*gridsize, y = 14*gridsize, facing = 4, location = "dormitory", canWork = 0},
-								{x = 27*gridsize, y = 14*gridsize, facing = 4, location = "dormitory", canWork = 0}}
+								{x = 27*gridsize, y = 14*gridsize, facing = 4, location = "dormitory", canWork = 0}},
+				animations = {walk = {{anim = newAnimation(animsheet1, 36*16, 4, 16, 16, .6 ), name = "up", loop = 0},
+															{anim = newAnimation(animsheet1, 37*16, 4, 16, 16, .6 ), name = "down", loop = 0},
+															{anim = newAnimation(animsheet1, 38*16, 4, 16, 16, .65 ), name = "left", loop = 0},
+															{anim = newAnimation(animsheet1, 39*16, 4, 16, 16, .65 ), name = "right", loop = 0}},
+								act = {{anim = newAnimation(animsheet_act, 36*16, 4, 16, 16, .6), name = "up", loop = 0, current = 0, running = 0, count = 0},
+								{anim = newAnimation(animsheet_act, 37*16, 4, 16, 16, .6), name = "down", loop = 0, current = 0, running = 0, count = 0},
+								{anim = newAnimation(animsheet_act, 38*16, 4, 16, 16, .6), name = "left", loop = 0, current = 0, running = 0, count = 0},
+								{anim = newAnimation(animsheet_act, 39*16, 4, 16, 16, .6), name = "right", loop = 0, current = 0, running = 0, count = 0}}
+							}
 			}
 }
 
 	storedLocation = {x = 0, y = 0}
-	storedIndex = 0
+	storedIndex = {0}
 	specialCoords = {{stage = 1, x = 17*gridsize, y = 20*gridsize, char = player, triggered = 0}}
 
 -- actions
@@ -358,123 +568,6 @@ function love.load()
 							}
 	itemText = ""
 
---images
-	love.graphics.setDefaultFilter("nearest", "nearest")
-	love.graphics.setColor(0, 0, 0)
-	love.graphics.setBackgroundColor(255,255,255)
-
-	-- scale for graphics
-	scale = {x=4, y=4}
-
-	bg = {overworld = love.graphics.newImage("images/solidarity_overworld.png"),
-				overworldnight = love.graphics.newImage("images/solidarity_overworld_night.png"),
-				gardeningShed = love.graphics.newImage("images/gardeningshedbg.png"),
-				battlefield1 = love.graphics.newImage("images/solidarity_battletest.png"),
-		  	dormitory = love.graphics.newImage("images/dormitory.png"),
-				dininghall = love.graphics.newImage("images/dininghall.png"),
-				store = love.graphics.newImage("images/store.png"),
-			}
-	currentBackground = bg.overworld
-	time = 1 -- 1 = day, 2 = evening, 3 = night
-	day = 1
-
-	worldmap1 = love.graphics.newImage("images/solidarity_map2.png")
-	overlays = {evening = love.graphics.newImage("images/evening_overlay.png")}
-
-	--portraits
-	portraitsheet1 = love.graphics.newImage("images/solidarity_char_portraits.png")
-	portraitkey = {{name = "player", width = 46, height = 46, start = 0},
-								 {name = "Fennel", width = 46, height = 46, start = 1*46},
-								 {name = "Mint", width = 46, height = 46, start = 2*46},
-								 {name = "Cress", width = 46, height = 46, start = 3*46},
-								 {name = "Tarragon", width = 46, height = 46, start = 4*46},
-								 {name = "Agave", width = 46, height = 46, start = 5*46},
-								 {name = "Finch", width = 46, height = 46, start = 6*46},
-								 {name = "Lark", width = 46, height = 46, start = 7*46},
-								 {name = "Robin", width = 46, height = 46, start = 8*46},
-								 {name = "Durian", width = 46, height = 46, start = 9*46},
-								 {name = "Brier", width = 46, height = 46, start = 10*46},
-								 {name = "Yarrow", width = 46, height = 46, start = 11*46},
-								 {name = "Kousa", width = 46, height = 46, start = 12*46},
-								 {name = "Tulsi", width = 46, height = 46, start = 14*46}
-								}
-	currentspeaker = "player"
-
-	animsheet1 = love.graphics.newImage("images/solidarity_anim.png")
-	ui = {arrowup = love.graphics.newImage("images/solidarity_ui_00.png"),
-		arrowdown = love.graphics.newImage("images/solidarity_ui_01.png"),
-		arrowright = love.graphics.newImage("images/solidarity_ui_02.png"),
-		arrowleft = love.graphics.newImage("images/solidarity_ui_03.png"),
-		pressz = love.graphics.newImage("images/solidarity_ui_04.png"),
-		cornerLTop = love.graphics.newImage("images/solidarity_ui_09.png"),
-		cornerRTop = love.graphics.newImage("images/solidarity_ui_10.png"),
-		cornerLBottom = love.graphics.newImage("images/solidarity_ui_11.png"),
-		cornerRBottom = love.graphics.newImage("images/solidarity_ui_12.png"),
-	 	itembg = love.graphics.newImage("images/solidarityui_16x16_14.png"),
-		textboxbg = love.graphics.newImage("images/solidarity_textboxfull.png"),
-		textboxbottom = love.graphics.newImage("images/solidarity_textboxbottom.png"),
-		energyicon = love.graphics.newImage("images/solidarityui_16x16_00.png"),
-		energytextbg = love.graphics.newImage("images/solidarityui_16x16_01.png"),
-		energytextbground = love.graphics.newImage("images/solidarityui_16x16_02.png"),
-		energyboltlg = love.graphics.newImage("images/solidarityui_16x16_03.png"),
-		energyboltsm = love.graphics.newImage("images/solidarityui_16x16_04.png"),
-		energytextbgcircle = love.graphics.newImage("images/solidarityui_16x16_05.png"),
-		energytextbgsmleft = love.graphics.newImage("images/solidarityui_16x16_06.png"),
-		energytextbgsmright = love.graphics.newImage("images/solidarityui_16x16_07.png"),
-		timeiconbgday = love.graphics.newImage("images/solidarityui_16x16_08.png"),
-		timeiconbgevening = love.graphics.newImage("images/solidarityui_16x16_09.png"),
-		timeiconbgnight = love.graphics.newImage("images/solidarityui_16x16_10.png"),
-		timeiconday = love.graphics.newImage("images/solidarityui_16x16_11.png"),
-		timeiconevening = love.graphics.newImage("images/solidarityui_16x16_12.png"),
-		timeiconnight = love.graphics.newImage("images/solidarityui_16x16_13.png"),
-		namebgL = love.graphics.newImage("images/solidarityui_16x16_15.png"),
-		namebgM = love.graphics.newImage("images/solidarityui_16x16_16.png"),
-		namebgR = love.graphics.newImage("images/solidarityui_16x16_17.png"),
-		}
-	boxTilesSheet = love.graphics.newImage("images/solidarity_box_tiles.png")
-
-	boxTilesQuads = {fill = {{love.graphics.newQuad(0, 0, 16, 16, boxTilesSheet:getDimensions()),
-														love.graphics.newQuad(1*16, 0, 16, 16, boxTilesSheet:getDimensions()),
-														love.graphics.newQuad(2*16, 0, 16, 16, boxTilesSheet:getDimensions())},
-														{love.graphics.newQuad(0, 1*16, 16, 16, boxTilesSheet:getDimensions()),
-														love.graphics.newQuad(1*16, 1*16, 16, 16, boxTilesSheet:getDimensions()),
-														love.graphics.newQuad(2*16, 1*16, 16, 16, boxTilesSheet:getDimensions())},
-														{love.graphics.newQuad(0, 2*16, 16, 16, boxTilesSheet:getDimensions()),
-														love.graphics.newQuad(1*16, 2*16, 16, 16, boxTilesSheet:getDimensions()),
-														love.graphics.newQuad(2*16, 2*16, 16, 16, boxTilesSheet:getDimensions())}
-													},
-									line = {{love.graphics.newQuad(0, 3*16, 16, 16, boxTilesSheet:getDimensions()),
-													love.graphics.newQuad(1*16, 3*16, 16, 16, boxTilesSheet:getDimensions()),
-													love.graphics.newQuad(2*16, 3*16, 16, 16, boxTilesSheet:getDimensions())},
-													{love.graphics.newQuad(0, 4*16, 16, 16, boxTilesSheet:getDimensions()),
-													love.graphics.newQuad(1*16, 4*16, 16, 16, boxTilesSheet:getDimensions()),
-													love.graphics.newQuad(2*16, 4*16, 16, 16, boxTilesSheet:getDimensions())},
-													{love.graphics.newQuad(0, 2*16, 5*16, 16, boxTilesSheet:getDimensions()),
-													love.graphics.newQuad(1*16, 5*16, 16, 16, boxTilesSheet:getDimensions()),
-													love.graphics.newQuad(2*16, 5*16, 16, 16, boxTilesSheet:getDimensions())}
-												}
-									}
-
-	boxMap = {}
-
-	menu = {currentTab = "inventory", allTabs = {"inventory", "map2", "journal", "map1", }, position = {1, 1, 1}, total = 3, tabNum = 2}
-
-	-- objects that are not part of static background
-	movingObjectSheet = love.graphics.newImage("images/solidarity_objects.png")
-	movingObjectQuads = {stool = love.graphics.newQuad(0, 0, 16, 16, movingObjectSheet:getDimensions()),
-											 platefull = love.graphics.newQuad(1*gridsize, 0, 16, 16, movingObjectSheet:getDimensions()),
-											 plantSm = love.graphics.newQuad(2*gridsize, 0, 16, 16, movingObjectSheet:getDimensions()),
-											 plantSmBerries = love.graphics.newQuad(3*gridsize, 0, 16, 16, movingObjectSheet:getDimensions()),
-											 plantLg = love.graphics.newQuad(4*gridsize, 0, 16, 16, movingObjectSheet:getDimensions()),
-											 plantLgBerries = love.graphics.newQuad(5*gridsize, 0, 16, 16, movingObjectSheet:getDimensions()),
-											 barrelSmBerries = love.graphics.newQuad(6*gridsize, 0, 16, 16, movingObjectSheet:getDimensions()),
-											 barrelLgBerries = love.graphics.newQuad(7*gridsize, 0, 16, 16, movingObjectSheet:getDimensions()),
-											 platefull2 = love.graphics.newQuad(8*gridsize, 0, 16, 16, movingObjectSheet:getDimensions()),
-											 fenceopenL = love.graphics.newQuad(9*gridsize, 0, 16, 16, movingObjectSheet:getDimensions()),
-											 fenceopenR = love.graphics.newQuad(10*gridsize, 0, 16, 16, movingObjectSheet:getDimensions()),
-											 fenceclosedL = love.graphics.newQuad(11*gridsize, 0, 16, 16, movingObjectSheet:getDimensions()),
-											 fenceclosedR = love.graphics.newQuad(12*gridsize, 0, 16, 16, movingObjectSheet:getDimensions())
-											}
 	movingObjectData = {overworld = {{name = "plantSmBerries", x = 11*gridsize, y = 24*gridsize, visible = 1},
 																		{name = "plantSmBerries", x = 12*gridsize, y = 24*gridsize, visible = 1},
 																		{name = "plantSmBerries", x = 13*gridsize, y = 24*gridsize, visible = 1},
@@ -562,94 +655,15 @@ function love.load()
 
 --- animated objects
 	animsheet2 = love.graphics.newImage("images/solidarity_object_anim.png")
-	objectAnimations = {{anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), "plantSmBerries", loop = 1, current = 0, running = 0, count = 0},
-				 							{anim = newAnimation(animsheet2, 1*16, 3, 16, 16, .3), "plantLgBerries", loop = 1, current = 0, running = 0, count = 0},
-										  {anim = newAnimation(animsheet2, 2*16, 4, 16, 16, .3), "barrelSmBerries", loop = 2, current = 0, running = 0, count = 0},
-											{anim = newAnimation(animsheet2, 3*16, 4, 16, 16, .3), "barrelLgBerries", loop = 2, current = 0, running = 0, count = 0}
+	objectAnimations = {{anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), name = "plantSmBerries", loop = 1, current = 0, running = 0, count = 0},
+				 							{anim = newAnimation(animsheet2, 1*16, 3, 16, 16, .3), name = "plantLgBerries", loop = 1, current = 0, running = 0, count = 0},
+										  {anim = newAnimation(animsheet2, 2*16, 4, 16, 16, .3), name = "barrelSmBerries", loop = 2, current = 0, running = 0, count = 0},
+											{anim = newAnimation(animsheet2, 3*16, 4, 16, 16, .3), name = "barrelLgBerries", loop = 2, current = 0, running = 0, count = 0}
 										}
 
 	animsheet_act = love.graphics.newImage("images/solidarity_anim_act.png")
 --spritesheet, number of tiles in animation, starting position, length, width, height, duration-- loop = 0 is infinite loop
-	animations = {{anim = newAnimation(animsheet1, 0, 4, 16, 16, .6), name = "player.walkup", loop = 0},
-				{anim = newAnimation(animsheet1, 1*16, 4, 16, 16, .6), name = "player.walkdown", loop = 0},
-				{anim = newAnimation(animsheet1, 2*16, 4, 16, 16, .65), name = "player.walkleft", loop = 0},
-				{anim = newAnimation(animsheet1, 3*16, 4, 16, 16, .65), name = "player.walkright", loop = 0},
-			 	{anim = newAnimation(animsheet1, 4*16, 4, 16, 16, .6 ), name = "npcs[1].walkup", loop = 0},
-			  {anim = newAnimation(animsheet1, 5*16, 4, 16, 16, .6 ), name = "npcs[1].walkdown", loop = 0},
-			 	{anim = newAnimation(animsheet1, 6*16, 4, 16, 16, .65 ), name = "npcs[1].walkleft", loop = 0},
-				{anim = newAnimation(animsheet1, 7*16, 4, 16, 16, .65 ), name = "npcs[1].walkright", loop = 0},
-				{anim = newAnimation(animsheet1, 8*16, 4, 16, 16, .6 ), name = "npcs[2].walkup", loop = 0},
-				{anim = newAnimation(animsheet1, 9*16, 4, 16, 16, .6 ), name = "npcs[2].walkdown", loop = 0},
-				{anim = newAnimation(animsheet1, 10*16, 4, 16, 16, .65 ), name = "npcs[2].walkleft", loop = 0},
-				{anim = newAnimation(animsheet1, 11*16, 4, 16, 16, .65 ), name = "npcs[2].walkright", loop = 0},
-				{anim = newAnimation(animsheet1, 12*16, 4, 16, 16, .6 ), name = "npcs[3].walkup", loop = 0},
-				{anim = newAnimation(animsheet1, 13*16, 4, 16, 16, .6 ), name = "npcs[3].walkdown", loop = 0},
-				{anim = newAnimation(animsheet1, 14*16, 4, 16, 16, .65 ), name = "npcs[3].walkleft", loop = 0},
-				{anim = newAnimation(animsheet1, 15*16, 4, 16, 16, .65 ), name = "npcs[3].walkright", loop = 0},
-				{anim = newAnimation(animsheet1, 16*16, 4, 16, 16, .6 ), name = "npcs[4].walkup", loop = 0},
-				{anim = newAnimation(animsheet1, 17*16, 4, 16, 16, .6 ), name = "npcs[4].walkdown", loop = 0},
-				{anim = newAnimation(animsheet1, 18*16, 4, 16, 16, .65 ), name = "npcs[4].walkleft", loop = 0},
-				{anim = newAnimation(animsheet1, 19*16, 4, 16, 16, .65 ), name = "npcs[4].walkright", loop = 0},
-				{anim = newAnimation(animsheet1, 20*16, 4, 16, 16, .6 ), name = "npcs[5].walkup", loop = 0},
-				{anim = newAnimation(animsheet1, 21*16, 4, 16, 16, .6 ), name = "npcs[5].walkdown", loop = 0},
-				{anim = newAnimation(animsheet1, 22*16, 4, 16, 16, .65 ), name = "npcs[5].walkleft", loop = 0},
-				{anim = newAnimation(animsheet1, 23*16, 4, 16, 16, .65 ), name = "npcs[5].walkright", loop = 0},
-				{anim = newAnimation(animsheet1, 24*16, 4, 16, 16, .6 ), name = "npcs[6].walkup", loop = 0},
-				{anim = newAnimation(animsheet1, 25*16, 4, 16, 16, .6 ), name = "npcs[6].walkdown", loop = 0},
-				{anim = newAnimation(animsheet1, 26*16, 4, 16, 16, .65 ), name = "npcs[6].walkleft", loop = 0},
-				{anim = newAnimation(animsheet1, 27*16, 4, 16, 16, .65 ), name = "npcs[6].walkright", loop = 0},
-				{anim = newAnimation(animsheet1, 28*16, 4, 16, 16, .6 ), name = "npcs[7].walkup", loop = 0},
-				{anim = newAnimation(animsheet1, 29*16, 4, 16, 16, .6 ), name = "npcs[7].walkdown", loop = 0},
-				{anim = newAnimation(animsheet1, 30*16, 4, 16, 16, .65 ), name = "npcs[7].walkleft", loop = 0},
-				{anim = newAnimation(animsheet1, 31*16, 4, 16, 16, .65 ), name = "npcs[7].walkright", loop = 0},
-				{anim = newAnimation(animsheet1, 32*16, 4, 16, 16, .6 ), name = "npcs[8].walkup", loop = 0},
-				{anim = newAnimation(animsheet1, 33*16, 4, 16, 16, .6 ), name = "npcs[8].walkdown", loop = 0},
-				{anim = newAnimation(animsheet1, 34*16, 4, 16, 16, .65 ), name = "npcs[8].walkleft", loop = 0},
-				{anim = newAnimation(animsheet1, 35*16, 4, 16, 16, .65 ), name = "npcs[8].walkright", loop = 0},
-				{anim = newAnimation(animsheet1, 36*16, 4, 16, 16, .6 ), name = "npcs[9].walkup", loop = 0},
-				{anim = newAnimation(animsheet1, 37*16, 4, 16, 16, .6 ), name = "npcs[9].walkdown", loop = 0},
-				{anim = newAnimation(animsheet1, 38*16, 4, 16, 16, .65 ), name = "npcs[9].walkleft", loop = 0},
-				{anim = newAnimation(animsheet1, 39*16, 4, 16, 16, .65 ), name = "npcs[9].walkright", loop = 0}
-			 }
 
-
-	anim_act = {{anim = newAnimation(animsheet_act, 0, 4, 16, 16, .6), name = "player.actup", loop = 1, current = 0, running = 0, count = 0},
-				{anim = newAnimation(animsheet_act, 1*16, 4, 16, 16, .6), name = "player.actdown", loop = 1, current = 0, running = 0, count = 0},
-				{anim = newAnimation(animsheet_act, 2*16, 4, 16, 16, .6), name = "player.actleft", loop = 1, current = 0, running = 0, count = 0},
-				{anim = newAnimation(animsheet_act, 3*16, 4, 16, 16, .6), name = "player.actright", loop = 1, current = 0, running = 0, count = 0},
-				{anim = newAnimation(animsheet_act, 4*16, 4, 16, 16, .6), name = "npcs[1].actup", loop = 0, current = 0, running = 0, count = 0},
-				{anim = newAnimation(animsheet_act, 5*16, 4, 16, 16, .6), name = "npcs[1].actdown", loop = 0, current = 0, running = 0, count = 0},
-				{anim = newAnimation(animsheet_act, 6*16, 4, 16, 16, .6), name = "npcs[1].actleft", loop = 0, current = 0, running = 0, count = 0},
-				{anim = newAnimation(animsheet_act, 7*16, 4, 16, 16, .6), name = "npcs[1].actright", loop = 0, current = 0, running = 0, count = 0},
-				{anim = newAnimation(animsheet_act, 8*16, 4, 16, 16, .6), name = "npcs[2].actup", loop = 0, current = 0, running = 0, count = 0},
-				{anim = newAnimation(animsheet_act, 9*16, 4, 16, 16, .6), name = "npcs[2].actdown", loop = 0, current = 0, running = 0, count = 0},
-				{anim = newAnimation(animsheet_act, 10*16, 4, 16, 16, .6), name = "npcs[2].actleft", loop = 0, current = 0, running = 0, count = 0},
-				{anim = newAnimation(animsheet_act, 11*16, 4, 16, 16, .6), name = "npcs[2].actright", loop = 0, current = 0, running = 0, count = 0},
-				{anim = newAnimation(animsheet_act, 12*16, 4, 16, 16, .6), name = "npcs[3].actup", loop = 0, current = 0, running = 0, count = 0},
-				{anim = newAnimation(animsheet_act, 13*16, 4, 16, 16, .6), name = "npcs[3].actdown", loop = 0, current = 0, running = 0, count = 0},
-				{anim = newAnimation(animsheet_act, 14*16, 4, 16, 16, .6), name = "npcs[3].actleft", loop = 0, current = 0, running = 0, count = 0},
-				{anim = newAnimation(animsheet_act, 15*16, 4, 16, 16, .6), name = "npcs[3].actright", loop = 0, current = 0, running = 0, count = 0},
-				{anim = newAnimation(animsheet_act, 16*16, 4, 16, 16, .6), name = "npcs[4].actup", loop = 0, current = 0, running = 0, count = 0},
-				{anim = newAnimation(animsheet_act, 17*16, 4, 16, 16, .6), name = "npcs[4].actdown", loop = 0, current = 0, running = 0, count = 0},
-				{anim = newAnimation(animsheet_act, 18*16, 4, 16, 16, .6), name = "npcs[4].actleft", loop = 0, current = 0, running = 0, count = 0},
-				{anim = newAnimation(animsheet_act, 19*16, 4, 16, 16, .6), name = "npcs[4].actright", loop = 0, current = 0, running = 0, count = 0},
-				{anim = newAnimation(animsheet_act, 20*16, 4, 16, 16, .6), name = "npcs[5].actup", loop = 0, current = 0, running = 0, count = 0},
-				{anim = newAnimation(animsheet_act, 21*16, 4, 16, 16, .6), name = "npcs[5].actdown", loop = 0, current = 0, running = 0, count = 0},
-				{anim = newAnimation(animsheet_act, 22*16, 4, 16, 16, .6), name = "npcs[5].actleft", loop = 0, current = 0, running = 0, count = 0},
-				{anim = newAnimation(animsheet_act, 23*16, 4, 16, 16, .6), name = "npcs[5].actright", loop = 0, current = 0, running = 0, count = 0},
-				{anim = newAnimation(animsheet_act, 24*16, 4, 16, 16, .6), name = "npcs[6].actup", loop = 0, current = 0, running = 0, count = 0},
-				{anim = newAnimation(animsheet_act, 25*16, 4, 16, 16, .6), name = "npcs[6].actdown", loop = 0, current = 0, running = 0, count = 0},
-				{anim = newAnimation(animsheet_act, 26*16, 4, 16, 16, .6), name = "npcs[6].actleft", loop = 0, current = 0, running = 0, count = 0},
-				{anim = newAnimation(animsheet_act, 27*16, 4, 16, 16, .6), name = "npcs[6].actright", loop = 0, current = 0, running = 0, count = 0},
-				{anim = newAnimation(animsheet_act, 28*16, 4, 16, 16, .6), name = "npcs[7].actup", loop = 0, current = 0, running = 0, count = 0},
-				{anim = newAnimation(animsheet_act, 29*16, 4, 16, 16, .6), name = "npcs[7].actdown", loop = 0, current = 0, running = 0, count = 0},
-				{anim = newAnimation(animsheet_act, 30*16, 4, 16, 16, .6), name = "npcs[7].actleft", loop = 0, current = 0, running = 0, count = 0},
-				{anim = newAnimation(animsheet_act, 31*16, 4, 16, 16, .6), name = "npcs[7].actright", loop = 0, current = 0, running = 0, count = 0},
-				{anim = newAnimation(animsheet_act, 32*16, 4, 16, 16, .6), name = "npcs[8].actup", loop = 0, current = 0, running = 0, count = 0},
-				{anim = newAnimation(animsheet_act, 33*16, 4, 16, 16, .6), name = "npcs[8].actdown", loop = 0, current = 0, running = 0, count = 0},
-				{anim = newAnimation(animsheet_act, 34*16, 4, 16, 16, .6), name = "npcs[8].actleft", loop = 0, current = 0, running = 0, count = 0},
-				{anim = newAnimation(animsheet_act, 35*16, 4, 16, 16, .6), name = "npcs[8].actright", loop = 0, current = 0, running = 0, count = 0}
-			}
 	--fading
 	fading = {on = false, type = 1, start = 0, goal = 0, rate = 0, a = 0, countdown = 0, triggered = 0} -- type 1 = fade in from 0 to 255; 2 = fade out from 255 to 0
 	--cutscene
@@ -660,7 +674,7 @@ function love.load()
 		triggered = false,
 		type = 1,
 		move = true, --does the NPC move?
-		npc = 3, --which NPC
+		npc = 4, --which NPC
 		target = player, -- where do they move
 		facing = {1}, --what direction are they facing at the end
 		noden = 1, --what node are they walking to next
@@ -846,7 +860,7 @@ function love.update(dt)
 
 	npcActUpdate(dt)
 	--animation time update
-	animUpdate(animations, dt)
+	animUpdate(player.animations.walk, dt)
 
 	if actions[1].k ~= 0 then
 		if objectAnimations[actions[1].k].running == 1 then
@@ -854,14 +868,17 @@ function love.update(dt)
 		end
 	end
 	if actionMode == 1 then
-		if anim_act[player.facing].running == 1 then
-			animUpdate(anim_act, dt, player.facing)
+		if player.animations.act[player.facing].running == 1 then
+			animUpdate(player.animations.act, dt, player.facing)
 		end
 	end
 	for i = 1, #npcs do
 		if npcs[i].working == 1 then
-			local k = npcs[i].animationkey + npcs[i].start - 1
-			animUpdate(anim_act, dt, k)
+			local k = npcs[i].start
+			animUpdate(npcs[i].animations.act, dt, k)
+			animUpdate(objectAnimations, dt, storedIndex[2])
+		else
+			animUpdate(npcs[i].animations.walk, dt)
 		end
 	end
 
@@ -907,9 +924,6 @@ function love.draw()
 	if actions[1].k ~= 0 then
 		drawActAnims(objectAnimations, actions[1].k, actions[1].x, actions[1].y)
 	end
-	if actionMode == 1 then
-		drawActAnims(anim_act, player.facing, player.act_x, player.act_y)
-	end
 
 	--draw extra infoView
 	if infoView == 1 then
@@ -917,12 +931,13 @@ function love.draw()
 	end
 
 	--render player
-	love.graphics.setColor(255, 255, 255)
-	drawPlayer(animations)
+	drawPlayer(player.animations.walk)
 
 
 	--render npcs
-	drawNPCs(animations)
+	for i = 1, #npcs do
+		drawNPCs(npcs[i].animations.walk, i)
+	end
 	-- render tiles on top of player
 	if currentLocation ~= "overworld" then
 		drawStillObjects(currentLocation, toptileData, toptilesSheet, toptiles)
@@ -935,7 +950,6 @@ function love.draw()
 	end
 	--render dialogue box and text
 	if text ~= nil and dialogueMode == 1 then
-		love.graphics.setColor(255, 255, 255)
 		local recheight = 32
 		local recwidth = 232
 		local xnudge = width/2
@@ -1021,14 +1035,14 @@ function love.keypressed(key)
 					afterItemUse()
 				end
 				DialogueSetup(npcs, dialogueStage)
-				faceObject(player.facing, staticObjects[currentLocation]) -- still objects
-				faceObject(player.facing, movingObjectData[currentLocation])
-				faceObject(player.facing, locationTriggers[currentLocation])
+				faceObject(player, player.facing, staticObjects[currentLocation]) -- still objects
+				faceObject(player, player.facing, movingObjectData[currentLocation])
+				faceObject(player, player.facing, locationTriggers[currentLocation])
 				if actions[1].k ~= 0 then
 					resetAnims(objectAnimations, actions[1].k)
 				end
 				if actionMode == 1 then
-					resetAnims(anim_act, player.facing)
+					resetAnims(player.animations.act, player.facing)
 				end
 			else
 				 menuHierarchy(key)

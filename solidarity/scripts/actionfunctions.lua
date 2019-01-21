@@ -33,6 +33,30 @@ function testObject(x, y, tbl)
 	end
 end
 
+function testNpcObject(dir, x, y, tbl)
+	for i = 1, #tbl do
+		local x2 = tbl[i].x
+		local y2 = tbl[i].y
+		if dir == 1 then
+			if x == x2 and y - gridsize == y2 then
+				return x2, y2, tbl[i].name
+			end
+		elseif dir == 2 then
+			if x == x2 and y + gridsize == y2 then
+				return x2, y2, tbl[i].name
+			end
+		elseif dir == 3 then
+			if y == y2 and x - gridsize == x2 then
+				return x2, y2, tbl[i].name
+			end
+		elseif dir == 4 then
+			if y == y2 and x + gridsize == x2 then
+				return x2, y2, tbl[i].name
+			end
+		end
+	end
+end
+
 function inventoryFull(m)
 	if #player.inventory >= m then
 		return true
@@ -199,38 +223,54 @@ function printObjText(b, c)
 end
 
 --test to see if player facing object, retrieve description
-function faceObject(dir, tbl)
+function faceObject(char, dir, tbl)
 	if dir == 1 then -- up
 		local a, b, c = testObject(0, -1, tbl)
 		if a and b ~= nil then
-      storedIndex = c
+      storedIndex[1] = c
 			print("dir 1")
-			printObjText(b, c)
-			return
+			if char == player then
+				printObjText(b, c)
+				return
+			else
+				return a, b, c
+			end
 		end
 	elseif dir == 2 then -- down
 		local a, b, c = testObject(0, 1, tbl)
 		if a and b ~= nil then
-      storedIndex = c
+      storedIndex[1] = c
 			print("dir 2")
-			printObjText(b, c)
-			return
+			if char == player then
+				printObjText(b, c)
+				return
+			else
+				return a, b, c
+			end
 		end
 	elseif dir == 3 then -- left
 		local a, b, c = testObject(-1, 0, tbl)
 		if a and b ~= nil then
-      storedIndex = c
+      storedIndex[1] = c
 			print("dir 3")
-			printObjText(b, c)
-			return
+			if char == player then
+				printObjText(b, c)
+				return
+			else
+				return a, b, c
+			end
 		end
 	elseif dir == 4 then -- right
 		local a, b, c = testObject(1, 0, tbl)
 		if a and b ~= nil then
-      storedIndex = c
+      storedIndex[1] = c
 			print("dir 4")
-			printObjText(b, c)
-			return
+			if char == player then
+				printObjText(b, c)
+				return
+			else
+				return a, b, c
+			end
 		end
 	end
 end
@@ -290,8 +330,8 @@ end
 
 function exitAction()
 	if actionMode == 1 then
-		if storedIndex then
-			movingObjectData[currentLocation][storedIndex].visible = 1
+		if storedIndex[1] then
+			movingObjectData[currentLocation][storedIndex[1]].visible = 1
 		end
 		actions[1].k = 0
 		actions[1].current = 0

@@ -178,5 +178,9 @@ objectText = {
   platefull2 = {"I feel much better now."}
   }
 
+itemDescription = {plantSmBerries = "One of the main ingredients used in potions. Very poisonous unless properly prepared.",
+                   plantLgBerries = "One of the main ingredients used in potions. Very poisonous unless properly prepared."
+}
+
 journalText = {[1]= {"Day 1, daytime - Lark made me stay late today. He says I'm not working hard enough, but all he does is sit around and yell at people. Luckily Agave and the others saved some food for me."}
 }
