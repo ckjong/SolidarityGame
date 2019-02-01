@@ -150,6 +150,7 @@ function dialogueOff(tbl, i, dialOpt) -- tbl = npcs
 	tbl[i].n = 1
 	tbl[i].c = dialOpt.logic.next
 	tbl[i].dialogue = 0
+	tbl[i].facing = tbl[i].start
 	wait.triggered = 0
 end
 

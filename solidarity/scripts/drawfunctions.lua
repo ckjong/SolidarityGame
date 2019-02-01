@@ -92,6 +92,7 @@ end
 
 function npcActSetup()
   for i = 1, #npcs do
+    npcs[i].facing = npcs[i].start
     if npcs[i].canWork == 1 then
       math.randomseed(i)
       local a = math.random(2, 6)
@@ -112,11 +113,19 @@ function npcActUpdate(dt)
         if npcs[i].timer.ct >= npcs[i].timer.mt then
           npcs[i].timer.ct = 0
           npcs[i].working = 0
+          if npcs[i].animations.act[npcs[i].facing].running == 1 then
+            npcs[i].animations.act[npcs[i].facing].running = 0
+            print(npcs[i].name .. " animation turned off " .. player.animations.act[npcs[i].facing].running)
+          end
         end
       else
         if npcs[i].timer.ct >= npcs[i].timer.wt then
           npcs[i].timer.ct = 0
           npcs[i].working = 1
+          if npcs[i].animations.act[npcs[i].facing].running == 0 then
+            npcs[i].animations.act[npcs[i].facing].running = 1
+            print(npcs[i].name .. " npc animation running " .. npcs[i].animations.act[npcs[i].facing].running)
+          end
         end
       end
     end
@@ -143,14 +152,15 @@ function animUpdate(tbl, dt, k)
     if tbl[k]["anim"]["currentTime"] >= tbl[k]["anim"]["duration"] then
       tbl[k]["anim"]["currentTime"] = tbl[k]["anim"]["currentTime"] - tbl[k]["anim"]["duration"]
       if tbl[k].loop ~= 0 then
+        print("unlooped anim")
         tbl[k].count = tbl[k].count + 1
         if tbl[k].count == tbl[k].loop then
           print("count:" .. tbl[k].count)
           if tbl[k].running == 1 then
             tbl[k].running = 0
             tbl[k].count = 0
-            if tbl == objectAnimations and actions[1].k ~= 0 then
-              animFinish(movingObjectData[currentLocation])
+            if actions.player.key ~= 0 then
+              animFinish()
             end
           end
         end
@@ -161,8 +171,15 @@ function animUpdate(tbl, dt, k)
   		tbl[k]["anim"]["currentTime"] = tbl[k]["anim"]["currentTime"] + dt
       if tbl[k]["anim"]["currentTime"] >= tbl[k]["anim"]["duration"] then
         tbl[k]["anim"]["currentTime"] = tbl[k]["anim"]["currentTime"] - tbl[k]["anim"]["duration"]
-        if tbl[k].running == 1 then
-          tbl[k].running = 0
+        if tbl[k].loop ~= 0 then
+          tbl[k].count = tbl[k].count + 1
+          if tbl[k].count == tbl[k].loop then
+            print("count:" .. tbl[k].count)
+            if tbl[k].running == 1 then
+              tbl[k].running = 0
+              tbl[k].count = 0
+            end
+          end
         end
         -- if tbl[k].loop ~= 0 then
         --   if tbl[k].running == 1 then
@@ -180,9 +197,8 @@ function animUpdate(tbl, dt, k)
   end
 end
 
-function animFinish(tbl)
-  tbl[storedIndex[1]].visible = 1
-  actions[1].k = 0
+function animFinish()
+  actions.player.key = 0
 end
 
 function resetAnims(tbl, k)
@@ -241,16 +257,10 @@ function drawNPCs(tbl, i)
         end
       else
         if npcs[i].working == 1 then
-          drawActAnims(npcs[i].animations.act, s, npcs[i].act_x, npcs[i].act_y)
-          local x, y, n =  testNpcObject(npcs[i].facing, npcs[i].act_x, npcs[i].act_y, movingObjectData[currentLocation])
-          for k = 1, #objectAnimations do
-            if objectAnimations[k].name == n then
-              print("object next to NPC " .. objectAnimations[k].name)
-              if objectAnimations[k].running == 0 then
-                objectAnimations[k].running = 1
-                storedIndex[2] = k
-              end
-              drawActAnims(objectAnimations, k, x, y)
+          drawActAnims(npcs[i].animations.act, f, npcs[i].act_x, npcs[i].act_y)
+          if actions.npcs[i] ~= nil then
+            if movingObjectData[currentLocation][actions.npcs[i].key] ~= nil then
+              drawActAnims(movingObjectData[currentLocation][actions.npcs[i].key], actions.npcs[i].index, actions.npcs[i].x, actions.npcs[i].y)
             end
           end
         else
@@ -265,27 +275,22 @@ end
 function drawStillObjects(l, tbl, img, quad)
   love.graphics.setColor(255, 255, 255)
   if tbl[l] ~= nil then
-    for i = 1, #tbl[l] do
-      local k = tbl[l][i].name
-      if tbl[l][i].visible == 1 then
-        love.graphics.draw(img, quad[k], tbl[l][i].x, tbl[l][i].y)
+    for k, v in pairs(tbl[l]) do
+      for i = 1, #tbl[l][k] do
+        if tbl[l][k][i].visible == 1 then
+          love.graphics.draw(img, quad[k], tbl[l][k][i].x, tbl[l][k][i].y)
+        end
       end
     end
   end
 end
 
 function drawActAnims(tbl, k, x, y)
-  local spriteNum = math.floor(tbl[k]["anim"]["currentTime"] / tbl[k]["anim"]["duration"] * #tbl[k]["anim"]["quads"]) + 1
-  if tbl[k].loop ~= 0 then
-    if tbl[k].running == 1 then
-      print("tbl[k].running == 1 x = " .. x/16 .. "  y = " .. y/16)
-      print("spriteNum " .. spriteNum)
-      love.graphics.draw(tbl[k]["anim"]["spriteSheet"], tbl[k]["anim"]["quads"][spriteNum], x, y, 0, 1)
-    elseif tbl[k].running == 0 then
-      love.graphics.draw(tbl[k]["anim"]["spriteSheet"], tbl[k]["anim"]["quads"][1], x, y, 0, 1)
-    end
-  else
+  if tbl[k].running == 1 then
+    local spriteNum = math.floor(tbl[k]["anim"]["currentTime"] / tbl[k]["anim"]["duration"] * #tbl[k]["anim"]["quads"]) + 1
     love.graphics.draw(tbl[k]["anim"]["spriteSheet"], tbl[k]["anim"]["quads"][spriteNum], x, y, 0, 1)
+  elseif tbl[k].running == 0 then
+    love.graphics.draw(tbl[k]["anim"]["spriteSheet"], tbl[k]["anim"]["quads"][1], x, y, 0, 1)
   end
 end
 
@@ -477,7 +482,7 @@ function drawInventory(x, y, offX, offY)
     love.graphics.setColor(93, 43, 67)
     love.graphics.rectangle("line",  x - offX + (i-1)*(26), y - offY, 16, 16)
     love.graphics.setColor(255, 255, 255)
-    love.graphics.draw(movingObjectSheet, movingObjectQuads[n], x - offX + (i-1)*(26), y - offY)
+    love.graphics.draw(animsheet3, movingObjectQuads[n], x - offX + (i-1)*(26), y - offY)
     objText = tostring(player.inventory[i].amount)
     love.graphics.setColor(93, 43, 67)
     love.graphics.printf(objText, x - offX + (i-1)*(26), y - offY + 18, 16, "center")

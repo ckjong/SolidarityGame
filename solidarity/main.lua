@@ -166,20 +166,20 @@ function love.load()
 		menu = {currentTab = "inventory", allTabs = {"inventory", "map2", "journal", "map1", }, position = {1, 1, 1}, total = 3, tabNum = 2}
 
 		-- objects that are not part of static background
-		movingObjectSheet = love.graphics.newImage("images/solidarity_objects.png")
-		movingObjectQuads = {stool = love.graphics.newQuad(0, 0, 16, 16, movingObjectSheet:getDimensions()),
-												 platefull = love.graphics.newQuad(1*gridsize, 0, 16, 16, movingObjectSheet:getDimensions()),
-												 plantSm = love.graphics.newQuad(2*gridsize, 0, 16, 16, movingObjectSheet:getDimensions()),
-												 plantSmBerries = love.graphics.newQuad(3*gridsize, 0, 16, 16, movingObjectSheet:getDimensions()),
-												 plantLg = love.graphics.newQuad(4*gridsize, 0, 16, 16, movingObjectSheet:getDimensions()),
-												 plantLgBerries = love.graphics.newQuad(5*gridsize, 0, 16, 16, movingObjectSheet:getDimensions()),
-												 barrelSmBerries = love.graphics.newQuad(6*gridsize, 0, 16, 16, movingObjectSheet:getDimensions()),
-												 barrelLgBerries = love.graphics.newQuad(7*gridsize, 0, 16, 16, movingObjectSheet:getDimensions()),
-												 platefull2 = love.graphics.newQuad(8*gridsize, 0, 16, 16, movingObjectSheet:getDimensions()),
-												 fenceopenL = love.graphics.newQuad(9*gridsize, 0, 16, 16, movingObjectSheet:getDimensions()),
-												 fenceopenR = love.graphics.newQuad(10*gridsize, 0, 16, 16, movingObjectSheet:getDimensions()),
-												 fenceclosedL = love.graphics.newQuad(11*gridsize, 0, 16, 16, movingObjectSheet:getDimensions()),
-												 fenceclosedR = love.graphics.newQuad(12*gridsize, 0, 16, 16, movingObjectSheet:getDimensions())
+		animsheet3 = love.graphics.newImage("images/solidarity_objects.png")
+		movingObjectQuads = {stool = love.graphics.newQuad(0, 0, 16, 16, animsheet3:getDimensions()),
+												 platefull = love.graphics.newQuad(1*gridsize, 0, 16, 16, animsheet3:getDimensions()),
+												 plantSm = love.graphics.newQuad(2*gridsize, 0, 16, 16, animsheet3:getDimensions()),
+												 plantSmBerries = love.graphics.newQuad(3*gridsize, 0, 16, 16, animsheet3:getDimensions()),
+												 plantLg = love.graphics.newQuad(4*gridsize, 0, 16, 16, animsheet3:getDimensions()),
+												 plantLgBerries = love.graphics.newQuad(5*gridsize, 0, 16, 16, animsheet3:getDimensions()),
+												 barrelSmBerries = love.graphics.newQuad(6*gridsize, 0, 16, 16, animsheet3:getDimensions()),
+												 barrelLgBerries = love.graphics.newQuad(7*gridsize, 0, 16, 16, animsheet3:getDimensions()),
+												 platefull2 = love.graphics.newQuad(8*gridsize, 0, 16, 16, animsheet3:getDimensions()),
+												 fenceopenL = love.graphics.newQuad(9*gridsize, 0, 16, 16, animsheet3:getDimensions()),
+												 fenceopenR = love.graphics.newQuad(10*gridsize, 0, 16, 16, animsheet3:getDimensions()),
+												 fenceclosedL = love.graphics.newQuad(11*gridsize, 0, 16, 16, animsheet3:getDimensions()),
+												 fenceclosedR = love.graphics.newQuad(12*gridsize, 0, 16, 16, animsheet3:getDimensions())
 												}
 
 animsheet1 = love.graphics.newImage("images/solidarity_anim.png")
@@ -539,7 +539,18 @@ animsheet_act = love.graphics.newImage("images/solidarity_anim_act.png")
 -- actions
 	actionMode = 0
 	usedItem = 0
-	actions = {{current = 0, max = 100, rate = 10, x = 0, y = 0, k = 0}
+	actions = {player = {current = 0, max = 100, rate = 10, x = 0, y = 0, key = 0},
+							npcs = {
+								{current = 0, max = 100, rate = 10, x = 0, y = 0, key = 0},
+								{current = 0, max = 100, rate = 10, x = 0, y = 0, key = 0},
+								{current = 0, max = 100, rate = 10, x = 0, y = 0, key = 0},
+								{current = 0, max = 100, rate = 10, x = 0, y = 0, key = 0},
+								{current = 0, max = 100, rate = 10, x = 0, y = 0, key = 0},
+								{current = 0, max = 100, rate = 10, x = 0, y = 0, key = 0},
+								{current = 0, max = 100, rate = 10, x = 0, y = 0, key = 0},
+								{current = 0, max = 100, rate = 10, x = 0, y = 0, key = 0},
+								{current = 0, max = 100, rate = 10, x = 0, y = 0, key = 0}
+							}
 						}
 --battle
 	battleMode = 0
@@ -567,72 +578,95 @@ animsheet_act = love.graphics.newImage("images/solidarity_anim_act.png")
 							platefull2 = {max = 60, stackable = 0, dropNum = 1}
 							}
 	itemText = ""
-
-	movingObjectData = {overworld = {{name = "plantSmBerries", x = 11*gridsize, y = 24*gridsize, visible = 1},
-																		{name = "plantSmBerries", x = 12*gridsize, y = 24*gridsize, visible = 1},
-																		{name = "plantSmBerries", x = 13*gridsize, y = 24*gridsize, visible = 1},
-																		{name = "plantSmBerries", x = 14*gridsize, y = 24*gridsize, visible = 1},
-																		{name = "plantSmBerries", x = 15*gridsize, y = 24*gridsize, visible = 1},
-																		{name = "plantSmBerries", x = 18*gridsize, y = 24*gridsize, visible = 1},
-																		{name = "plantSmBerries", x = 19*gridsize, y = 24*gridsize, visible = 1},
-																		{name = "plantSmBerries", x = 20*gridsize, y = 24*gridsize, visible = 1},
-																		{name = "plantSmBerries", x = 21*gridsize, y = 24*gridsize, visible = 1},
-																		{name = "plantSmBerries", x = 22*gridsize, y = 24*gridsize, visible = 1},
-																		{name = "plantSmBerries", x = 11*gridsize, y = 25*gridsize, visible = 1},
-																		{name = "plantSmBerries", x = 12*gridsize, y = 25*gridsize, visible = 1},
-																		{name = "plantSmBerries", x = 13*gridsize, y = 25*gridsize, visible = 1},
-																		{name = "plantSm", x = 14*gridsize, y = 25*gridsize, visible = 1},
-																		{name = "plantSmBerries", x = 15*gridsize, y = 25*gridsize, visible = 1},
-																		{name = "plantSmBerries", x = 18*gridsize, y = 25*gridsize, visible = 1},
-																		{name = "plantSmBerries", x = 19*gridsize, y = 25*gridsize, visible = 1},
-																		{name = "plantSmBerries", x = 20*gridsize, y = 25*gridsize, visible = 1},
-																		{name = "plantSmBerries", x = 21*gridsize, y = 25*gridsize, visible = 1},
-																		{name = "plantSm", x = 22*gridsize, y = 25*gridsize, visible = 1},
-																		{name = "plantLgBerries", x = 11*gridsize, y = 28*gridsize, visible = 1},
-																		{name = "plantLgBerries", x = 12*gridsize, y = 28*gridsize, visible = 1},
-																		{name = "plantLgBerries", x = 13*gridsize, y = 28*gridsize, visible = 1},
-																		{name = "plantLgBerries", x = 14*gridsize, y = 28*gridsize, visible = 1},
-																		{name = "plantLg", x = 15*gridsize, y = 28*gridsize, visible = 1},
-																		{name = "plantLgBerries", x = 18*gridsize, y = 28*gridsize, visible = 1},
-																		{name = "plantLgBerries", x = 19*gridsize, y = 28*gridsize, visible = 1},
-																		{name = "plantLgBerries", x = 20*gridsize, y = 28*gridsize, visible = 1},
-																		{name = "plantLgBerries", x = 21*gridsize, y = 28*gridsize, visible = 1},
-																		{name = "plantLgBerries", x = 22*gridsize, y = 28*gridsize, visible = 1},
-																		{name = "plantLgBerries", x = 11*gridsize, y = 29*gridsize, visible = 1},
-																		{name = "plantLg", x = 12*gridsize, y = 29*gridsize, visible = 1},
-																		{name = "plantLgBerries", x = 13*gridsize, y = 29*gridsize, visible = 1},
-																		{name = "plantLgBerries", x = 14*gridsize, y = 29*gridsize, visible = 1},
-																		{name = "plantLgBerries", x = 15*gridsize, y = 29*gridsize, visible = 1},
-																		{name = "plantLgBerries", x = 18*gridsize, y = 29*gridsize, visible = 1},
-																		{name = "plantLgBerries", x = 19*gridsize, y = 29*gridsize, visible = 1},
-																		{name = "plantLgBerries", x = 20*gridsize, y = 29*gridsize, visible = 1},
-																		{name = "plantLgBerries", x = 21*gridsize, y = 29*gridsize, visible = 1},
-																		{name = "plantLgBerries", x = 22*gridsize, y = 29*gridsize, visible = 1},
-																		{name = "barrelSmBerries", x = 15*gridsize, y = 22*gridsize, visible = 1},
-																		{name = "barrelLgBerries", x = 18*gridsize, y = 22*gridsize, visible = 1}
-																	 }
+	animsheet2 = love.graphics.newImage("images/solidarity_object_anim.png")
+	movingObjectData = {overworld =
+												{plantSmBerries = {
+														{x = 11*gridsize, y = 24*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
+														{x = 12*gridsize, y = 24*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
+														{x = 13*gridsize, y = 24*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
+														{x = 14*gridsize, y = 24*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
+														{x = 15*gridsize, y = 24*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
+														{x = 18*gridsize, y = 24*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
+														{x = 19*gridsize, y = 24*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
+														{x = 20*gridsize, y = 24*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
+														{x = 21*gridsize, y = 24*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
+														{x = 22*gridsize, y = 24*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
+														{x = 11*gridsize, y = 25*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
+														{x = 12*gridsize, y = 25*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
+														{x = 13*gridsize, y = 25*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
+														{x = 15*gridsize, y = 25*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
+														{x = 18*gridsize, y = 25*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
+														{x = 19*gridsize, y = 25*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
+														{x = 20*gridsize, y = 25*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
+														{x = 21*gridsize, y = 25*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0}
+													},
+												plantSm = {
+														{x = 14*gridsize, y = 25*gridsize, visible = 1, anim = {spriteSheet = animsheet3, quads = {movingObjectQuads.plantSm}}, loop = 1, current = 0, running = 0, count = 0},
+														{x = 22*gridsize, y = 25*gridsize, visible = 1 ,anim = {spriteSheet = animsheet3, quads = {movingObjectQuads.plantSm}}, loop = 1, current = 0, running = 0, count = 0}
+													},
+												plantLgBerries = {
+														{x = 11*gridsize, y = 28*gridsize, visible = 1, anim = newAnimation(animsheet2, 1*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
+														{x = 12*gridsize, y = 28*gridsize, visible = 1, anim = newAnimation(animsheet2, 1*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
+														{x = 13*gridsize, y = 28*gridsize, visible = 1, anim = newAnimation(animsheet2, 1*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
+														{x = 14*gridsize, y = 28*gridsize, visible = 1, anim = newAnimation(animsheet2, 1*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
+														{x = 18*gridsize, y = 28*gridsize, visible = 1, anim = newAnimation(animsheet2, 1*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
+														{x = 19*gridsize, y = 28*gridsize, visible = 1, anim = newAnimation(animsheet2, 1*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
+														{x = 20*gridsize, y = 28*gridsize, visible = 1, anim = newAnimation(animsheet2, 1*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
+														{x = 21*gridsize, y = 28*gridsize, visible = 1, anim = newAnimation(animsheet2, 1*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
+														{x = 22*gridsize, y = 28*gridsize, visible = 1, anim = newAnimation(animsheet2, 1*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
+														{x = 11*gridsize, y = 29*gridsize, visible = 1, anim = newAnimation(animsheet2, 1*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
+														{x = 13*gridsize, y = 29*gridsize, visible = 1, anim = newAnimation(animsheet2, 1*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
+														{x = 14*gridsize, y = 29*gridsize, visible = 1, anim = newAnimation(animsheet2, 1*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
+														{x = 15*gridsize, y = 29*gridsize, visible = 1, anim = newAnimation(animsheet2, 1*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
+														{x = 18*gridsize, y = 29*gridsize, visible = 1, anim = newAnimation(animsheet2, 1*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
+														{x = 19*gridsize, y = 29*gridsize, visible = 1, anim = newAnimation(animsheet2, 1*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
+														{x = 20*gridsize, y = 29*gridsize, visible = 1, anim = newAnimation(animsheet2, 1*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
+														{x = 21*gridsize, y = 29*gridsize, visible = 1, anim = newAnimation(animsheet2, 1*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
+														{x = 22*gridsize, y = 29*gridsize, visible = 1, anim = newAnimation(animsheet2, 1*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0}
+													},
+												plantLg = {
+														{x = 15*gridsize, y = 28*gridsize, visible = 1, anim = {spriteSheet = animsheet3, quads = {movingObjectQuads.plantLg}}, loop = 1, current = 0, running = 0, count = 0},
+														{x = 12*gridsize, y = 29*gridsize, visible = 1, anim = {spriteSheet = animsheet3, quads = {movingObjectQuads.plantLg}}, loop = 1, current = 0, running = 0, count = 0}
+												},
+												barrelSmBerries = {
+														{x = 15*gridsize, y = 22*gridsize, visible = 1, anim = newAnimation(animsheet2, 2*16, 4, 16, 16, .3), loop = 2, current = 0, running = 0, count = 0}
+													},
+												barrelLgBerries = {
+														{x = 18*gridsize, y = 22*gridsize, visible = 1, anim = newAnimation(animsheet2, 3*16, 4, 16, 16, .3), loop = 2, current = 0, running = 0, count = 0}
+													},
+												}
 											}
 
-	nonInteractiveObjects = {overworld = {{name = "fenceopenL", x = 16*gridsize, y = 21*gridsize, visible = 1},
-																				{name = "fenceopenR", x = 17*gridsize, y = 21*gridsize, visible = 1},
-																				{name = "fenceclosedL", x = 16*gridsize, y = 21*gridsize, visible = 0},
-																				{name = "fenceclosedR", x = 17*gridsize, y = 21*gridsize, visible = 0}
+	nonInteractiveObjects = {overworld = {fenceopenL = {
+																					{x = 16*gridsize, y = 21*gridsize, visible = 1}
+																				},
+																				fenceopenR = {
+																					{x = 17*gridsize, y = 21*gridsize, visible = 1}
+																				},
+																				fenceclosedL = {
+																					{x = 16*gridsize, y = 21*gridsize, visible = 0}
+																				},
+																				fenceclosedR = {
+																					{x = 17*gridsize, y = 21*gridsize, visible = 0}
+																				},
 																			},
-													dininghall = {{name = "stool", x = 12*gridsize, y = 12*gridsize, visible = 1},
-																				{name = "stool", x = 14*gridsize, y = 12*gridsize, visible = 1},
-																				{name = "stool", x = 17*gridsize, y = 12*gridsize, visible = 1},
-																				{name = "stool", x = 18*gridsize, y = 12*gridsize, visible = 1},
-																				{name = "stool", x = 19*gridsize, y = 12*gridsize, visible = 1},
-																				{name = "stool", x = 23*gridsize, y = 12*gridsize, visible = 1},
-																				{name = "stool", x = 24*gridsize, y = 12*gridsize, visible = 1},
-																				{name = "stool", x = 12*gridsize, y = 16*gridsize, visible = 1},
-																				{name = "stool", x = 13*gridsize, y = 16*gridsize, visible = 1},
-																				{name = "stool", x = 14*gridsize, y = 16*gridsize, visible = 1},
-																				{name = "stool", x = 18*gridsize, y = 16*gridsize, visible = 1},
-																				{name = "stool", x = 19*gridsize, y = 16*gridsize, visible = 1},
-																				{name = "stool", x = 22*gridsize, y = 16*gridsize, visible = 1},
-																				{name = "stool", x = 23*gridsize, y = 16*gridsize, visible = 1}
+													dininghall = {stool = {
+																					{name = "stool", x = 12*gridsize, y = 12*gridsize, visible = 1},
+																					{name = "stool", x = 14*gridsize, y = 12*gridsize, visible = 1},
+																					{name = "stool", x = 17*gridsize, y = 12*gridsize, visible = 1},
+																					{name = "stool", x = 18*gridsize, y = 12*gridsize, visible = 1},
+																					{name = "stool", x = 19*gridsize, y = 12*gridsize, visible = 1},
+																					{name = "stool", x = 23*gridsize, y = 12*gridsize, visible = 1},
+																					{name = "stool", x = 24*gridsize, y = 12*gridsize, visible = 1},
+																					{name = "stool", x = 12*gridsize, y = 16*gridsize, visible = 1},
+																					{name = "stool", x = 13*gridsize, y = 16*gridsize, visible = 1},
+																					{name = "stool", x = 14*gridsize, y = 16*gridsize, visible = 1},
+																					{name = "stool", x = 18*gridsize, y = 16*gridsize, visible = 1},
+																					{name = "stool", x = 19*gridsize, y = 16*gridsize, visible = 1},
+																					{name = "stool", x = 22*gridsize, y = 16*gridsize, visible = 1},
+																					{name = "stool", x = 23*gridsize, y = 16*gridsize, visible = 1}
 																			}
+																		}
 													}
 
 
@@ -654,12 +688,11 @@ animsheet_act = love.graphics.newImage("images/solidarity_anim_act.png")
 								}
 
 --- animated objects
-	animsheet2 = love.graphics.newImage("images/solidarity_object_anim.png")
-	objectAnimations = {{anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), name = "plantSmBerries", loop = 1, current = 0, running = 0, count = 0},
-				 							{anim = newAnimation(animsheet2, 1*16, 3, 16, 16, .3), name = "plantLgBerries", loop = 1, current = 0, running = 0, count = 0},
-										  {anim = newAnimation(animsheet2, 2*16, 4, 16, 16, .3), name = "barrelSmBerries", loop = 2, current = 0, running = 0, count = 0},
-											{anim = newAnimation(animsheet2, 3*16, 4, 16, 16, .3), name = "barrelLgBerries", loop = 2, current = 0, running = 0, count = 0}
-										}
+	-- objectAnimations = {{anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0},
+	-- 			 							{anim = newAnimation(animsheet2, 1*16, 3, 16, 16, .3), name = "plantLgBerries", loop = 1, current = 0, running = 0, count = 0},
+	-- 									  {anim = newAnimation(animsheet2, 2*16, 4, 16, 16, .3), name = "barrelSmBerries", loop = 2, current = 0, running = 0, count = 0},
+	-- 										{anim = newAnimation(animsheet2, 3*16, 4, 16, 16, .3), name = "barrelLgBerries", loop = 2, current = 0, running = 0, count = 0}
+	-- 									}
 
 	animsheet_act = love.graphics.newImage("images/solidarity_anim_act.png")
 --spritesheet, number of tiles in animation, starting position, length, width, height, duration-- loop = 0 is infinite loop
@@ -797,10 +830,10 @@ function love.update(dt)
 		if tempBlocks.overworld[2].on == 0 then
 			tempBlocks.overworld[2].on = 1
 			tempBlocks.overworld[3].on = 1
-			nonInteractiveObjects.overworld[1].visible = 0
-			nonInteractiveObjects.overworld[2].visible = 0
-			nonInteractiveObjects.overworld[3].visible = 1
-			nonInteractiveObjects.overworld[4].visible = 1
+			nonInteractiveObjects.overworld.fenceopenL[1].visible = 0
+			nonInteractiveObjects.overworld.fenceopenR[2].visible = 0
+			nonInteractiveObjects.overworld.fenceclosedL[3].visible = 1
+			nonInteractiveObjects.overworld.fenceclosedR[4].visible = 1
 			addTempBlocks(initTable)
 			saveMap()
 		end
@@ -860,11 +893,11 @@ function love.update(dt)
 
 	npcActUpdate(dt)
 	--animation time update
-	animUpdate(player.animations.walk, dt)
+	animUpdate(player.animations.walk, dt, player.facing)
 
-	if actions[1].k ~= 0 then
-		if objectAnimations[actions[1].k].running == 1 then
-			animUpdate(objectAnimations, dt, actions[1].k)
+	if actions.player.key ~= 0 and actions.player.index ~= 0 then
+		if movingObjectData[currentLocation][actions.player.key][actions.player.index].running == 1 then
+			animUpdate(movingObjectData[currentLocation][actions.player.key], dt, actions.player.index)
 		end
 	end
 	if actionMode == 1 then
@@ -874,11 +907,16 @@ function love.update(dt)
 	end
 	for i = 1, #npcs do
 		if npcs[i].working == 1 then
-			local k = npcs[i].start
-			animUpdate(npcs[i].animations.act, dt, k)
-			animUpdate(objectAnimations, dt, storedIndex[2])
+			animUpdate(npcs[i].animations.act, dt, npcs[i].start)
+			testNpcObject(npcs[i].start, npcs[i].grid_x, npcs[i].grid_y, movingObjectData[currentLocation], i, dt)
+			-- if movingObjectData[currentLocation][actions.npcs[i].key][actions.npcs[i].index].running == 1 then
+			-- 	animUpdate(movingObjectData[currentLocation][actions.npcs[i].key], dt, actions.npcs[i].index)
+			-- end
+			if movingObjectData[currentLocation][actions.npcs[i].key][actions.npcs[i].index].running == 1 then
+				animUpdate(movingObjectData[currentLocation][actions.npcs[i].key], dt, actions.npcs[i].index)
+			end
 		else
-			animUpdate(npcs[i].animations.walk, dt)
+			animUpdate(npcs[i].animations.walk, dt, npcs[i].facing)
 		end
 	end
 
@@ -919,11 +957,14 @@ function love.draw()
 	end
 
 	-- draw tiles on top of player
-	drawStillObjects(currentLocation, movingObjectData, movingObjectSheet, movingObjectQuads)
-	drawStillObjects(currentLocation, nonInteractiveObjects, movingObjectSheet, movingObjectQuads)
-	if actions[1].k ~= 0 then
-		drawActAnims(objectAnimations, actions[1].k, actions[1].x, actions[1].y)
+	-- drawStillObjects(currentLocation, movingObjectData, animsheet3, movingObjectQuads)
+	drawStillObjects(currentLocation, nonInteractiveObjects, animsheet3, movingObjectQuads)
+	for k, v in pairs(movingObjectData[currentLocation]) do
+		for i = 1, #movingObjectData[currentLocation][k] do
+			drawActAnims(movingObjectData[currentLocation][k], i, movingObjectData[currentLocation][k][i].x, movingObjectData[currentLocation][k][i].y)
+		end
 	end
+
 
 	--draw extra infoView
 	if infoView == 1 then
@@ -1038,8 +1079,8 @@ function love.keypressed(key)
 				faceObject(player, player.facing, staticObjects[currentLocation]) -- still objects
 				faceObject(player, player.facing, movingObjectData[currentLocation])
 				faceObject(player, player.facing, locationTriggers[currentLocation])
-				if actions[1].k ~= 0 then
-					resetAnims(objectAnimations, actions[1].k)
+				if actions.player.key ~= 0 then
+					resetAnims(movingObjectData[currentLocation][actions.player.key], actions.player.index)
 				end
 				if actionMode == 1 then
 					resetAnims(player.animations.act, player.facing)
