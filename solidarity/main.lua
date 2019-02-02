@@ -802,7 +802,9 @@ function love.update(dt)
 	end
 	--immobilize player if dialoguemode active
 	if dialogueMode == 1 then
-		player.canMove = 0
+		if player.canMove == 1 then
+			player.canMove = 0
+		end
 	end
 
 	-- initiate dialogue and move character back if they enter a location
@@ -874,8 +876,9 @@ function love.update(dt)
 		updateGrid(player, 0)
 	end
 
+	--update player move direction and actual position
 	player.moveDir, player.act_x, player.act_y = moveChar(player.moveDir, player.act_x, player.grid_x, player.act_y, player.grid_y, (player.speed *dt))
-
+	--check if player enters location change trigger, update currentlocation
 	if player.canMove == 1 then
 		changeMap(player.act_x, player.act_y, locationTriggers[currentLocation])
 	end
@@ -892,26 +895,28 @@ function love.update(dt)
 	end
 
 	npcActUpdate(dt)
-	--animation time update
-	animUpdate(player.animations.walk, dt, player.facing)
 
+	--animation time update
+	if player.moveDir ~= 0 then
+		animUpdate(player.animations.walk, dt, player.moveDir)
+	end
+	if player.animations.act[player.facing].running == 1 then
+		animUpdate(player.animations.act, dt, player.facing)
+	end
 	if actions.player.key ~= 0 and actions.player.index ~= 0 then
 		if movingObjectData[currentLocation][actions.player.key][actions.player.index].running == 1 then
 			animUpdate(movingObjectData[currentLocation][actions.player.key], dt, actions.player.index)
 		end
 	end
-	if actionMode == 1 then
-		if player.animations.act[player.facing].running == 1 then
-			animUpdate(player.animations.act, dt, player.facing)
-		end
-	end
+
+
 	for i = 1, #npcs do
 		if npcs[i].working == 1 then
+			if npcs[i].animations.act[npcs[i].start].running == 0 then
+				npcs[i].animations.act[npcs[i].start].running = 1
+			end
 			animUpdate(npcs[i].animations.act, dt, npcs[i].start)
 			testNpcObject(npcs[i].start, npcs[i].grid_x, npcs[i].grid_y, movingObjectData[currentLocation], i, dt)
-			-- if movingObjectData[currentLocation][actions.npcs[i].key][actions.npcs[i].index].running == 1 then
-			-- 	animUpdate(movingObjectData[currentLocation][actions.npcs[i].key], dt, actions.npcs[i].index)
-			-- end
 			if movingObjectData[currentLocation][actions.npcs[i].key][actions.npcs[i].index].running == 1 then
 				animUpdate(movingObjectData[currentLocation][actions.npcs[i].key], dt, actions.npcs[i].index)
 			end

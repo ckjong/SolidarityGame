@@ -75,9 +75,7 @@ function randomFacing(char, x, ct, dt)
 		local tbl = checkOpenSpace(char.grid_x, char.grid_y)
 		local i = math.random(#tbl)
 		char.facing = tbl[i]
-		print(char.name .. " now facing " .. char.facing)
 		char.timer.mt = math.random(3, 7)
-		print(char.name .. " next turn " .. char.timer.mt)
 		ct = ct - x
 		return ct
 	else
@@ -171,6 +169,7 @@ function changeGridy(char, dir, x, y, s, col)
 			char.act_x = char.grid_x
 			char.grid_y = char.grid_y + (s * gridsize)
 			char.moveDir = dir
+			char.facing = dir
 		end
 	end
 end
@@ -193,6 +192,7 @@ function changeGridx(char, dir, x, y, s, col)
 			char.act_y = char.grid_y
 			char.grid_x = char.grid_x + (s * gridsize)
 			char.moveDir = dir
+			char.facing = dir
 		end
 	end
 end
@@ -202,13 +202,21 @@ end
 function updateGrid(char, c)
 	if char.canMove == 1 then
 		if love.keyboard.isDown("up") and char.act_y <= char.grid_y then
-			changeGridy (char, 1, 0, -1, -1, c) -- char, dir, x-test, y-test, multiplier, collision
+			if love.keyboard.isDown("left", "right", "down") == false then
+				changeGridy (char, 1, 0, -1, -1, c) -- char, dir, x-test, y-test, multiplier, collision
+			end
 		elseif love.keyboard.isDown("down") and char.act_y >= char.grid_y then
-			changeGridy (char, 2, 0, 1, 1, c)
+			if love.keyboard.isDown("left", "right", "up") == false then
+				changeGridy (char, 2, 0, 1, 1, c)
+			end
 		elseif love.keyboard.isDown("left") and char.act_x <= char.grid_x then
-			changeGridx (char, 3, -1, 0, -1, c)
+			if love.keyboard.isDown("up", "down", "right") == false then
+				changeGridx (char, 3, -1, 0, -1, c)
+			end
 		elseif love.keyboard.isDown("right") and char.act_x >= char.grid_x then
-			changeGridx (char, 4, 1, 0, 1, c)
+			if love.keyboard.isDown("up", "down", "left") == false then
+				changeGridx (char, 4, 1, 0, 1, c)
+			end
 		end
 	end
 end
