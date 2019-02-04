@@ -31,7 +31,6 @@ function testObject(x, y, tbl)
 			end
 		end
 	else
-		print("testObject failed for " .. k)
 		return false, nil
 	end
 end
@@ -209,6 +208,7 @@ function printObjText(b, c)
         BerryBarrel(b, c, "Rose Berries", "plantLgBerries")
         return
 			else
+				print("Not berries or barrel obj: " .. b)
 				startAction(b, 1)
       end
 		else
@@ -325,12 +325,16 @@ function BerryHarvestStart(b, c)
   if b == "plantSmBerries" then
     actions.player.rate = 10
     actions.player.key = b
-		print(actions.player.key)
+		print("actions.player.key " .. actions.player.key)
+		player.animations.act[player.facing].running = 1
+		movingObjectData[currentLocation][b][c].running = 1
     -- k = key for object animation
   elseif b == "plantLgBerries" then
     actions.player.rate = 15
     actions.player.key = b
-		print(actions.player.key)
+		print("actions.player.key " .. actions.player.key)
+		player.animations.act[player.facing].running = 1
+		movingObjectData[currentLocation][b][c].running = 1
   elseif b == "barrelSmBerries" then
     actions.player.key = b
 		print(actions.player.key)
@@ -370,6 +374,7 @@ function startAction(b, n)
 	currentspeaker = "player"
 	print("n: " .. n)
 	if objectText[b][n]~= nil then
+		print("objectText not nil")
 		text = objectText[b][n]
 		wait.triggered = 1
 		wait.n = string.len(text)

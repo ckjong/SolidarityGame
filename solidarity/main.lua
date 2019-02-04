@@ -633,7 +633,7 @@ animsheet_act = love.graphics.newImage("images/solidarity_anim_act.png")
 													},
 												barrelLgBerries = {
 														{x = 18*gridsize, y = 22*gridsize, visible = 1, anim = newAnimation(animsheet2, 3*16, 4, 16, 16, .3), loop = 2, current = 0, running = 0, count = 0}
-													},
+													}
 												}
 											}
 
@@ -833,9 +833,9 @@ function love.update(dt)
 			tempBlocks.overworld[2].on = 1
 			tempBlocks.overworld[3].on = 1
 			nonInteractiveObjects.overworld.fenceopenL[1].visible = 0
-			nonInteractiveObjects.overworld.fenceopenR[2].visible = 0
-			nonInteractiveObjects.overworld.fenceclosedL[3].visible = 1
-			nonInteractiveObjects.overworld.fenceclosedR[4].visible = 1
+			nonInteractiveObjects.overworld.fenceopenR[1].visible = 0
+			nonInteractiveObjects.overworld.fenceclosedL[1].visible = 1
+			nonInteractiveObjects.overworld.fenceclosedR[1].visible = 1
 			addTempBlocks(initTable)
 			saveMap()
 		end
@@ -911,17 +911,21 @@ function love.update(dt)
 
 
 	for i = 1, #npcs do
-		if npcs[i].working == 1 then
-			if npcs[i].animations.act[npcs[i].start].running == 0 then
-				npcs[i].animations.act[npcs[i].start].running = 1
+		if dialogueMode == 0 and menuView == 0 then
+			if npcs[i].working == 1 then
+				if npcs[i].animations.act[npcs[i].start].running == 0 then
+					npcs[i].animations.act[npcs[i].start].running = 1
+				end
+				animUpdate(npcs[i].animations.act, dt, npcs[i].start)
+				if movingObjectData[currentLocation] ~= nil then
+					testNpcObject(npcs[i].start, npcs[i].grid_x, npcs[i].grid_y, movingObjectData[currentLocation], i, dt)
+					if movingObjectData[currentLocation][actions.npcs[i].key][actions.npcs[i].index].running == 1 then
+						animUpdate(movingObjectData[currentLocation][actions.npcs[i].key], dt, actions.npcs[i].index)
+					end
+				end
+			else
+				animUpdate(npcs[i].animations.walk, dt, npcs[i].facing)
 			end
-			animUpdate(npcs[i].animations.act, dt, npcs[i].start)
-			testNpcObject(npcs[i].start, npcs[i].grid_x, npcs[i].grid_y, movingObjectData[currentLocation], i, dt)
-			if movingObjectData[currentLocation][actions.npcs[i].key][actions.npcs[i].index].running == 1 then
-				animUpdate(movingObjectData[currentLocation][actions.npcs[i].key], dt, actions.npcs[i].index)
-			end
-		else
-			animUpdate(npcs[i].animations.walk, dt, npcs[i].facing)
 		end
 	end
 
@@ -964,9 +968,11 @@ function love.draw()
 	-- draw tiles on top of player
 	-- drawStillObjects(currentLocation, movingObjectData, animsheet3, movingObjectQuads)
 	drawStillObjects(currentLocation, nonInteractiveObjects, animsheet3, movingObjectQuads)
-	for k, v in pairs(movingObjectData[currentLocation]) do
-		for i = 1, #movingObjectData[currentLocation][k] do
-			drawActAnims(movingObjectData[currentLocation][k], i, movingObjectData[currentLocation][k][i].x, movingObjectData[currentLocation][k][i].y)
+	if movingObjectData[currentLocation] ~= nil then
+		for k, v in pairs(movingObjectData[currentLocation]) do
+			for i = 1, #movingObjectData[currentLocation][k] do
+				drawActAnims(movingObjectData[currentLocation][k], i, movingObjectData[currentLocation][k][i].x, movingObjectData[currentLocation][k][i].y)
+			end
 		end
 	end
 
@@ -1080,16 +1086,17 @@ function love.keypressed(key)
 				if usedItem == 1 then
 					afterItemUse()
 				end
+				-- if actions.player.key ~= 0 then
+				-- 	resetAnims(movingObjectData[currentLocation][actions.player.key], actions.player.index)
+				-- end
+				-- if actionMode == 1 then
+				-- 	resetAnims(player.animations.act, player.facing)
+				-- end
 				DialogueSetup(npcs, dialogueStage)
 				faceObject(player, player.facing, staticObjects[currentLocation]) -- still objects
 				faceObject(player, player.facing, movingObjectData[currentLocation])
 				faceObject(player, player.facing, locationTriggers[currentLocation])
-				if actions.player.key ~= 0 then
-					resetAnims(movingObjectData[currentLocation][actions.player.key], actions.player.index)
-				end
-				if actionMode == 1 then
-					resetAnims(player.animations.act, player.facing)
-				end
+
 			else
 				 menuHierarchy(key)
 			end

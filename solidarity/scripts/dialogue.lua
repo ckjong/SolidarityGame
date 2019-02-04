@@ -80,7 +80,7 @@ NPCdialogue = {
            [5] = {text = {"Day's over. Go back to whatever hole you crawled out of."},
                logic = {next = 5, speaker = "Finch", cond = true, off = true, display = 1}}
         },
-  Cress = {[1] = {text = {"Oh, uh, hi " ..player.name.. ". Happy birthday. Sorry they made you work late."},
+  Cress = {[1] = {text = {"Oh, uh, hi " ..player.name.. ". Sorry they made you work late."},
                 logic = {next = 2, speaker = "Cress", cond = true, off = false, display = 1, spoken = 0}},
           [2] = {text = {"It's not your fault.", "Lark is the worst."},
                 logic = {next = 3, offset = 2, speaker = "player", cond = true, off = false, display = 2}},
@@ -96,7 +96,7 @@ NPCdialogue = {
           [2] = {text = {"Wow, thank you! How did you get it?", "They're usually so strict about food."},
                 logic = {next = 3, speaker = "player", cond = true, off = false, display = 1, spoken = 0}},
           [3] = {text = {"Let's just say it was a group effort.", "You need to eat at least one meal a day to keep your strength up!", "Try not to get in trouble too often or you'll go hungry."},
-                logic = {next = 3, speaker = "Agave", cond = true, off = true, display = 1, spoken = 0, func = charGivesObject, par = {"I got 1 Rat Soup.\n(Press I to open inventory.)", "Rat Soup", 1, "platefull2", false}}}
+                logic = {next = 3, speaker = "Agave", cond = true, off = true, display = 1, spoken = 0, func = charGivesObject, par = {"I got 1 Meat Soup.\n(Press I to open inventory.)", "Meat Soup", 1, "platefull2", false}}}
           },
   Tarragon = {[1] = {text = {"Leave me alone, I'm busy."},
                   logic = {next = 1, speaker = "Tarragon", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
@@ -119,37 +119,37 @@ NPCdialogue = {
   Finch = {[1] = {text = {"Day's over. Go back to whatever hole you crawled out of."},
                logic = {next = 1, speaker = "Finch", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
         },
-  Cress = {[1] = {text = {"You must be hungry after such a long day.","Were you able to get something to eat?"},
+  Cress = {[1] = {text = {"Did you want something?"},
                 logic = {next = 2, speaker = "Cress", cond = true, off = false, display = 1, spoken = 0}},
-          [2] = {text = {"Yeah Agave saved some food for me."},
+          [2] = {text = {"No just saying hi."},
                 logic = {next = 3, offset = 2, speaker = "player", cond = true, off = false, display = 1}},
-          [3] = {text = {"Oh good, I'm glad."},
+          [3] = {text = {"Oh... um... ok."},
                 logic = {next = 3, speaker = "Cress", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
         },
-  Agave = {[1] = {text = {"You should probably get to the dormitory.", "Don't let them catch you hanging around here after clean-up.", "You know how they are about loitering..."},
+  Agave = {[1] = {text = {"You should probably get to the dormitory.", "Don't let them catch you hanging around here after clean-up.", "They might think you're trying to steal something."},
                 logic = {next = 1, speaker = "Agave", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
           },
   Tarragon = {[1] = {text = {"..."},
                   logic = {next = 1, speaker = "Tarragon", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
         },
-  Robin = {[1] = {text = {"What are you doing on the men's side?", "Go hang out with the girls and play with your dolls", "or whatever it is females do with their spare time."},
+  Robin = {[1] = {text = {"What are you doing on the men's side?", "Females aren't allowed here"},
                 logic = {next = 2, speaker = "Robin", cond = true, off = false, display = 1, spoken = 0}},
           [2] = {text = {"Females...? You've got to be kidding."},
                 logic = {next = 3, speaker = "player", cond = true, off = false, display = 1, spoken = 0}},
           [3] = {text = {"What? It's what you are isn't it?"},
-                logic = {next = 4, speaker = "Robin", cond = true, off = true, display = 1, spoken = 0, energy = 1}},
+                logic = {next = 4, speaker = "Robin", cond = true, off = false, display = 1, spoken = 0, energy = 1}},
           [4] = {text = {"You know what, I'm not going to bother.", "I'm not an animal...", "That's it, you're going down."},
                 logic = {next = 5, offset = 4, speaker = "player", cond = true, off = false, display = 2}},
           [5] = {text = {"Running away huh? Typical."},
                 logic = {next = 8, speaker = "Robin", cond = true, off = true, display = 1, spoken = 0, energy = 1}}, -- respond to player options
           [6] = {text = {"Really? Could have fooled me."},
                 logic = {next = 8, speaker = "Durian", cond = true, off = true, display = 1, spoken = 0, energy = 1}}, -- respond to player options
-          [7] = {text = {"."},
+          [7] = {text = {"Hahaha yeah right, you're just a girl.", "What are you going to do? Cry on us?"},
                 logic = {next = 8, speaker = "Durian", cond = true, off = true, display = 1, spoken = 0, energy = 1}}, -- respond to player options
           [8] = {text = {"Ugh women are so chatty."},
                 logic = {next = 8, speaker = "Robin", cond = true, off = true, display = 1, spoken = 0, energy = 1}}, -- respond to player options
       },
-  Durian = {[1] = {text = {"Oh look it's another loser. Get out of here.", "Can't you see the adults are talking?"},
+  Durian = {[1] = {text = {"Oh look a loser. Get out of here.", "Can't you see the adults are talking?"},
                 logic = {next = 1, speaker = "Durian", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
         }
   }
@@ -179,7 +179,8 @@ objectText = {
   }
 
 itemDescription = {plantSmBerries = "One of the main ingredients used in potions. Very poisonous unless properly prepared.",
-                   plantLgBerries = "One of the main ingredients used in potions. Very poisonous unless properly prepared."
+                   plantLgBerries = "One of the main ingredients used in potions. Very poisonous unless properly prepared.",
+                   platefull2 = "A thin soup made with an unidentified meat. Try not to think about it too hard."
 }
 
 journalText = {[1]= {"Day 1, daytime - Lark made me stay late today. He says I'm not working hard enough, but all he does is sit around and yell at people. Luckily Agave and the others saved some food for me."}

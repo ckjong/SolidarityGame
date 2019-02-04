@@ -149,21 +149,12 @@ end
 function animUpdate(tbl, dt, k)
   if k then
     tbl[k]["anim"]["currentTime"] = tbl[k]["anim"]["currentTime"] + dt
-    if tbl == player.animations.walk then
-      print(player.animations.walk[k]["anim"]["currentTime"])
-    end
     if tbl[k]["anim"]["currentTime"] >= tbl[k]["anim"]["duration"] then
       tbl[k]["anim"]["currentTime"] = tbl[k]["anim"]["currentTime"] - tbl[k]["anim"]["duration"]
       if tbl[k].loop ~= 0 then
         tbl[k].count = tbl[k].count + 1
         if tbl[k].count == tbl[k].loop then
-          if tbl[k].running == 1 then
-            tbl[k].running = 0
-            tbl[k].count = 0
-            if actions.player.key ~= 0 then
-              animFinish()
-            end
-          end
+          resetAnims(tbl, k)
         end
       end
     end
@@ -176,10 +167,7 @@ function animUpdate(tbl, dt, k)
           tbl[k].count = tbl[k].count + 1
           if tbl[k].count == tbl[k].loop then
             print("count:" .. tbl[k].count)
-            if tbl[k].running == 1 then
-              tbl[k].running = 0
-              tbl[k].count = 0
-            end
+            resetAnims(tbl, k)
           end
         end
         -- if tbl[k].loop ~= 0 then
@@ -203,7 +191,10 @@ function animFinish()
 end
 
 function resetAnims(tbl, k)
-  tbl[k].running = 1
+  if tbl[k].running == 1 then
+    tbl[k].running = 0
+    tbl[k].count = 0
+  end
 end
 
 --render portrait
@@ -233,7 +224,6 @@ function drawPlayer(tbl)
   elseif player.moveDir == 0 then
     i = player.facing
     if actionMode == 0 then
-      tbl[i]["anim"]["currentTime"] = 0
       love.graphics.draw(tbl[i]["anim"]["spriteSheet"], tbl[i]["anim"]["quads"][1], player.act_x, player.act_y, 0, 1)
     else
       drawActAnims(player.animations.act, player.facing, player.act_x, player.act_y)
@@ -297,7 +287,7 @@ function drawActAnims(tbl, k, x, y)
       if spriteNum > #tbl[k]["anim"]["quads"] then
         n = #tbl[k]["anim"]["quads"]
       end
-      love.graphics.draw(tbl[k]["anim"]["spriteSheet"], tbl[k]["anim"]["quads"][max], x, y, 0, 1)
+      love.graphics.draw(tbl[k]["anim"]["spriteSheet"], tbl[k]["anim"]["quads"][n], x, y, 0, 1)
     end
   elseif tbl[k].running == 0 then
     love.graphics.draw(tbl[k]["anim"]["spriteSheet"], tbl[k]["anim"]["quads"][1], x, y, 0, 1)
@@ -412,6 +402,7 @@ function drawInfo(x, y)
   love.graphics.setColor(0, 0, 0)
   love.graphics.print(currentLocation, x - 48, y - 48)
   love.graphics.print("x: " .. x/gridsize .." y: " .. y/gridsize, x - 48, y - 40)
+  love.graphics.print("Current FPS: "..tostring(love.timer.getFPS( )), x - 48, y - 30)
 end
 
 function drawMenu(x, y, tab)

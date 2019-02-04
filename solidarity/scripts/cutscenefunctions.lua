@@ -201,6 +201,13 @@ function changeGameStage()
       npcs[i].n = 1
       npcs[i].canMove = 0
       npcActSetup()
+      for k, v in pairs(movingObjectData) do
+        for l, w in pairs(movingObjectData[k]) do
+          for m = 1, #movingObjectData[k][j] do
+            movingObjectData[k][l][m].running = 0
+          end
+        end
+      end
     end
   end
 end
