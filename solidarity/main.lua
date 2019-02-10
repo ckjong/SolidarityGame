@@ -204,10 +204,10 @@ animsheet_act = love.graphics.newImage("images/solidarity_anim_act.png")
 		energy = 100,
 		next = {{x = 0, y = 0, facing = 0, location = "overworld"},
 						{x = 0, y = 0, facing = 0, location = "dininghall"}},
-		animations = {walk = {{anim = newAnimation(animsheet1, 0, 4, 16, 16, .6), name = "up", loop = 0},
-													{anim = newAnimation(animsheet1, 1*16, 4, 16, 16, .6), name = "down", loop = 0},
-													{anim = newAnimation(animsheet1, 2*16, 4, 16, 16, .65), name = "left", loop = 0},
-													{anim = newAnimation(animsheet1, 3*16, 4, 16, 16, .65), name = "right", loop = 0}},
+		animations = {walk = {{anim = newAnimation(animsheet1, 0, 4, 16, 16, .50), name = "up", loop = 0},
+													{anim = newAnimation(animsheet1, 1*16, 4, 16, 16, .50), name = "down", loop = 0},
+													{anim = newAnimation(animsheet1, 2*16, 4, 16, 16, .55), name = "left", loop = 0},
+													{anim = newAnimation(animsheet1, 3*16, 4, 16, 16, .55), name = "right", loop = 0}},
 					act = {{anim = newAnimation(animsheet_act, 0, 4, 16, 16, .6), name = "up", loop = 1, current = 0, running = 0, count = 0},
 								{anim = newAnimation(animsheet_act, 1*16, 4, 16, 16, .6), name = "down", loop = 1, current = 0, running = 0, count = 0},
 								{anim = newAnimation(animsheet_act, 2*16, 4, 16, 16, .6), name = "left", loop = 1, current = 0, running = 0, count = 0},
@@ -539,17 +539,17 @@ animsheet_act = love.graphics.newImage("images/solidarity_anim_act.png")
 -- actions
 	actionMode = 0
 	usedItem = 0
-	actions = {player = {current = 0, max = 100, rate = 10, x = 0, y = 0, key = 0},
+	actions = {player = {current = 0, max = 100, rate = 10, x = 0, y = 0, key = 0, index = 0},
 							npcs = {
-								{current = 0, max = 100, rate = 10, x = 0, y = 0, key = 0},
-								{current = 0, max = 100, rate = 10, x = 0, y = 0, key = 0},
-								{current = 0, max = 100, rate = 10, x = 0, y = 0, key = 0},
-								{current = 0, max = 100, rate = 10, x = 0, y = 0, key = 0},
-								{current = 0, max = 100, rate = 10, x = 0, y = 0, key = 0},
-								{current = 0, max = 100, rate = 10, x = 0, y = 0, key = 0},
-								{current = 0, max = 100, rate = 10, x = 0, y = 0, key = 0},
-								{current = 0, max = 100, rate = 10, x = 0, y = 0, key = 0},
-								{current = 0, max = 100, rate = 10, x = 0, y = 0, key = 0}
+								{current = 0, max = 100, rate = 10, x = 0, y = 0, key = 0, index = 0},
+								{current = 0, max = 100, rate = 10, x = 0, y = 0, key = 0, index = 0},
+								{current = 0, max = 100, rate = 10, x = 0, y = 0, key = 0, index = 0},
+								{current = 0, max = 100, rate = 10, x = 0, y = 0, key = 0, index = 0},
+								{current = 0, max = 100, rate = 10, x = 0, y = 0, key = 0, index = 0},
+								{current = 0, max = 100, rate = 10, x = 0, y = 0, key = 0, index = 0},
+								{current = 0, max = 100, rate = 10, x = 0, y = 0, key = 0, index = 0},
+								{current = 0, max = 100, rate = 10, x = 0, y = 0, key = 0, index = 0},
+								{current = 0, max = 100, rate = 10, x = 0, y = 0, key = 0, index = 0}
 							}
 						}
 --battle
@@ -559,15 +559,27 @@ animsheet_act = love.graphics.newImage("images/solidarity_anim_act.png")
 	require("scripts/battle")
 	--object text index for background objects
 	staticObjects = {overworld = {
-		{name = "gardeningSign", x = 16*gridsize, y = 17*gridsize},
-		{name = "kitchenSign",  x = 23*gridsize, y = 17*gridsize},
-	 	{name = "dormitorySign",  x = 29*gridsize, y = 26*gridsize},
-		{name = "storeSign",  x = 29*gridsize, y = 34*gridsize}
-		-- {"barrelSmBerriesStatic", 15*gridsize, 34*gridsize, off = 0},
-		-- {"barrelLgBerriesStatic", 19*gridsize, 34*gridsize, off = 0}
+		gardeningSign = {{x = 16*gridsize, y = 17*gridsize}},
+		kitchenSign = {{x = 23*gridsize, y = 17*gridsize}},
+	 	dormitorySign = {{x = 29*gridsize, y = 26*gridsize}},
+		storeSign = {{x = 29*gridsize, y = 34*gridsize}},
+		gardeningShed = {
+			{x = locationTriggers.overworld[1].x, y = locationTriggers.overworld[1].y, visible = 0}
 		},
 		dormitory = {
-			{name = "playerBed", x = 15*gridsize, y = 16*gridsize}
+			{x = locationTriggers.overworld[2].x, y = locationTriggers.overworld[2].y, visible = 0},
+			{x = locationTriggers.overworld[3].x, y = locationTriggers.overworld[3].y, visible = 0}
+		},
+		dininghall = {
+			{x = locationTriggers.overworld[4].x, y = locationTriggers.overworld[4].y, visible = 0},
+			{x = locationTriggers.overworld[5].x, y = locationTriggers.overworld[5].y, visible = 0}
+		},
+		store = {
+			{x = locationTriggers.overworld[6].x, y = locationTriggers.overworld[6].y, visible = 0}
+		}
+	},
+	dormitory = {
+			playerBed = {{x = 15*gridsize, y = 16*gridsize}}
 		}
 	}
 
@@ -673,18 +685,40 @@ animsheet_act = love.graphics.newImage("images/solidarity_anim_act.png")
 	-- tiles that are rendered on top of the player and npcs
 	toptilesSheet = love.graphics.newImage("images/solidarity_toptiles.png")
 	toptiles = {doorway = love.graphics.newQuad(0, 0, 16, 16, toptilesSheet:getDimensions()),
-							black = love.graphics.newQuad(1*gridsize, 0, 16, 16, toptilesSheet:getDimensions())
+							black = love.graphics.newQuad(1*gridsize, 0, 16, 16, toptilesSheet:getDimensions()),
+							doorL = love.graphics.newQuad(2*gridsize, 0, 16, 16, toptilesSheet:getDimensions()),
+							doorR = love.graphics.newQuad(3*gridsize, 0, 16, 16, toptilesSheet:getDimensions())
 							}
-	toptileData = {gardeningShed = {{name = "doorway", x = locationTriggers.gardeningShed[1].x, y = locationTriggers.gardeningShed[1].y, visible = 1}
+	toptileData = {gardeningShed = {
+																	doorway = {{x = locationTriggers.gardeningShed[1].x, y = locationTriggers.gardeningShed[1].y, visible = 1}},
+																	doorL = {{x = locationTriggers.gardeningShed[1].x-gridsize, y = locationTriggers.gardeningShed[1].y, visible = 1}},
+																	doorR = {{x = locationTriggers.gardeningShed[1].x+gridsize, y = locationTriggers.gardeningShed[1].y, visible = 1}}
 																 },
-								dormitory = {{name = "doorway", x= locationTriggers.dormitory[1].x, y = locationTriggers.dormitory[1].y, visible = 1},
-														 {name = "doorway", x= locationTriggers.dormitory[2].x, y = locationTriggers.dormitory[2].y, visible = 1}
+								dormitory = {
+														doorway = {{x= locationTriggers.dormitory[1].x, y = locationTriggers.dormitory[1].y, visible = 1},
+																				{x= locationTriggers.dormitory[2].x, y = locationTriggers.dormitory[2].y, visible = 1}
+																			},
+														doorL = {{x= locationTriggers.dormitory[1].x-gridsize, y = locationTriggers.dormitory[1].y, visible = 1},
+																		 {x = locationTriggers.dormitory[2].x-gridsize, y = locationTriggers.dormitory[2].y, visible = 1},
+																	 },
+														doorR = {{x = locationTriggers.dormitory[1].x+gridsize, y = locationTriggers.dormitory[1].y, visible = 1},
+																		 {x = locationTriggers.dormitory[2].x+gridsize, y = locationTriggers.dormitory[2].y, visible = 1}
+																		}
 													 	},
-							  dininghall = {{name = "doorway", x= locationTriggers.dininghall[1].x, y = locationTriggers.dininghall[1].y, visible = 1},
-														  {name = "doorway", x= locationTriggers.dininghall[2].x, y = locationTriggers.dininghall[2].y, visible = 1}
+							  dininghall = {
+															doorway = {{ x= locationTriggers.dininghall[1].x, y = locationTriggers.dininghall[1].y, visible = 1},
+																				 {x= locationTriggers.dininghall[2].x, y = locationTriggers.dininghall[2].y, visible = 1}
+																			 },
+															doorL = {{x= locationTriggers.dininghall[1].x-gridsize, y = locationTriggers.dininghall[1].y, visible = 1},
+																			 {x= locationTriggers.dininghall[2].x-gridsize, y = locationTriggers.dininghall[2].y, visible = 1}
+																		 },
+															doorR = {{x= locationTriggers.dininghall[1].x+gridsize, y = locationTriggers.dininghall[1].y, visible = 1},
+																			 {x= locationTriggers.dininghall[2].x+gridsize, y = locationTriggers.dininghall[2].y, visible = 1}
+																			}
 														},
-								store = {{name = "doorway", x= locationTriggers.store[1].x, y = locationTriggers.store[1].y, visible = 1}
-																							 }
+								store = {doorway = {{x= locationTriggers.store[1].x, y = locationTriggers.store[1].y, visible = 1}
+																	 }
+												}
 								}
 
 --- animated objects
@@ -782,7 +816,7 @@ animsheet_act = love.graphics.newImage("images/solidarity_anim_act.png")
 	menuW, menuH = 14*gridsize, 7*gridsize
 	canvas = love.graphics.newCanvas(menuW, menuH)
 	formBox(menuW, menuH)
-	lockDialogue(locationTriggers[currentLocation])
+	lockDialogue(locationTriggers.overworld)
 end
 
 
@@ -807,39 +841,11 @@ function love.update(dt)
 		end
 	end
 
+	-- do checks for each gamestage
+	gameStageUpdate(dt)
+
 	-- initiate dialogue and move character back if they enter a location
-	if gameStage == 1 then
-		local i = getCharIndex("Finch")
-		if objectInventory.barrelSmBerries + objectInventory.barrelLgBerries >= 60 then
-			if areaCheck(16, 21, 17, 22, player) then
-				local bool1, k = checkInventory("Plum Berries")
-				local bool2, k = checkInventory("Rose Berries")
-				if bool1 == 0 and bool2 == 0 then
-					if npcs[i].c ~= 3 then
-						removeTempBlocks(currentLocation, 1)
-						npcs[i].c = 3
-					end
-				else
-					if npcs[i].c ~= 4 then
-						npcs[i].c = 4
-						print("npcs[i].c " ..  npcs[i].c)
-					end
-				end
-			end
-		end
-	elseif gameStage == 2 then
-		local i = getCharIndex("Finch")
-		if tempBlocks.overworld[2].on == 0 then
-			tempBlocks.overworld[2].on = 1
-			tempBlocks.overworld[3].on = 1
-			nonInteractiveObjects.overworld.fenceopenL[1].visible = 0
-			nonInteractiveObjects.overworld.fenceopenR[1].visible = 0
-			nonInteractiveObjects.overworld.fenceclosedL[1].visible = 1
-			nonInteractiveObjects.overworld.fenceclosedR[1].visible = 1
-			addTempBlocks(initTable)
-			saveMap()
-		end
-	end
+
 	if dialogueMode == 0 then
 		if trigger[1] == 0 then
 			DialogueTrigger(17, 21, 3)
@@ -904,8 +910,14 @@ function love.update(dt)
 		animUpdate(player.animations.act, dt, player.facing)
 	end
 	if actions.player.key ~= 0 and actions.player.index ~= 0 then
-		if movingObjectData[currentLocation][actions.player.key][actions.player.index].running == 1 then
-			animUpdate(movingObjectData[currentLocation][actions.player.key], dt, actions.player.index)
+		if movingObjectData[currentLocation] ~= nil then
+			if movingObjectData[currentLocation][actions.player.key] ~= nil then
+				if movingObjectData[currentLocation][actions.player.key][actions.player.index] ~= nil then
+					if movingObjectData[currentLocation][actions.player.key][actions.player.index].running == 1 then
+						animUpdate(movingObjectData[currentLocation][actions.player.key], dt, actions.player.index)
+					end
+				end
+			end
 		end
 	end
 

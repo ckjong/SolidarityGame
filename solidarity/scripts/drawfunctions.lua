@@ -168,6 +168,9 @@ function animUpdate(tbl, dt, k)
           if tbl[k].count == tbl[k].loop then
             print("count:" .. tbl[k].count)
             resetAnims(tbl, k)
+            if actionMode == 0 then
+              animFinish()
+            end
           end
         end
         -- if tbl[k].loop ~= 0 then
@@ -188,6 +191,7 @@ end
 
 function animFinish()
   actions.player.key = 0
+  actions.player.index = 0
 end
 
 function resetAnims(tbl, k)

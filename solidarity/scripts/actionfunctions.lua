@@ -3,9 +3,10 @@
 function lockDialogue(tbl)
 	for i = 1, #tbl do
 		if tbl[i].locked == 1 then
-			tbl[i].off = 0
+			objectText[tbl[i].name].logic.off = false
 		elseif tbl[i].locked == 0 then
-			tbl[i].off = 1
+			print("object i turned off " .. i)
+			objectText[tbl[i].name].logic.off = true
 		end
 	end
 end
@@ -41,6 +42,7 @@ function updateActionsTable(tbl, x2, y2, k, i, n)
 	actions.npcs[n].key = k
 	actions.npcs[n].index = i
 	tbl[k][i].running = 1
+	tbl[k][i].used = 1
 end
 
 function testNpcObject(dir, x, y, tbl, npc)
@@ -224,7 +226,7 @@ function printObjText(b, c)
 			BerryHarvestStart(b, c)
 			actions.player.current = actions.player.current + actions.player.rate
 			print ("action meter: " .. actions.player.current)
-      text = objectText[b][2]
+      text = objectText[b].text[2]
 			if player.energy > 0 then
 				player.energy = player.energy - 1
 			end
@@ -242,7 +244,6 @@ function printObjText(b, c)
 				-- movingObjectData[currentLocation][b][c].used = 1
 				-- movingObjectData[currentLocation][b][c].visible = 0
 
-        actions.player.key = 0
 			elseif b == "plantLgBerries" then
 				addRemoveItem("I got 10 Rose Berries.", "Rose Berries", 10, b, true)
 				movingObjectData[currentLocation][b][c]["anim"]["spriteSheet"] = animsheet3
@@ -251,7 +252,6 @@ function printObjText(b, c)
 				table.remove(movingObjectData[currentLocation][b], c)
 				-- movingObjectData[currentLocation][b][c].used = 1
 
-        actions.player.key = 0
       elseif b == "barrelSmBerries" then
         BerryBarrel(b, c, "Plum Berries")
         return
@@ -339,10 +339,12 @@ function BerryHarvestStart(b, c)
     actions.player.key = b
 		print(actions.player.key)
     actions.player.current = actions.player.max
+		movingObjectData[currentLocation][b][c].running = 1
   elseif b == "barrelLgBerries" then
     actions.player.key = b
 		print(actions.player.key)
     actions.player.current = actions.player.max
+		movingObjectData[currentLocation][b][c].running = 1
   end
   -- movingObjectData[currentLocation][actions.player.key][actions.player.index].visible = 0 -- hide still sprite
   actions.player.x = movingObjectData[currentLocation][actions.player.key][actions.player.index].x
@@ -364,28 +366,28 @@ function BerryBarrel(b, c, sub, icon)
 		wait.n = string.len(text)
     actions.player.current = 0
     actions.player.key = 0
+		actions.player.index = 0
     actionMode = 0
   end
 end
 
 function startAction(b, n)
-	print("startAction set dialogueMode to 1")
-	dialogueMode = 1
-	currentspeaker = "player"
-	print("n: " .. n)
-	if objectText[b][n]~= nil then
-		print("objectText not nil")
-		text = objectText[b][n]
-		wait.triggered = 1
-		wait.n = string.len(text)
+	if objectText[b].logic.off == false then
+		print("startAction set dialogueMode to 1")
+		dialogueMode = 1
+		currentspeaker = "player"
+		print("n: " .. n)
+		if objectText[b].text[n]~= nil then
+			print("objectText not nil")
+			text = objectText[b].text[n]
+			wait.triggered = 1
+			wait.n = string.len(text)
+		end
 	end
 end
 
 function exitAction()
 	if actionMode == 1 then
-		if actions.player.index then
-			movingObjectData[currentLocation][actions.player.key][actions.player.index].visible = 1
-		end
 		actions.player.key = 0
 		actions.player.current = 0
 		player.canMove = 1
@@ -444,7 +446,7 @@ function useItem(i, item)
 		startAction(i, itemEffects[i].text)
 		if itemEffects[i].type == "once" then
 			print("remove used item")
-			addRemoveItem(objectText[i][itemEffects[i].text], item, -1, i, false)
+			addRemoveItem(objectText[i].text[itemEffects[i].text], item, -1, i, false)
 		end
 	else
 		print("no action possible")

@@ -1,5 +1,5 @@
 function cutsceneTrigger()
-  if menuView == 0 then
+  if menuView == 0 and dialogueMode == 0 then
     if gameStage == 0 then
       if checkSpoken(npcs, NPCdialogue[dialogueStage], 6) == true then
         if cutsceneControl.stage == 0 then
@@ -197,15 +197,23 @@ function changeGameStage()
       end
       npcs[i].location = npcs[i].next[gameStage].location
       npcs[i].canWork = npcs[i].next[gameStage].canWork
+      npcs[i].working = 0
       npcs[i].c = 1
       npcs[i].n = 1
       npcs[i].canMove = 0
       npcActSetup()
       for k, v in pairs(movingObjectData) do
         for l, w in pairs(movingObjectData[k]) do
-          for m = 1, #movingObjectData[k][j] do
+          for m = 1, #movingObjectData[k][l] do
             movingObjectData[k][l][m].running = 0
+            movingObjectData[k][l][m].used = 0
           end
+        end
+      end
+      for k, v in pairs(actions) do
+        for m = 1, #actions[k] do
+          actions[k][m].key = 0
+          actions[k][m].index = 0
         end
       end
     end
@@ -219,6 +227,41 @@ function gameStageControl(g)
     -- staticObjects.overworld[5].off = 1
     -- staticObjects.overworld[6].off = 1
   end
+end
+
+function gameStageUpdate(dt)
+  if gameStage == 1 then
+		local i = getCharIndex("Finch")
+		if objectInventory.barrelSmBerries + objectInventory.barrelLgBerries >= 60 then
+			if areaCheck(16, 21, 17, 22, player) then
+				local bool1, k = checkInventory("Plum Berries")
+				local bool2, k = checkInventory("Rose Berries")
+				if bool1 == 0 and bool2 == 0 then
+					if npcs[i].c ~= 3 then
+						removeTempBlocks(currentLocation, 1)
+						npcs[i].c = 3
+					end
+				else
+					if npcs[i].c ~= 4 then
+						npcs[i].c = 4
+						print("npcs[i].c " ..  npcs[i].c)
+					end
+				end
+			end
+		end
+	elseif gameStage == 2 then
+		local i = getCharIndex("Finch")
+		if tempBlocks.overworld[2].on == 0 then
+			tempBlocks.overworld[2].on = 1
+			tempBlocks.overworld[3].on = 1
+			nonInteractiveObjects.overworld.fenceopenL[1].visible = 0
+			nonInteractiveObjects.overworld.fenceopenR[1].visible = 0
+			nonInteractiveObjects.overworld.fenceclosedL[1].visible = 1
+			nonInteractiveObjects.overworld.fenceclosedR[1].visible = 1
+			addTempBlocks(initTable)
+			saveMap()
+		end
+	end
 end
 
 function changeTime(t)

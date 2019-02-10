@@ -123,33 +123,33 @@ NPCdialogue = {
                 logic = {next = 2, speaker = "Cress", cond = true, off = false, display = 1, spoken = 0}},
           [2] = {text = {"No just saying hi."},
                 logic = {next = 3, offset = 2, speaker = "player", cond = true, off = false, display = 1}},
-          [3] = {text = {"Oh... um... ok."},
+          [3] = {text = {"Oh... um... ok. Hi."},
                 logic = {next = 3, speaker = "Cress", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
         },
-  Agave = {[1] = {text = {"You should probably get to the dormitory.", "Don't let them catch you hanging around here after clean-up.", "They might think you're trying to steal something."},
+  Agave = {[1] = {text = {"You should probably get to the dormitory.", "Don't let them catch you hanging around here after dark."},
                 logic = {next = 1, speaker = "Agave", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
           },
   Tarragon = {[1] = {text = {"..."},
                   logic = {next = 1, speaker = "Tarragon", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
         },
-  Robin = {[1] = {text = {"What are you doing on the men's side?", "Females aren't allowed here"},
+  Robin = {[1] = {text = {"What are you doing on the men's side?", "Females aren't allowed here."},
                 logic = {next = 2, speaker = "Robin", cond = true, off = false, display = 1, spoken = 0}},
           [2] = {text = {"Females...? You've got to be kidding."},
                 logic = {next = 3, speaker = "player", cond = true, off = false, display = 1, spoken = 0}},
           [3] = {text = {"What? It's what you are isn't it?"},
-                logic = {next = 4, speaker = "Robin", cond = true, off = false, display = 1, spoken = 0, energy = 1}},
-          [4] = {text = {"You know what, I'm not going to bother.", "I'm not an animal...", "That's it, you're going down."},
+                logic = {next = 4, speaker = "Robin", cond = true, off = false, display = 1, spoken = 0}},
+          [4] = {text = {"Never mind.", "I'm not an animal...", "That's it, you're going down."},
                 logic = {next = 5, offset = 4, speaker = "player", cond = true, off = false, display = 2}},
           [5] = {text = {"Running away huh? Typical."},
-                logic = {next = 8, speaker = "Robin", cond = true, off = true, display = 1, spoken = 0, energy = 1}}, -- respond to player options
+                logic = {next = 8, speaker = "Robin", cond = true, off = true, display = 1, spoken = 0, energy = 3}}, -- respond to player options
           [6] = {text = {"Really? Could have fooled me."},
-                logic = {next = 8, speaker = "Durian", cond = true, off = true, display = 1, spoken = 0, energy = 1}}, -- respond to player options
+                logic = {next = 8, speaker = "Durian", cond = true, off = true, display = 1, spoken = 0, energy = 3}}, -- respond to player options
           [7] = {text = {"Hahaha yeah right, you're just a girl.", "What are you going to do? Cry on us?"},
-                logic = {next = 8, speaker = "Durian", cond = true, off = true, display = 1, spoken = 0, energy = 1}}, -- respond to player options
-          [8] = {text = {"Ugh women are so chatty."},
-                logic = {next = 8, speaker = "Robin", cond = true, off = true, display = 1, spoken = 0, energy = 1}}, -- respond to player options
+                logic = {next = 8, speaker = "Durian", cond = true, off = true, display = 1, spoken = 0, energy = 3}}, -- respond to player options
+          [8] = {text = {"Ugh girls are so chatty."},
+                logic = {next = 8, speaker = "Robin", cond = true, off = true, display = 1, spoken = 0}}, -- respond to player options
       },
-  Durian = {[1] = {text = {"Oh look a loser. Get out of here.", "Can't you see the adults are talking?"},
+  Durian = {[1] = {text = {"Hey loser, get out of here.", "Can't you see the adults are talking?"},
                 logic = {next = 1, speaker = "Durian", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
         }
   }
@@ -157,25 +157,24 @@ NPCdialogue = {
 
 
 objectText = {
-  gardeningSign = {"Field Supplies"},
-  kitchenSign = {"Dining Hall"},
-  dormitorySign = {"Dormitory"},
-  storeSign = {"The Shiny Coin: Your Friendly Local Store and Tavern"},
-  gardeningShed = {"It's locked."},
-  playerBed = {"It's my bed.", "I still have things to do."},
-  dormitory = {"It's locked."},
-  dininghall = {"It's locked."},
-  store = {"It's locked."},
-  barrelSmBerriesStatic = {"Berries in barrel: " .. objectInventory["barrelSmBerries"]},
-  barrelLgBerriesStatic = {"Berries in barrel: " .. objectInventory["barrelLgBerries"]},
-  plantSm = {"The berries have already been harvested from this plant."},
-  plantSmBerries = {"Press Z to Harvest Plum Berries", "...", "I'm too tired to work.", "I can't carry any more."},
-  plantLg = {"The berries have already been harvested from this plant."},
-  plantLgBerries = {"Press Z to Harvest Rose Berries", "...", "I'm too tired to work.", "I can't carry any more."},
-  barrelSmBerries = {"Press Z to drop the Plum Berries in the Barrel"},
-  barrelLgBerries = {"Press Z to drop the Rose Berries in the Barrel"},
-  stool = {"Sit?"},
-  platefull2 = {"I feel much better now."}
+  gardeningSign = {text = {"Field Supplies"}, logic = {off = false}},
+  kitchenSign = {text = {"Dining Hall"}, logic = {off = false}},
+  dormitorySign = {text = {"Dormitory"}, logic = {off = false}},
+  storeSign = {text = {"The Shiny Coin: Your Friendly Local Store and Tavern"}, logic = {off = false}},
+  gardeningShed = {text = {"It's locked."}, logic = {off = false}},
+  playerBed = {text = {"It's my bed.", "I still have things to do."}, logic = {off = false}},
+  dormitory = {text = {"It's locked."}, logic = {off = false}},
+  dininghall = {text = {"It's locked."}, logic = {off = false}},
+  store = {text = {"It's locked."}, logic = {off = false}},
+  barrelSmBerriesStatic = {text = {"Berries in barrel: " .. objectInventory["barrelSmBerries"]}, logic = {off = false}},
+  barrelLgBerriesStatic = {text = {"Berries in barrel: " .. objectInventory["barrelLgBerries"]}, logic = {off = false}},
+  plantSm = {text = {"The berries have already been harvested from this plant."}, logic = {off = false}},
+  plantSmBerries = {text = {"Press Z to Harvest Plum Berries", "...", "I'm too tired to work.", "I can't carry any more."}, logic = {off = false}},
+  plantLg = {text = {"The berries have already been harvested from this plant."}, logic = {off = false}},
+  plantLgBerries = {text = {"Press Z to Harvest Rose Berries", "...", "I'm too tired to work.", "I can't carry any more."}, logic = {off = false}},
+  barrelSmBerries = {text = {"Press Z to drop the Plum Berries in the Barrel"}, logic = {off = false}},
+  barrelLgBerries = {text = {"Press Z to drop the Rose Berries in the Barrel"}, logic = {off = false}},
+  platefull2 = {text = {"I feel much better now."}, logic = {off = false}}
   }
 
 itemDescription = {plantSmBerries = "One of the main ingredients used in potions. Very poisonous unless properly prepared.",
