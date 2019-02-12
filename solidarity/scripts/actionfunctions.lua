@@ -37,15 +37,16 @@ function testObject(x, y, tbl)
 end
 
 function updateActionsTable(tbl, x2, y2, k, i, n)
-	actions.npcs[n].x = x2
-	actions.npcs[n].y = y2
-	actions.npcs[n].key = k
-	actions.npcs[n].index = i
+	npcs[n].actions.x = x2
+	npcs[n].actions.y = y2
+	npcs[n].actions.key = k
+	npcs[n].actions.index = i
 	tbl[k][i].running = 1
 	tbl[k][i].used = 1
+	print("npcs[n].actions.key = " .. npcs[n].actions.key)
 end
 
-function testNpcObject(dir, x, y, tbl, npc)
+function testNpcObject(dir, x, y, tbl, npc, check)
 	if tbl ~= nil then
 		for k, v in pairs(tbl) do
 			for i = 1, #tbl[k] do
@@ -53,34 +54,46 @@ function testNpcObject(dir, x, y, tbl, npc)
 				local y2 = tbl[k][i].y
 				if dir == 1 then
 					if x == x2 and y - gridsize == y2 then
-						if tbl[k][i].running == 0 then
-							updateActionsTable(tbl, x2, y2, k, i, npc)
+						if check == true then
+							if tbl[k][i].running == 0 then
+								print("anim not running " .. dir)
+								updateActionsTable(tbl, x2, y2, k, i, npc)
+							end
 						else
-							return
+							updateActionsTable(tbl, x2, y2, k, i, npc)
 						end
 					end
 				elseif dir == 2 then
 					if x == x2 and y + gridsize == y2 then
-						if tbl[k][i].running == 0 then
-							updateActionsTable(tbl, x2, y2, k, i, npc)
+						if check == true then
+							if tbl[k][i].running == 0 then
+								print("anim not running " .. dir)
+								updateActionsTable(tbl, x2, y2, k, i, npc)
+							end
 						else
-							return
+							updateActionsTable(tbl, x2, y2, k, i, npc)
 						end
 					end
 				elseif dir == 3 then
 					if y == y2 and x - gridsize == x2 then
-						if tbl[k][i].running == 0 then
-							updateActionsTable(tbl, x2, y2, k, i, npc)
+						if check == true then
+							if tbl[k][i].running == 0 then
+								print("anim not running " .. dir)
+								updateActionsTable(tbl, x2, y2, k, i, npc)
+							end
 						else
-							return
+							updateActionsTable(tbl, x2, y2, k, i, npc)
 						end
 					end
 				elseif dir == 4 then
 					if y == y2 and x + gridsize == x2 then
-						if tbl[k][i].running == 0 then
-							updateActionsTable(tbl, x2, y2, k, i, npc)
+						if check == true then
+							if tbl[k][i].running == 0 then
+								print("anim not running " .. dir)
+								updateActionsTable(tbl, x2, y2, k, i, npc)
+							end
 						else
-							return
+							updateActionsTable(tbl, x2, y2, k, i, npc)
 						end
 					end
 				end
@@ -220,12 +233,12 @@ function printObjText(b, c)
       wait.triggered = 0
 		end
 	elseif actionMode == 1 then
-		print("actions.player.current " ..  actions.player.current)
-		print("actions.player.max " ..  actions.player.max)
-		if actions.player.current < actions.player.max then
+		print("player.actions.current " ..  player.actions.current)
+		print("player.actions.max " ..  player.actions.max)
+		if player.actions.current < player.actions.max then
 			BerryHarvestStart(b, c)
-			actions.player.current = actions.player.current + actions.player.rate
-			print ("action meter: " .. actions.player.current)
+			player.actions.current = player.actions.current + player.actions.rate
+			print ("action meter: " .. player.actions.current)
       text = objectText[b].text[2]
 			if player.energy > 0 then
 				player.energy = player.energy - 1
@@ -241,6 +254,9 @@ function printObjText(b, c)
 				movingObjectData[currentLocation][b][c]["anim"]["quads"] = {movingObjectQuads.plantSm}
 				table.insert(movingObjectData[currentLocation].plantSm, movingObjectData[currentLocation][b][c])
 				table.remove(movingObjectData[currentLocation][b], c)
+				for i = 1, #npcs do
+					testNpcObject(npcs[i].start, npcs[i].grid_x, npcs[i].grid_y, movingObjectData[currentLocation], i, false)
+				end
 				-- movingObjectData[currentLocation][b][c].used = 1
 				-- movingObjectData[currentLocation][b][c].visible = 0
 
@@ -250,6 +266,9 @@ function printObjText(b, c)
 				movingObjectData[currentLocation][b][c]["anim"]["quads"] = {movingObjectQuads.plantLg}
 				table.insert(movingObjectData[currentLocation].plantLg, movingObjectData[currentLocation][b][c])
 				table.remove(movingObjectData[currentLocation][b], c)
+				for i = 1, #npcs do
+					testNpcObject(npcs[i].start, npcs[i].grid_x, npcs[i].grid_y, movingObjectData[currentLocation], i, false)
+				end
 				-- movingObjectData[currentLocation][b][c].used = 1
 
       elseif b == "barrelSmBerries" then
@@ -260,7 +279,7 @@ function printObjText(b, c)
         return
       end
 			print("Current = max")
-			actions.player.current = 0
+			player.actions.current = 0
 			actionMode = 0
 		end
 	end
@@ -272,7 +291,7 @@ function faceObject(char, dir, tbl)
 	if dir == 1 then -- up
 		local a, b, c = testObject(0, -1, tbl)
 		if a and b ~= nil then
-      actions.player.index = c
+      player.actions.index = c
 			print("dir 1")
 			if char == player then
 				printObjText(b, c)
@@ -284,7 +303,7 @@ function faceObject(char, dir, tbl)
 	elseif dir == 2 then -- down
 		local a, b, c = testObject(0, 1, tbl)
 		if a and b ~= nil then
-      actions.player.index = c
+      player.actions.index = c
 			print("dir 2")
 			if char == player then
 				printObjText(b, c)
@@ -296,7 +315,7 @@ function faceObject(char, dir, tbl)
 	elseif dir == 3 then -- left
 		local a, b, c = testObject(-1, 0, tbl)
 		if a and b ~= nil then
-      actions.player.index = c
+      player.actions.index = c
 			print("dir 3")
 			if char == player then
 				printObjText(b, c)
@@ -308,7 +327,7 @@ function faceObject(char, dir, tbl)
 	elseif dir == 4 then -- right
 		local a, b, c = testObject(1, 0, tbl)
 		if a and b ~= nil then
-      actions.player.index = c
+      player.actions.index = c
 			print("dir 4")
 			if char == player then
 				printObjText(b, c)
@@ -323,32 +342,32 @@ end
 -- berry harvest
 function BerryHarvestStart(b, c)
   if b == "plantSmBerries" then
-    actions.player.rate = 10
-    actions.player.key = b
-		print("actions.player.key " .. actions.player.key)
+    player.actions.rate = 10
+    player.actions.key = b
+		print("player.actions.key " .. player.actions.key)
 		player.animations.act[player.facing].running = 1
 		movingObjectData[currentLocation][b][c].running = 1
     -- k = key for object animation
   elseif b == "plantLgBerries" then
-    actions.player.rate = 15
-    actions.player.key = b
-		print("actions.player.key " .. actions.player.key)
+    player.actions.rate = 15
+    player.actions.key = b
+		print("player.actions.key " .. player.actions.key)
 		player.animations.act[player.facing].running = 1
 		movingObjectData[currentLocation][b][c].running = 1
   elseif b == "barrelSmBerries" then
-    actions.player.key = b
-		print(actions.player.key)
-    actions.player.current = actions.player.max
+    player.actions.key = b
+		print(player.actions.key)
+    player.actions.current = player.actions.max
 		movingObjectData[currentLocation][b][c].running = 1
   elseif b == "barrelLgBerries" then
-    actions.player.key = b
-		print(actions.player.key)
-    actions.player.current = actions.player.max
+    player.actions.key = b
+		print(player.actions.key)
+    player.actions.current = player.actions.max
 		movingObjectData[currentLocation][b][c].running = 1
   end
-  -- movingObjectData[currentLocation][actions.player.key][actions.player.index].visible = 0 -- hide still sprite
-  actions.player.x = movingObjectData[currentLocation][actions.player.key][actions.player.index].x
-  actions.player.y = movingObjectData[currentLocation][actions.player.key][actions.player.index].y
+  -- movingObjectData[currentLocation][player.actions.key][player.actions.index].visible = 0 -- hide still sprite
+  player.actions.x = movingObjectData[currentLocation][player.actions.key][player.actions.index].x
+  player.actions.y = movingObjectData[currentLocation][player.actions.key][player.actions.index].y
   actionMode = 1
 end
 
@@ -358,15 +377,15 @@ function BerryBarrel(b, c, sub, icon)
 		objectInventory[b] = objectInventory[b] + player.inventory[k].amount
     addRemoveItem("Dropped " .. player.inventory[k].amount .. " " .. sub .. "\nBerries in barrel: " .. objectInventory[b], sub, -player.inventory[k].amount, icon, true)
 		actionMode = 0
-		actions.player.current = 0
+		player.actions.current = 0
 		return
   else
     text = "I don't have any " .. sub .. ".\nBerries in barrel: " .. objectInventory[b]
     wait.triggered = 1
 		wait.n = string.len(text)
-    actions.player.current = 0
-    actions.player.key = 0
-		actions.player.index = 0
+    player.actions.current = 0
+    player.actions.key = 0
+		player.actions.index = 0
     actionMode = 0
   end
 end
@@ -388,8 +407,8 @@ end
 
 function exitAction()
 	if actionMode == 1 then
-		actions.player.key = 0
-		actions.player.current = 0
+		player.actions.key = 0
+		player.actions.current = 0
 		player.canMove = 1
 		actionMode = 0
 		print("exitAction set dialogueMode to 0")

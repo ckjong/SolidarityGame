@@ -124,7 +124,9 @@ NPCdialogue = {
           [2] = {text = {"No just saying hi."},
                 logic = {next = 3, offset = 2, speaker = "player", cond = true, off = false, display = 1}},
           [3] = {text = {"Oh... um... ok. Hi."},
-                logic = {next = 3, speaker = "Cress", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
+                logic = {next = 4, speaker = "Cress", cond = true, off = true, display = 1, spoken = 0, energy = 1}},
+          [4] = {text = {"Uh...hi."},
+                logic = {next = 4, speaker = "Cress", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
         },
   Agave = {[1] = {text = {"You should probably get to the dormitory.", "Don't let them catch you hanging around here after dark."},
                 logic = {next = 1, speaker = "Agave", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
@@ -145,11 +147,11 @@ NPCdialogue = {
           [6] = {text = {"Really? Could have fooled me."},
                 logic = {next = 8, speaker = "Durian", cond = true, off = true, display = 1, spoken = 0, energy = 3}}, -- respond to player options
           [7] = {text = {"Hahaha yeah right, you're just a girl.", "What are you going to do? Cry on us?"},
-                logic = {next = 8, speaker = "Durian", cond = true, off = true, display = 1, spoken = 0, energy = 3}}, -- respond to player options
+                logic = {next = 8, speaker = "Robin", cond = true, off = true, display = 1, spoken = 0, energy = 3}}, -- respond to player options
           [8] = {text = {"Ugh girls are so chatty."},
                 logic = {next = 8, speaker = "Robin", cond = true, off = true, display = 1, spoken = 0}}, -- respond to player options
       },
-  Durian = {[1] = {text = {"Hey loser, get out of here.", "Can't you see the adults are talking?"},
+  Durian = {[1] = {text = {"Get out of here pipsqueak. Can't you see the adults are talking?"},
                 logic = {next = 1, speaker = "Durian", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
         }
   }

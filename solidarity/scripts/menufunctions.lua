@@ -110,3 +110,25 @@ function itemMenu()
 		end
 	end
 end
+
+function saveGame(name, data)
+  f = assert(io.open(name, "w"))
+  f:write(data)
+  f:close(data)
+end
+
+function compileSaveData(name)
+  local dir = "maps"
+  local files = love.filesystem.enumerate(dir)
+  local path = {}
+  for k, file in ipairs(files) do
+    path[k] = tostring(dir .. "/" .. file)
+  end
+  local data = {love.filesystem.newFileData("scripts/dialogue")}
+  for i = 1, #path do
+    table.insert(data, path[i])
+  end
+  for i = 1, #data do
+    success, errormsg = love.filesystem.append(name, data[i])
+  end
+end

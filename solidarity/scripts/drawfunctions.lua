@@ -105,28 +105,26 @@ function npcActSetup()
   end
 end
 
-function npcActUpdate(dt)
-  for i = 1, #npcs do
-    if npcs[i].canWork == 1 then
-      npcs[i].timer.ct = npcs[i].timer.ct + dt
-      if npcs[i].working == 1 then
-        if npcs[i].timer.ct >= npcs[i].timer.mt then
-          npcs[i].timer.ct = 0
-          npcs[i].working = 0
-          if npcs[i].animations.act[npcs[i].facing].running == 1 then
-            npcs[i].animations.act[npcs[i].facing].running = 0
-            -- print(npcs[i].name .. " animation turned off " .. player.animations.act[npcs[i].facing].running)
-          end
+function npcActUpdate(dt, i)
+  if npcs[i].canWork == 1 then
+    npcs[i].timer.ct = npcs[i].timer.ct + dt
+    if npcs[i].working == 1 then
+      if npcs[i].timer.ct >= npcs[i].timer.mt then
+        npcs[i].timer.ct = 0
+        npcs[i].working = 0
+        print("set npcs actions on to 0")
+        npcs[i].actions.on = 0
+        if npcs[i].animations.act[npcs[i].facing].running == 1 then
+          npcs[i].animations.act[npcs[i].facing].running = 0
+          -- print(npcs[i].name .. " animation turned off " .. player.animations.act[npcs[i].facing].running)
         end
-      else
-        if npcs[i].timer.ct >= npcs[i].timer.wt then
-          npcs[i].timer.ct = 0
-          npcs[i].working = 1
-          if npcs[i].animations.act[npcs[i].facing].running == 0 then
-            npcs[i].animations.act[npcs[i].facing].running = 1
-            -- print(npcs[i].name .. " npc animation running " .. npcs[i].animations.act[npcs[i].facing].running)
-          end
-        end
+      end
+    else
+      if npcs[i].timer.ct >= npcs[i].timer.wt then
+        npcs[i].timer.ct = 0
+        npcs[i].working = 1
+        npcs[i].animations.act[npcs[i].facing].running = 1
+          -- print(npcs[i].name .. " npc animation running " .. npcs[i].animations.act[npcs[i].facing].running)
       end
     end
   end
@@ -155,6 +153,9 @@ function animUpdate(tbl, dt, k)
         tbl[k].count = tbl[k].count + 1
         if tbl[k].count == tbl[k].loop then
           resetAnims(tbl, k)
+          if actionMode == 0 then
+            animFinish()
+          end
         end
       end
     end
@@ -190,8 +191,8 @@ function animUpdate(tbl, dt, k)
 end
 
 function animFinish()
-  actions.player.key = 0
-  actions.player.index = 0
+  player.actions.key = 0
+  player.actions.index = 0
 end
 
 function resetAnims(tbl, k)
@@ -254,11 +255,13 @@ function drawNPCs(tbl, i)
       else
         if npcs[i].working == 1 then
           drawActAnims(npcs[i].animations.act, f, npcs[i].act_x, npcs[i].act_y)
-          if actions.npcs[i] ~= nil then
-            if movingObjectData[currentLocation][actions.npcs[i].key] ~= nil then
-              drawActAnims(movingObjectData[currentLocation][actions.npcs[i].key], actions.npcs[i].index, actions.npcs[i].x, actions.npcs[i].y)
-            end
-          end
+          -- if movingObjectData[currentLocation] ~= nil then
+          --   if npcs[i].actions.on == 1 then
+          --     if movingObjectData[currentLocation][npcs[i].actions.key][npcs[i].actions.index] ~= nil then
+          --       drawActAnims(movingObjectData[currentLocation][npcs[i].actions.key], npcs[i].actions.index, npcs[i].actions.x, npcs[i].actions.y)
+          --     end
+          --   end
+          -- end
         else
           tbl = npcs[i].animations.walk
           love.graphics.draw(tbl[s]["anim"]["spriteSheet"], tbl[s]["anim"]["quads"][1], npcs[i].act_x, npcs[i].act_y, 0, 1)
