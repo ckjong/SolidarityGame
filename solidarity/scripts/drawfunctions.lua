@@ -129,16 +129,30 @@ function npcActUpdate(dt, i)
     end
   end
 end
+
+function setTintColor(t)
+  if t == 1 then
+    love.graphics.setColor(255, 255, 255)
+  elseif t == 2 then
+    if currentLocation == "overworld" then
+	    love.graphics.setColor(255, 180, 180)
+    else
+      love.graphics.setColor(255, 255, 255)
+    end
+  end
+end
+
+
 --draw background
 function drawBackground()
   love.graphics.setBackgroundColor(93, 43, 67)
-	love.graphics.setColor(255, 255, 255)
+  setTintColor(time)
 	love.graphics.draw(currentBackground, 16, 16)
 end
 
 -- --render dialogue box
 -- function drawBox(boxposx, boxposy, recwidth, recheight)
---   love.graphics.setColor(93, 43, 67)
+--   love.graphics.setColor(75, 37, 58)
 --   love.graphics.rectangle("fill", boxposx, boxposy, recwidth, recheight, 4, 4, 4) -- outside box (dark)
 --   love.graphics.setColor(255, 221, 163)
 --   love.graphics.rectangle("fill", boxposx+2, boxposy+2, recwidth-4, recheight-4, 3, 3, 4) -- inside box (light colored)
@@ -222,7 +236,7 @@ end
 --render player
 function drawPlayer(tbl)
   local i = player.moveDir
-  love.graphics.setColor(255, 255, 255)
+  setTintColor(time)
   if player.moveDir ~= 0 then
     local spriteNum = math.floor(tbl[i]["anim"]["currentTime"] / tbl[i]["anim"]["duration"] * #tbl[i]["anim"]["quads"]) + 1
     love.graphics.draw(tbl[i]["anim"]["spriteSheet"], tbl[i]["anim"]["quads"][spriteNum], player.act_x, player.act_y, 0, 1)
@@ -237,7 +251,7 @@ function drawPlayer(tbl)
 end
 
 function drawNPCs(tbl, i)
-  love.graphics.setColor(255, 255, 255)
+  setTintColor(time)
   if currentLocation == npcs[i].location then
     local j = npcs[i].moveDir
     local f = npcs[i].facing
@@ -272,7 +286,7 @@ function drawNPCs(tbl, i)
 end
 
 function drawStillObjects(l, tbl, img, quad)
-  love.graphics.setColor(255, 255, 255)
+  setTintColor(time)
   if tbl[l] ~= nil then
     for k, v in pairs(tbl[l]) do
       for i = 1, #tbl[l][k] do
@@ -285,6 +299,7 @@ function drawStillObjects(l, tbl, img, quad)
 end
 
 function drawActAnims(tbl, k, x, y)
+  setTintColor(time)
   if tbl[k].running == 1 then
     local spriteNum = math.floor(tbl[k]["anim"]["currentTime"] / tbl[k]["anim"]["duration"] * #tbl[k]["anim"]["quads"]) + 1
     if tbl[k]["anim"]["quads"][spriteNum] ~= nil then
@@ -303,12 +318,12 @@ end
 
 function drawMeters(x, y)
   love.graphics.setColor(255, 255, 255)
-  love.graphics.draw(ui.energytextbgsmleft, x, y)
+  -- love.graphics.draw(ui.energytextbgsmleft, x, y)
   love.graphics.draw(ui.energytextbgcircle, x, y)
   love.graphics.draw(ui.energyboltsm, x, y)
-  love.graphics.draw(ui.energytextbgsmright, x+gridsize, y)
-  love.graphics.setColor(93, 43, 67)
-  love.graphics.print(player.energy, x + gridsize, y+5)
+  love.graphics.draw(ui.energytextbground, x+gridsize+1, y)
+  love.graphics.setColor(75, 37, 58)
+  love.graphics.printf(player.energy, x + gridsize+2, y+5, 16, "center")
 end
 
 function drawTime(x, y)
@@ -316,7 +331,7 @@ function drawTime(x, y)
   love.graphics.setColor(255, 255, 255)
   love.graphics.draw(ui.energytextbgsmleft, x, y)
   love.graphics.draw(ui.energytextbgsmright, x+gridsize, y)
-  love.graphics.setColor(93, 43, 67)
+  love.graphics.setColor(75, 37, 58)
   love.graphics.printf("Day " .. day, x, y+5, 32, "center")
   love.graphics.setColor(255, 255, 255)
   if time == 1 then
@@ -350,7 +365,7 @@ function drawName(boxposx, boxposy)
   love.graphics.draw(ui.namebgL, nameposx, nameposy)
   love.graphics.draw(ui.namebgM, nameposx + n, nameposy)
   love.graphics.draw(ui.namebgR, nameposx + 2 * n, nameposy)
-  love.graphics.setColor(93, 43, 67)
+  love.graphics.setColor(75, 37, 58)
   if currentspeaker ~= "player" then
     love.graphics.printf(currentspeaker, nameposx, nameposy+4, n+n+17, "center")
   else
@@ -367,20 +382,20 @@ function drawText(x, y, scalex, recwidth)
       y = y + 4
     end
     if choice.pos == 1 then
-        love.graphics.draw(ui.arrowright, x, y-4)
+        love.graphics.draw(ui.arrowright, x, y-3)
     elseif choice.pos < choice.total then
-      love.graphics.draw(ui.arrowright, x, y + 4)
+      love.graphics.draw(ui.arrowright, x, y + 5)
     elseif choice.pos == choice.total then
       if choice.total == 2 then
-        love.graphics.draw(ui.arrowright, x, y + 4)
+        love.graphics.draw(ui.arrowright, x, y + 5)
       else
-        love.graphics.draw(ui.arrowright, x, y + 12)
+        love.graphics.draw(ui.arrowright, x, y + 13)
       end
     end
-    love.graphics.setColor(93, 43, 67)
-    love.graphics.printf(c, x+6, y-4, recwidth - 60)
+    love.graphics.setColor(75, 37, 58)
+    love.graphics.printf(c, x+6, y-3, recwidth - 60)
   else
-    love.graphics.setColor(93, 43, 67)
+    love.graphics.setColor(75, 37, 58)
     love.graphics.printf(c, x, y, recwidth - 66) -- 48, 46, 112
   end
 end
@@ -441,7 +456,7 @@ function drawMenu(x, y, tab)
       love.graphics.draw(ui.arrowright, boxX + menuW - 32, textY)
     end
   end
-  love.graphics.setColor(93, 43, 67)
+  love.graphics.setColor(75, 37, 58)
   love.graphics.printf(menuText, boxX, textY, textW, "center")
 end
 
@@ -466,7 +481,7 @@ local function drawMenuBottom(x, y, offX, offY)
     love.graphics.draw(ui.namebgM, textposx + 80 + n, textposy - 68)
     love.graphics.draw(ui.namebgM, textposx + 80 + 2 * n, textposy - 68)
     love.graphics.draw(ui.namebgR, textposx + 80 + 3 * n, textposy - 68)
-    love.graphics.setColor(93, 43, 67)
+    love.graphics.setColor(75, 37, 58)
     love.graphics.printf(selectText, textposx, textposy - 64, menuW, "center")
     love.graphics.printf(descriptionText, textposx +4, textposy - 46, menuW - 6, "center")
   end
@@ -487,12 +502,12 @@ function drawInventory(x, y, offX, offY)
     if i > 8 then
       offY = offY - 24
     end
-    love.graphics.setColor(93, 43, 67)
+    love.graphics.setColor(75, 37, 58)
     love.graphics.rectangle("line",  x - offX + (i-1)*(26), y - offY, 16, 16)
     love.graphics.setColor(255, 255, 255)
     love.graphics.draw(animsheet3, movingObjectQuads[n], x - offX + (i-1)*(26), y - offY)
     objText = tostring(player.inventory[i].amount)
-    love.graphics.setColor(93, 43, 67)
+    love.graphics.setColor(75, 37, 58)
     love.graphics.printf(objText, x - offX + (i-1)*(26), y - offY + 18, 16, "center")
   end
   if menu.position[1] == 2 then
@@ -536,7 +551,7 @@ function drawInventory(x, y, offX, offY)
       love.graphics.draw(ui.arrowright, boxposx + 8, boxposy + 16)
       b = 6
     end
-    love.graphics.setColor(93, 43, 67)
+    love.graphics.setColor(75, 37, 58)
     love.graphics.print("Use", boxposx + 8 + a, boxposy + 8)
     love.graphics.print("Drop", boxposx + 8 + b, boxposy + 16)
   end
@@ -551,7 +566,7 @@ function drawMap2(x, y)
 end
 
 function fadeBlack(alpha, width, height)
-  love.graphics.setColor(93, 43, 67, alpha)
+  love.graphics.setColor(75, 37, 58, alpha)
   love.graphics.rectangle("fill", player.act_x-width/2, player.act_y-height/2, width, height)
 end
 

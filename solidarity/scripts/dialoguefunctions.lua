@@ -144,6 +144,7 @@ function dialogueOff(tbl, i, dialOpt) -- tbl = npcs
 		dialOpt.logic.spoken = 1
 	end
 	print("dialogueOff triggered")
+	choice.pos = 1
 	choice.more = 0
 	dialogueMode = 0
 	player.canMove = 1
@@ -247,7 +248,7 @@ function DialogueSetup(tbl, n) -- iterate through npcs table, lookup text in NPC
 								tbl[i].n = 1
 								tbl[i].c = dialOpt.logic.next
 								choice.mode = 0
-								choice.pos = 0
+								choice.pos = 1
 								DialogueSetup(tbl, n)
 							end
 						end

@@ -157,7 +157,15 @@ function addRemoveItem(txt, i, a, b, w) -- text to display, item, amount, icon n
 		-- else
 		if a > 0 then
 			if inventoryFull (player.maxInventory) == false then
-				table.insert(player.inventory, {item = i, amount = a, icon = b})
+				if itemStats[b].stackable == 1 then
+					table.insert(player.inventory, {item = i, amount = a, icon = b})
+				else
+					for j = 1, a do
+						if inventoryFull (player.maxInventory) == false then
+							table.insert(player.inventory, {item = i, amount = 1, icon = b})
+						end
+					end
+				end
 			else
 				text = "I can't carry any more."
 			end

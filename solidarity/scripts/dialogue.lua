@@ -93,10 +93,10 @@ NPCdialogue = {
         },
   Agave = {[1] = {text = {"Oh there you are! I was worried they'd keep you all night.", "Don't worry we saved some dinner for you. And Mint too."},
                 logic = {next = 2, speaker = "Agave", cond = true, off = false, display = 1, spoken = 0,}},
-          [2] = {text = {"Wow, thank you! How did you get it?", "They're usually so strict about food."},
+          [2] = {text = {"Wow, thank you! How did you get this?", "They're usually so strict about food."},
                 logic = {next = 3, speaker = "player", cond = true, off = false, display = 1, spoken = 0}},
           [3] = {text = {"Let's just say it was a group effort.", "You need to eat at least one meal a day to keep your strength up!", "Try not to get in trouble too often or you'll go hungry."},
-                logic = {next = 3, speaker = "Agave", cond = true, off = true, display = 1, spoken = 0, func = charGivesObject, par = {"I got 1 Meat Soup.\n(Press I to open inventory.)", "Meat Soup", 1, "platefull2", false}}}
+                logic = {next = 3, speaker = "Agave", cond = true, off = true, display = 1, spoken = 0, func = charGivesObject, par = {"I got 2 Meat Soups.\n(Press I to open inventory.)", "Meat Soup", 2, "platefull2", false}}}
           },
   Tarragon = {[1] = {text = {"Leave me alone, I'm busy."},
                   logic = {next = 1, speaker = "Tarragon", cond = true, off = true, display = 1, spoken = 0, energy = 1}}

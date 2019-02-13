@@ -180,6 +180,8 @@ function changeGameStage()
       player.facing = player.next[gameStage].facing
     end
     player.location = player.next[gameStage].location
+    player.actions.key = 0
+    player.actions.index = 0
     for i = 1, #npcs do
       if npcs[i].next[gameStage].location ~= "offscreen" then
         if npcs[i].next[gameStage].x ~= 0 then
@@ -201,6 +203,8 @@ function changeGameStage()
       npcs[i].c = 1
       npcs[i].n = 1
       npcs[i].canMove = 0
+      npcs[i].actions.key = 0
+      npcs[i].actions.index = 0
       npcActSetup()
       for k, v in pairs(movingObjectData) do
         for l, w in pairs(movingObjectData[k]) do
@@ -208,12 +212,6 @@ function changeGameStage()
             movingObjectData[k][l][m].running = 0
             movingObjectData[k][l][m].used = 0
           end
-        end
-      end
-      for k, v in pairs(actions) do
-        for m = 1, #actions[k] do
-          actions[k][m].key = 0
-          actions[k][m].index = 0
         end
       end
     end
@@ -273,7 +271,7 @@ function fadeControl(t) -- arg: fading.type
   if t == 1 then
     fading.start = 0
     fading.goal = 255
-    fading.rate = 140
+    fading.rate = 180
     fading.a = fading.start
   elseif t == 2 then
     fading.start = 255

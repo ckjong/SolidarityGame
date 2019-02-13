@@ -187,7 +187,7 @@ function love.draw()
 	--camera move and scale
 	love.graphics.translate(-player.act_x*scale.x + translate.x, -player.act_y*scale.y + translate.y)
 	love.graphics.scale( scale.x, scale.y )
-
+	-- love.graphics.setShader(multiply)
 	-- draw background
 	drawBackground()
 
@@ -230,6 +230,7 @@ function love.draw()
 	end
 
 	-- add multiply screen for evening
+	-- love.graphics.setShader()
  	-- multiplyLayer(width, height)
 	if menuView == 1 then
 		drawMenu(player.act_x, player.act_y, menu.currentTab)

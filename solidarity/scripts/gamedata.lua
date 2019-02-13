@@ -228,10 +228,10 @@ npcs = {{
   actions = {key = 0, index = 0, x = 0, y = 0, on = 0},
   next = {{x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
           {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0}},
-  animations = {walk = {{anim = newAnimation(animsheet1, 4*16, 4, 16, 16, .6 ), name = "up", loop = 0},
-                        {anim = newAnimation(animsheet1, 5*16, 4, 16, 16, .6 ), name = "down", loop = 0},
-                        {anim = newAnimation(animsheet1, 6*16, 4, 16, 16, .65 ), name = "left", loop = 0},
-                        {anim = newAnimation(animsheet1, 7*16, 4, 16, 16, .65 ), name = "right", loop = 0}},
+  animations = {walk = {{anim = newAnimation(animsheet1, 4*16, 4, 16, 16, .5 ), name = "up", loop = 0},
+                        {anim = newAnimation(animsheet1, 5*16, 4, 16, 16, .5 ), name = "down", loop = 0},
+                        {anim = newAnimation(animsheet1, 6*16, 4, 16, 16, .55 ), name = "left", loop = 0},
+                        {anim = newAnimation(animsheet1, 7*16, 4, 16, 16, .55 ), name = "right", loop = 0}},
           act = {{anim = newAnimation(animsheet_act, 4*16, 4, 16, 16, .6), name = "up", loop = 0, current = 0, running = 0, count = 0},
           {anim = newAnimation(animsheet_act, 5*16, 4, 16, 16, .6), name = "down", loop = 0, current = 0, running = 0, count = 0},
           {anim = newAnimation(animsheet_act, 6*16, 4, 16, 16, .6), name = "left", loop = 0, current = 0, running = 0, count = 0},
@@ -264,10 +264,10 @@ npcs = {{
     actions = {key = 0, index = 0, x = 0, y = 0, on = 0},
     next = {{x = 21*gridsize, y = 23*gridsize, facing = 2, location = "overworld", canWork = 1},
             {x = 21*gridsize, y = 15*gridsize, facing = 4, location = "dormitory", canWork = 0}},
-    animations = {walk = {{anim = newAnimation(animsheet1, 8*16, 4, 16, 16, .6 ), name = "up", loop = 0},
-                          {anim = newAnimation(animsheet1, 9*16, 4, 16, 16, .6 ), name = "down", loop = 0},
-                          {anim = newAnimation(animsheet1, 10*16, 4, 16, 16, .65 ), name = "left", loop = 0},
-                          {anim = newAnimation(animsheet1, 11*16, 4, 16, 16, .65 ), name = "right", loop = 0}},
+    animations = {walk = {{anim = newAnimation(animsheet1, 8*16, 4, 16, 16, .5 ), name = "up", loop = 0},
+                          {anim = newAnimation(animsheet1, 9*16, 4, 16, 16, .5 ), name = "down", loop = 0},
+                          {anim = newAnimation(animsheet1, 10*16, 4, 16, 16, .55 ), name = "left", loop = 0},
+                          {anim = newAnimation(animsheet1, 11*16, 4, 16, 16, .55 ), name = "right", loop = 0}},
             act = {{anim = newAnimation(animsheet_act, 8*16, 4, 16, 16, .6), name = "up", loop = 0, current = 0, running = 0, count = 0},
             {anim = newAnimation(animsheet_act, 9*16, 4, 16, 16, .6), name = "down", loop = 0, current = 0, running = 0, count = 0},
             {anim = newAnimation(animsheet_act, 10*16, 4, 16, 16, .6), name = "left", loop = 0, current = 0, running = 0, count = 0},
@@ -300,10 +300,10 @@ npcs = {{
       actions = {key = 0, index = 0, x = 0, y = 0, on = 0},
       next = {{x = 16*gridsize, y = 21*gridsize, facing = 4, location = "overworld", canWork = 0},
               {x = 16*gridsize, y = 20*gridsize, facing = 4, location = "overworld", canWork = 0}},
-      animations = {walk = {{anim = newAnimation(animsheet1, 12*16, 4, 16, 16, .6 ), name = "up", loop = 0},
-                            {anim = newAnimation(animsheet1, 13*16, 4, 16, 16, .6 ), name = "down", loop = 0},
-                            {anim = newAnimation(animsheet1, 14*16, 4, 16, 16, .65 ), name = "left", loop = 0},
-                            {anim = newAnimation(animsheet1, 15*16, 4, 16, 16, .65 ), name = "right", loop = 0}},
+      animations = {walk = {{anim = newAnimation(animsheet1, 12*16, 4, 16, 16, .5 ), name = "up", loop = 0},
+                            {anim = newAnimation(animsheet1, 13*16, 4, 16, 16, .5 ), name = "down", loop = 0},
+                            {anim = newAnimation(animsheet1, 14*16, 4, 16, 16, .55 ), name = "left", loop = 0},
+                            {anim = newAnimation(animsheet1, 15*16, 4, 16, 16, .55 ), name = "right", loop = 0}},
               act = {{anim = newAnimation(animsheet_act, 12*16, 4, 16, 16, .6), name = "up", loop = 0, current = 0, running = 0, count = 0},
               {anim = newAnimation(animsheet_act, 13*16, 4, 16, 16, .6), name = "down", loop = 0, current = 0, running = 0, count = 0},
               {anim = newAnimation(animsheet_act, 14*16, 4, 16, 16, .6), name = "left", loop = 0, current = 0, running = 0, count = 0},
@@ -336,10 +336,10 @@ npcs = {{
       actions = {key = 0, index = 0, x = 0, y = 0, on = 0},
       next = {{x = 10*gridsize, y = 27*gridsize, facing = 4, location = "overworld", canWork = 0},
               {x = 0, y = 0, facing = 0, location = "offscreen", canWork = 0}},
-      animations = {walk = {{anim = newAnimation(animsheet1, 16*16, 4, 16, 16, .6 ), name = "up", loop = 0},
-                            {anim = newAnimation(animsheet1, 17*16, 4, 16, 16, .6 ), name = "down", loop = 0},
-                            {anim = newAnimation(animsheet1, 18*16, 4, 16, 16, .65 ), name = "left", loop = 0},
-                            {anim = newAnimation(animsheet1, 19*16, 4, 16, 16, .65 ), name = "right", loop = 0}},
+      animations = {walk = {{anim = newAnimation(animsheet1, 16*16, 4, 16, 16, .5 ), name = "up", loop = 0},
+                            {anim = newAnimation(animsheet1, 17*16, 4, 16, 16, .5 ), name = "down", loop = 0},
+                            {anim = newAnimation(animsheet1, 18*16, 4, 16, 16, .55 ), name = "left", loop = 0},
+                            {anim = newAnimation(animsheet1, 19*16, 4, 16, 16, .55 ), name = "right", loop = 0}},
               act = {{anim = newAnimation(animsheet_act, 16*16, 4, 16, 16, .6), name = "up", loop = 0, current = 0, running = 0, count = 0},
               {anim = newAnimation(animsheet_act, 17*16, 4, 16, 16, .6), name = "down", loop = 0, current = 0, running = 0, count = 0},
               {anim = newAnimation(animsheet_act, 18*16, 4, 16, 16, .6), name = "left", loop = 0, current = 0, running = 0, count = 0},
@@ -372,10 +372,10 @@ npcs = {{
       actions = {key = 0, index = 0, x = 0, y = 0, on = 0},
       next = {{x = 10*gridsize, y = 9*gridsize, facing = 2, location = "dormitory", canWork = 0},
               {x = 10*gridsize, y = 9*gridsize, facing = 2, location = "dormitory", canWork = 0}},
-      animations = {walk = {{anim = newAnimation(animsheet1, 20*16, 4, 16, 16, .6 ), name = "up", loop = 0},
-                            {anim = newAnimation(animsheet1, 21*16, 4, 16, 16, .6 ), name = "down", loop = 0},
-                            {anim = newAnimation(animsheet1, 22*16, 4, 16, 16, .65 ), name = "left", loop = 0},
-                            {anim = newAnimation(animsheet1, 23*16, 4, 16, 16, .65 ), name = "right", loop = 0}},
+      animations = {walk = {{anim = newAnimation(animsheet1, 20*16, 4, 16, 16, .5 ), name = "up", loop = 0},
+                            {anim = newAnimation(animsheet1, 21*16, 4, 16, 16, .5 ), name = "down", loop = 0},
+                            {anim = newAnimation(animsheet1, 22*16, 4, 16, 16, .55 ), name = "left", loop = 0},
+                            {anim = newAnimation(animsheet1, 23*16, 4, 16, 16, .55 ), name = "right", loop = 0}},
               act = {{anim = newAnimation(animsheet_act, 20*16, 4, 16, 16, .6), name = "up", loop = 0, current = 0, running = 0, count = 0},
               {anim = newAnimation(animsheet_act, 21*16, 4, 16, 16, .6), name = "down", loop = 0, current = 0, running = 0, count = 0},
               {anim = newAnimation(animsheet_act, 22*16, 4, 16, 16, .6), name = "left", loop = 0, current = 0, running = 0, count = 0},
@@ -387,7 +387,7 @@ npcs = {{
       grid_y = 31*gridsize,
       act_x = 13*gridsize,
       act_y = 31*gridsize,
-      speed = 30,
+      speed = 25,
       canMove = 0,
       moveDir = 0,
       threshold = 0,
@@ -570,9 +570,9 @@ dormitory = {
 
 objectInventory = {barrelSmBerries = 0, barrelLgBerries = 0}
 
-itemStats = {plantSmBerries = {max = 60, stackable = 1, dropNum = 10},
-            plantLgBerries = {max = 60, stackable = 1, dropNum = 10},
-            platefull2 = {max = 60, stackable = 0, dropNum = 1}
+itemStats = {plantSmBerries = {max = 60, stackable = 1},
+            plantLgBerries = {max = 60, stackable = 1},
+            platefull2 = {max = 60, stackable = 0}
             }
 itemText = ""
 animsheet2 = love.graphics.newImage("images/solidarity_object_anim.png")
@@ -715,6 +715,8 @@ toptileData = {gardeningShed = {
 
 animsheet_act = love.graphics.newImage("images/solidarity_anim_act.png")
 --spritesheet, number of tiles in animation, starting position, length, width, height, duration-- loop = 0 is infinite loop
+
+multiply = love.graphics.newShader( "multiply.glsl" )
 
 --fading
 fading = {on = false, type = 1, start = 0, goal = 0, rate = 0, a = 0, countdown = 0, triggered = 0} -- type 1 = fade in from 0 to 255; 2 = fade out from 255 to 0
