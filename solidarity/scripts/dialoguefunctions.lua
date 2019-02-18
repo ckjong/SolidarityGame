@@ -153,6 +153,7 @@ function dialogueOff(tbl, i, dialOpt) -- tbl = npcs
 	tbl[i].dialogue = 0
 	tbl[i].facing = tbl[i].start
 	wait.triggered = 0
+	bubble.on = 0
 end
 
 
@@ -224,6 +225,9 @@ function DialogueSetup(tbl, n) -- iterate through npcs table, lookup text in NPC
 									dialogueOff(tbl, i, dialOpt)
 									return
 								else
+									if dialOpt.logic.func ~= nil then
+										dialOpt.logic.func(unpack(dialOpt.logic.par))
+									end
 									tbl[i].n = 1
 									tbl[i].c = dialOpt.logic.next
 									DialogueSetup(tbl, n)
@@ -294,9 +298,8 @@ function checkSpoken(tbl1, tbl2, num) -- npcs, NPCdialogue[stage]
 	end
 end
 
-function charGivesObject(a, b, c, d, e)
-	print("character gives object")
-	currentspeaker = "player"
-	addRemoveItem(a, b, c, d, e)
-	return
+function changeDialogue(item, stage, npc, i, n)
+	if checkInventory(item) == false then
+		NPCdialogue[stage][npc][i].logic.next = n
+	end
 end

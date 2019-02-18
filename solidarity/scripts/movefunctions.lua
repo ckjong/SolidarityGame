@@ -132,20 +132,18 @@ function updateGridPosNPC(tbl, char, n)
     char.moveDir = 4
     char.facing = 4
   end
-  print("gridx, gridy:" .. char.grid_x, char.grid_y)
-  print("actx, acty:" .. char.act_x, char.act_y)
 end
 
 --move character to another location if they enter a certain point
 function moveCharBack(x1, y1, x2, y2, d)
-	if player.act_x == x1*gridsize and player.act_y == y1*gridsize  then
+	if math.abs(player.act_x - x1*gridsize) < 1 and math.abs(player.act_y - y1*gridsize) < 1 then
 		player.grid_x = x2*gridsize
 		player.grid_y = y2*gridsize
 		player.moveDir = d
 		player.facing = d
 	elseif player.act_x == x2*gridsize and player.act_y == y2*gridsize then
     if trigger[1] == 1 then
-      print("trigger reset")
+			keyInput = 1
 		  trigger[1] = 0
     end
 	end

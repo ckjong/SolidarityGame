@@ -72,6 +72,8 @@ function love.update(dt)
 	if dialogueMode == 0 then
 		if trigger[1] == 0 then
 			DialogueTrigger(17, 21, 3)
+		else
+			keyInput = 0
 		end
 	end
 	if dialogueMode == 0 then
@@ -100,7 +102,9 @@ function love.update(dt)
 	end
 --set direction and destination position
 	if debugView == 0 then
-		updateGrid(player, 1)
+		if keyInput == 1 then
+			updateGrid(player, 1)
+		end
 	elseif debugView == 1 then
 		updateGrid(player, 0)
 	end
@@ -144,19 +148,21 @@ function love.update(dt)
 
 
 	for i = 1, #npcs do
-		if dialogueMode == 0 and menuView == 0 then
-			npcActUpdate(dt, i)
-			if npcs[i].working == 1 then
-				if npcs[i].animations.act[npcs[i].start].running == 0 then
-					npcs[i].animations.act[npcs[i].start].running = 1
+		if menuView == 0 then
+			if npcs[i].dialogue == 0 then
+				npcActUpdate(dt, i)
+				if npcs[i].working == 1 then
+					if npcs[i].animations.act[npcs[i].start].running == 0 then
+						npcs[i].animations.act[npcs[i].start].running = 1
+					end
+					animUpdate(npcs[i].animations.act, dt, npcs[i].start)
+					if movingObjectData[currentLocation] ~= nil then
+						testNpcObject(npcs[i].start, npcs[i].grid_x, npcs[i].grid_y, movingObjectData[currentLocation], i, true)
+						animUpdate(movingObjectData[currentLocation][npcs[i].actions.key], dt, npcs[i].actions.index)
+					end
+				else
+					animUpdate(npcs[i].animations.walk, dt, npcs[i].facing)
 				end
-				animUpdate(npcs[i].animations.act, dt, npcs[i].start)
-				if movingObjectData[currentLocation] ~= nil then
-					testNpcObject(npcs[i].start, npcs[i].grid_x, npcs[i].grid_y, movingObjectData[currentLocation], i, true)
-					animUpdate(movingObjectData[currentLocation][npcs[i].actions.key], dt, npcs[i].actions.index)
-				end
-			else
-				animUpdate(npcs[i].animations.walk, dt, npcs[i].facing)
 			end
 		end
 	end
@@ -229,9 +235,10 @@ function love.draw()
 		drawStillObjects(currentLocation, toptileData, toptilesSheet, toptiles)
 	end
 
-	-- add multiply screen for evening
-	-- love.graphics.setShader()
- 	-- multiplyLayer(width, height)
+	if bubble.on == 1 then
+		drawBubble(bubble.x, bubble.y, bubble.obj)
+	end
+
 	if menuView == 1 then
 		drawMenu(player.act_x, player.act_y, menu.currentTab)
 	end

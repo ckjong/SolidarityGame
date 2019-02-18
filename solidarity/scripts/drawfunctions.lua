@@ -112,7 +112,6 @@ function npcActUpdate(dt, i)
       if npcs[i].timer.ct >= npcs[i].timer.mt then
         npcs[i].timer.ct = 0
         npcs[i].working = 0
-        print("set npcs actions on to 0")
         npcs[i].actions.on = 0
         if npcs[i].animations.act[npcs[i].facing].running == 1 then
           npcs[i].animations.act[npcs[i].facing].running = 0
@@ -319,9 +318,8 @@ end
 function drawMeters(x, y)
   love.graphics.setColor(255, 255, 255)
   -- love.graphics.draw(ui.energytextbgsmleft, x, y)
-  love.graphics.draw(ui.energytextbgcircle, x, y)
-  love.graphics.draw(ui.energyboltsm, x, y)
-  love.graphics.draw(ui.energytextbground, x+gridsize+1, y)
+  love.graphics.draw(uiSheet, uiQuads.energyiconcircle, x, y)
+  love.graphics.draw(uiSheet, uiQuads.energytextbground, x+gridsize+1, y+1)
   love.graphics.setColor(75, 37, 58)
   love.graphics.printf(player.energy, x + gridsize+2, y+5, 16, "center")
 end
@@ -329,20 +327,26 @@ end
 function drawTime(x, y)
   local txt = ""
   love.graphics.setColor(255, 255, 255)
-  love.graphics.draw(ui.energytextbgsmleft, x, y)
-  love.graphics.draw(ui.energytextbgsmright, x+gridsize, y)
+  love.graphics.draw(uiSheet, uiQuads.energytextbgsmleft, x, y+1)
+  love.graphics.draw(uiSheet, uiQuads.energytextbgsmright, x+gridsize, y+1)
   love.graphics.setColor(75, 37, 58)
   love.graphics.printf("Day " .. day, x, y+5, 32, "center")
   love.graphics.setColor(255, 255, 255)
   if time == 1 then
-    love.graphics.draw(ui.timeiconbgday, x - 16, y)
-    love.graphics.draw(ui.timeiconday, x - 16, y)
+    love.graphics.draw(uiSheet, uiQuads.timeiconday, x - 16, y)
   elseif time == 2 then
-    love.graphics.draw(ui.timeiconbgevening, x - 16, y)
-    love.graphics.draw(ui.timeiconevening, x - 16, y)
+    love.graphics.draw(uiSheet, uiQuads.timeiconevening, x - 16, y)
   elseif time == 3 then
-    love.graphics.draw(ui.timeiconbgnight, x - 16, y)
-    love.graphics.draw(ui.timeiconnight, x - 16, y)
+    love.graphics.draw(uiSheet, uiQuads.timeiconnight, x - 16, y)
+  end
+end
+
+function drawBubble(x, y, obj)
+  if obj == "barrelSmBerries" or obj == "barrelLgBerries" then
+    love.graphics.setColor(255, 255, 255)
+    love.graphics.draw(uiSheet, uiQuads.speechbubblemedbot, x, y)
+    love.graphics.setColor(75, 37, 58)
+    love.graphics.printf(objectInventory[obj], x, y+4, 16, "center")
   end
 end
 
@@ -362,9 +366,9 @@ function drawName(boxposx, boxposy)
     n = 16
   end
   love.graphics.setColor(255, 255, 255)
-  love.graphics.draw(ui.namebgL, nameposx, nameposy)
-  love.graphics.draw(ui.namebgM, nameposx + n, nameposy)
-  love.graphics.draw(ui.namebgR, nameposx + 2 * n, nameposy)
+  love.graphics.draw(uiSheet, uiQuads.namebgL, nameposx, nameposy)
+  love.graphics.draw(uiSheet, uiQuads.namebgM, nameposx + n, nameposy)
+  love.graphics.draw(uiSheet, uiQuads.namebgR, nameposx + 2 * n, nameposy)
   love.graphics.setColor(75, 37, 58)
   if currentspeaker ~= "player" then
     love.graphics.printf(currentspeaker, nameposx, nameposy+4, n+n+17, "center")
@@ -477,10 +481,10 @@ local function drawMenuBottom(x, y, offX, offY)
       print("no item description found")
     end
     love.graphics.setColor(255, 255, 255)
-    love.graphics.draw(ui.namebgL, textposx + 80, textposy - 68)
-    love.graphics.draw(ui.namebgM, textposx + 80 + n, textposy - 68)
-    love.graphics.draw(ui.namebgM, textposx + 80 + 2 * n, textposy - 68)
-    love.graphics.draw(ui.namebgR, textposx + 80 + 3 * n, textposy - 68)
+    love.graphics.draw(uiSheet, uiQuads.namebgL, textposx + 80, textposy - 68)
+    love.graphics.draw(uiSheet, uiQuads.namebgM, textposx + 80 + n, textposy - 68)
+    love.graphics.draw(uiSheet, uiQuads.namebgM, textposx + 80 + 2 * n, textposy - 68)
+    love.graphics.draw(uiSheet, uiQuads.namebgR, textposx + 80 + 3 * n, textposy - 68)
     love.graphics.setColor(75, 37, 58)
     love.graphics.printf(selectText, textposx, textposy - 64, menuW, "center")
     love.graphics.printf(descriptionText, textposx +4, textposy - 46, menuW - 6, "center")
@@ -495,7 +499,7 @@ function drawInventory(x, y, offX, offY)
   local descriptionText = ""
   for i = 1, player.maxInventory do
     love.graphics.setColor(255, 255, 255)
-    love.graphics.draw(ui.itembg, x - offX + (i-1)*(26), y - offY)
+    love.graphics.draw(uiSheet, uiQuads.itembg, x - offX + (i-1)*(26), y - offY)
   end
   for i = 1, #player.inventory do
     local n = player.inventory[i].icon
@@ -568,11 +572,4 @@ end
 function fadeBlack(alpha, width, height)
   love.graphics.setColor(75, 37, 58, alpha)
   love.graphics.rectangle("fill", player.act_x-width/2, player.act_y-height/2, width, height)
-end
-
-function multiplyLayer(width, height)
-  love.graphics.setColor(255, 255, 255, 80)
-	love.graphics.setBlendMode("alpha")
-	love.graphics.draw(overlays.evening, player.act_x-width/2, player.act_y-height/2)
-  love.graphics.setBlendMode("alpha")
 end

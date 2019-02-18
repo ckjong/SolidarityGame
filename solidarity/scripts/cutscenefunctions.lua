@@ -234,13 +234,15 @@ function gameStageUpdate(dt)
 			if areaCheck(16, 21, 17, 22, player) then
 				local bool1, k = checkInventory("Plum Berries")
 				local bool2, k = checkInventory("Rose Berries")
-				if bool1 == 0 and bool2 == 0 then
+				if bool1 == false and bool2 == false then
 					if npcs[i].c ~= 3 then
 						removeTempBlocks(currentLocation, 1)
 						npcs[i].c = 3
 					end
 				else
 					if npcs[i].c ~= 4 then
+            tempBlocks["overworld"][1].on = 1
+            addTempBlocks(initTable)
 						npcs[i].c = 4
 						print("npcs[i].c " ..  npcs[i].c)
 					end
