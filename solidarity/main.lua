@@ -85,7 +85,9 @@ function love.update(dt)
 					moveCharBack(17, 21, 17, 22, 2)
 				else
 					local i = getCharIndex("Finch")
-					if npcs[i].c == 4 then
+					if npcs[i].c == 3 then
+						moveCharBack(17, 21, 17, 20, 1)
+					elseif npcs[i].c == 4 then
 						moveCharBack(17, 21, 17, 22, 2)
 					end
 				end
@@ -134,17 +136,7 @@ function love.update(dt)
 	if player.animations.act[player.facing].running == 1 then
 		animUpdate(player.animations.act, dt, player.facing)
 	end
-	if player.actions.key ~= 0 and player.actions.index ~= 0 then
-		if movingObjectData[currentLocation] ~= nil then
-			if movingObjectData[currentLocation][player.actions.key] ~= nil then
-				if movingObjectData[currentLocation][player.actions.key][player.actions.index] ~= nil then
-					if movingObjectData[currentLocation][player.actions.key][player.actions.index].running == 1 then
-						animUpdate(movingObjectData[currentLocation][player.actions.key], dt, player.actions.index)
-					end
-				end
-			end
-		end
-	end
+
 
 
 	for i = 1, #npcs do
@@ -158,7 +150,6 @@ function love.update(dt)
 					animUpdate(npcs[i].animations.act, dt, npcs[i].start)
 					if movingObjectData[currentLocation] ~= nil then
 						testNpcObject(npcs[i].start, npcs[i].grid_x, npcs[i].grid_y, movingObjectData[currentLocation], i, true)
-						animUpdate(movingObjectData[currentLocation][npcs[i].actions.key], dt, npcs[i].actions.index)
 					end
 				else
 					animUpdate(npcs[i].animations.walk, dt, npcs[i].facing)
@@ -166,6 +157,17 @@ function love.update(dt)
 			end
 		end
 	end
+
+	if movingObjectData[currentLocation] ~= nil then
+		for k, v in pairs(movingObjectData[currentLocation]) do
+			for l, m in pairs(movingObjectData[currentLocation][k]) do
+				if movingObjectData[currentLocation][k][l].running == 1 then
+					animUpdate(movingObjectData[currentLocation][k], dt, l)
+				end
+			end
+		end
+	end
+
 
 	freezeControl()
 	runCutscene(dt)

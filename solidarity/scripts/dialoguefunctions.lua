@@ -2,12 +2,13 @@
 
 --initiate dialogue if char enters a certain square
 function DialogueTrigger(x1, y1, f)
-	if (player.act_x - x1*gridsize) < 0.02 and (player.act_y - y1*gridsize) < 0.02 then
+	if math.abs(player.act_x - x1*gridsize) < 0.1 and math.abs(player.act_y - y1*gridsize) < 0.1 then
 		player.act_x = x1*gridsize
 		player.act_y = y1*gridsize
 		player.facing = f
 		DialogueSetup(npcs, dialogueStage)
 		trigger[1] = 1
+		keyInput = 0
 	end
 end
 
@@ -225,8 +226,14 @@ function DialogueSetup(tbl, n) -- iterate through npcs table, lookup text in NPC
 									dialogueOff(tbl, i, dialOpt)
 									return
 								else
-									if dialOpt.logic.func ~= nil then
-										dialOpt.logic.func(unpack(dialOpt.logic.par))
+									if dialOpt.logic.spoken ~= nil and dialOpt.logic.spoken == 0 then
+										if dialOpt.logic.statmod ~= nil then
+											changeCharStats(unpack(dialOpt.logic.statmod))
+										end
+										if dialOpt.logic.func ~= nil then
+											dialOpt.logic.func(unpack(dialOpt.logic.par))
+										end
+										dialOpt.logic.spoken = 1
 									end
 									tbl[i].n = 1
 									tbl[i].c = dialOpt.logic.next
@@ -301,5 +308,20 @@ end
 function changeDialogue(item, stage, npc, i, n)
 	if checkInventory(item) == false then
 		NPCdialogue[stage][npc][i].logic.next = n
+	end
+end
+
+
+function changeCharStats(char, stat1, stat2, amount)
+	local i = getCharIndex(char)
+	if npcs[i].stats[stat1] ~= nil then
+		if npcs[i].stats[stat1][stat2] ~= nil then
+			npcs[i].stats[stat1][stat2] = npcs[i].stats[stat1][stat2] + amount
+			print(char .. " stat " .. stat1 .. " changed by " .. amount)
+		else
+			print("stat2 is nil")
+		end
+	else
+		print("stat1 is nil")
 	end
 end

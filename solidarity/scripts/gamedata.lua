@@ -231,8 +231,9 @@ npcs = {{
   animationkey = 5, -- where animations start
   n = 1, --stage in single conversation
   c = 1, -- dialogue case
-  trust = {player = 80, Mint = 80, Finch = 0, Lark = 0, Cress = 70, Agave = 60, Tarragon = 5, Robin = 5, Durian = 5},
-  battlestats = {maxhp = 2, damage = 1, moves = 3},
+  stats = {trust = {player = 80, Mint = 80, Finch = 0, Lark = 0, Cress = 70, Agave = 60, Tarragon = 5, Robin = 5, Durian = 5},
+          battlestats = {maxhp = 2, damage = 1, moves = 3}
+  },
   actions = {key = 0, index = 0, x = 0, y = 0, on = 0},
   next = {{x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
           {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0}},
@@ -268,8 +269,9 @@ npcs = {{
     animationkey = 9,
     n = 1,
     c = 1,
-    trust = {player = 60, Fennel = 80, Finch = 5, Lark = 5, Cress = 60, Agave = 70, Tarragon = 5, Robin = 5, Durian = 5},
-    battlestats = {maxhp = 2, damage = 1, moves = 2},
+    stats = {trust = {player = 60, Fennel = 80, Finch = 5, Lark = 5, Cress = 60, Agave = 70, Tarragon = 5, Robin = 5, Durian = 5},
+            battlestats = {maxhp = 2, damage = 1, moves = 3}
+          },
     actions = {key = 0, index = 0, x = 0, y = 0, on = 0},
     next = {{x = 21*gridsize, y = 23*gridsize, facing = 2, location = "overworld", canWork = 1},
             {x = 21*gridsize, y = 15*gridsize, facing = 4, location = "dormitory", canWork = 0}},
@@ -305,8 +307,9 @@ npcs = {{
       animationkey = 13, -- where animations start
       n = 1, --stage in single conversation
       c = 1,
-      trust = {player = 5, Mint = 5, Fennel = 5, Lark = 70, Cress = 5, Agave = 0, Tarragon = 5, Robin = 30, Durian = 5},
-      battlestats = {maxhp = 3, damage = 1,  moves = 1},
+      stats = {trust = {player = 5, Mint = 5, Fennel = 5, Lark = 70, Cress = 5, Agave = 0, Tarragon = 5, Robin = 30, Durian = 5},
+              battlestats = {maxhp = 3, damage = 1, moves = 1}
+            },
       actions = {key = 0, index = 0, x = 0, y = 0, on = 0},
       next = {{x = 16*gridsize, y = 21*gridsize, facing = 4, location = "overworld", canWork = 0},
               {x = 16*gridsize, y = 20*gridsize, facing = 4, location = "overworld", canWork = 0}},
@@ -342,8 +345,9 @@ npcs = {{
       animationkey = 17, -- where animations start
       n = 1, --stage in single conversation
       c = 1,
-      trust = {player = 10, Mint = 10, Fennel = 10, Finch = 80, Agave = 10, Tarragon = 10, Robin = 20, Durian = 10},
-      battlestats = {maxhp = 5, damage = 1,  moves = 2},
+      stats = {trust = {player = 10, Mint = 10, Fennel = 10, Finch = 80, Agave = 10, Tarragon = 10, Robin = 20, Durian = 10},
+              battlestats = {maxhp = 5, damage = 1,  moves = 2}
+            },
       actions = {key = 0, index = 0, x = 0, y = 0, on = 0},
       next = {{x = 10*gridsize, y = 27*gridsize, facing = 4, location = "overworld", canWork = 0},
               {x = 0, y = 0, facing = 0, location = "offscreen", canWork = 0}},
@@ -379,8 +383,9 @@ npcs = {{
       animationkey = 21, -- where animations start
       n = 1, --stage in single conversation
       c = 1,
-      trust = {player = 50, Mint = 70, Fennel = 50, Finch = 0, Lark = 0, Agave = 40, Tarragon = 10, Robin = 5, Durian = 10},
-      battlestats = {maxhp = 3, damage = 1,  moves = 1},
+      stats = {trust = {player = 50, Mint = 70, Fennel = 50, Finch = 0, Lark = 0, Agave = 40, Tarragon = 10, Robin = 5, Durian = 10},
+              battlestats = {maxhp = 3, damage = 1,  moves = 1}
+      },
       actions = {key = 0, index = 0, x = 0, y = 0, on = 0},
       next = {{x = 10*gridsize, y = 9*gridsize, facing = 2, location = "dormitory", canWork = 0},
               {x = 10*gridsize, y = 9*gridsize, facing = 2, location = "dormitory", canWork = 0}},
@@ -416,8 +421,9 @@ npcs = {{
       animationkey = 25, -- where animations start
       n = 1, --stage in single conversation
       c = 1,
-      trust = {player = 70, Mint = 70, Fennel = 70, Finch = 0, Lark = 0, Cress = 70, Tarragon = 70, Robin = 45, Durian = 60},
-      battlestats = {maxhp = 3, damage = 1,  moves = 1},
+      stats = {trust = {player = 70, Mint = 70, Fennel = 70, Finch = 0, Lark = 0, Cress = 70, Tarragon = 70, Robin = 45, Durian = 60},
+              battlestats = {maxhp = 3, damage = 1,  moves = 1}
+            },
       actions = {key = 0, index = 0, x = 0, y = 0, on = 0},
       next = {{x = 18*gridsize, y = 19*gridsize, facing = 2, location = "dininghall", canWork = 0},
               {x = 0, y = 0, facing = 0, location = "dininghall", canWork = 0}},
@@ -453,8 +459,9 @@ npcs = {{
       animationkey = 29, -- where animations start
       n = 1, --stage in single conversation
       c = 1,
-      trust = {player = 15, Mint = 30, Fennel = 10, Finch = 0, Lark = 0, Cress = 20, Agave = 30, Robin = 45, Durian = 70},
-      battlestats = {maxhp = 3, damage = 1,  moves = 1},
+      stats = {trust = {player = 15, Mint = 30, Fennel = 10, Finch = 0, Lark = 0, Cress = 20, Agave = 30, Robin = 45, Durian = 70},
+              battlestats = {maxhp = 3, damage = 1,  moves = 1}
+      },
       actions = {key = 0, index = 0, x = 0, y = 0, on = 0},
       next = {{x = 26*gridsize, y = 16*gridsize, facing = 2, location = "dormitory", canWork = 0},
               {x = 26*gridsize, y = 16*gridsize, facing = 2, location = "dormitory", canWork = 0}},
@@ -490,8 +497,9 @@ npcs = {{
       animationkey = 33, -- where animations start
       n = 1, --stage in single conversation
       c = 1,
-      trust = {player = 10, Mint = 20, Fennel = 5, Finch = 30, Lark = 40, Cress = 10, Agave = 10, Tarragon = 50, Durian = 70},
-      battlestats = {maxhp = 3, damage = 1,  moves = 1},
+      stats = {trust = {player = 10, Mint = 20, Fennel = 5, Finch = 30, Lark = 40, Cress = 10, Agave = 10, Tarragon = 50, Durian = 70},
+              battlestats = {maxhp = 3, damage = 1,  moves = 1}
+      },
       actions = {key = 0, index = 0, x = 0, y = 0, on = 0},
       next = {{x = 28*gridsize, y = 13*gridsize, facing = 2, location = "dormitory", canWork = 0},
               {x = 28*gridsize, y = 13*gridsize, facing = 2, location = "dormitory", canWork = 0}},
@@ -527,8 +535,9 @@ npcs = {{
       animationkey = 37, -- where animations start
       n = 1, --stage in single conversation
       c = 1,
-      trust = {player = 20, Mint = 30, Fennel = 10, Finch = 5, Lark = 0, Cress = 15, Agave = 20, Tarragon = 60, Robin = 80},
-      battlestats = {maxhp = 3, damage = 1,  moves = 1},
+      stats = {trust = {player = 20, Mint = 30, Fennel = 10, Finch = 5, Lark = 0, Cress = 15, Agave = 20, Tarragon = 60, Robin = 80},
+              battlestats = {maxhp = 3, damage = 1,  moves = 1}
+            },
       actions = {key = 0, index = 0, x = 0, y = 0, on = 0},
       next = {{x = 27*gridsize, y = 14*gridsize, facing = 4, location = "dormitory", canWork = 0},
               {x = 27*gridsize, y = 14*gridsize, facing = 4, location = "dormitory", canWork = 0}},
@@ -564,8 +573,9 @@ npcs = {{
       animationkey = 37, -- where animations start
       n = 1, --stage in single conversation
       c = 1,
-      trust = {player = 20, Mint = 30, Fennel = 10, Finch = 5, Lark = 0, Cress = 15, Agave = 20, Tarragon = 60, Robin = 80},
-      battlestats = {maxhp = 3, damage = 1,  moves = 1},
+      stats = {trust = {player = 20, Mint = 30, Fennel = 10, Finch = 5, Lark = 0, Cress = 15, Agave = 20, Tarragon = 60, Robin = 80},
+              battlestats = {maxhp = 3, damage = 1,  moves = 1}
+      },
       actions = {key = 0, index = 0, x = 0, y = 0, on = 0},
       next = {{x = 25*gridsize, y = 9*gridsize, facing = 1, location = "dormitory", canWork = 0},
               {x = 24*gridsize, y = 9*gridsize, facing = 1, location = "dormitory", canWork = 0}},
@@ -601,8 +611,9 @@ npcs = {{
       animationkey = 37, -- where animations start
       n = 1, --stage in single conversation
       c = 1,
-      trust = {player = 20, Mint = 30, Fennel = 10, Finch = 5, Lark = 0, Cress = 15, Agave = 20, Tarragon = 60, Robin = 80},
-      battlestats = {maxhp = 3, damage = 1,  moves = 1},
+      stats = {trust = {player = 20, Mint = 30, Fennel = 10, Finch = 5, Lark = 0, Cress = 15, Agave = 20, Tarragon = 60, Robin = 80},
+              battlestats = {maxhp = 3, damage = 1,  moves = 1}
+      },
       actions = {key = 0, index = 0, x = 0, y = 0, on = 0},
       next = {{x = 14*gridsize, y = 10*gridsize, facing = 2, location = "overworld", canWork = 0},
               {x = 10*gridsize, y = 15*gridsize, facing = 4, location = "dormitory", canWork = 0}},

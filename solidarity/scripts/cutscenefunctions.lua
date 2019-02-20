@@ -228,6 +228,7 @@ function gameStageControl(g)
 end
 
 function gameStageUpdate(dt)
+
   if gameStage == 1 then
 		local i = getCharIndex("Finch")
 		if objectInventory.barrelSmBerries + objectInventory.barrelLgBerries >= 60 then
@@ -237,6 +238,7 @@ function gameStageUpdate(dt)
 				if bool1 == false and bool2 == false then
 					if npcs[i].c ~= 3 then
 						removeTempBlocks(currentLocation, 1)
+            keyInput = 1
 						npcs[i].c = 3
 					end
 				else

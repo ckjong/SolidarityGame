@@ -243,13 +243,9 @@ function BerryHarvestStart(b, c)
   elseif b == "barrelSmBerries" then
     player.actions.key = b
     player.actions.current = player.actions.max
-		player.animations.act[player.facing].running = 1
-		movingObjectData[currentLocation][b][c].running = 1
   elseif b == "barrelLgBerries" then
     player.actions.key = b
     player.actions.current = player.actions.max
-		player.animations.act[player.facing].running = 1
-		movingObjectData[currentLocation][b][c].running = 1
   end
   -- movingObjectData[currentLocation][player.actions.key][player.actions.index].visible = 0 -- hide still sprite
   player.actions.x = movingObjectData[currentLocation][player.actions.key][player.actions.index].x
@@ -267,6 +263,8 @@ function BerryBarrel(b, c, sub, icon)
   local present, k = checkInventory(sub)
   if present == true then
 		local total = countTotal(sub)
+		player.animations.act[player.facing].running = 1
+		movingObjectData[currentLocation][b][c].running = 1
 		objectInventory[b] = objectInventory[b] + total
 		setBubble(b, c)
     addRemoveItem("Dropped " .. total .. " " .. sub .. ".", sub, -total, icon, true)
