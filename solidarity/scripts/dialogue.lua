@@ -113,6 +113,12 @@ NPCdialogue = {
         },
   Lotus = {[1] = {text = {"Shhh. I'm in the middle of a water ceremony. Please don't interrupt."},
                 logic = {next = 1, speaker = "Lotus", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
+        },
+  Eucalyptus = {[1] = {text = {"Sorry sprout, dinner's over."},
+                logic = {next = 1, speaker = "Eucalyptus", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
+        },
+  Hawk = {[1] = {text = {"Stop sneaking around."},
+                logic = {next = 1, speaker = "Hawk", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
         }
   },
   [2]= {
@@ -184,6 +190,12 @@ NPCdialogue = {
                 logic = {next = 2, speaker = "Lotus", cond = true, off = true, display = 1, spoken = 0, energy = 1}},
            [2] = {text = {"*sniff* *sniff*"},
                 logic = {next = 1, speaker = "Lotus", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
+        },
+  Eucalyptus = {[1] = {text = {"Sorry sprout, dinner's over."},
+                logic = {next = 1, speaker = "Eucalyptus", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
+        },
+  Hawk = {[1] = {text = {"Stop sneaking around."},
+                logic = {next = 1, speaker = "Hawk", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
         }
   }
 }

@@ -75,20 +75,22 @@ mapFile1 = nil
 
   --portraits
   portraitsheet1 = love.graphics.newImage("images/solidarity_char_portraits.png")
-  portraitkey = {{name = "player", width = 46, height = 46, start = 0},
-                 {name = "Fennel", width = 46, height = 46, start = 1*46},
-                 {name = "Mint", width = 46, height = 46, start = 2*46},
-                 {name = "Cress", width = 46, height = 46, start = 3*46},
-                 {name = "Tarragon", width = 46, height = 46, start = 4*46},
-                 {name = "Agave", width = 46, height = 46, start = 5*46},
-                 {name = "Finch", width = 46, height = 46, start = 6*46},
-                 {name = "Lark", width = 46, height = 46, start = 7*46},
-                 {name = "Robin", width = 46, height = 46, start = 8*46},
-                 {name = "Durian", width = 46, height = 46, start = 9*46},
-                 {name = "Brier", width = 46, height = 46, start = 10*46},
-                 {name = "Lotus", width = 46, height = 46, start = 11*46},
-                 {name = "Kousa", width = 46, height = 46, start = 12*46},
-                 {name = "Tulsi", width = 46, height = 46, start = 14*46}
+  portraitkey = {player = love.graphics.newQuad(0, 0, 46, 46, portraitsheet1:getDimensions()),
+                 Fennel = love.graphics.newQuad(1*46, 0, 46, 46, portraitsheet1:getDimensions()),
+                 Mint = love.graphics.newQuad(2*46, 0, 46, 46, portraitsheet1:getDimensions()),
+                 Cress = love.graphics.newQuad(3*46, 0, 46, 46, portraitsheet1:getDimensions()),
+                 Tarragon = love.graphics.newQuad(4*46, 0, 46, 46, portraitsheet1:getDimensions()),
+                 Agave = love.graphics.newQuad(5*46, 0, 46, 46, portraitsheet1:getDimensions()),
+                 Finch = love.graphics.newQuad(6*46, 0, 46, 46, portraitsheet1:getDimensions()),
+                 Lark = love.graphics.newQuad(7*46, 0, 46, 46, portraitsheet1:getDimensions()),
+                 Robin = love.graphics.newQuad(8*46, 0, 46, 46, portraitsheet1:getDimensions()),
+                 Durian = love.graphics.newQuad(9*46, 0, 46, 46, portraitsheet1:getDimensions()),
+                 Brier = love.graphics.newQuad(10*46, 0, 46, 46, portraitsheet1:getDimensions()),
+                 Lotus = love.graphics.newQuad(11*46, 0, 46, 46, portraitsheet1:getDimensions()),
+                 Eucalyptus = love.graphics.newQuad(12*46, 0, 46, 46, portraitsheet1:getDimensions()),
+                 Hawk = love.graphics.newQuad(13*46, 0, 46, 46, portraitsheet1:getDimensions()),
+                 Kousa = love.graphics.newQuad(0, 1*46, 46, 46, portraitsheet1:getDimensions()),
+                 Tulsi = love.graphics.newQuad(1*46, 1*46, 46, 46, portraitsheet1:getDimensions())
                 }
   currentspeaker = "player"
   uiSheet = love.graphics.newImage("images/solidarityui_16x16.png")
@@ -228,7 +230,6 @@ npcs = {{
   dialogue = 0,
   name = "Fennel",
   status = "worker",
-  animationkey = 5, -- where animations start
   n = 1, --stage in single conversation
   c = 1, -- dialogue case
   stats = {trust = {player = 80, Mint = 80, Finch = 0, Lark = 0, Cress = 70, Agave = 60, Tarragon = 5, Robin = 5, Durian = 5},
@@ -266,7 +267,6 @@ npcs = {{
     dialogue = 0,
     name = "Mint", --2
     status = "worker",
-    animationkey = 9,
     n = 1,
     c = 1,
     stats = {trust = {player = 60, Fennel = 80, Finch = 5, Lark = 5, Cress = 60, Agave = 70, Tarragon = 5, Robin = 5, Durian = 5},
@@ -304,7 +304,6 @@ npcs = {{
       dialogue = 0,
       name = "Finch", --4
       status = "boss",
-      animationkey = 13, -- where animations start
       n = 1, --stage in single conversation
       c = 1,
       stats = {trust = {player = 5, Mint = 5, Fennel = 5, Lark = 70, Cress = 5, Agave = 0, Tarragon = 5, Robin = 30, Durian = 5},
@@ -342,7 +341,6 @@ npcs = {{
       dialogue = 0,
       name = "Lark", -- 3
       status = "boss",
-      animationkey = 17, -- where animations start
       n = 1, --stage in single conversation
       c = 1,
       stats = {trust = {player = 10, Mint = 10, Fennel = 10, Finch = 80, Agave = 10, Tarragon = 10, Robin = 20, Durian = 10},
@@ -380,7 +378,6 @@ npcs = {{
       dialogue = 0,
       name = "Cress", -- 5
       status = "worker",
-      animationkey = 21, -- where animations start
       n = 1, --stage in single conversation
       c = 1,
       stats = {trust = {player = 50, Mint = 70, Fennel = 50, Finch = 0, Lark = 0, Agave = 40, Tarragon = 10, Robin = 5, Durian = 10},
@@ -418,7 +415,6 @@ npcs = {{
       dialogue = 0,
       name = "Agave", --6
       status = "worker",
-      animationkey = 25, -- where animations start
       n = 1, --stage in single conversation
       c = 1,
       stats = {trust = {player = 70, Mint = 70, Fennel = 70, Finch = 0, Lark = 0, Cress = 70, Tarragon = 70, Robin = 45, Durian = 60},
@@ -456,7 +452,6 @@ npcs = {{
       dialogue = 0,
       name = "Tarragon", --7
       status = "worker",
-      animationkey = 29, -- where animations start
       n = 1, --stage in single conversation
       c = 1,
       stats = {trust = {player = 15, Mint = 30, Fennel = 10, Finch = 0, Lark = 0, Cress = 20, Agave = 30, Robin = 45, Durian = 70},
@@ -487,14 +482,13 @@ npcs = {{
       facing = 1,
       start = 2,
       randomturn = 0,
-      working = 0,
-      canWork = 0,
+      working = 1,
+      canWork = 1,
       timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc.
       location = "overworld",
       dialogue = 0,
       name = "Robin", --8
       status = "worker",
-      animationkey = 33, -- where animations start
       n = 1, --stage in single conversation
       c = 1,
       stats = {trust = {player = 10, Mint = 20, Fennel = 5, Finch = 30, Lark = 40, Cress = 10, Agave = 10, Tarragon = 50, Durian = 70},
@@ -532,7 +526,6 @@ npcs = {{
       dialogue = 0,
       name = "Durian", --9
       status = "worker",
-      animationkey = 37, -- where animations start
       n = 1, --stage in single conversation
       c = 1,
       stats = {trust = {player = 20, Mint = 30, Fennel = 10, Finch = 5, Lark = 0, Cress = 15, Agave = 20, Tarragon = 60, Robin = 80},
@@ -570,7 +563,6 @@ npcs = {{
       dialogue = 0,
       name = "Brier", --9
       status = "worker",
-      animationkey = 37, -- where animations start
       n = 1, --stage in single conversation
       c = 1,
       stats = {trust = {player = 20, Mint = 30, Fennel = 10, Finch = 5, Lark = 0, Cress = 15, Agave = 20, Tarragon = 60, Robin = 80},
@@ -608,7 +600,6 @@ npcs = {{
       dialogue = 0,
       name = "Lotus", --9
       status = "worker",
-      animationkey = 37, -- where animations start
       n = 1, --stage in single conversation
       c = 1,
       stats = {trust = {player = 20, Mint = 30, Fennel = 10, Finch = 5, Lark = 0, Cress = 15, Agave = 20, Tarragon = 60, Robin = 80},
@@ -625,6 +616,80 @@ npcs = {{
               {anim = newAnimation(animsheet_act, 45*16, 4, 16, 16, .6), name = "down", loop = 0, current = 0, running = 0, count = 0},
               {anim = newAnimation(animsheet_act, 46*16, 4, 16, 16, .6), name = "left", loop = 0, current = 0, running = 0, count = 0},
               {anim = newAnimation(animsheet_act, 47*16, 4, 16, 16, .6), name = "right", loop = 0, current = 0, running = 0, count = 0}}
+            }
+    },
+    {
+      grid_x = 18*gridsize,
+      grid_y = 9*gridsize,
+      act_x = 18*gridsize,
+      act_y = 9*gridsize,
+      speed = 30,
+      canMove = 0,
+      moveDir = 0,
+      threshold = 0,
+      facing = 1,
+      start = 2,
+      randomturn = 0,
+      working = 0,
+      canWork = 0,
+      timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc., current time, max time, wait time
+      location = "dininghall",
+      dialogue = 0,
+      name = "Eucalyptus", --9
+      status = "worker",
+      n = 1, --stage in single conversation
+      c = 1,
+      stats = {trust = {player = 15, Mint = 15, Fennel = 20, Finch = 5, Lark = 0, Cress = 15, Agave = 15, Tarragon = 10, Robin = 10},
+              battlestats = {maxhp = 3, damage = 1,  moves = 1}
+      },
+      actions = {key = 0, index = 0, x = 0, y = 0, on = 0},
+      next = {{x = 0, y = 0, facing = 0, location = "dininghall", canWork = 0},
+              {x = 0, y = 0, facing = 0, location = "dininghall", canWork = 0}},
+      animations = {walk = {{anim = newAnimation(animsheet1, 48*16, 4, 16, 16, .5 ), name = "up", loop = 0},
+                            {anim = newAnimation(animsheet1, 49*16, 4, 16, 16, .5 ), name = "down", loop = 0},
+                            {anim = newAnimation(animsheet1, 50*16, 4, 16, 16, .55 ), name = "left", loop = 0},
+                            {anim = newAnimation(animsheet1, 51*16, 4, 16, 16, .55 ), name = "right", loop = 0}},
+              act = {{anim = newAnimation(animsheet_act, 48*16, 4, 16, 16, .6), name = "up", loop = 0, current = 0, running = 0, count = 0},
+              {anim = newAnimation(animsheet_act, 49*16, 4, 16, 16, .6), name = "down", loop = 0, current = 0, running = 0, count = 0},
+              {anim = newAnimation(animsheet_act, 50*16, 4, 16, 16, .6), name = "left", loop = 0, current = 0, running = 0, count = 0},
+              {anim = newAnimation(animsheet_act, 51*16, 4, 16, 16, .6), name = "right", loop = 0, current = 0, running = 0, count = 0}}
+            }
+    },
+    {
+      grid_x = 14*gridsize,
+      grid_y = 10*gridsize,
+      act_x = 14*gridsize,
+      act_y = 10*gridsize,
+      speed = 30,
+      canMove = 0,
+      moveDir = 0,
+      threshold = 0,
+      facing = 1,
+      start = 2,
+      randomturn = 0,
+      working = 0,
+      canWork = 0,
+      timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc., current time, max time, wait time
+      location = "dininghall",
+      dialogue = 0,
+      name = "Hawk", --9
+      status = "boss",
+      n = 1, --stage in single conversation
+      c = 1,
+      stats = {trust = {player = 20, Mint = 30, Fennel = 10, Finch = 5, Lark = 0, Cress = 15, Agave = 20, Tarragon = 60, Robin = 80},
+              battlestats = {maxhp = 3, damage = 1,  moves = 1}
+      },
+      actions = {key = 0, index = 0, x = 0, y = 0, on = 0},
+      next = {{x = 0, y = 0, facing = 0, location = "dininghall", canWork = 0},
+              {x = 0, y = 0, facing = 0, location = "dininghall", canWork = 0}},
+      animations = {walk = {{anim = newAnimation(animsheet1, 52*16, 4, 16, 16, .5 ), name = "up", loop = 0},
+                            {anim = newAnimation(animsheet1, 53*16, 4, 16, 16, .5 ), name = "down", loop = 0},
+                            {anim = newAnimation(animsheet1, 54*16, 4, 16, 16, .55 ), name = "left", loop = 0},
+                            {anim = newAnimation(animsheet1, 55*16, 4, 16, 16, .55 ), name = "right", loop = 0}},
+              act = {{anim = newAnimation(animsheet_act, 52*16, 4, 16, 16, .6), name = "up", loop = 0, current = 0, running = 0, count = 0},
+              {anim = newAnimation(animsheet_act, 53*16, 4, 16, 16, .6), name = "down", loop = 0, current = 0, running = 0, count = 0},
+              {anim = newAnimation(animsheet_act, 54*16, 4, 16, 16, .6), name = "left", loop = 0, current = 0, running = 0, count = 0},
+              {anim = newAnimation(animsheet_act, 55*16, 4, 16, 16, .6), name = "right", loop = 0, current = 0, running = 0, count = 0}}
             }
     }
 }

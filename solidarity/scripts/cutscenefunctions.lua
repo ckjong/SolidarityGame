@@ -180,8 +180,8 @@ function changeGameStage()
       player.facing = player.next[gameStage].facing
     end
     player.location = player.next[gameStage].location
-    player.actions.key = 0
-    player.actions.index = 0
+    -- player.actions.key = 0
+    -- player.actions.index = 0
     for i = 1, #npcs do
       if npcs[i].next[gameStage].location ~= "offscreen" then
         if npcs[i].next[gameStage].x ~= 0 then
@@ -203,8 +203,8 @@ function changeGameStage()
       npcs[i].c = 1
       npcs[i].n = 1
       npcs[i].canMove = 0
-      npcs[i].actions.key = 0
-      npcs[i].actions.index = 0
+      -- npcs[i].actions.key = 0
+      -- npcs[i].actions.index = 0
       npcActSetup()
       for k, v in pairs(movingObjectData) do
         for l, w in pairs(movingObjectData[k]) do

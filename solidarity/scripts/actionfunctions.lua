@@ -36,13 +36,11 @@ function testObject(x, y, tbl)
 	end
 end
 
-function updateActionsTable(tbl, x2, y2, k, i, n)
-	npcs[n].actions.x = x2
-	npcs[n].actions.y = y2
-	npcs[n].actions.key = k
-	npcs[n].actions.index = i
-	tbl[k][i].running = 1
-	tbl[k][i].used = 1
+function updateActionsTable(tbl, k, i, n)
+	if npcs[n].working == 1 then
+		tbl[k][i].running = 1
+		tbl[k][i].used = 1
+	end
 end
 
 function testNpcObject(dir, x, y, tbl, npc, check)
@@ -55,40 +53,40 @@ function testNpcObject(dir, x, y, tbl, npc, check)
 					if x == x2 and y - gridsize == y2 then
 						if check == true then
 							if tbl[k][i].running == 0 then
-								updateActionsTable(tbl, x2, y2, k, i, npc)
+								updateActionsTable(tbl, k, i, npc)
 							end
 						else
-							updateActionsTable(tbl, x2, y2, k, i, npc)
+							updateActionsTable(tbl, k, i, npc)
 						end
 					end
 				elseif dir == 2 then
 					if x == x2 and y + gridsize == y2 then
 						if check == true then
 							if tbl[k][i].running == 0 then
-								updateActionsTable(tbl, x2, y2, k, i, npc)
+								updateActionsTable(tbl, k, i, npc)
 							end
 						else
-							updateActionsTable(tbl, x2, y2, k, i, npc)
+							updateActionsTable(tbl, k, i, npc)
 						end
 					end
 				elseif dir == 3 then
 					if y == y2 and x - gridsize == x2 then
 						if check == true then
 							if tbl[k][i].running == 0 then
-								updateActionsTable(tbl, x2, y2, k, i, npc)
+								updateActionsTable(tbl, k, i, npc)
 							end
 						else
-							updateActionsTable(tbl, x2, y2, k, i, npc)
+							updateActionsTable(tbl, k, i, npc)
 						end
 					end
 				elseif dir == 4 then
 					if y == y2 and x + gridsize == x2 then
 						if check == true then
 							if tbl[k][i].running == 0 then
-								updateActionsTable(tbl, x2, y2, k, i, npc)
+								updateActionsTable(tbl, k, i, npc)
 							end
 						else
-							updateActionsTable(tbl, x2, y2, k, i, npc)
+							updateActionsTable(tbl, k, i, npc)
 						end
 					end
 				end
@@ -231,25 +229,22 @@ end
 function BerryHarvestStart(b, c)
   if b == "plantSmBerries" then
     player.actions.rate = 10
-    player.actions.key = b
+    -- player.actions.key = b
 		player.animations.act[player.facing].running = 1
 		movingObjectData[currentLocation][b][c].running = 1
     -- k = key for object animation
   elseif b == "plantLgBerries" then
     player.actions.rate = 15
-    player.actions.key = b
+    -- player.actions.key = b
 		player.animations.act[player.facing].running = 1
 		movingObjectData[currentLocation][b][c].running = 1
   elseif b == "barrelSmBerries" then
-    player.actions.key = b
+    -- player.actions.key = b
     player.actions.current = player.actions.max
   elseif b == "barrelLgBerries" then
-    player.actions.key = b
+    -- player.actions.key = b
     player.actions.current = player.actions.max
   end
-  -- movingObjectData[currentLocation][player.actions.key][player.actions.index].visible = 0 -- hide still sprite
-  player.actions.x = movingObjectData[currentLocation][player.actions.key][player.actions.index].x
-  player.actions.y = movingObjectData[currentLocation][player.actions.key][player.actions.index].y
   actionMode = 1
 end
 
@@ -277,8 +272,8 @@ function BerryBarrel(b, c, sub, icon)
     wait.triggered = 1
 		wait.n = string.len(text)
     player.actions.current = 0
-    player.actions.key = 0
-		player.actions.index = 0
+    -- player.actions.key = 0
+		-- player.actions.index = 0
     actionMode = 0
   end
 end
@@ -298,7 +293,7 @@ end
 
 function exitAction()
 	if actionMode == 1 then
-		player.actions.key = 0
+		-- player.actions.key = 0
 		player.actions.current = 0
 		player.canMove = 1
 		actionMode = 0
@@ -427,7 +422,7 @@ function faceObject(char, dir, tbl)
 	if dir == 1 then -- up
 		local a, b, c = testObject(0, -1, tbl)
 		if a and b ~= nil then
-      player.actions.index = c
+      -- player.actions.index = c
 			if char == player then
 				printObjText(b, c)
 				return
@@ -438,7 +433,7 @@ function faceObject(char, dir, tbl)
 	elseif dir == 2 then -- down
 		local a, b, c = testObject(0, 1, tbl)
 		if a and b ~= nil then
-      player.actions.index = c
+      -- player.actions.index = c
 			if char == player then
 				printObjText(b, c)
 				return
@@ -449,7 +444,7 @@ function faceObject(char, dir, tbl)
 	elseif dir == 3 then -- left
 		local a, b, c = testObject(-1, 0, tbl)
 		if a and b ~= nil then
-      player.actions.index = c
+      -- player.actions.index = c
 			if char == player then
 				printObjText(b, c)
 				return
@@ -460,7 +455,7 @@ function faceObject(char, dir, tbl)
 	elseif dir == 4 then -- right
 		local a, b, c = testObject(1, 0, tbl)
 		if a and b ~= nil then
-      player.actions.index = c
+      -- player.actions.index = c
 			if char == player then
 				printObjText(b, c)
 				return

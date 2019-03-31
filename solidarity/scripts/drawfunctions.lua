@@ -166,9 +166,9 @@ function animUpdate(tbl, dt, k)
         tbl[k].count = tbl[k].count + 1
         if tbl[k].count == tbl[k].loop then
           resetAnims(tbl, k)
-          if actionMode == 0 then
-            animFinish()
-          end
+          -- if actionMode == 0 then
+          --   animFinish()
+          -- end
         end
       end
     end
@@ -182,31 +182,20 @@ function animUpdate(tbl, dt, k)
           if tbl[k].count == tbl[k].loop then
             print("count:" .. tbl[k].count)
             resetAnims(tbl, k)
-            if actionMode == 0 then
-              animFinish()
-            end
+            -- if actionMode == 0 then
+            --   animFinish()
+            -- end
           end
         end
-        -- if tbl[k].loop ~= 0 then
-        --   if tbl[k].running == 1 then
-        --     if tbl[k].current > 0 then
-        --       print("tbl[k].current " .. tbl[k].current)
-        --       tbl[k].current = tbl[k].current - 1
-        --     else
-        --       tbl[k].current = tbl[k].loop
-        --       tbl[k].running = 0
-        --     end
-        --   end
-        -- end
       end
   	end
   end
 end
-
-function animFinish()
-  player.actions.key = 0
-  player.actions.index = 0
-end
+--
+-- function animFinish()
+--   player.actions.key = 0
+--   player.actions.index = 0
+-- end
 
 function resetAnims(tbl, k)
   if tbl[k].running == 1 then
@@ -217,17 +206,7 @@ end
 
 --render portrait
 function drawPortrait(name, x, y, sheet)
-  local k = 0
-  for i = 1, #portraitkey do
-    if name == portraitkey[i].name then
-      k =  i
-    end
-  end
-  local image = sheet
-  local s = portraitkey[k].start
-  local w = portraitkey[k].width
-  local h = portraitkey[k].height
-  local quad = love.graphics.newQuad(s, 0, w, h, image:getDimensions())
+  local quad = portraitkey[name]
   love.graphics.setColor(255, 255, 255)
   love.graphics.draw(sheet, quad, x + 4, y-16)
 end
@@ -238,6 +217,11 @@ function drawPlayer(tbl)
   setTintColor(time)
   if player.moveDir ~= 0 then
     local spriteNum = math.floor(tbl[i]["anim"]["currentTime"] / tbl[i]["anim"]["duration"] * #tbl[i]["anim"]["quads"]) + 1
+    if spriteNum > 4 then
+      spriteNum = 4
+    elseif spriteNum < 1 then
+      spriteNum = 1
+    end
     love.graphics.draw(tbl[i]["anim"]["spriteSheet"], tbl[i]["anim"]["quads"][spriteNum], player.act_x, player.act_y, 0, 1)
   elseif player.moveDir == 0 then
     i = player.facing
@@ -261,6 +245,11 @@ function drawNPCs(tbl, i)
       if npcs[i].canMove == 1 then
         if npcs[i].moveDir ~= 0 then
           local spriteNum = math.floor(tbl[j]["anim"]["currentTime"] / tbl[j]["anim"]["duration"] * #tbl[j]["anim"]["quads"]) + 1
+          if spriteNum > 4 then
+            spriteNum = 4
+          elseif spriteNum < 1 then
+            spriteNum = 1
+          end
           love.graphics.draw(tbl[j]["anim"]["spriteSheet"], tbl[j]["anim"]["quads"][spriteNum], npcs[i].act_x, npcs[i].act_y, 0, 1)
         elseif npcs[i].moveDir == 0 then
           love.graphics.draw(tbl[f]["anim"]["spriteSheet"], tbl[f]["anim"]["quads"][1], npcs[i].act_x, npcs[i].act_y, 0, 1)
@@ -268,13 +257,7 @@ function drawNPCs(tbl, i)
       else
         if npcs[i].working == 1 then
           drawActAnims(npcs[i].animations.act, f, npcs[i].act_x, npcs[i].act_y)
-          -- if movingObjectData[currentLocation] ~= nil then
-          --   if npcs[i].actions.on == 1 then
-          --     if movingObjectData[currentLocation][npcs[i].actions.key][npcs[i].actions.index] ~= nil then
-          --       drawActAnims(movingObjectData[currentLocation][npcs[i].actions.key], npcs[i].actions.index, npcs[i].actions.x, npcs[i].actions.y)
-          --     end
-          --   end
-          -- end
+
         else
           tbl = npcs[i].animations.walk
           love.graphics.draw(tbl[s]["anim"]["spriteSheet"], tbl[s]["anim"]["quads"][1], npcs[i].act_x, npcs[i].act_y, 0, 1)

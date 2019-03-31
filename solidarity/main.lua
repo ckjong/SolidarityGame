@@ -330,12 +330,6 @@ function love.keypressed(key)
 				if usedItem == 1 then
 					afterItemUse()
 				end
-				-- if player.actions.key ~= 0 then
-				-- 	resetAnims(movingObjectData[currentLocation][player.actions.key], player.actions.index)
-				-- end
-				-- if actionMode == 1 then
-				-- 	resetAnims(player.animations.act, player.facing)
-				-- end
 				DialogueSetup(npcs, dialogueStage)
 				faceObject(player, player.facing, staticObjects[currentLocation]) -- still objects
 				faceObject(player, player.facing, movingObjectData[currentLocation])
@@ -349,7 +343,7 @@ function love.keypressed(key)
 
 	-- add block to editor
 		if key == "space" and debugView == 1 then
-			addBlock (initTable, player.grid_x, player.grid_y, 1) -- editor.lua
+			addBlock(initTable, player.grid_x, player.grid_y, 1) -- editor.lua
 		end
 
 		if key == "s" and debugView == 1 then
