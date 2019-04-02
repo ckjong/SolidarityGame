@@ -201,8 +201,31 @@ function resetAnims(tbl, k)
   if tbl[k].running == 1 then
     tbl[k].running = 0
     tbl[k].count = 0
+    if tbl[k].trigger ~= nil then
+      if tbl[k].trigger == 1 then
+        tbl[k].anim = newAnimation(animsheet2, tbl[k].picked*16, 3, 16, 16, .3)
+        tbl[k].trigger = 0
+      elseif tbl[k].trigger == 2 then
+        tbl[k].anim = newAnimation(animsheet2, (tbl[k].picked+4)*16, 3, 16, 16, .3)
+        tbl[k].trigger = 0
+      elseif tbl[k].trigger == 3 then
+        tbl[k]["anim"]["spriteSheet"] = animsheet3
+				tbl[k]["anim"]["quads"] = {movingObjectQuads.plantSm}
+        tbl[k].trigger = 0
+				table.insert(movingObjectData[currentLocation].plantSm, tbl[k])
+				table.remove(tbl, k)
+      elseif tbl[k].trigger == 4 then
+        tbl[k]["anim"]["spriteSheet"] = animsheet3
+        tbl[k]["anim"]["quads"] = {movingObjectQuads.plantLg}
+        tbl[k].trigger = 0
+        table.insert(movingObjectData[currentLocation].plantLg, tbl[k])
+        table.remove(tbl, k)
+      end
+    end
   end
 end
+
+
 
 --render portrait
 function drawPortrait(name, x, y, sheet)
@@ -225,7 +248,7 @@ function drawPlayer(tbl)
     love.graphics.draw(tbl[i]["anim"]["spriteSheet"], tbl[i]["anim"]["quads"][spriteNum], player.act_x, player.act_y, 0, 1)
   elseif player.moveDir == 0 then
     i = player.facing
-    if actionMode == 0 then
+    if player.animations.act[i].running == 0 then
       love.graphics.draw(tbl[i]["anim"]["spriteSheet"], tbl[i]["anim"]["quads"][1], player.act_x, player.act_y, 0, 1)
     else
       drawActAnims(player.animations.act, player.facing, player.act_x, player.act_y)

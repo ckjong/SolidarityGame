@@ -189,7 +189,7 @@ NPCdialogue = {
   Lotus = {[1] = {text = {"Is it just me or does it smell funny in here?", "I can't tell if it's the mould or someone's feet.", "Can I smell your... wait, that would be weird wouldn't it?", "Nevermind."},
                 logic = {next = 2, speaker = "Lotus", cond = true, off = true, display = 1, spoken = 0, energy = 1}},
            [2] = {text = {"*sniff* *sniff*"},
-                logic = {next = 1, speaker = "Lotus", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
+                logic = {next = 2, speaker = "Lotus", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
         },
   Eucalyptus = {[1] = {text = {"Sorry sprout, dinner's over."},
                 logic = {next = 1, speaker = "Eucalyptus", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
@@ -214,9 +214,9 @@ objectText = {
   barrelSmBerriesStatic = {text = {"Berries in barrel: " .. objectInventory["barrelSmBerries"]}, logic = {off = false}},
   barrelLgBerriesStatic = {text = {"Berries in barrel: " .. objectInventory["barrelLgBerries"]}, logic = {off = false}},
   plantSm = {text = {"The berries have already been harvested from this plant."}, logic = {off = false}},
-  plantSmBerries = {text = {"Press Z to Harvest Plum Berries", "...", "I'm too tired to work.", "I can't carry any more."}, logic = {off = false}},
+  plantSmBerries = {text = {"I got 1 Plum Berry.", "That's the last one.", "I'm too tired to work.", "I can't carry any more."}, logic = {off = false}},
   plantLg = {text = {"The berries have already been harvested from this plant."}, logic = {off = false}},
-  plantLgBerries = {text = {"Press Z to Harvest Rose Berries", "...", "I'm too tired to work.", "I can't carry any more."}, logic = {off = false}},
+  plantLgBerries = {text = {"I got 1 Rose Berry.", "That's the last one.", "I'm too tired to work.", "I can't carry any more."}, logic = {off = false}},
   barrelSmBerries = {text = {"Press Z to drop the Plum Berries in the Barrel"}, logic = {off = false}},
   barrelLgBerries = {text = {"Press Z to drop the Rose Berries in the Barrel"}, logic = {off = false}},
   platefull2 = {text = {"I feel much better now."}, logic = {off = false}}

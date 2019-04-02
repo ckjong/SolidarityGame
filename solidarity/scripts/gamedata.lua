@@ -744,58 +744,58 @@ itemText = ""
 animsheet2 = love.graphics.newImage("images/solidarity_object_anim.png")
 movingObjectData = {overworld =
                       {plantSmBerries = {
-                          {x = 11*gridsize, y = 24*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
-                          {x = 12*gridsize, y = 24*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
-                          {x = 13*gridsize, y = 24*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
-                          {x = 14*gridsize, y = 24*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
-                          {x = 15*gridsize, y = 24*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
-                          {x = 18*gridsize, y = 24*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
-                          {x = 19*gridsize, y = 24*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
-                          {x = 20*gridsize, y = 24*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
-                          {x = 21*gridsize, y = 24*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
-                          {x = 22*gridsize, y = 24*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
-                          {x = 11*gridsize, y = 25*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
-                          {x = 12*gridsize, y = 25*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
-                          {x = 13*gridsize, y = 25*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
-                          {x = 15*gridsize, y = 25*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
-                          {x = 18*gridsize, y = 25*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
-                          {x = 19*gridsize, y = 25*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
-                          {x = 20*gridsize, y = 25*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
-                          {x = 21*gridsize, y = 25*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0}
+                          {x = 11*gridsize, y = 24*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0, picked = 0, trigger = 0},
+                          {x = 12*gridsize, y = 24*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0, picked = 0, trigger = 0},
+                          {x = 13*gridsize, y = 24*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0, picked = 0, trigger = 0},
+                          {x = 14*gridsize, y = 24*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0, picked = 0, trigger = 0},
+                          {x = 15*gridsize, y = 24*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0, picked = 0, trigger = 0},
+                          {x = 18*gridsize, y = 24*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0, picked = 0, trigger = 0},
+                          {x = 19*gridsize, y = 24*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0, picked = 0, trigger = 0},
+                          {x = 20*gridsize, y = 24*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0, picked = 0, trigger = 0},
+                          {x = 21*gridsize, y = 24*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0, picked = 0, trigger = 0},
+                          {x = 22*gridsize, y = 24*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0, picked = 0, trigger = 0},
+                          {x = 11*gridsize, y = 25*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0, picked = 0, trigger = 0},
+                          {x = 12*gridsize, y = 25*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0, picked = 0, trigger = 0},
+                          {x = 13*gridsize, y = 25*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0, picked = 0, trigger = 0},
+                          {x = 15*gridsize, y = 25*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0, picked = 0, trigger = 0},
+                          {x = 18*gridsize, y = 25*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0, picked = 0, trigger = 0},
+                          {x = 19*gridsize, y = 25*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0, picked = 0, trigger = 0},
+                          {x = 20*gridsize, y = 25*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0, picked = 0, trigger = 0},
+                          {x = 21*gridsize, y = 25*gridsize, visible = 1, anim = newAnimation(animsheet2, 0, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0, picked = 0, trigger = 0}
                         },
                       plantSm = {
                           {x = 14*gridsize, y = 25*gridsize, visible = 1, anim = {spriteSheet = animsheet3, quads = {movingObjectQuads.plantSm}}, loop = 1, current = 0, running = 0, count = 0},
                           {x = 22*gridsize, y = 25*gridsize, visible = 1 ,anim = {spriteSheet = animsheet3, quads = {movingObjectQuads.plantSm}}, loop = 1, current = 0, running = 0, count = 0}
                         },
                       plantLgBerries = {
-                          {x = 11*gridsize, y = 28*gridsize, visible = 1, anim = newAnimation(animsheet2, 1*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
-                          {x = 12*gridsize, y = 28*gridsize, visible = 1, anim = newAnimation(animsheet2, 1*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
-                          {x = 13*gridsize, y = 28*gridsize, visible = 1, anim = newAnimation(animsheet2, 1*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
-                          {x = 14*gridsize, y = 28*gridsize, visible = 1, anim = newAnimation(animsheet2, 1*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
-                          {x = 18*gridsize, y = 28*gridsize, visible = 1, anim = newAnimation(animsheet2, 1*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
-                          {x = 19*gridsize, y = 28*gridsize, visible = 1, anim = newAnimation(animsheet2, 1*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
-                          {x = 20*gridsize, y = 28*gridsize, visible = 1, anim = newAnimation(animsheet2, 1*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
-                          {x = 21*gridsize, y = 28*gridsize, visible = 1, anim = newAnimation(animsheet2, 1*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
-                          {x = 22*gridsize, y = 28*gridsize, visible = 1, anim = newAnimation(animsheet2, 1*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
-                          {x = 11*gridsize, y = 29*gridsize, visible = 1, anim = newAnimation(animsheet2, 1*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
-                          {x = 13*gridsize, y = 29*gridsize, visible = 1, anim = newAnimation(animsheet2, 1*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
-                          {x = 14*gridsize, y = 29*gridsize, visible = 1, anim = newAnimation(animsheet2, 1*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
-                          {x = 15*gridsize, y = 29*gridsize, visible = 1, anim = newAnimation(animsheet2, 1*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
-                          {x = 18*gridsize, y = 29*gridsize, visible = 1, anim = newAnimation(animsheet2, 1*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
-                          {x = 19*gridsize, y = 29*gridsize, visible = 1, anim = newAnimation(animsheet2, 1*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
-                          {x = 20*gridsize, y = 29*gridsize, visible = 1, anim = newAnimation(animsheet2, 1*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
-                          {x = 21*gridsize, y = 29*gridsize, visible = 1, anim = newAnimation(animsheet2, 1*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0},
-                          {x = 22*gridsize, y = 29*gridsize, visible = 1, anim = newAnimation(animsheet2, 1*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0}
+                          {x = 11*gridsize, y = 28*gridsize, visible = 1, anim = newAnimation(animsheet2, 4*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0, picked = 0, trigger = 0},
+                          {x = 12*gridsize, y = 28*gridsize, visible = 1, anim = newAnimation(animsheet2, 4*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0, picked = 0, trigger = 0},
+                          {x = 13*gridsize, y = 28*gridsize, visible = 1, anim = newAnimation(animsheet2, 4*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0, picked = 0, trigger = 0},
+                          {x = 14*gridsize, y = 28*gridsize, visible = 1, anim = newAnimation(animsheet2, 4*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0, picked = 0, trigger = 0},
+                          {x = 18*gridsize, y = 28*gridsize, visible = 1, anim = newAnimation(animsheet2, 4*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0, picked = 0, trigger = 0},
+                          {x = 19*gridsize, y = 28*gridsize, visible = 1, anim = newAnimation(animsheet2, 4*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0, picked = 0, trigger = 0},
+                          {x = 20*gridsize, y = 28*gridsize, visible = 1, anim = newAnimation(animsheet2, 4*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0, picked = 0, trigger = 0},
+                          {x = 21*gridsize, y = 28*gridsize, visible = 1, anim = newAnimation(animsheet2, 4*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0, picked = 0, trigger = 0},
+                          {x = 22*gridsize, y = 28*gridsize, visible = 1, anim = newAnimation(animsheet2, 4*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0, picked = 0, trigger = 0},
+                          {x = 11*gridsize, y = 29*gridsize, visible = 1, anim = newAnimation(animsheet2, 4*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0, picked = 0, trigger = 0},
+                          {x = 13*gridsize, y = 29*gridsize, visible = 1, anim = newAnimation(animsheet2, 4*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0, picked = 0, trigger = 0},
+                          {x = 14*gridsize, y = 29*gridsize, visible = 1, anim = newAnimation(animsheet2, 4*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0, picked = 0, trigger = 0},
+                          {x = 15*gridsize, y = 29*gridsize, visible = 1, anim = newAnimation(animsheet2, 4*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0, picked = 0, trigger = 0},
+                          {x = 18*gridsize, y = 29*gridsize, visible = 1, anim = newAnimation(animsheet2, 4*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0, picked = 0, trigger = 0},
+                          {x = 19*gridsize, y = 29*gridsize, visible = 1, anim = newAnimation(animsheet2, 4*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0, picked = 0, trigger = 0},
+                          {x = 20*gridsize, y = 29*gridsize, visible = 1, anim = newAnimation(animsheet2, 4*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0, picked = 0, trigger = 0},
+                          {x = 21*gridsize, y = 29*gridsize, visible = 1, anim = newAnimation(animsheet2, 4*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0, picked = 0, trigger = 0},
+                          {x = 22*gridsize, y = 29*gridsize, visible = 1, anim = newAnimation(animsheet2, 4*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0, picked = 0, trigger = 0}
                         },
                       plantLg = {
                           {x = 15*gridsize, y = 28*gridsize, visible = 1, anim = {spriteSheet = animsheet3, quads = {movingObjectQuads.plantLg}}, loop = 1, current = 0, running = 0, count = 0},
                           {x = 12*gridsize, y = 29*gridsize, visible = 1, anim = {spriteSheet = animsheet3, quads = {movingObjectQuads.plantLg}}, loop = 1, current = 0, running = 0, count = 0}
                       },
                       barrelSmBerries = {
-                          {x = 15*gridsize, y = 22*gridsize, visible = 1, anim = newAnimation(animsheet2, 2*16, 4, 16, 16, .3), loop = 2, current = 0, running = 0, count = 0}
+                          {x = 15*gridsize, y = 22*gridsize, visible = 1, anim = newAnimation(animsheet2, 10*16, 4, 16, 16, .3), loop = 2, current = 0, running = 0, count = 0}
                         },
                       barrelLgBerries = {
-                          {x = 18*gridsize, y = 22*gridsize, visible = 1, anim = newAnimation(animsheet2, 3*16, 4, 16, 16, .3), loop = 2, current = 0, running = 0, count = 0}
+                          {x = 18*gridsize, y = 22*gridsize, visible = 1, anim = newAnimation(animsheet2, 11*16, 4, 16, 16, .3), loop = 2, current = 0, running = 0, count = 0}
                         }
                       }
                     }

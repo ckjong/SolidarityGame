@@ -141,7 +141,15 @@ function addRemoveItem(txt, i, a, b, w) -- text to display, item, amount, icon n
 		if a > 0 then
 			if inventoryFull (player.maxInventory) == false then
 				if itemStats[b].stackable == 1 then
-					table.insert(player.inventory, {item = i, amount = a, icon = b})
+					if present then
+						print("item present")
+						if player.inventory[k] ~= nil then
+							player.inventory[k].amount = player.inventory[k].amount + a
+						end
+					else
+						table.insert(player.inventory, {item = i, amount = a, icon = b})
+					end
+					-- table.insert(player.inventory, {item = i, amount = a, icon = b})
 				else
 					for j = 1, a do
 						if inventoryFull (player.maxInventory) == false then
@@ -228,16 +236,34 @@ end
 -- berry harvest
 function BerryHarvestStart(b, c)
   if b == "plantSmBerries" then
-    player.actions.rate = 10
+		if movingObjectData[currentLocation][b][c].picked < 3 then
+			movingObjectData[currentLocation][b][c].picked = movingObjectData[currentLocation][b][c].picked + 1
+			movingObjectData[currentLocation][b][c].trigger = 1
+			if player.energy > 0 then
+				player.energy = player.energy - 1
+			end
+		else
+			movingObjectData[currentLocation][b][c].trigger = 3
+		end
     -- player.actions.key = b
 		player.animations.act[player.facing].running = 1
 		movingObjectData[currentLocation][b][c].running = 1
+
     -- k = key for object animation
   elseif b == "plantLgBerries" then
-    player.actions.rate = 15
+		if movingObjectData[currentLocation][b][c].picked < 5 then
+			movingObjectData[currentLocation][b][c].picked = movingObjectData[currentLocation][b][c].picked + 1
+			movingObjectData[currentLocation][b][c].trigger = 2
+			if player.energy > 0 then
+				player.energy = player.energy - 1
+			end
+		else
+			movingObjectData[currentLocation][b][c].trigger = 4
+		end
     -- player.actions.key = b
 		player.animations.act[player.facing].running = 1
 		movingObjectData[currentLocation][b][c].running = 1
+
   elseif b == "barrelSmBerries" then
     -- player.actions.key = b
     player.actions.current = player.actions.max
@@ -314,8 +340,12 @@ function printObjText(b, c)
 				if inventoryFull (player.maxInventory) == false then -- check if space in inventory
 					if freeze.action == 0 then -- check if player has energy
 						if movingObjectData[currentLocation][b][c].used == 0 then
+
 							startAction(b, 1)
 						  BerryHarvestStart(b, c)
+							addRemoveItem("I got 1 Plum Berry.", "Plum Berries", 1, b, false)
+							player.actions.current = 0
+							actionMode = 0
 						end
 					elseif freeze.action == 1 then
 						startAction(b, 3)
@@ -333,6 +363,10 @@ function printObjText(b, c)
 						if movingObjectData[currentLocation][b][c].used == 0 then
 							startAction(b, 1)
 			        BerryHarvestStart(b, c)
+							addRemoveItem("I got 1 Rose Berry.", "Rose Berries", 1, b, false)
+							player.actions.current = 0
+							actionMode = 0
+
 						end
 					elseif freeze.action == 1 then
 						startAction(b, 3)
@@ -368,52 +402,56 @@ function printObjText(b, c)
 	elseif actionMode == 1 then
 		print("player.actions.current " ..  player.actions.current)
 		print("player.actions.max " ..  player.actions.max)
-		if player.actions.current < player.actions.max then
-			BerryHarvestStart(b, c)
-			player.actions.current = player.actions.current + player.actions.rate
-			print ("action meter: " .. player.actions.current)
-      text = objectText[b].text[2]
-			if player.energy > 0 then
-				player.energy = player.energy - 1
-			end
-			if player.energy <= 0 then
-				exitAction()
-			end
-			print("player energy: " .. player.energy)
-		else
-			if b == "plantSmBerries" then
-				addRemoveItem("I got 10 Plum Berries.", "Plum Berries", 10, b, true)
-				movingObjectData[currentLocation][b][c]["anim"]["spriteSheet"] = animsheet3
-				movingObjectData[currentLocation][b][c]["anim"]["quads"] = {movingObjectQuads.plantSm}
-				table.insert(movingObjectData[currentLocation].plantSm, movingObjectData[currentLocation][b][c])
-				table.remove(movingObjectData[currentLocation][b], c)
-				for i = 1, #npcs do
-					testNpcObject(npcs[i].start, npcs[i].grid_x, npcs[i].grid_y, movingObjectData[currentLocation], i, false)
-				end
-				-- movingObjectData[currentLocation][b][c].used = 1
-				-- movingObjectData[currentLocation][b][c].visible = 0
 
-			elseif b == "plantLgBerries" then
-				addRemoveItem("I got 10 Rose Berries.", "Rose Berries", 10, b, true)
-				movingObjectData[currentLocation][b][c]["anim"]["spriteSheet"] = animsheet3
-				movingObjectData[currentLocation][b][c]["anim"]["quads"] = {movingObjectQuads.plantLg}
-				table.insert(movingObjectData[currentLocation].plantLg, movingObjectData[currentLocation][b][c])
-				table.remove(movingObjectData[currentLocation][b], c)
-				for i = 1, #npcs do
-					testNpcObject(npcs[i].start, npcs[i].grid_x, npcs[i].grid_y, movingObjectData[currentLocation], i, false)
-				end
-				-- movingObjectData[currentLocation][b][c].used = 1
+		if b == "plantSmBerries" then
+			-- if movingObjectData[currentLocation][b][c].picked > 3 then
+			-- 	movingObjectData[currentLocation][b][c].trigger = 3
+			-- 	for i = 1, #npcs do
+			-- 		testNpcObject(npcs[i].start, npcs[i].grid_x, npcs[i].grid_y, movingObjectData[currentLocation], i, false)
+			-- 	end
+			-- end
+			-- addRemoveItem("I got 1 Plum Berry.", "Plum Berries", 1, b, true)
+			-- if movingObjectData[currentLocation][b][c].picked == 3 then
+			-- 	movingObjectData[currentLocation][b][c]["anim"]["spriteSheet"] = animsheet3
+			-- 	movingObjectData[currentLocation][b][c]["anim"]["quads"] = {movingObjectQuads.plantSm}
+			-- 	table.insert(movingObjectData[currentLocation].plantSm, movingObjectData[currentLocation][b][c])
+			-- 	table.remove(movingObjectData[currentLocation][b], c)
+			-- 	for i = 1, #npcs do
+			-- 		testNpcObject(npcs[i].start, npcs[i].grid_x, npcs[i].grid_y, movingObjectData[currentLocation], i, false)
+			-- 	end
+			-- end
+			-- -- movingObjectData[currentLocation][b][c].used = 1
+			-- -- movingObjectData[currentLocation][b][c].visible = 0
 
-      elseif b == "barrelSmBerries" then
-        BerryBarrel(b, c, "Plum Berries")
-        return
-      elseif b == "barrelLgBerries" then
-        BerryBarrel(b, c, "Rose Berries")
-        return
-      end
-			player.actions.current = 0
-			actionMode = 0
-		end
+		elseif b == "plantLgBerries" then
+			-- if movingObjectData[currentLocation][b][c].picked > 5 then
+			-- 	movingObjectData[currentLocation][b][c].trigger = 4
+			--
+			-- 	for i = 1, #npcs do
+			-- 		testNpcObject(npcs[i].start, npcs[i].grid_x, npcs[i].grid_y, movingObjectData[currentLocation], i, false)
+			-- 	end
+			-- end
+			-- addRemoveItem("I got 1 Rose Berry.", "Rose Berries", 1, b, true)
+			-- if movingObjectData[currentLocation][b][c].picked == 5 then
+			-- 	movingObjectData[currentLocation][b][c]["anim"]["spriteSheet"] = animsheet3
+			-- 	movingObjectData[currentLocation][b][c]["anim"]["quads"] = {movingObjectQuads.plantLg}
+			-- 	table.insert(movingObjectData[currentLocation].plantLg, movingObjectData[currentLocation][b][c])
+			-- 	table.remove(movingObjectData[currentLocation][b], c)
+			-- 	for i = 1, #npcs do
+			-- 		testNpcObject(npcs[i].start, npcs[i].grid_x, npcs[i].grid_y, movingObjectData[currentLocation], i, false)
+			-- 	end
+			-- end
+			-- -- movingObjectData[currentLocation][b][c].used = 1
+
+    elseif b == "barrelSmBerries" then
+      BerryBarrel(b, c, "Plum Berries")
+      return
+    elseif b == "barrelLgBerries" then
+      BerryBarrel(b, c, "Rose Berries")
+      return
+    end
+		player.actions.current = 0
+		actionMode = 0
 	end
 end
 

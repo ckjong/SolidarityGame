@@ -75,8 +75,6 @@ function love.update(dt)
 		else
 			keyInput = 0
 		end
-	end
-	if dialogueMode == 0 then
 		if player.canMove == 1 and currentLocation == "overworld" then
 			if gameStage == 0 then
 				moveCharBack(17, 21, 17, 22, 2)
