@@ -245,7 +245,6 @@ function BerryHarvestStart(b, c)
 		else
 			movingObjectData[currentLocation][b][c].trigger = 3
 		end
-    -- player.actions.key = b
 		player.animations.act[player.facing].running = 1
 		movingObjectData[currentLocation][b][c].running = 1
 
@@ -260,16 +259,8 @@ function BerryHarvestStart(b, c)
 		else
 			movingObjectData[currentLocation][b][c].trigger = 4
 		end
-    -- player.actions.key = b
 		player.animations.act[player.facing].running = 1
 		movingObjectData[currentLocation][b][c].running = 1
-
-  elseif b == "barrelSmBerries" then
-    -- player.actions.key = b
-    player.actions.current = player.actions.max
-  elseif b == "barrelLgBerries" then
-    -- player.actions.key = b
-    player.actions.current = player.actions.max
   end
   actionMode = 1
 end
@@ -290,16 +281,12 @@ function BerryBarrel(b, c, sub, icon)
 		setBubble(b, c)
     addRemoveItem("Dropped " .. total .. " " .. sub .. ".", sub, -total, icon, true)
 		actionMode = 0
-		player.actions.current = 0
 		return
   else
     text = "I don't have any " .. sub .. "."
 		setBubble(b, c)
     wait.triggered = 1
 		wait.n = string.len(text)
-    player.actions.current = 0
-    -- player.actions.key = 0
-		-- player.actions.index = 0
     actionMode = 0
   end
 end
@@ -319,8 +306,6 @@ end
 
 function exitAction()
 	if actionMode == 1 then
-		-- player.actions.key = 0
-		player.actions.current = 0
 		player.canMove = 1
 		actionMode = 0
 		print("exitAction set dialogueMode to 0")
@@ -328,6 +313,10 @@ function exitAction()
 		wait.triggered = 0
 		bubble.on = 0
 		keyInput = 1
+		if choice.mode == 1 then
+			choice.mode = 0
+			choice.pos = 1
+		end
 	end
 end
 
@@ -344,7 +333,6 @@ function printObjText(b, c)
 							startAction(b, 1)
 						  BerryHarvestStart(b, c)
 							addRemoveItem("I got 1 Plum Berry.", "Plum Berries", 1, b, false)
-							player.actions.current = 0
 							actionMode = 0
 						end
 					elseif freeze.action == 1 then
@@ -364,7 +352,6 @@ function printObjText(b, c)
 							startAction(b, 1)
 			        BerryHarvestStart(b, c)
 							addRemoveItem("I got 1 Rose Berry.", "Rose Berries", 1, b, false)
-							player.actions.current = 0
 							actionMode = 0
 
 						end
@@ -388,6 +375,13 @@ function printObjText(b, c)
         BerryHarvestStart(b, c)
         BerryBarrel(b, c, "Rose Berries", "plantLgBerries")
         return
+			elseif b == "playerBed" then
+				if player.sleep == true then
+					startAction(b, 3)
+					objectText[b].logic.yesno = true
+					choice.pos = 1
+					actionMode = 1
+				end
 			else
 				print("Not berries or barrel obj: " .. b)
 				startAction(b, 1)
@@ -400,57 +394,31 @@ function printObjText(b, c)
       wait.triggered = 0
 		end
 	elseif actionMode == 1 then
-		print("player.actions.current " ..  player.actions.current)
-		print("player.actions.max " ..  player.actions.max)
-
-		if b == "plantSmBerries" then
-			-- if movingObjectData[currentLocation][b][c].picked > 3 then
-			-- 	movingObjectData[currentLocation][b][c].trigger = 3
-			-- 	for i = 1, #npcs do
-			-- 		testNpcObject(npcs[i].start, npcs[i].grid_x, npcs[i].grid_y, movingObjectData[currentLocation], i, false)
-			-- 	end
-			-- end
-			-- addRemoveItem("I got 1 Plum Berry.", "Plum Berries", 1, b, true)
-			-- if movingObjectData[currentLocation][b][c].picked == 3 then
-			-- 	movingObjectData[currentLocation][b][c]["anim"]["spriteSheet"] = animsheet3
-			-- 	movingObjectData[currentLocation][b][c]["anim"]["quads"] = {movingObjectQuads.plantSm}
-			-- 	table.insert(movingObjectData[currentLocation].plantSm, movingObjectData[currentLocation][b][c])
-			-- 	table.remove(movingObjectData[currentLocation][b], c)
-			-- 	for i = 1, #npcs do
-			-- 		testNpcObject(npcs[i].start, npcs[i].grid_x, npcs[i].grid_y, movingObjectData[currentLocation], i, false)
-			-- 	end
-			-- end
-			-- -- movingObjectData[currentLocation][b][c].used = 1
-			-- -- movingObjectData[currentLocation][b][c].visible = 0
-
-		elseif b == "plantLgBerries" then
-			-- if movingObjectData[currentLocation][b][c].picked > 5 then
-			-- 	movingObjectData[currentLocation][b][c].trigger = 4
-			--
-			-- 	for i = 1, #npcs do
-			-- 		testNpcObject(npcs[i].start, npcs[i].grid_x, npcs[i].grid_y, movingObjectData[currentLocation], i, false)
-			-- 	end
-			-- end
-			-- addRemoveItem("I got 1 Rose Berry.", "Rose Berries", 1, b, true)
-			-- if movingObjectData[currentLocation][b][c].picked == 5 then
-			-- 	movingObjectData[currentLocation][b][c]["anim"]["spriteSheet"] = animsheet3
-			-- 	movingObjectData[currentLocation][b][c]["anim"]["quads"] = {movingObjectQuads.plantLg}
-			-- 	table.insert(movingObjectData[currentLocation].plantLg, movingObjectData[currentLocation][b][c])
-			-- 	table.remove(movingObjectData[currentLocation][b], c)
-			-- 	for i = 1, #npcs do
-			-- 		testNpcObject(npcs[i].start, npcs[i].grid_x, npcs[i].grid_y, movingObjectData[currentLocation], i, false)
-			-- 	end
-			-- end
-			-- -- movingObjectData[currentLocation][b][c].used = 1
-
-    elseif b == "barrelSmBerries" then
+		if b == "barrelSmBerries" then
       BerryBarrel(b, c, "Plum Berries")
       return
     elseif b == "barrelLgBerries" then
       BerryBarrel(b, c, "Rose Berries")
       return
+		elseif b == "playerBed" then
+			if objectText[b].logic.yesno == true and player.sleep == true then
+				if choice.mode == 0 then
+					choice.mode = 1
+					choice.total = 2
+					choice.type = "yesno"
+					choiceText(objectText.yesno.text, choice.pos, choice.total)
+					return
+				elseif choice.mode == 1 then
+					if choice.pos == 1 then
+						cutsceneControl.stage = 5
+					end
+					choice.mode = 0
+					dialogueMode = 0
+					player.canMove = 1
+					choice.pos = 1
+				end
+			end
     end
-		player.actions.current = 0
 		actionMode = 0
 	end
 end
@@ -460,7 +428,6 @@ function faceObject(char, dir, tbl)
 	if dir == 1 then -- up
 		local a, b, c = testObject(0, -1, tbl)
 		if a and b ~= nil then
-      -- player.actions.index = c
 			if char == player then
 				printObjText(b, c)
 				return
@@ -471,7 +438,6 @@ function faceObject(char, dir, tbl)
 	elseif dir == 2 then -- down
 		local a, b, c = testObject(0, 1, tbl)
 		if a and b ~= nil then
-      -- player.actions.index = c
 			if char == player then
 				printObjText(b, c)
 				return
@@ -482,7 +448,6 @@ function faceObject(char, dir, tbl)
 	elseif dir == 3 then -- left
 		local a, b, c = testObject(-1, 0, tbl)
 		if a and b ~= nil then
-      -- player.actions.index = c
 			if char == player then
 				printObjText(b, c)
 				return
@@ -493,7 +458,6 @@ function faceObject(char, dir, tbl)
 	elseif dir == 4 then -- right
 		local a, b, c = testObject(1, 0, tbl)
 		if a and b ~= nil then
-      -- player.actions.index = c
 			if char == player then
 				printObjText(b, c)
 				return
@@ -521,7 +485,28 @@ function freezeControl()
 	end
 end
 
-
+function resetBerries()
+	for k, v in pairs(movingObjectData.overworld.plantSm) do
+		movingObjectData.overworld.plantSm[k].anim = newAnimation(animsheet2, 0, 3, 16, 16, .3)
+		movingObjectData.overworld.plantSm[k].trigger = 0
+		movingObjectData.overworld.plantSm[k].picked = 0
+		table.insert(movingObjectData.overworld.plantSmBerries, movingObjectData.overworld.plantSm[k])
+		table.remove(movingObjectData.overworld.plantSm, k)
+	end
+	for k, v in pairs(movingObjectData.overworld.plantLg) do
+		movingObjectData.overworld.plantLg[k].anim = newAnimation(animsheet2, 4*gridsize, 3, 16, 16, .3)
+		movingObjectData.overworld.plantLg[k].trigger = 0
+		movingObjectData.overworld.plantLg[k].picked = 0
+		table.insert(movingObjectData.overworld.plantLgBerries, movingObjectData.overworld.plantLg[k])
+		table.remove(movingObjectData.overworld.plantLg, k)
+	end
+	for k, v in pairs(movingObjectData.overworld.plantSmBerries) do
+		movingObjectData.overworld.plantSmBerries[k].anim = newAnimation(animsheet2, 0, 3, 16, 16, .3)
+	end
+	for k, v in pairs(movingObjectData.overworld.plantLgBerries) do
+		movingObjectData.overworld.plantLgBerries[k].anim = newAnimation(animsheet2, 4*gridsize, 3, 16, 16, .3)
+	end
+end
 
 itemEffects = {platefull2 = {type = "once", description = "Restores Energy", text = 1, func = energyMod, par = {100}}
 							}

@@ -174,7 +174,15 @@ mapFile1 = nil
                        fenceopenL = love.graphics.newQuad(9*gridsize, 0, 16, 16, animsheet3:getDimensions()),
                        fenceopenR = love.graphics.newQuad(10*gridsize, 0, 16, 16, animsheet3:getDimensions()),
                        fenceclosedL = love.graphics.newQuad(11*gridsize, 0, 16, 16, animsheet3:getDimensions()),
-                       fenceclosedR = love.graphics.newQuad(12*gridsize, 0, 16, 16, animsheet3:getDimensions())
+                       fenceclosedR = love.graphics.newQuad(12*gridsize, 0, 16, 16, animsheet3:getDimensions()),
+                       playerSleepClosed = love.graphics.newQuad(0, 1*gridsize, 16, 16, animsheet3:getDimensions()),
+                       playerSleepOpen = love.graphics.newQuad(0, 2*gridsize, 16, 16, animsheet3:getDimensions()),
+                       fennelSleepClosed = love.graphics.newQuad(1*gridsize, 1*gridsize, 16, 16, animsheet3:getDimensions()),
+                       fennelSleepOpen = love.graphics.newQuad(1*gridsize, 2*gridsize, 16, 16, animsheet3:getDimensions()),
+                       mintSleepClosed = love.graphics.newQuad(2*gridsize, 1*gridsize, 16, 16, animsheet3:getDimensions()),
+                       mintSleepOpen = love.graphics.newQuad(2*gridsize, 2*gridsize, 16, 16, animsheet3:getDimensions()),
+                       durianSleepClosed = love.graphics.newQuad(3*gridsize, 1*gridsize, 16, 16, animsheet3:getDimensions()),
+                       durianSleepClosed = love.graphics.newQuad(3*gridsize, 2*gridsize, 16, 16, animsheet3:getDimensions())
                       }
 
 animsheet1 = love.graphics.newImage("images/solidarity_anim.png")
@@ -197,9 +205,13 @@ player = {
   party = {1, 2}, -- Fennel, Mint
   spells = {},
   energy = 100,
+  sleep = false,
   actions = {current = 0, max = 100, rate = 10, x = 0, y = 0, key = 0, index = 0},
   next = {{x = 0, y = 0, facing = 0, location = "overworld"},
-          {x = 0, y = 0, facing = 0, location = "dininghall"}},
+          {x = 0, y = 0, facing = 0, location = "dininghall"},
+          {x = 14*gridsize, y = 16*gridsize, facing = 3, location = "dormitory"},
+          {x = 0, y = 0, facing = 0, location = "dormitory"}
+        },
   animations = {walk = {{anim = newAnimation(animsheet1, 0, 4, 16, 16, .50), name = "up", loop = 0},
                         {anim = newAnimation(animsheet1, 1*16, 4, 16, 16, .50), name = "down", loop = 0},
                         {anim = newAnimation(animsheet1, 2*16, 4, 16, 16, .55), name = "left", loop = 0},
@@ -237,7 +249,10 @@ npcs = {{
   },
   actions = {key = 0, index = 0, x = 0, y = 0, on = 0},
   next = {{x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
-          {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0}},
+          {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
+          {x = 13*gridsize, y = 16*gridsize, facing = 4, location = "dormitory", canWork = 0},
+          {x = 16*gridsize, y = 13*gridsize, facing = 2, location = "dormitory", canWork = 0},
+        },
   animations = {walk = {{anim = newAnimation(animsheet1, 4*16, 4, 16, 16, .5 ), name = "up", loop = 0},
                         {anim = newAnimation(animsheet1, 5*16, 4, 16, 16, .5 ), name = "down", loop = 0},
                         {anim = newAnimation(animsheet1, 6*16, 4, 16, 16, .55 ), name = "left", loop = 0},
@@ -274,7 +289,9 @@ npcs = {{
           },
     actions = {key = 0, index = 0, x = 0, y = 0, on = 0},
     next = {{x = 21*gridsize, y = 23*gridsize, facing = 2, location = "overworld", canWork = 1},
-            {x = 21*gridsize, y = 15*gridsize, facing = 4, location = "dormitory", canWork = 0}},
+            {x = 21*gridsize, y = 15*gridsize, facing = 4, location = "dormitory", canWork = 0},
+            {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
+            {x = 21*gridsize, y = 23*gridsize, facing = 2, location = "overworld", canWork = 1}},
     animations = {walk = {{anim = newAnimation(animsheet1, 8*16, 4, 16, 16, .5 ), name = "up", loop = 0},
                           {anim = newAnimation(animsheet1, 9*16, 4, 16, 16, .5 ), name = "down", loop = 0},
                           {anim = newAnimation(animsheet1, 10*16, 4, 16, 16, .55 ), name = "left", loop = 0},
@@ -311,7 +328,9 @@ npcs = {{
             },
       actions = {key = 0, index = 0, x = 0, y = 0, on = 0},
       next = {{x = 16*gridsize, y = 21*gridsize, facing = 4, location = "overworld", canWork = 0},
-              {x = 16*gridsize, y = 20*gridsize, facing = 4, location = "overworld", canWork = 0}},
+              {x = 16*gridsize, y = 20*gridsize, facing = 4, location = "overworld", canWork = 0},
+              {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
+              {x = 16*gridsize, y = 21*gridsize, facing = 4, location = "overworld", canWork = 0}},
       animations = {walk = {{anim = newAnimation(animsheet1, 12*16, 4, 16, 16, .5 ), name = "up", loop = 0},
                             {anim = newAnimation(animsheet1, 13*16, 4, 16, 16, .5 ), name = "down", loop = 0},
                             {anim = newAnimation(animsheet1, 14*16, 4, 16, 16, .55 ), name = "left", loop = 0},
@@ -348,7 +367,10 @@ npcs = {{
             },
       actions = {key = 0, index = 0, x = 0, y = 0, on = 0},
       next = {{x = 10*gridsize, y = 27*gridsize, facing = 4, location = "overworld", canWork = 0},
-              {x = 0, y = 0, facing = 0, location = "offscreen", canWork = 0}},
+              {x = 0, y = 0, facing = 0, location = "offscreen", canWork = 0},
+              {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
+              {x = 10*gridsize, y = 27*gridsize, facing = 4, location = "overworld", canWork = 0}
+            },
       animations = {walk = {{anim = newAnimation(animsheet1, 16*16, 4, 16, 16, .5 ), name = "up", loop = 0},
                             {anim = newAnimation(animsheet1, 17*16, 4, 16, 16, .5 ), name = "down", loop = 0},
                             {anim = newAnimation(animsheet1, 18*16, 4, 16, 16, .55 ), name = "left", loop = 0},
@@ -385,7 +407,10 @@ npcs = {{
       },
       actions = {key = 0, index = 0, x = 0, y = 0, on = 0},
       next = {{x = 10*gridsize, y = 9*gridsize, facing = 2, location = "dormitory", canWork = 0},
-              {x = 10*gridsize, y = 9*gridsize, facing = 2, location = "dormitory", canWork = 0}},
+              {x = 10*gridsize, y = 9*gridsize, facing = 2, location = "dormitory", canWork = 0},
+              {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
+              {x = 10*gridsize, y = 9*gridsize, facing = 2, location = "dormitory", canWork = 0}
+            },
       animations = {walk = {{anim = newAnimation(animsheet1, 20*16, 4, 16, 16, .5 ), name = "up", loop = 0},
                             {anim = newAnimation(animsheet1, 21*16, 4, 16, 16, .5 ), name = "down", loop = 0},
                             {anim = newAnimation(animsheet1, 22*16, 4, 16, 16, .55 ), name = "left", loop = 0},
@@ -422,7 +447,10 @@ npcs = {{
             },
       actions = {key = 0, index = 0, x = 0, y = 0, on = 0},
       next = {{x = 18*gridsize, y = 19*gridsize, facing = 2, location = "dininghall", canWork = 0},
-              {x = 0, y = 0, facing = 0, location = "dininghall", canWork = 0}},
+              {x = 0, y = 0, facing = 0, location = "dininghall", canWork = 0},
+              {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
+              {x = 13*gridsize, y = 31*gridsize, facing = 2, location = "overworld", canWork = 0}
+            },
       animations = {walk = {{anim = newAnimation(animsheet1, 24*16, 4, 16, 16, .6 ), name = "up", loop = 0},
                             {anim = newAnimation(animsheet1, 25*16, 4, 16, 16, .6 ), name = "down", loop = 0},
                             {anim = newAnimation(animsheet1, 26*16, 4, 16, 16, .65 ), name = "left", loop = 0},
@@ -459,7 +487,10 @@ npcs = {{
       },
       actions = {key = 0, index = 0, x = 0, y = 0, on = 0},
       next = {{x = 26*gridsize, y = 16*gridsize, facing = 2, location = "dormitory", canWork = 0},
-              {x = 26*gridsize, y = 16*gridsize, facing = 2, location = "dormitory", canWork = 0}},
+              {x = 26*gridsize, y = 16*gridsize, facing = 2, location = "dormitory", canWork = 0},
+              {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
+              {x = 21*gridsize, y = 31*gridsize, facing = 2, location = "overworld", canWork = 0},
+            },
       animations = {walk = {{anim = newAnimation(animsheet1, 28*16, 4, 16, 16, .5), name = "up", loop = 0},
                             {anim = newAnimation(animsheet1, 29*16, 4, 16, 16, .5), name = "down", loop = 0},
                             {anim = newAnimation(animsheet1, 30*16, 4, 16, 16, .55), name = "left", loop = 0},
@@ -496,7 +527,10 @@ npcs = {{
       },
       actions = {key = 0, index = 0, x = 0, y = 0, on = 0},
       next = {{x = 28*gridsize, y = 13*gridsize, facing = 2, location = "dormitory", canWork = 0},
-              {x = 28*gridsize, y = 13*gridsize, facing = 2, location = "dormitory", canWork = 0}},
+              {x = 28*gridsize, y = 13*gridsize, facing = 2, location = "dormitory", canWork = 0},
+              {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
+              {x = 14*gridsize, y = 27*gridsize, facing = 2, location = "overworld", canWork = 0}
+            },
       animations = {walk = {{anim = newAnimation(animsheet1, 32*16, 4, 16, 16, .5), name = "up", loop = 0},
                             {anim = newAnimation(animsheet1, 33*16, 4, 16, 16, .5), name = "down", loop = 0},
                             {anim = newAnimation(animsheet1, 34*16, 4, 16, 16, .55 ), name = "left", loop = 0},
@@ -533,7 +567,10 @@ npcs = {{
             },
       actions = {key = 0, index = 0, x = 0, y = 0, on = 0},
       next = {{x = 27*gridsize, y = 14*gridsize, facing = 4, location = "dormitory", canWork = 0},
-              {x = 27*gridsize, y = 14*gridsize, facing = 4, location = "dormitory", canWork = 0}},
+              {x = 27*gridsize, y = 14*gridsize, facing = 4, location = "dormitory", canWork = 0},
+              {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
+              {x = 14*gridsize, y = 16*gridsize, facing = 4, location = "overworld", canWork = 0}
+            },
       animations = {walk = {{anim = newAnimation(animsheet1, 36*16, 4, 16, 16, .5 ), name = "up", loop = 0},
                             {anim = newAnimation(animsheet1, 37*16, 4, 16, 16, .5 ), name = "down", loop = 0},
                             {anim = newAnimation(animsheet1, 38*16, 4, 16, 16, .55 ), name = "left", loop = 0},
@@ -570,7 +607,10 @@ npcs = {{
       },
       actions = {key = 0, index = 0, x = 0, y = 0, on = 0},
       next = {{x = 25*gridsize, y = 9*gridsize, facing = 1, location = "dormitory", canWork = 0},
-              {x = 24*gridsize, y = 9*gridsize, facing = 1, location = "dormitory", canWork = 0}},
+              {x = 24*gridsize, y = 9*gridsize, facing = 1, location = "dormitory", canWork = 0},
+              {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
+              {x = 24*gridsize, y = 9*gridsize, facing = 1, location = "dormitory", canWork = 0}
+            },
       animations = {walk = {{anim = newAnimation(animsheet1, 40*16, 4, 16, 16, .5 ), name = "up", loop = 0},
                             {anim = newAnimation(animsheet1, 41*16, 4, 16, 16, .5 ), name = "down", loop = 0},
                             {anim = newAnimation(animsheet1, 42*16, 4, 16, 16, .55 ), name = "left", loop = 0},
@@ -602,12 +642,15 @@ npcs = {{
       status = "worker",
       n = 1, --stage in single conversation
       c = 1,
-      stats = {trust = {player = 20, Mint = 30, Fennel = 10, Finch = 5, Lark = 0, Cress = 15, Agave = 20, Tarragon = 60, Robin = 80},
+      stats = {trust = {player = 20, Mint = 30, Fennel = 10, Finch = 10, Lark = 10, Cress = 15, Agave = 20, Tarragon = 60, Robin = 80},
               battlestats = {maxhp = 3, damage = 1,  moves = 1}
       },
       actions = {key = 0, index = 0, x = 0, y = 0, on = 0},
       next = {{x = 14*gridsize, y = 10*gridsize, facing = 2, location = "overworld", canWork = 0},
-              {x = 10*gridsize, y = 15*gridsize, facing = 4, location = "dormitory", canWork = 0}},
+              {x = 10*gridsize, y = 15*gridsize, facing = 4, location = "dormitory", canWork = 0},
+              {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
+              {x = 10*gridsize, y = 15*gridsize, facing = 4, location = "dormitory", canWork = 0}
+            },
       animations = {walk = {{anim = newAnimation(animsheet1, 44*16, 4, 16, 16, .5 ), name = "up", loop = 0},
                             {anim = newAnimation(animsheet1, 45*16, 4, 16, 16, .5 ), name = "down", loop = 0},
                             {anim = newAnimation(animsheet1, 46*16, 4, 16, 16, .55 ), name = "left", loop = 0},
@@ -644,7 +687,10 @@ npcs = {{
       },
       actions = {key = 0, index = 0, x = 0, y = 0, on = 0},
       next = {{x = 0, y = 0, facing = 0, location = "dininghall", canWork = 0},
-              {x = 0, y = 0, facing = 0, location = "dininghall", canWork = 0}},
+              {x = 0, y = 0, facing = 0, location = "dininghall", canWork = 0},
+              {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
+              {x = 0, y = 0, facing = 0, location = "dininghall", canWork = 0}
+            },
       animations = {walk = {{anim = newAnimation(animsheet1, 48*16, 4, 16, 16, .5 ), name = "up", loop = 0},
                             {anim = newAnimation(animsheet1, 49*16, 4, 16, 16, .5 ), name = "down", loop = 0},
                             {anim = newAnimation(animsheet1, 50*16, 4, 16, 16, .55 ), name = "left", loop = 0},
@@ -681,7 +727,10 @@ npcs = {{
       },
       actions = {key = 0, index = 0, x = 0, y = 0, on = 0},
       next = {{x = 0, y = 0, facing = 0, location = "dininghall", canWork = 0},
-              {x = 0, y = 0, facing = 0, location = "dininghall", canWork = 0}},
+              {x = 0, y = 0, facing = 0, location = "dininghall", canWork = 0},
+              {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
+              {x = 0, y = 0, facing = 0, location = "dininghall", canWork = 0}
+            },
       animations = {walk = {{anim = newAnimation(animsheet1, 52*16, 4, 16, 16, .5 ), name = "up", loop = 0},
                             {anim = newAnimation(animsheet1, 53*16, 4, 16, 16, .5 ), name = "down", loop = 0},
                             {anim = newAnimation(animsheet1, 54*16, 4, 16, 16, .55 ), name = "left", loop = 0},
@@ -765,7 +814,7 @@ movingObjectData = {overworld =
                         },
                       plantSm = {
                           {x = 14*gridsize, y = 25*gridsize, visible = 1, anim = {spriteSheet = animsheet3, quads = {movingObjectQuads.plantSm}}, loop = 1, current = 0, running = 0, count = 0},
-                          {x = 22*gridsize, y = 25*gridsize, visible = 1 ,anim = {spriteSheet = animsheet3, quads = {movingObjectQuads.plantSm}}, loop = 1, current = 0, running = 0, count = 0}
+                          {x = 22*gridsize, y = 25*gridsize, visible = 1, anim = {spriteSheet = animsheet3, quads = {movingObjectQuads.plantSm}}, loop = 1, current = 0, running = 0, count = 0}
                         },
                       plantLgBerries = {
                           {x = 11*gridsize, y = 28*gridsize, visible = 1, anim = newAnimation(animsheet2, 4*16, 3, 16, 16, .3), loop = 1, current = 0, running = 0, count = 0, used = 0, picked = 0, trigger = 0},
@@ -814,22 +863,42 @@ nonInteractiveObjects = {overworld = {fenceopenL = {
                                       },
                                     },
                         dininghall = {stool = {
-                                        {name = "stool", x = 12*gridsize, y = 12*gridsize, visible = 1},
-                                        {name = "stool", x = 14*gridsize, y = 12*gridsize, visible = 1},
-                                        {name = "stool", x = 17*gridsize, y = 12*gridsize, visible = 1},
-                                        {name = "stool", x = 18*gridsize, y = 12*gridsize, visible = 1},
-                                        {name = "stool", x = 19*gridsize, y = 12*gridsize, visible = 1},
-                                        {name = "stool", x = 23*gridsize, y = 12*gridsize, visible = 1},
-                                        {name = "stool", x = 24*gridsize, y = 12*gridsize, visible = 1},
-                                        {name = "stool", x = 12*gridsize, y = 16*gridsize, visible = 1},
-                                        {name = "stool", x = 13*gridsize, y = 16*gridsize, visible = 1},
-                                        {name = "stool", x = 14*gridsize, y = 16*gridsize, visible = 1},
-                                        {name = "stool", x = 18*gridsize, y = 16*gridsize, visible = 1},
-                                        {name = "stool", x = 19*gridsize, y = 16*gridsize, visible = 1},
-                                        {name = "stool", x = 22*gridsize, y = 16*gridsize, visible = 1},
-                                        {name = "stool", x = 23*gridsize, y = 16*gridsize, visible = 1}
+                                        {x = 12*gridsize, y = 12*gridsize, visible = 1},
+                                        {x = 14*gridsize, y = 12*gridsize, visible = 1},
+                                        {x = 17*gridsize, y = 12*gridsize, visible = 1},
+                                        {x = 18*gridsize, y = 12*gridsize, visible = 1},
+                                        {x = 19*gridsize, y = 12*gridsize, visible = 1},
+                                        {x = 23*gridsize, y = 12*gridsize, visible = 1},
+                                        {x = 24*gridsize, y = 12*gridsize, visible = 1},
+                                        {x = 12*gridsize, y = 16*gridsize, visible = 1},
+                                        {x = 13*gridsize, y = 16*gridsize, visible = 1},
+                                        {x = 14*gridsize, y = 16*gridsize, visible = 1},
+                                        {x = 18*gridsize, y = 16*gridsize, visible = 1},
+                                        {x = 19*gridsize, y = 16*gridsize, visible = 1},
+                                        {x = 22*gridsize, y = 16*gridsize, visible = 1},
+                                        {x = 23*gridsize, y = 16*gridsize, visible = 1}
                                     }
-                                  }
+                                  },
+                        dormitory = {
+                                    playerSleepClosed = {
+                                      {x = 15*gridsize, y = 16*gridsize, visible = 0},
+                                    },
+                                    playerSleepOpen = {
+                                      {x = 15*gridsize, y = 16*gridsize, visible = 0},
+                                    },
+                                    fennelSleepClosed = {
+                                      {x = 15*gridsize, y = 12*gridsize, visible = 0},
+                                    },
+                                    fennelSleepOpen = {
+                                      {x = 15*gridsize, y = 12*gridsize, visible = 0},
+                                    },
+                                    mintSleepClosed = {
+                                      {x = 15*gridsize, y = 12*gridsize, visible = 0},
+                                    },
+                                    mintSleepOpen = {
+                                      {x = 15*gridsize, y = 12*gridsize, visible = 0},
+                                    },
+                                  },
                         }
 
 
@@ -882,17 +951,15 @@ toptileData = {gardeningShed = {
 animsheet_act = love.graphics.newImage("images/solidarity_anim_act.png")
 --spritesheet, number of tiles in animation, starting position, length, width, height, duration-- loop = 0 is infinite loop
 
-multiply = love.graphics.newShader( "multiply.glsl" )
 
 --fading
 fading = {on = false, type = 1, start = 0, goal = 0, rate = 0, a = 0, countdown = 0, triggered = 0} -- type 1 = fade in from 0 to 255; 2 = fade out from 255 to 0
 --cutscene
-cutsceneControl = {stage = 0, total = 2, current = 1}
+cutsceneControl = {stage = 0, total = 4, current = 1}
 -- types: 1 = talk, 2 = changeScene
 cutsceneList ={{
-  setup = 0,
   triggered = false,
-  type = 1,
+  type = 1, -- npc talks to you
   move = true, --does the NPC move?
   npc = 4, --which NPC
   target = player, -- where do they move
@@ -909,7 +976,7 @@ cutsceneList ={{
 },
 {
   triggered = false,
-  type = 1,
+  type = 1, -- npc talks to you
   move = true, --does the NPC move?
   npc = 6, --which NPC
   target = player, -- where do they move
@@ -923,14 +990,37 @@ cutsceneList ={{
   skipnext = false, -- do we go directly to next cutscene?
   nextStage = true, -- do we go to the next game scene
   switchTime = 2 -- what time of day is it after the end
-}}
+},
+{
+  triggered = false,
+  type = 0, -- sleep
+  fadeout = 1,
+  black = 1,
+  skipnext = true, -- do we go directly to next cutscene?
+  nextStage = true, -- do we go to the next game scene
+  switchTime = 3 -- what time of day is it after the end
+},
+{
+  triggered = false,
+  type = 1, -- npc talks
+  move = false, --does the NPC move?
+  npc = 1, --which NPC
+  target = player, -- where do they move
+  dialoguekey = 1,
+  fadeout = 1,
+  black = 1,
+  skipnext = false, -- do we go directly to next cutscene?
+  nextStage = true, -- do we go to the next game scene
+  switchTime = 1 -- what time of day is it after the end
+}
+}
 
 
 --dialogue
 
 dialogueMode = 0
 dialogueStage = 0
-choice = {mode = 0, pos = 1, total = 1, name = "", case = 0, more = 0}
+choice = {mode = 0, pos = 1, total = 1, name = "", case = 0, more = 0, type = ""}
 text = nil
 textsub = ""
 textn = 0

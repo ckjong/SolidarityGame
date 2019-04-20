@@ -1,4 +1,18 @@
 
+function changeCharStats(char, stat1, stat2, amount)
+	local i = getCharIndex(char)
+	if npcs[i].stats[stat1] ~= nil then
+		if npcs[i].stats[stat1][stat2] ~= nil then
+			npcs[i].stats[stat1][stat2] = npcs[i].stats[stat1][stat2] + amount
+			print(char .. " stat " .. stat1 .. " changed by " .. amount)
+			print("current stat: " .. npcs[i].stats[stat1][stat2])
+		else
+			print("stat2 is nil")
+		end
+	else
+		print("stat1 is nil")
+	end
+end
 
 --initiate dialogue if char enters a certain square
 function DialogueTrigger(x1, y1, f)
@@ -92,6 +106,7 @@ end
 
 --initiate dialogue
 function initDialogue (char)
+	print("initDialogue char " .. char.name)
 	if currentLocation == char.location then
 		if player.act_y == char.act_y then
 			if player.act_x == char.act_x - gridsize and player.facing == 4 then
@@ -178,17 +193,19 @@ function choiceText(tbl, pos, total) -- tbl = NPCdialogue[name][case], pos = cho
 	text = table.concat(t)
 end
 
-function choiceChange(key)
+function choiceChange(key, tbl)
 	if key == "down" then
 		if choice.pos >= 1 and choice.pos < choice.total then
 			choice.pos = choice.pos + 1
+			print("choice.pos d " .. choice.pos)
 		end
 	elseif key == "up" then
 		if choice.pos > 1 then
 			choice.pos = choice.pos - 1
+			print("choice.pos u " .. choice.pos)
 		end
 	end
-	choiceText(NPCdialogue[dialogueStage][choice.name][choice.case].text, choice.pos, choice.total)
+	choiceText(tbl, choice.pos, choice.total)
 end
 
 function DialogueSetup(tbl, n) -- iterate through npcs table, lookup text in NPCdialogue
@@ -228,7 +245,7 @@ function DialogueSetup(tbl, n) -- iterate through npcs table, lookup text in NPC
 								else
 									if dialOpt.logic.spoken ~= nil and dialOpt.logic.spoken == 0 then
 										if dialOpt.logic.statmod ~= nil then
-											changeCharStats(unpack(dialOpt.logic.statmod))
+											changeCharStats(unpack(dialOpt.logic.statpar))
 										end
 										if dialOpt.logic.func ~= nil then
 											dialOpt.logic.func(unpack(dialOpt.logic.par))
@@ -250,6 +267,7 @@ function DialogueSetup(tbl, n) -- iterate through npcs table, lookup text in NPC
 								choice.name = name
 								choice.case = case
 								choiceText(dialOpt.text, choice.pos, choice.total) -- display dialogue options
+								choice.type = "npc"
 								return
 							elseif choice.mode == 1 then
 								print("choice mode off case" .. case)
@@ -308,20 +326,5 @@ end
 function changeDialogue(item, stage, npc, i, n)
 	if checkInventory(item) == false then
 		NPCdialogue[stage][npc][i].logic.next = n
-	end
-end
-
-
-function changeCharStats(char, stat1, stat2, amount)
-	local i = getCharIndex(char)
-	if npcs[i].stats[stat1] ~= nil then
-		if npcs[i].stats[stat1][stat2] ~= nil then
-			npcs[i].stats[stat1][stat2] = npcs[i].stats[stat1][stat2] + amount
-			print(char .. " stat " .. stat1 .. " changed by " .. amount)
-		else
-			print("stat2 is nil")
-		end
-	else
-		print("stat1 is nil")
 	end
 end

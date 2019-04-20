@@ -65,12 +65,13 @@ function menuHierarchy(key)
 		end
 	elseif key == "z" then
 		if menu.currentTab == "inventory" then
-			if #player.inventory < 1 then
-				menu.total = 2
-			else
-				menu.total = 3
-				print("menu total: " .. menu.total)
-			end
+      menu.total = 2
+			-- if #player.inventory < 1 then
+			-- 	menu.total = 2
+			-- else
+			-- 	menu.total = 3
+			-- 	print("menu total: " .. menu.total)
+			-- end
 		else
 			menu.total = 1
 		end
@@ -79,7 +80,7 @@ function menuHierarchy(key)
 			print("added to menu position[1]: " .. menu.position[1])
 			return
 		end
-		itemMenu()
+		-- itemMenu()
 	end
 end
 

@@ -138,6 +138,8 @@ function setTintColor(t)
     else
       love.graphics.setColor(255, 255, 255)
     end
+  elseif t == 3 then
+    love.graphics.setColor(89, 66, 105)
   end
 end
 
@@ -203,10 +205,10 @@ function resetAnims(tbl, k)
     tbl[k].count = 0
     if tbl[k].trigger ~= nil then
       if tbl[k].trigger == 1 then
-        tbl[k].anim = newAnimation(animsheet2, tbl[k].picked*16, 3, 16, 16, .3)
+        tbl[k].anim = newAnimation(animsheet2, tbl[k].picked*gridsize, 3, 16, 16, .3)
         tbl[k].trigger = 0
       elseif tbl[k].trigger == 2 then
-        tbl[k].anim = newAnimation(animsheet2, (tbl[k].picked+4)*16, 3, 16, 16, .3)
+        tbl[k].anim = newAnimation(animsheet2, (tbl[k].picked+4)*gridsize, 3, 16, 16, .3)
         tbl[k].trigger = 0
       elseif tbl[k].trigger == 3 then
         tbl[k]["anim"]["spriteSheet"] = animsheet3

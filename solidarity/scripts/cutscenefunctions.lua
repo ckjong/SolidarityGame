@@ -1,3 +1,11 @@
+function sleepCheck()
+  if time == 2 then
+    if gameStage == 2 then
+      player.sleep = true
+    end
+  end
+end
+
 function cutsceneTrigger()
   if menuView == 0 and dialogueMode == 0 then
     if gameStage == 0 then
@@ -32,10 +40,17 @@ function cutsceneTrigger()
           end
         end
       end
+    elseif gameStage == 3 then
+      if NPCdialogue[3]["Fennel"][10].logic.spoken == 1 then
+        if cutsceneControl.stage == 0 then
+          cutsceneControl.stage = 5
+        end
+      end
     end
   end
 end
 
+--update map and find path
 function cutsceneStage1Talk()
   updateMap(npcs) -- add NPC locations to map and save
   local n = cutsceneControl.current
@@ -54,35 +69,41 @@ function cutsceneStage1Talk()
   cutsceneControl.stage = 2
 end
 
+--walk to target
 function cutsceneStage2Talk(dt)
   player.canMove = 0
   keyInput = 0
 	local n = cutsceneControl.current
-	local path = cutsceneList[n].path
 	local i = cutsceneList[n].npc
 	local char = npcs[i]
-	local target = cutsceneList[n].target
-	local x1, y1 = target.act_x, target.act_y
-	local t = #cutsceneList[n].path
-	if path then
-    char.canMove = 1
-    if char.act_x == char.grid_x and char.act_y == char.grid_y then
-			if cutsceneList[n].noden < t then
-				cutsceneList[n].noden = cutsceneList[n].noden + 1
-				updateGridPosNPC(path, char, cutsceneList[n].noden)
-				print("node n:" .. cutsceneList[n].noden)
-			end
-		end
+  if cutsceneList[n].move == true then
+    local path = cutsceneList[n].path
+    local target = cutsceneList[n].target
+    local x1, y1 = target.act_x, target.act_y
+    local t = #cutsceneList[n].path
+    if path then
+      char.canMove = 1
+      if char.act_x == char.grid_x and char.act_y == char.grid_y then
+       if cutsceneList[n].noden < t then
+         cutsceneList[n].noden = cutsceneList[n].noden + 1
+         updateGridPosNPC(path, char, cutsceneList[n].noden)
+         print("node n:" .. cutsceneList[n].noden)
+       end
+     end
+    end
+    char.moveDir, char.act_x, char.act_y = moveChar(char.moveDir, char.act_x, char.grid_x, char.act_y, char.grid_y, (char.speed *dt))
+    if char.act_x == cutsceneList[n].path[t].x*gridsize and char.act_y == cutsceneList[n].path[t].y*gridsize then
+     char.facing = cutsceneList[n].facing[1]
+     target.facing = changeFacing(x1, y1, char.act_x, char.act_y)
+     npcs[i].moveDir = 0
+     cutsceneControl.stage = 3
+    end
+  else
+    cutsceneControl.stage = 3
   end
-	char.moveDir, char.act_x, char.act_y = moveChar(char.moveDir, char.act_x, char.grid_x, char.act_y, char.grid_y, (char.speed *dt))
-	if char.act_x == cutsceneList[n].path[t].x*gridsize and char.act_y == cutsceneList[n].path[t].y*gridsize then
-		char.facing = cutsceneList[n].facing[1]
-		target.facing = changeFacing(x1, y1, char.act_x, char.act_y)
-		npcs[i].moveDir = 0
-		cutsceneControl.stage = 3
-	end
 end
 
+--dialogue
 function cutsceneStage3Talk()
   local n = cutsceneControl.current
   local i = cutsceneList[n].npc
@@ -91,33 +112,38 @@ function cutsceneStage3Talk()
   cutsceneControl.stage = 4
 end
 
+--return to starting position
 function cutsceneStage4Talk(dt)
   local n = cutsceneControl.current
   local i = cutsceneList[n].npc
-  local path = cutsceneList[n].path
   local char = npcs[i]
-  print("#path " .. #path)
-  if #path == 1 then cutsceneList[n].goback = false end -- if path is empty then don't go back to starting position
-  if cutsceneList[n].goback == true then -- if character needs to return to start position
-    if path then
-      player.canMove = 0
-      table.insert(cutsceneList[n].facing, npcs[i].start)
-      if char.act_x == char.grid_x and char.act_y == char.grid_y then
-        if cutsceneList[n].noden > 0 then
-          cutsceneList[n].noden = cutsceneList[n].noden - 1
-          updateGridPosNPC(path, char, cutsceneList[n].noden)
-          print("node n:" .. cutsceneList[n].noden)
+  if cutsceneList[n].move == true then
+    local path = cutsceneList[n].path
+    print("#path " .. #path)
+    if #path == 1 then cutsceneList[n].goback = false end -- if path is empty then don't go back to starting position
+    if cutsceneList[n].goback == true then -- if character needs to return to start position
+      if path then
+        player.canMove = 0
+        table.insert(cutsceneList[n].facing, npcs[i].start)
+        if char.act_x == char.grid_x and char.act_y == char.grid_y then
+          if cutsceneList[n].noden > 0 then
+            cutsceneList[n].noden = cutsceneList[n].noden - 1
+            updateGridPosNPC(path, char, cutsceneList[n].noden)
+            print("node n:" .. cutsceneList[n].noden)
+          end
         end
       end
-    end
-    char.moveDir, char.act_x, char.act_y = moveChar(char.moveDir, char.act_x, char.grid_x, char.act_y, char.grid_y, (char.speed *dt))
-    if char.act_x == cutsceneList[n].path[1].x*gridsize and char.act_y == cutsceneList[n].path[1].y*gridsize then
-      char.facing = cutsceneList[n].facing[#cutsceneList[n].facing]
-      npcs[i].moveDir = 0
+      char.moveDir, char.act_x, char.act_y = moveChar(char.moveDir, char.act_x, char.grid_x, char.act_y, char.grid_y, (char.speed *dt))
+      if char.act_x == cutsceneList[n].path[1].x*gridsize and char.act_y == cutsceneList[n].path[1].y*gridsize then
+        char.facing = cutsceneList[n].facing[#cutsceneList[n].facing]
+        npcs[i].moveDir = 0
+        cutsceneControl.stage = 5
+      end
+    else
+      npcs[i].canMove = 0
       cutsceneControl.stage = 5
     end
   else
-    npcs[i].canMove = 0
     cutsceneControl.stage = 5
   end
 end
@@ -137,6 +163,7 @@ function cutsceneStage5Talk()
   end
 end
 
+--run fade
 function cutsceneStage6Talk(dt)
   if fading.on == true then
     fading.a, fading.on = fade(dt, fading.a, fading.goal, fading.rate)
@@ -145,14 +172,22 @@ function cutsceneStage6Talk(dt)
   end
 end
 
+--advance to next stage
 function cutsceneStage7Talk()
+  print("stage 7 triggered")
   if cutsceneList[cutsceneControl.current].triggered == false then
     changeGameStage()
     cutsceneList[cutsceneControl.current].triggered = true
   end
   if cutsceneControl.current < cutsceneControl.total then -- if there are more cutscenes advance to next one
+    print("cutsceneControl.current less than total")
+    if cutsceneList[cutsceneControl.current].skipnext == true then
+      print("skipping to next cutscene")
+      cutsceneControl.stage = 1
+    else
+      cutsceneControl.stage = 0
+    end
     cutsceneControl.current = cutsceneControl.current + 1
-    cutsceneControl.stage = 0
   else
     cutsceneControl.stage = 8
   end
@@ -180,8 +215,6 @@ function changeGameStage()
       player.facing = player.next[gameStage].facing
     end
     player.location = player.next[gameStage].location
-    -- player.actions.key = 0
-    -- player.actions.index = 0
     for i = 1, #npcs do
       if npcs[i].next[gameStage].location ~= "offscreen" then
         if npcs[i].next[gameStage].x ~= 0 then
@@ -268,6 +301,18 @@ end
 
 function changeTime(t)
   time = t
+  if time == 1 then
+    for i = 1, #tempBlocks.overworld do
+      tempBlocks.overworld[i].on = 0
+    end
+    clearTempBlocks()
+    resetBerries()
+    nonInteractiveObjects.overworld.fenceopenL[1].visible = 1
+    nonInteractiveObjects.overworld.fenceopenR[1].visible = 1
+    nonInteractiveObjects.overworld.fenceclosedL[1].visible = 0
+    nonInteractiveObjects.overworld.fenceclosedR[1].visible = 0
+    day = day + 1
+  end
   print("time " .. time)
 end
 
@@ -296,6 +341,7 @@ function fade(dt, a, b, r)
       fading.countdown = .5
       fading.triggered = 1
       keyInput = 1
+      cutsceneControl.stage = 7
       print("fading off")
       return a, false
     end
@@ -306,6 +352,7 @@ function fade(dt, a, b, r)
     else
       player.canMove = 1
       keyInput = 1
+      cutsceneControl.stage = 7
       print("fading off")
       return a, false
     end

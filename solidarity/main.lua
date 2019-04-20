@@ -67,6 +67,10 @@ function love.update(dt)
 	-- do checks for each gamestage
 	gameStageUpdate(dt)
 
+	if currentLocation == "dormitory" then
+		sleepCheck()
+	end
+
 	-- initiate dialogue and move character back if they enter a location
 
 	if dialogueMode == 0 then
@@ -76,7 +80,7 @@ function love.update(dt)
 			keyInput = 0
 		end
 		if player.canMove == 1 and currentLocation == "overworld" then
-			if gameStage == 0 then
+			if gameStage == 0 or gameStage == 4 then
 				moveCharBack(17, 21, 17, 22, 2)
 			elseif gameStage == 1 then
 				if objectInventory.barrelSmBerries + objectInventory.barrelLgBerries < 60 then
@@ -383,7 +387,14 @@ function love.keypressed(key)
 	if key == "down" or key == "up" then
 		if menuView ~= 1 then
 			if choice.mode == 1 then
-				choiceChange(key)
+				local tbl = {}
+				if choice.type == "npc" then
+					tbl = NPCdialogue[dialogueStage][choice.name][choice.case].text
+				elseif choice.type == "yesno" then
+					print ("yes no text: " .. objectText.yesno.text[choice.pos])
+					tbl = objectText.yesno.text
+				end
+				choiceChange(key, tbl)
 			end
 		else
 			if menu.position[1] == 3 then
