@@ -350,11 +350,18 @@ function drawTime(x, y)
 end
 
 function drawBubble(x, y, obj)
+  love.graphics.setColor(255, 255, 255)
+  love.graphics.draw(uiSheet, uiQuads.speechbubblemedbot, x, y)
+  love.graphics.setColor(75, 37, 58)
   if obj == "barrelSmBerries" or obj == "barrelLgBerries" then
-    love.graphics.setColor(255, 255, 255)
-    love.graphics.draw(uiSheet, uiQuads.speechbubblemedbot, x, y)
-    love.graphics.setColor(75, 37, 58)
     love.graphics.printf(objectInventory[obj], x, y+4, 16, "center")
+  else
+    local present, k = checkInventory(obj)
+    if present then
+      love.graphics.printf(player.inventory[k].amount, x, y+4, 16, "center")
+    else
+      love.graphics.printf(0, x, y+4, 16, "center")
+    end
   end
 end
 

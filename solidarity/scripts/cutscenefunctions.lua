@@ -266,8 +266,8 @@ function gameStageUpdate(dt)
 		local i = getCharIndex("Finch")
 		if objectInventory.barrelSmBerries + objectInventory.barrelLgBerries >= 60 then
 			if areaCheck(16, 21, 17, 22, player) then
-				local bool1, k = checkInventory("Plum Berries")
-				local bool2, k = checkInventory("Rose Berries")
+				local bool1, k = checkInventory("plantSmBerries")
+				local bool2, k = checkInventory("plantLgBerries")
 				if bool1 == false and bool2 == false then
 					if npcs[i].c ~= 3 then
 						removeTempBlocks(currentLocation, 1)

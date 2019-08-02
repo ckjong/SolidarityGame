@@ -127,7 +127,7 @@ NPCdialogue = {
   --                 logic = {next = 2, speaker = "Fennel", cond = true, off = true, display = 1, spoken = 0, energy = 1}} -- say once
   --       }, -- repeat
   Mint = {[1] = {text = {"I don't think Lark likes me very much." , "He makes me work overtime almost every day."},
-                logic = {next = 2, speaker = "Mint", cond = true, off = false, display = 1, spoken = 0, energy = 1, func = changeDialogue, par = {"Meat Soup", 2, "Mint", 1, 4}}}, -- say once
+                logic = {next = 2, speaker = "Mint", cond = true, off = false, display = 1, spoken = 0, energy = 1, func = changeDialogue, par = {"platefull2", 2, "Mint", 1, 4}}}, -- say once
           [2] = {text = {"I've got food for you.", "*say nothing*"},
                 logic = {next = 6, offset = 2, speaker = "player", cond = true, off = false, display = 2}},
           [3] = {text = {"Agave gave it to me."},
@@ -260,13 +260,13 @@ NPCdialogue = {
                 logic = {next = 1, speaker = "Robin", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
         },
   Lotus = {[1] = {text = {"The section manager is coming tomorrow for his weekly speech.", "I think this is it, this is the week I finally get my promotion."},
-                logic = {next = 1, speaker = "Lotus", cond = true, off = false, display = 1, spoken = 0, energy = 0}},
+                logic = {next = 2, speaker = "Lotus", cond = true, off = false, display = 1, spoken = 0, energy = 0}},
            [2] = {text = {"What makes you think that?"},
                logic = {next = 3, speaker = "player", cond = true, off = false, display = 1, spoken = 0, energy = 0}},
-           [3] = {text = {"I performed a water divination ceremony yesterday", "The ripples told me I should 'expect great things'", "The tides are changing, I can feel it."},
-               logic = {next = 2, speaker = "Lotus", cond = true, off = true, display = 1, spoken = 0, energy = 1}},
-           [4] = {text = {"I performed a water divination ceremony yesterday", "The ripples told me I should 'expect great things'", "The tides are changing, I can feel it."},
-               logic = {next = 2, speaker = "Lotus", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
+           [3] = {text = {"I performed a water divination ceremony yesterday", "The ripples told me I should 'expect great things'"},
+               logic = {next = 4, speaker = "Lotus", cond = true, off = false, display = 1, spoken = 0, energy = 0}},
+           [4] = {text = {"The tides are changing, I can feel it."},
+               logic = {next = 5, speaker = "Lotus", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
         },
 
   }

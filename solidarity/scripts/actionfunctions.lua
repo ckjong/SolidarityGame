@@ -103,10 +103,10 @@ function inventoryFull(m)
 	end
 end
 
-function checkInventory(i) -- i = player.inventory[k].item
+function checkInventory(b) -- i = player.inventory[k].item
   if #player.inventory > 0 then
     for k = 1, #player.inventory do
-      if player.inventory[k].item == i then
+      if player.inventory[k].icon == b then
         -- check if item already in the inventory
         return true, k
       end
@@ -136,7 +136,7 @@ function addRemoveItem(txt, i, a, b, w) -- text to display, item, amount, icon n
 	  wait.n = string.len(txt)
 	end
   text = txt
-  local present, k = checkInventory(i)
+  local present, k = checkInventory(b)
 	local total = countTotal(i)
 		if a > 0 then
 			if inventoryFull (player.maxInventory) == false then
@@ -165,7 +165,7 @@ function addRemoveItem(txt, i, a, b, w) -- text to display, item, amount, icon n
 				print("amount" .. a)
 				local div = math.floor(math.abs(a) / player.inventory[k].amount)
 				while div > 0 do
-					local p, j = checkInventory(i)
+					local p, j = checkInventory(b)
 					if p then
 						print("item present")
 						if player.inventory[j] ~= nil then
@@ -235,6 +235,8 @@ end
 
 -- berry harvest
 function BerryHarvestStart(b, c)
+	wait.triggered = 1
+	wait.current = .8
   if b == "plantSmBerries" then
 		if movingObjectData[currentLocation][b][c].picked < 3 then
 			movingObjectData[currentLocation][b][c].picked = movingObjectData[currentLocation][b][c].picked + 1
@@ -267,12 +269,16 @@ end
 
 function setBubble(b, c)
 	bubble.on = 1
-	bubble.x, bubble.y = movingObjectData[currentLocation][b][c].x, movingObjectData[currentLocation][b][c].y - 16
 	bubble.obj = b
+	if b == "barrelSmBerries" or b == "barrelLgBerries" then
+		bubble.x, bubble.y = movingObjectData[currentLocation][b][c].x, movingObjectData[currentLocation][b][c].y - 16
+	else
+		bubble.x, bubble.y = player.grid_x, player.grid_y - 17
+	end
 end
 
 function BerryBarrel(b, c, sub, icon)
-  local present, k = checkInventory(sub)
+  local present, k = checkInventory(icon)
   if present == true then
 		local total = countTotal(sub)
 		player.animations.act[player.facing].running = 1
@@ -329,10 +335,10 @@ function printObjText(b, c)
 				if inventoryFull (player.maxInventory) == false then -- check if space in inventory
 					if freeze.action == 0 then -- check if player has energy
 						if movingObjectData[currentLocation][b][c].used == 0 then
-
-							startAction(b, 1)
+							-- startAction(b, 1)
 						  BerryHarvestStart(b, c)
 							addRemoveItem("I got 1 Plum Berry.", "Plum Berries", 1, b, false)
+							setBubble(b, c)
 							actionMode = 0
 						end
 					elseif freeze.action == 1 then
@@ -349,11 +355,11 @@ function printObjText(b, c)
 				if inventoryFull (player.maxInventory) == false then
 					if freeze.action == 0 then
 						if movingObjectData[currentLocation][b][c].used == 0 then
-							startAction(b, 1)
+							-- startAction(b, 1)
 			        BerryHarvestStart(b, c)
 							addRemoveItem("I got 1 Rose Berry.", "Rose Berries", 1, b, false)
+							setBubble(b, c)
 							actionMode = 0
-
 						end
 					elseif freeze.action == 1 then
 						startAction(b, 3)
@@ -392,6 +398,7 @@ function printObjText(b, c)
 			dialogueMode = 0
 			player.canMove = 1
       wait.triggered = 0
+			print("printObjText set wait off")
 		end
 	elseif actionMode == 1 then
 		if b == "barrelSmBerries" then

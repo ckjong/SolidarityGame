@@ -33,6 +33,9 @@ function inputWait(n, dt)
 			wait.current = 0
 			wait.triggered = 0
 			wait.n = 0
+			if bubble.on == 1 then
+				bubble.on = 0
+			end
 			return
 		else
 			keyInput = 0
@@ -49,6 +52,9 @@ function inputWait(n, dt)
 			keyInput = 1
 			wait.current = 0
 			wait.triggered = 0
+			if bubble.on == 1 then
+				bubble.on = 0
+			end
 		end
 	end
 end
