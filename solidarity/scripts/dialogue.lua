@@ -26,7 +26,7 @@ NPCdialogue = {
           [8] = {text = {"Cool!"},
                 logic = {next = 10, speaker = "Mint", cond = true, off = false, display = 1, spoken = 0, energy = 1}},
           [9] = {text = {"I see..."},
-                logic = {next = 10, speaker = "Mint", cond = true, off = false, display = 1, spoken = 0, energy = 1}},
+                logic = {next = 10, speaker = "Mint", cond = true, off = false, display = 1, spoken = 0, energy = 1, statmod = 1, statpar = {"Mint", "trust", "player", -5}}},
           [10] = {text = {"Ok back to work I guess."},
                 logic = {next = 10, speaker = "Mint", cond = true, off = true, display = 1, spoken = 0, energy = 1}},
         },
@@ -73,7 +73,7 @@ NPCdialogue = {
                 logic = {next = 2, speaker = "Finch", cond = true, off = true, display = 1}},
            [2] = {text = {"You haven't filled your quota yet."},
                 logic = {next = 1, speaker = "Finch", cond = true, off = true, display = 1}},
-           [3] = {text = {"Ughh finally. What took you so long?"},
+           [3] = {text = {"You're done? Ughh finally. What took you so long?"},
                 logic = {next = 3, speaker = "Finch", cond = true, off = true, display = 1}},
            [4] = {text = {"Those berries don't belong to you.", "Better drop them in the barrels or\nyou'll be in biiig trouble."},
                 logic = {next = 4, speaker = "Finch", cond = true, off = true, display = 1}},
@@ -128,13 +128,13 @@ NPCdialogue = {
   --       }, -- repeat
   Mint = {[1] = {text = {"I don't think Lark likes me very much." , "He makes me work overtime almost every day."},
                 logic = {next = 2, speaker = "Mint", cond = true, off = false, display = 1, spoken = 0, energy = 1, func = changeDialogue, par = {"platefull2", 2, "Mint", 1, 4}}}, -- say once
-          [2] = {text = {"I've got food for you.", "*say nothing*"},
+          [2] = {text = {"I brought you some dinner.", "*say nothing*"},
                 logic = {next = 6, offset = 2, speaker = "player", cond = true, off = false, display = 2}},
           [3] = {text = {"Agave gave it to me."},
                 logic = {next = 5, speaker = "player", cond = true, off = false, display = 1, spoken = 0, energy = 1, statmod = 1, statpar = {"Mint", "trust", "player", 5}, func = charGivesObject, par = {"I gave away 1 Meat Soup", "Meat Soup", -1, "platefull2", false}}},
-          [4] = {text = {"You must be really hungry too.", "I wish I had some food to share with you, like a big juicy steak.", "Not that I have any idea what steak tastes like.", "Maybe it's actually gross, and people just pretend to like it?", ".. haha I'm kidding, of course steak is good.", "It's just easier to believe it's not, you know?"},
+          [4] = {text = {"You must be starving too.", "I wish I had some food to share with you, like a big juicy steak.", "Not that I have any idea what steak tastes like.", "Maybe it's actually gross, and people just pretend to like it?", ".. haha I'm kidding, of course steak is good.", "It's just easier to believe it's not, you know?"},
                 logic = {next = 6, speaker = "Mint", cond = true, off = true, display = 1, spoken = 0, energy = 1}},
-          [5] = {text = {"Wow, thank you!"},
+          [5] = {text = {"Wow, thank you! Please tell her I said thanks!"},
                 logic = {next = 6, speaker = "Mint", cond = true, off = true, display = 1, spoken = 0, energy = 1}},
           [6] = {text = {"*yawn* Well, guess it's time for bed."},
                 logic = {next = 6, speaker = "Mint", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
@@ -275,6 +275,9 @@ NPCdialogue = {
                logic = {next = 4, speaker = "Lotus", cond = true, off = false, display = 1, spoken = 0, energy = 0}},
            [4] = {text = {"The tides are changing, I can feel it."},
                logic = {next = 4, speaker = "Lotus", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
+        },
+  Eucalyptus = {[1] = {text = {"Late again huh?"},
+                logic = {next = 1, speaker = "Eucalyptus", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
         },
   Hawk = {[1] = {text = {"Looks like you missed breakfast. Too bad."},
                 logic = {next = 1, speaker = "Hawk", cond = true, off = true, display = 1, spoken = 0, energy = 1}}

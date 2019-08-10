@@ -40,7 +40,8 @@ function cutsceneTrigger()
           end
         end
       end
-    elseif gameStage == 3 then
+    elseif gameStage == 4 then
+      player.sleep = false
       -- if NPCdialogue[3]["Fennel"][10].logic.spoken == 1 then
       --   if cutsceneControl.stage == 0 then
       --     cutsceneControl.stage = 5
@@ -328,6 +329,11 @@ function fadeControl(t) -- arg: fading.type
     fading.start = 255
     fading.goal = 0
     fading.rate = 140
+    fading.a = fading.start
+  elseif t == 3 then
+    fading.start = 255
+    fading.goal = 255
+    fading.rate = 180
     fading.a = fading.start
   end
 end

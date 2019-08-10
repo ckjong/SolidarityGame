@@ -1,5 +1,6 @@
 
 function changeCharStats(char, stat1, stat2, amount)
+	print("changing stats")
 	local i = getCharIndex(char)
 	if npcs[i].stats[stat1] ~= nil then
 		if npcs[i].stats[stat1][stat2] ~= nil then
@@ -106,25 +107,30 @@ end
 
 --initiate dialogue
 function initDialogue (char)
-	print("initDialogue char " .. char.name)
+	local x = char.act_x
+	local y = char.act_y
 	if currentLocation == char.location then
-		if player.act_y == char.act_y then
-			if player.act_x == char.act_x - gridsize and player.facing == 4 then
+		if char.offset ~= nil then
+			x = x + char.offset.x
+			y = y + char.offset.y
+		end
+		if player.act_y == y then
+			if player.act_x == x - gridsize and player.facing == 4 then
 				char.dialogue = 1
 				char.facing = 3
 				return true
-			elseif player.act_x == char.act_x + gridsize and player.facing == 3 then
+			elseif player.act_x == x + gridsize and player.facing == 3 then
 				char.dialogue = 1
 				char.facing = 4
 				return true
 			end
 		end
-		if player.act_x == char.act_x then
-			if player.act_y == char.act_y - gridsize and player.facing == 2 then
+		if player.act_x == x then
+			if player.act_y == y - gridsize and player.facing == 2 then
 				char.dialogue = 1
 				char.facing = 1
 				return true
-			elseif player.act_y == char.act_y + gridsize and player.facing == 1 then
+			elseif player.act_y == y + gridsize and player.facing == 1 then
 				char.dialogue = 1
 				char.facing = 2
 				return true
@@ -137,7 +143,6 @@ end
 
 
 function textUpdate(num, currentTbl)
-	print("textUpdate triggered")
 	dialogueMode = 1
 	player.canMove = 0
 	text = currentTbl.text[num]
@@ -158,6 +163,7 @@ function dialogueOff(tbl, i, dialOpt) -- tbl = npcs
 			return
 		end
 		dialOpt.logic.spoken = 1
+		tbl[i].mapping.dialogueCount = tbl[i].mapping.dialogueCount + 1
 	end
 	print("dialogueOff triggered")
 	choice.pos = 1
@@ -208,7 +214,6 @@ function choiceChange(key, tbl)
 end
 
 function DialogueSetup(tbl, n) -- iterate through npcs table, lookup text in NPCdialogue
-	print("dialogue setup triggered")
 	for i = 1, #tbl do
 		if initDialogue(tbl[i]) == true then
 			local name = tbl[i].name
@@ -227,6 +232,9 @@ function DialogueSetup(tbl, n) -- iterate through npcs table, lookup text in NPC
 					print("tbl[i].n " .. tbl[i].n)
 					wait.triggered = 1
 					currentspeaker = dialOpt.logic.speaker
+					if tbl[i].mapping.added == 0 then
+						tbl[i].mapping.added = 1
+					end
 					if dialOpt.logic.cond == true then
 						if dialOpt.logic.display == 1 then
 							if num <= #dialOpt.text then -- if there are more lines to say, advance through table
@@ -244,12 +252,14 @@ function DialogueSetup(tbl, n) -- iterate through npcs table, lookup text in NPC
 								else
 									if dialOpt.logic.spoken ~= nil and dialOpt.logic.spoken == 0 then
 										if dialOpt.logic.statmod ~= nil then
+											print("statmod not nil")
 											changeCharStats(unpack(dialOpt.logic.statpar))
 										end
 										if dialOpt.logic.func ~= nil then
 											dialOpt.logic.func(unpack(dialOpt.logic.par))
 										end
 										dialOpt.logic.spoken = 1
+										tbl[i].mapping.dialogueCount = tbl[i].mapping.dialogueCount + 1
 									end
 									tbl[i].n = 1
 									tbl[i].c = dialOpt.logic.next

@@ -379,33 +379,52 @@ end
 
 function nameBoxSize(txt)
   local l = string.len(txt)
-  if l < 5 then
+  if l < 4 then
     return 6
-  elseif l >= 5 and l < 7 then
+  elseif l >= 4 and l < 7 then
     return 10
-  elseif l >= 7 then
+  elseif l >= 7 and l < 10 then
     return 16
+  elseif l >= 10 then
+    local n = 2*l+1
+    return n
   end
+end
+
+function calcDistance(x1, y1, x2, y2)
+  local x3 = x2 - x1
+  local y3 = y2 - y1
+  return x3, y3
 end
 
 function drawName(boxposx, boxposy)
   local nameposx = boxposx + 48
   local nameposy = boxposy - 12
   local n = 16
+  local d = 16
   if currentspeaker == "player" then
     n = nameBoxSize(player.name)
   else
     n = nameBoxSize(currentspeaker)
   end
   love.graphics.setColor(255, 255, 255)
-  love.graphics.draw(uiSheet, uiQuads.namebgL, nameposx, nameposy)
-  love.graphics.draw(uiSheet, uiQuads.namebgM, nameposx + n, nameposy)
-  love.graphics.draw(uiSheet, uiQuads.namebgR, nameposx + 2 * n, nameposy)
+  if n < 17 then
+    love.graphics.draw(uiSheet, uiQuads.namebgL, nameposx, nameposy)
+    love.graphics.draw(uiSheet, uiQuads.namebgM, nameposx + n, nameposy)
+    love.graphics.draw(uiSheet, uiQuads.namebgR, nameposx + 2 * n, nameposy)
+    d = calcDistance(nameposx, nameposy, nameposx + 2 * n + 17, nameposy)
+  else
+    love.graphics.draw(uiSheet, uiQuads.namebgL, nameposx, nameposy)
+    love.graphics.draw(uiSheet, uiQuads.namebgM, nameposx + 16, nameposy)
+    love.graphics.draw(uiSheet, uiQuads.namebgM, nameposx + 32, nameposy)
+    love.graphics.draw(uiSheet, uiQuads.namebgR, nameposx + 16 + n, nameposy)
+    d = calcDistance(nameposx, nameposy, nameposx + 33 + n, nameposy)
+  end
   love.graphics.setColor(75, 37, 58)
   if currentspeaker ~= "player" then
-    love.graphics.printf(currentspeaker, nameposx, nameposy+4, n+n+17, "center")
+    love.graphics.printf(currentspeaker, nameposx, nameposy+4, d, "center")
   else
-    love.graphics.printf(player.name, nameposx, nameposy+4, n+n+17, "center")
+    love.graphics.printf(player.name, nameposx, nameposy+4, d, "center")
   end
 end
 
@@ -469,32 +488,35 @@ function drawMenuTabs(startx, starty, tab)
   local x2 = 0
   if tab == "inventory" then
     x = startx
-    x2 = x + 62
   elseif tab == "map2" then
-    x2 = startx
-    x = x2 + 62
+    x = startx + 62
+  elseif tab == "map1" then
+    x = startx + 2*62
   end
   love.graphics.setColor(255, 255, 255)
+  for i = 1, menu.tabNum do
+    local s = startx + (62*(i-1))
+    love.graphics.draw(uiSheet, uiQuads.menutabdarkL, s, starty)
+    love.graphics.draw(uiSheet, uiQuads.menutabdarkM, s+16, starty)
+    love.graphics.draw(uiSheet, uiQuads.menutabdarkM, s+32, starty)
+    love.graphics.draw(uiSheet, uiQuads.menutabdarkR, s+48, starty)
+  end
   love.graphics.draw(uiSheet, uiQuads.menutablightL, x, starty)
   love.graphics.draw(uiSheet, uiQuads.menutablightM, x+16, starty)
   love.graphics.draw(uiSheet, uiQuads.menutablightM, x+32, starty)
   love.graphics.draw(uiSheet, uiQuads.menutablightR, x+48, starty)
-  love.graphics.draw(uiSheet, uiQuads.menutabdarkL, x2, starty)
-  love.graphics.draw(uiSheet, uiQuads.menutabdarkM, x2+16, starty)
-  love.graphics.draw(uiSheet, uiQuads.menutabdarkM, x2+32, starty)
-  love.graphics.draw(uiSheet, uiQuads.menutabdarkR, x2+48, starty)
   if menu.position[1] == 1 then
     love.graphics.draw(ui.arrowright, x+4, starty+4)
   end
   love.graphics.setColor(75, 37, 58)
   for i = 1, menu.tabNum do
     local t = menu.allTabs[i]
-    love.graphics.printf(menu.tabData[t].text, startx+64*(i-1), starty+4, 64, "center")
+    love.graphics.printf(menu.tabData[t].text, startx+63*(i-1), starty+4, 63, "center")
   end
 end
 
 function drawMenu(x, y, tab)
-  local offset = {x= 106, y = 56}
+  local offset = {x= 106, y = 58}
   local boxX = x + gridsize/2 - menuW/2
   -- local textW = 16
   -- local textX = x + gridsize/2 - textW/2
@@ -503,13 +525,15 @@ function drawMenu(x, y, tab)
   love.graphics.setColor(198, 200, 84)
   love.graphics.rectangle("fill", x - width/2, y - height/2, width, height)
   love.graphics.setColor(255, 255, 255)
-  love.graphics.draw(canvas, boxX, y-offset.y+16)
-  drawMenuTabs(boxX+6, y-offset.y+2, tab)
+  love.graphics.draw(canvas, boxX, y-offset.y+14)
+  drawMenuTabs(boxX+6, y-offset.y, tab)
   if tab == "inventory" then
-    drawInventory(x, y, offset.x - 14, offset.y - 32)
+    drawInventory(x, y, offset.x - 14, offset.y - 34)
   elseif tab == "map2" then
     --"Island Map"
-    drawMap2(x + gridsize/2, y-offset.y +32)
+    drawMap2(x + gridsize/2, y-offset.y + 26)
+  elseif tab == "map1" then
+    drawMap1(x - (offset.x-20), y - (offset.y-24))
   end
   -- if menu.position[1] == 1 then
   --   if timer[1].trigger == 1 then
@@ -617,6 +641,32 @@ function drawInventory(x, y, offX, offY)
   end
 end
 
+function drawMap1(x, y)
+  local c = 0
+  local x2 = x
+  local y2 = y
+  local g = 44 -- gap between sprites
+  for i = 1, #npcs do
+    if npcs[i].mapping.added == 1 then
+      c = c + 1
+      local tbl = npcs[i].animations.walk
+      if c < 6 then
+        x2 = x + (c-1)*(g)
+        y2 = y
+      elseif c >= 6 and c < 11 then
+        x2 = x + (c-6)*(g)
+        y2 = y + 36
+      else
+        x2 = x + (c-11)*(g)
+        y2 = y + 2*36
+      end
+      love.graphics.setColor(255, 255, 255)
+      love.graphics.draw(tbl[2]["anim"]["spriteSheet"], tbl[2]["anim"]["quads"][1], x2, y2)
+      love.graphics.setColor(75, 37, 58)
+      love.graphics.printf(npcs[i].name, x2-((g-16)/2), y2+16, g, "center")
+    end
+  end
+end
 
 function drawMap2(x, y)
   local width = worldmap1:getWidth( )

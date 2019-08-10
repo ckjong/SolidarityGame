@@ -164,7 +164,7 @@ mapFile1 = nil
 
   boxMap = {}
 
-  menu = {currentTab = "inventory", allTabs = {"inventory", "map2", "journal", "map1"}, tabData = {inventory = {text = "Inventory", x = 0}, map2 = {text = "Island Map", x = 64}, journal = {text = "Journal", x = 0}, map1 = {text = "Social Map", x = 0}}, position = {1, 1, 1}, total = 3, tabNum = 2}
+  menu = {currentTab = "inventory", allTabs = {"inventory", "map2", "map1", "journal"}, tabData = {inventory = {text = "Inventory", x = 0}, map2 = {text = "Island Map", x = 64}, map1 = {text = "Social Map", x = 0,}, journal = {text = "Journal", x = 0}}, position = {1, 1, 1}, total = 3, tabNum = 3}
 
   -- objects that are not part of static background
   animsheet3 = love.graphics.newImage("images/solidarity_objects.png")
@@ -245,7 +245,8 @@ npcs = {{
   canWork = 1,
   timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc.
   location = "overworld",
-  dialogue = 0,
+  dialogue = 0, -- curently in dialogue
+  mapping = {added = 0, dialogueCount = 0, notes = ""},
   name = "Fennel",
   status = "worker",
   n = 1, --stage in single conversation
@@ -286,6 +287,7 @@ npcs = {{
     timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc.
     location = "overworld",
     dialogue = 0,
+    mapping = {added = 0, dialogueCount = 0, notes = ""},
     name = "Mint", --2
     status = "worker",
     n = 1,
@@ -325,6 +327,7 @@ npcs = {{
       timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc.
       location = "overworld",
       dialogue = 0,
+      mapping = {added = 0, dialogueCount = 0, notes = ""},
       name = "Finch", --4
       status = "boss",
       n = 1, --stage in single conversation
@@ -364,6 +367,7 @@ npcs = {{
       timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc.
       location = "overworld",
       dialogue = 0,
+      mapping = {added = 0, dialogueCount = 0, notes = ""},
       name = "Lark", -- 3
       status = "boss",
       n = 1, --stage in single conversation
@@ -404,6 +408,7 @@ npcs = {{
       timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc.
       location = "overworld",
       dialogue = 0,
+      mapping = {added = 0, dialogueCount = 0, notes = ""},
       name = "Cress", -- 5
       status = "worker",
       n = 1, --stage in single conversation
@@ -444,6 +449,7 @@ npcs = {{
       timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc.
       location = "overworld",
       dialogue = 0,
+      mapping = {added = 0, dialogueCount = 0, notes = ""},
       name = "Agave", --6
       status = "worker",
       n = 1, --stage in single conversation
@@ -484,6 +490,7 @@ npcs = {{
       timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc.
       location = "overworld",
       dialogue = 0,
+      mapping = {added = 0, dialogueCount = 0, notes = ""},
       name = "Tarragon", --7
       status = "worker",
       n = 1, --stage in single conversation
@@ -524,6 +531,7 @@ npcs = {{
       timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc.
       location = "overworld",
       dialogue = 0,
+      mapping = {added = 0, dialogueCount = 0, notes = ""},
       name = "Robin", --8
       status = "worker",
       n = 1, --stage in single conversation
@@ -564,6 +572,7 @@ npcs = {{
       timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc., current time, max time, wait time
       location = "offscreen",
       dialogue = 0,
+      mapping = {added = 0, dialogueCount = 0, notes = ""},
       name = "Durian", --9
       status = "worker",
       n = 1, --stage in single conversation
@@ -604,6 +613,7 @@ npcs = {{
       timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc., current time, max time, wait time
       location = "offscreen",
       dialogue = 0,
+      mapping = {added = 0, dialogueCount = 0, notes = ""},
       name = "Brier", --9
       status = "worker",
       n = 1, --stage in single conversation
@@ -644,6 +654,7 @@ npcs = {{
       timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc., current time, max time, wait time
       location = "offscreen",
       dialogue = 0,
+      mapping = {added = 0, dialogueCount = 0, notes = ""},
       name = "Lotus", --9
       status = "worker",
       n = 1, --stage in single conversation
@@ -684,8 +695,10 @@ npcs = {{
       timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc., current time, max time, wait time
       location = "dininghall",
       dialogue = 0,
+      mapping = {added = 0, dialogueCount = 0, notes = ""},
       name = "Eucalyptus", --9
       status = "worker",
+      offset = {x = 0, y = 16},
       n = 1, --stage in single conversation
       c = 1,
       stats = {trust = {player = 15, Mint = 15, Fennel = 20, Finch = 5, Lark = 0, Cress = 15, Agave = 15, Tarragon = 10, Robin = 10},
@@ -724,6 +737,7 @@ npcs = {{
       timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc., current time, max time, wait time
       location = "dininghall",
       dialogue = 0,
+      mapping = {added = 0, dialogueCount = 0, notes = ""},
       name = "Hawk", --9
       status = "boss",
       n = 1, --stage in single conversation
@@ -748,6 +762,8 @@ npcs = {{
             }
     }
 }
+
+trustTable = {}
 
 storedLocation = {x = 0, y = 0}
 storedIndex = {0}
@@ -1004,16 +1020,15 @@ cutsceneList ={{
   black = 1,
   skipnext = true, -- do we go directly to next cutscene?
   nextStage = true, -- do we go to the next game scene
-  switchTime = 1 -- what time of day is it after the end
+  switchTime = 3 -- what time of day is it after the end
 },
 {
   triggered = false,
   type = 1, -- npc talks
   move = false, --does the NPC move?
   npc = 1, --which NPC
-  target = player, -- where do they move
   dialoguekey = 1,
-  fadeout = 1,
+  fadeout = 3,
   black = 1,
   skipnext = false, -- do we go directly to next cutscene?
   nextStage = true, -- do we go to the next game scene

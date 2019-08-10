@@ -78,7 +78,9 @@ function love.update(dt)
 	gameStageUpdate(dt)
 
 	if currentLocation == "dormitory" then
-		sleepCheck()
+		if time == 2 and player.sleep == false then
+			sleepCheck()
+		end
 	end
 
 	-- initiate dialogue and move character back if they enter a location
@@ -404,9 +406,7 @@ function love.keypressed(key)
 			saveMap()
 	 		love.event.quit()
 		else
-			menuView = 0
-			menu.position[2] = 1
-			player.canMove = 1
+			menuEscape()
 		end
 	end
 
@@ -425,15 +425,14 @@ function love.keypressed(key)
 					infoView = 0
 				end
 		  end
-		--print additional info about game on screen for debugging
+
 			if key == "i" then
 				if dialogueMode == 0 then
 					if menuView == 0 then
 						player.canMove = 0
 						menuView = 1
 					else
-						player.canMove = 1
-						menuView = 0
+						menuEscape()
 					end
 				end
 			end

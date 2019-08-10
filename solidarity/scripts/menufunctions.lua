@@ -1,3 +1,11 @@
+function menuEscape()
+  menu.position[1] = 1
+  menu.position[2] = 1
+  menu.currentTab = "inventory"
+  player.canMove = 1
+  menuView = 0
+end
+
 function switchTabs(key)
   for i = 1, menu.tabNum do
     if menu.currentTab == menu.allTabs[i] then
@@ -59,9 +67,7 @@ function menuHierarchy(key)
 			end
 			menu.position[1] = menu.position[1] - 1
 		else
-			menuView = 0
-			player.canMove = 1
-			menu.position[2] = 1
+			menuEscape()
 		end
 	elseif key == "z" then
 		if menu.currentTab == "inventory" then
