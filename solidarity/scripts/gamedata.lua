@@ -40,7 +40,6 @@ currentJournal = {}
 
 mapPath = {overworld = {"C:\\Users\\Carolyn\\Documents\\GitHub\\SolidarityGame\\solidarity\\maps\\1overworld.txt"},
 gardeningShed = {"C:\\Users\\Carolyn\\Documents\\GitHub\\SolidarityGame\\solidarity\\maps\\2gardeningShed.txt"},
-battlefield1 = {"C:\\Users\\Carolyn\\Documents\\GitHub\\SolidarityGame\\solidarity\\maps\\3battlefield1.txt"},
 dormitory = {"C:\\Users\\Carolyn\\Documents\\GitHub\\SolidarityGame\\solidarity\\maps\\4dormitory.txt"},
 dininghall = {"C:\\Users\\Carolyn\\Documents\\GitHub\\SolidarityGame\\solidarity\\maps\\5dininghall.txt"},
 store = {"C:\\Users\\Carolyn\\Documents\\GitHub\\SolidarityGame\\solidarity\\maps\\6store.txt"}
@@ -128,9 +127,16 @@ mapFile1 = nil
               speechbubblesmbot = love.graphics.newQuad(3*16, 4*16, 16, 16, uiSheet:getDimensions()),
               speechbubblesmleft = love.graphics.newQuad(0, 5*16, 16, 16, uiSheet:getDimensions()),
               speechbubblesmright = love.graphics.newQuad(16, 5*16, 16, 16, uiSheet:getDimensions()),
+              speechbubblesmtop = love.graphics.newQuad(2*16, 5*16, 16, 16, uiSheet:getDimensions()),
+              menutablightL = love.graphics.newQuad(4*16, 0, 16, 16, uiSheet:getDimensions()),
+              menutablightM = love.graphics.newQuad(5*16, 0, 16, 16, uiSheet:getDimensions()),
+              menutablightR = love.graphics.newQuad(6*16, 0, 16, 16, uiSheet:getDimensions()),
+              menutabdarkL = love.graphics.newQuad(4*16, 16, 16, 16, uiSheet:getDimensions()),
+              menutabdarkM = love.graphics.newQuad(5*16, 16, 16, 16, uiSheet:getDimensions()),
+              menutabdarkR = love.graphics.newQuad(6*16, 16, 16, 16, uiSheet:getDimensions())
               }
 
-  bubble = {x = 0, y = 0, on = 0, obj = ""}
+  bubble = {x = 0, y = 0, on = 0, obj = "", timer = 0, static = 0}
 
   boxTilesSheet = love.graphics.newImage("images/solidarity_box_tiles.png")
 
@@ -158,7 +164,7 @@ mapFile1 = nil
 
   boxMap = {}
 
-  menu = {currentTab = "inventory", allTabs = {"inventory", "map2", "journal", "map1", }, position = {1, 1, 1}, total = 3, tabNum = 2}
+  menu = {currentTab = "inventory", allTabs = {"inventory", "map2", "journal", "map1"}, tabData = {inventory = {text = "Inventory", x = 0}, map2 = {text = "Island Map", x = 64}, journal = {text = "Journal", x = 0}, map1 = {text = "Social Map", x = 0}}, position = {1, 1, 1}, total = 3, tabNum = 2}
 
   -- objects that are not part of static background
   animsheet3 = love.graphics.newImage("images/solidarity_objects.png")
@@ -209,17 +215,17 @@ player = {
   actions = {current = 0, max = 100, rate = 10, x = 0, y = 0, key = 0, index = 0},
   next = {{x = 0, y = 0, facing = 0, location = "overworld"},
           {x = 0, y = 0, facing = 0, location = "dininghall"},
-          {x = 14*gridsize, y = 16*gridsize, facing = 3, location = "dormitory"},
+          {x = 15*gridsize, y = 16*gridsize, facing = 3, location = "dormitory"},
           {x = 0, y = 0, facing = 0, location = "dormitory"}
         },
   animations = {walk = {{anim = newAnimation(animsheet1, 0, 4, 16, 16, .50), name = "up", loop = 0},
                         {anim = newAnimation(animsheet1, 1*16, 4, 16, 16, .50), name = "down", loop = 0},
                         {anim = newAnimation(animsheet1, 2*16, 4, 16, 16, .55), name = "left", loop = 0},
                         {anim = newAnimation(animsheet1, 3*16, 4, 16, 16, .55), name = "right", loop = 0}},
-        act = {{anim = newAnimation(animsheet_act, 0, 4, 16, 16, .6), name = "up", loop = 1, current = 0, running = 0, count = 0},
-              {anim = newAnimation(animsheet_act, 1*16, 4, 16, 16, .6), name = "down", loop = 1, current = 0, running = 0, count = 0},
-              {anim = newAnimation(animsheet_act, 2*16, 4, 16, 16, .6), name = "left", loop = 1, current = 0, running = 0, count = 0},
-              {anim = newAnimation(animsheet_act, 3*16, 4, 16, 16, .6), name = "right", loop = 1, current = 0, running = 0, count = 0}}
+        act = {{anim = newAnimation(animsheet_act, 0, 4, 16, 16, .4), name = "up", loop = 1, current = 0, running = 0, count = 0},
+              {anim = newAnimation(animsheet_act, 1*16, 4, 16, 16, .4), name = "down", loop = 1, current = 0, running = 0, count = 0},
+              {anim = newAnimation(animsheet_act, 2*16, 4, 16, 16, .4), name = "left", loop = 1, current = 0, running = 0, count = 0},
+              {anim = newAnimation(animsheet_act, 3*16, 4, 16, 16, .4), name = "right", loop = 1, current = 0, running = 0, count = 0}}
       }
 }
 
@@ -787,7 +793,7 @@ objectInventory = {barrelSmBerries = 0, barrelLgBerries = 0}
 
 itemStats = {plantSmBerries = {max = 60, stackable = 1},
             plantLgBerries = {max = 60, stackable = 1},
-            platefull2 = {max = 60, stackable = 0}
+            platefull2 = {max = 60, stackable = 0, use = "Eat"}
             }
 itemText = ""
 animsheet2 = love.graphics.newImage("images/solidarity_object_anim.png")
@@ -998,7 +1004,7 @@ cutsceneList ={{
   black = 1,
   skipnext = true, -- do we go directly to next cutscene?
   nextStage = true, -- do we go to the next game scene
-  switchTime = 3 -- what time of day is it after the end
+  switchTime = 1 -- what time of day is it after the end
 },
 {
   triggered = false,

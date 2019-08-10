@@ -41,11 +41,11 @@ function cutsceneTrigger()
         end
       end
     elseif gameStage == 3 then
-      if NPCdialogue[3]["Fennel"][10].logic.spoken == 1 then
-        if cutsceneControl.stage == 0 then
-          cutsceneControl.stage = 5
-        end
-      end
+      -- if NPCdialogue[3]["Fennel"][10].logic.spoken == 1 then
+      --   if cutsceneControl.stage == 0 then
+      --     cutsceneControl.stage = 5
+      --   end
+      -- end
     end
   end
 end
@@ -268,6 +268,7 @@ function gameStageUpdate(dt)
 			if areaCheck(16, 21, 17, 22, player) then
 				local bool1, k = checkInventory("plantSmBerries")
 				local bool2, k = checkInventory("plantLgBerries")
+        --if there are no berries in the player's inventory
 				if bool1 == false and bool2 == false then
 					if npcs[i].c ~= 3 then
 						removeTempBlocks(currentLocation, 1)
@@ -289,6 +290,7 @@ function gameStageUpdate(dt)
 		if tempBlocks.overworld[2].on == 0 then
 			tempBlocks.overworld[2].on = 1
 			tempBlocks.overworld[3].on = 1
+      print("tempblocks 2 and 3 on")
 			nonInteractiveObjects.overworld.fenceopenL[1].visible = 0
 			nonInteractiveObjects.overworld.fenceopenR[1].visible = 0
 			nonInteractiveObjects.overworld.fenceclosedL[1].visible = 1

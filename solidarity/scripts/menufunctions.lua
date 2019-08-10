@@ -35,18 +35,18 @@ function inventorySelect(key)
 				menu.position[2] = menu.position[2] - 1
 			end
 		end
-	elseif key == "up" then
-		if menu.position[1] == 3 then
-			if menu.position[3] > 1 then
-				menu.position[3] = menu.position[3] - 1
-			end
-		end
-	elseif key == "down" then
-		if menu.position[1] == 3 then
-			if menu.position[3] < 2 then
-				menu.position[3] = menu.position[3] + 1
-			end
-		end
+	-- elseif key == "up" then
+	-- 	if menu.position[1] == 3 then
+	-- 		if menu.position[3] > 1 then
+	-- 			menu.position[3] = menu.position[3] - 1
+	-- 		end
+	-- 	end
+	-- elseif key == "down" then
+	-- 	if menu.position[1] == 3 then
+	-- 		if menu.position[3] < 2 then
+	-- 			menu.position[3] = menu.position[3] + 1
+	-- 		end
+	-- 	end
 	end
 end
 
@@ -65,13 +65,18 @@ function menuHierarchy(key)
 		end
 	elseif key == "z" then
 		if menu.currentTab == "inventory" then
-      menu.total = 2
-			-- if #player.inventory < 1 then
-			-- 	menu.total = 2
-			-- else
-			-- 	menu.total = 3
-			-- 	print("menu total: " .. menu.total)
-			-- end
+			if #player.inventory < 1 then
+				menu.total = 2
+			else
+        local i = menu.position[2]
+        local b = player.inventory[i].icon
+        if itemStats[b].use ~= nil then
+          print("use not nil")
+				  menu.total = 3
+        else
+          menu.total = 2
+        end
+			end
 		else
 			menu.total = 1
 		end
@@ -80,7 +85,7 @@ function menuHierarchy(key)
 			print("added to menu position[1]: " .. menu.position[1])
 			return
 		end
-		-- itemMenu()
+		itemMenu()
 	end
 end
 
@@ -89,25 +94,25 @@ function itemMenu()
 	if menu.position[1] == 3 and menu.currentTab == "inventory" then
 		if menu.position[3] == 1 then
 			print("menu position[1]: " .. menu.position[1])
-			useItem(player.inventory[menu.position[2]].icon, player.inventory[menu.position[2]].item)
+			useItem(player.inventory[i].icon, player.inventory[i].item)
 			menu.position[1] = 2
 			menu.position[3] = 1
 			if player.inventory[i] == nil then
 				menu.position[2] = 1
 			end
-		elseif menu.position[3] == 2 then
-      if itemStats[player.inventory[i].icon].dropNum ~= nil then
-  			addRemoveItem("Dropped " .. player.inventory[i].item, player.inventory[i].item, -itemStats[player.inventory[i].icon].dropNum, player.inventory[i].icon, false)
-  			print("removing item done")
-      else
-        itemText = "You can't drop that."
-        print("can't drop item")
-      end
-			menu.position[1] = 2
-			menu.position[3] = 1
-			if player.inventory[i] == nil then
-				menu.position[2] = 1
-			end
+		-- elseif menu.position[3] == 2 then
+    --   if itemStats[player.inventory[i].icon].dropNum ~= nil then
+  	-- 		addRemoveItem("Dropped " .. player.inventory[i].item, player.inventory[i].item, -itemStats[player.inventory[i].icon].dropNum, player.inventory[i].icon, false)
+  	-- 		print("removing item done")
+    --   else
+    --     itemText = "You can't drop that."
+    --     print("can't drop item")
+    --   end
+		-- 	menu.position[1] = 2
+		-- 	menu.position[3] = 1
+		-- 	if player.inventory[i] == nil then
+		-- 		menu.position[2] = 1
+		-- 	end
 		end
 	end
 end

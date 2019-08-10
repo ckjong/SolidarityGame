@@ -158,6 +158,18 @@ end
 --   love.graphics.setColor(255, 221, 163)
 --   love.graphics.rectangle("fill", boxposx+2, boxposy+2, recwidth-4, recheight-4, 3, 3, 4) -- inside box (light colored)
 -- end
+function bubbleUpdate(t, dt)
+  if t > 0 then
+    t = t - dt
+    bubble.timer = t
+    if bubble.static == 0 then
+      bubble.x, bubble.y = player.act_x, player.act_y - 17
+    end
+  else
+    bubble.on = 0
+    bubble.timer = 0
+  end
+end
 
 function animUpdate(tbl, dt, k)
   if k then
@@ -365,20 +377,25 @@ function drawBubble(x, y, obj)
   end
 end
 
+function nameBoxSize(txt)
+  local l = string.len(txt)
+  if l < 5 then
+    return 6
+  elseif l >= 5 and l < 7 then
+    return 10
+  elseif l >= 7 then
+    return 16
+  end
+end
+
 function drawName(boxposx, boxposy)
   local nameposx = boxposx + 48
   local nameposy = boxposy - 12
-  local l = string.len(currentspeaker)
-  if currentspeaker == "player" then
-    l = string.len(player.name)
-  end
   local n = 16
-  if l < 5 then
-    n = 6
-  elseif l >= 5 and l < 7 then
-    n = 10
-  elseif l >= 7 then
-    n = 16
+  if currentspeaker == "player" then
+    n = nameBoxSize(player.name)
+  else
+    n = nameBoxSize(currentspeaker)
   end
   love.graphics.setColor(255, 255, 255)
   love.graphics.draw(uiSheet, uiQuads.namebgL, nameposx, nameposy)
@@ -446,37 +463,61 @@ function drawInfo(x, y)
   love.graphics.print("Current FPS: "..tostring(love.timer.getFPS( )), x - 48, y - 30)
 end
 
+
+function drawMenuTabs(startx, starty, tab)
+  local x = 0
+  local x2 = 0
+  if tab == "inventory" then
+    x = startx
+    x2 = x + 62
+  elseif tab == "map2" then
+    x2 = startx
+    x = x2 + 62
+  end
+  love.graphics.setColor(255, 255, 255)
+  love.graphics.draw(uiSheet, uiQuads.menutablightL, x, starty)
+  love.graphics.draw(uiSheet, uiQuads.menutablightM, x+16, starty)
+  love.graphics.draw(uiSheet, uiQuads.menutablightM, x+32, starty)
+  love.graphics.draw(uiSheet, uiQuads.menutablightR, x+48, starty)
+  love.graphics.draw(uiSheet, uiQuads.menutabdarkL, x2, starty)
+  love.graphics.draw(uiSheet, uiQuads.menutabdarkM, x2+16, starty)
+  love.graphics.draw(uiSheet, uiQuads.menutabdarkM, x2+32, starty)
+  love.graphics.draw(uiSheet, uiQuads.menutabdarkR, x2+48, starty)
+  if menu.position[1] == 1 then
+    love.graphics.draw(ui.arrowright, x+4, starty+4)
+  end
+  love.graphics.setColor(75, 37, 58)
+  for i = 1, menu.tabNum do
+    local t = menu.allTabs[i]
+    love.graphics.printf(menu.tabData[t].text, startx+64*(i-1), starty+4, 64, "center")
+  end
+end
+
 function drawMenu(x, y, tab)
-  local menuText = ""
   local offset = {x= 106, y = 56}
   local boxX = x + gridsize/2 - menuW/2
-  local textW = menuW
-  local textX = x + gridsize/2 - textW/2
-  local textY = y-offset.y+6
+  -- local textW = 16
+  -- local textX = x + gridsize/2 - textW/2
+  -- local textY = y-offset.y+6
   local width, height = love.graphics.getDimensions()
   love.graphics.setColor(198, 200, 84)
   love.graphics.rectangle("fill", x - width/2, y - height/2, width, height)
   love.graphics.setColor(255, 255, 255)
-  love.graphics.draw(canvas, boxX, y-offset.y)
+  love.graphics.draw(canvas, boxX, y-offset.y+16)
+  drawMenuTabs(boxX+6, y-offset.y+2, tab)
   if tab == "inventory" then
-    menuText = drawInventory(x, y, offset.x - 14, offset.y - 22)
-  elseif tab == "journal" then
-    menuText = "Journal"
-  elseif tab == "map1" then
-    menuText = "Social Map"
+    drawInventory(x, y, offset.x - 14, offset.y - 32)
   elseif tab == "map2" then
-    menuText = "Island Map"
-    drawMap2(x + gridsize/2, y-offset.y +16)
+    --"Island Map"
+    drawMap2(x + gridsize/2, y-offset.y +32)
   end
-  if menu.position[1] == 1 then
-    if timer[1].trigger == 1 then
-      love.graphics.setColor(255, 255, 255)
-      love.graphics.draw(ui.arrowleft, boxX+32, textY)
-      love.graphics.draw(ui.arrowright, boxX + menuW - 32, textY)
-    end
-  end
-  love.graphics.setColor(75, 37, 58)
-  love.graphics.printf(menuText, boxX, textY, textW, "center")
+  -- if menu.position[1] == 1 then
+  --   if timer[1].trigger == 1 then
+  --     love.graphics.setColor(255, 255, 255)
+  --     love.graphics.draw(ui.arrowleft, boxX+32, textY)
+  --     love.graphics.draw(ui.arrowright, boxX + menuW - 32, textY)
+  --   end
+  -- end
 end
 
 
@@ -507,7 +548,6 @@ local function drawMenuBottom(x, y, offX, offY)
 end
 
 function drawInventory(x, y, offX, offY)
-  local txt = "Inventory"
   local items = {}
   local objText = ""
   local selectText = ""
@@ -536,13 +576,14 @@ function drawInventory(x, y, offX, offY)
     end
     if timer[1].trigger == 1 then
       love.graphics.setColor(255, 255, 255)
-      love.graphics.draw(ui.cornerLTop, x - offX - 4 + (i-1)*(26), y - offY - 4)
-      love.graphics.draw(ui.cornerRTop, x - offX + gridsize + (i-1)*(26), y - offY - 4)
-      love.graphics.draw(ui.cornerLBottom, x - offX - 4 + (i-1)*(26), y - offY + gridsize)
-      love.graphics.draw(ui.cornerRBottom, x - offX + gridsize + (i-1)*(26), y - offY + gridsize)
+      love.graphics.draw(ui.cornerLTop, x - offX - 5 + (i-1)*(26), y - offY - 5)
+      love.graphics.draw(ui.cornerRTop, x - offX + gridsize + (i-1)*(26) + 1, y - offY - 5)
+      love.graphics.draw(ui.cornerLBottom, x - offX - 5 + (i-1)*(26), y - offY + gridsize + 1)
+      love.graphics.draw(ui.cornerRBottom, x - offX + gridsize + (i-1)*(26) + 1, y - offY + gridsize + 1)
     end
   elseif menu.position[1] == 3 then
     local i = menu.position[2]
+    local icon = player.inventory[i].icon
     local a = 0
     local b = 0
     local width, height = love.graphics.getDimensions()
@@ -566,15 +607,14 @@ function drawInventory(x, y, offX, offY)
     if menu.position[3] == 1 then
       love.graphics.draw(ui.arrowright, boxposx + 8, boxposy + 8)
       a = 6
-    elseif menu.position[3] == 2 then
-      love.graphics.draw(ui.arrowright, boxposx + 8, boxposy + 16)
-      b = 6
+    -- elseif menu.position[3] == 2 then
+    --   love.graphics.draw(ui.arrowright, boxposx + 8, boxposy + 16)
+    --   b = 6
     end
     love.graphics.setColor(75, 37, 58)
-    love.graphics.print("Use", boxposx + 8 + a, boxposy + 8)
-    love.graphics.print("Drop", boxposx + 8 + b, boxposy + 16)
+    love.graphics.print(itemStats[icon].use, boxposx + 8 + a, boxposy + 8)
+    -- love.graphics.print("Drop", boxposx + 8 + b, boxposy + 16)
   end
-  return txt
 end
 
 

@@ -26,7 +26,17 @@ function love.load()
 --editor for creating new maps and other functions
 	require("scripts/mapfunctions")
 
-	--generate map
+	--generate maps
+
+	for k, v in pairs(mapPath) do
+		print(k)
+		mapFile1 =  mapPath[k][1]
+		currentLocation = k
+		mapGen (bg[k], mapFile1)
+		clearMap(2)
+		saveMap()
+	end
+	currentLocation = "overworld"
 	mapFile1 = mapPath[currentLocation][1]
 	mapGen (bg[currentLocation], mapFile1)
 	--table.save(initTable, "D:\\my game projects\\utopia\\scripts\\initTable.lua")
@@ -171,6 +181,8 @@ function love.update(dt)
 	end
 
 
+	bubbleUpdate(bubble.timer, dt)
+
 	freezeControl()
 	runCutscene(dt)
 
@@ -297,33 +309,9 @@ end
 -- KEY PRESSES --
 ---------------
 function love.keypressed(key)
-	print("key pressed, keyInput = " .. keyInput)
 	if keyInput == 1 then
-	--initiate debug/map editing mode
-	  if key == "p" then
-		 	if debugView == 0 then
-	    	debugView = 1
-			elseif debugView == 1 then
-				debugView = 0
-			end
-			if infoView == 0 then
-				infoView = 1
-			else
-				infoView = 0
-			end
-	  end
-	--print additional info about game on screen for debugging
-		if key == "i" then
-			if dialogueMode == 0 then
-				if menuView == 0 then
-					player.canMove = 0
-					menuView = 1
-				else
-					player.canMove = 1
-					menuView = 0
-				end
-			end
-		end
+
+
 	--- interact with objects or people
 	  if key == "z" then
 			print("pressed z")
@@ -341,45 +329,6 @@ function love.keypressed(key)
 				 menuHierarchy(key)
 			end
 			print("dialogueMode after z" .. dialogueMode)
-		end
-
-	-- add block to editor
-		if key == "space" and debugView == 1 then
-			addBlock(initTable, player.grid_x, player.grid_y, 1) -- editor.lua
-		end
-
-		if key == "s" and debugView == 1 then
-			saveMap()
-		end
-
-
-		if key == "c" then --trigger cutscene for testing
-			if cutsceneControl.stage == 0 then
-				cutsceneControl.stage = 1
-			else
-				print("exit cutscene")
-				cutsceneControl.stage = 8
-				player.canMove = 1
-			end
-		end
-
-		if key == "1" then
-			player.energy = 100
-		end
-
-		if key == "0" then
-			player.energy = 0
-		end
-
-		if key == "6" then
-			addRemoveItem("You got 60 Plum Berries", "Plum Berries", 60, "plantSmBerries")
-		end
-
-		if key == "l" then
-			changeGameStage()
-			cutsceneControl.current = cutsceneControl.current + 1
-			cutsceneControl.stage = 0
-			print("gameStage: " .. gameStage)
 		end
 
 	-- move between dialogue or menu options
@@ -460,4 +409,72 @@ function love.keypressed(key)
 			player.canMove = 1
 		end
 	end
+
+
+		-- ====CHEAT KEYS===
+		--initiate debug/map editing mode
+		  if key == "p" then
+			 	if debugView == 0 then
+		    	debugView = 1
+				elseif debugView == 1 then
+					debugView = 0
+				end
+				if infoView == 0 then
+					infoView = 1
+				else
+					infoView = 0
+				end
+		  end
+		--print additional info about game on screen for debugging
+			if key == "i" then
+				if dialogueMode == 0 then
+					if menuView == 0 then
+						player.canMove = 0
+						menuView = 1
+					else
+						player.canMove = 1
+						menuView = 0
+					end
+				end
+			end
+
+			-- add block to editor
+				if key == "space" and debugView == 1 then
+					addBlock(initTable, player.grid_x, player.grid_y, 1) -- editor.lua
+				end
+
+				if key == "s" and debugView == 1 then
+					saveMap()
+				end
+
+
+				if key == "c" then --trigger cutscene for testing
+					if cutsceneControl.stage == 0 then
+						cutsceneControl.stage = 1
+					else
+						print("exit cutscene")
+						cutsceneControl.stage = 8
+						player.canMove = 1
+					end
+				end
+
+				if key == "1" then
+					player.energy = 100
+				end
+
+				if key == "0" then
+					player.energy = 0
+				end
+
+				if key == "6" then
+					addRemoveItem("You got 60 Plum Berries", "Plum Berries", 60, "plantSmBerries")
+				end
+
+				if key == "l" then
+					changeGameStage()
+					cutsceneControl.current = cutsceneControl.current + 1
+					cutsceneControl.stage = 0
+					print("gameStage: " .. gameStage)
+				end
+		-- ====END CHEAT KEYS===
 end

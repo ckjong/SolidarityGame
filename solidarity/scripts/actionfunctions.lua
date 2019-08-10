@@ -236,7 +236,7 @@ end
 -- berry harvest
 function BerryHarvestStart(b, c)
 	wait.triggered = 1
-	wait.current = .8
+	wait.current = .4
   if b == "plantSmBerries" then
 		if movingObjectData[currentLocation][b][c].picked < 3 then
 			movingObjectData[currentLocation][b][c].picked = movingObjectData[currentLocation][b][c].picked + 1
@@ -271,9 +271,13 @@ function setBubble(b, c)
 	bubble.on = 1
 	bubble.obj = b
 	if b == "barrelSmBerries" or b == "barrelLgBerries" then
+		bubble.static = 1
+		bubble.timer = 1.2
 		bubble.x, bubble.y = movingObjectData[currentLocation][b][c].x, movingObjectData[currentLocation][b][c].y - 16
 	else
-		bubble.x, bubble.y = player.grid_x, player.grid_y - 17
+		bubble.static = 0
+		bubble.timer = 1
+		bubble.x, bubble.y = player.act_x, player.act_y - 17
 	end
 end
 
@@ -317,7 +321,6 @@ function exitAction()
 		print("exitAction set dialogueMode to 0")
 		dialogueMode = 0
 		wait.triggered = 0
-		bubble.on = 0
 		keyInput = 1
 		if choice.mode == 1 then
 			choice.mode = 0
@@ -394,7 +397,6 @@ function printObjText(b, c)
       end
 		else
 			print("printObjText set dialogueMode to 0")
-			bubble.on = 0
 			dialogueMode = 0
 			player.canMove = 1
       wait.triggered = 0
