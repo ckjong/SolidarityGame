@@ -56,7 +56,7 @@ function cutsceneStage1Talk()
   updateMap(npcs) -- add NPC locations to map and save
   local n = cutsceneControl.current
   if cutsceneList[n].move == true then -- if npc is supposed to move
-    local i = cutsceneList[n].npc
+    local i = getCharIndex(cutsceneList[n].npc)
     local char = npcs[i]
     local target = cutsceneList[n].target
     local x1, y1 = target.grid_x, target.grid_y
@@ -75,7 +75,7 @@ function cutsceneStage2Talk(dt)
   player.canMove = 0
   keyInput = 0
 	local n = cutsceneControl.current
-	local i = cutsceneList[n].npc
+	local i = getCharIndex(cutsceneList[n].npc)
 	local char = npcs[i]
   if cutsceneList[n].move == true then
     local path = cutsceneList[n].path
@@ -107,7 +107,7 @@ end
 --dialogue
 function cutsceneStage3Talk()
   local n = cutsceneControl.current
-  local i = cutsceneList[n].npc
+  local i = getCharIndex(cutsceneList[n].npc)
   npcs[i].c = cutsceneList[n].dialoguekey
   DialogueSetup(npcs, dialogueStage)
   cutsceneControl.stage = 4
@@ -116,7 +116,7 @@ end
 --return to starting position
 function cutsceneStage4Talk(dt)
   local n = cutsceneControl.current
-  local i = cutsceneList[n].npc
+  local i = getCharIndex(cutsceneList[n].npc)
   local char = npcs[i]
   if cutsceneList[n].move == true then
     local path = cutsceneList[n].path
@@ -310,6 +310,7 @@ function changeTime(t)
     end
     clearTempBlocks()
     resetBerries()
+    resetBarrels()
     nonInteractiveObjects.overworld.fenceopenL[1].visible = 1
     nonInteractiveObjects.overworld.fenceopenR[1].visible = 1
     nonInteractiveObjects.overworld.fenceclosedL[1].visible = 0

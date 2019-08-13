@@ -15,9 +15,9 @@ function getScale()
 end
 
 --form box
-function formBox(w, h)
+function formBox(w, h, c)
   if w >= 32 and h >= 32 then
-    love.graphics.setCanvas(canvas)
+    love.graphics.setCanvas(c)
     love.graphics.setColor(255, 255, 255)
     local xTiles = math.floor(w/16)
     local yTiles = math.floor(h/16)
@@ -163,7 +163,11 @@ function bubbleUpdate(t, dt)
     t = t - dt
     bubble.timer = t
     if bubble.static == 0 then
-      bubble.x, bubble.y = player.act_x, player.act_y - 17
+      if bubble.type == 1 then
+        bubble.x, bubble.y = player.act_x, player.act_y - 17
+      elseif bubble.type == 4 then
+        bubble.x, bubble.y = player.act_x, player.act_y + 17
+      end
     end
   else
     bubble.on = 0
@@ -363,7 +367,11 @@ end
 
 function drawBubble(x, y, obj)
   love.graphics.setColor(255, 255, 255)
-  love.graphics.draw(uiSheet, uiQuads.speechbubblemedbot, x, y)
+  if bubble.type == 1 then
+    love.graphics.draw(uiSheet, uiQuads.speechbubblemedbot, x, y)
+  elseif bubble.type == 4 then
+    love.graphics.draw(uiSheet, uiQuads.speechbubblemedtop, x, y)
+  end
   love.graphics.setColor(75, 37, 58)
   if obj == "barrelSmBerries" or obj == "barrelLgBerries" then
     love.graphics.printf(objectInventory[obj], x, y+4, 16, "center")
@@ -397,15 +405,13 @@ function calcDistance(x1, y1, x2, y2)
   return x3, y3
 end
 
-function drawName(boxposx, boxposy)
-  local nameposx = boxposx + 48
-  local nameposy = boxposy - 12
+function drawName(nameposx, nameposy, name)
   local n = 16
   local d = 16
-  if currentspeaker == "player" then
+  if name == "player" then
     n = nameBoxSize(player.name)
   else
-    n = nameBoxSize(currentspeaker)
+    n = nameBoxSize(name)
   end
   love.graphics.setColor(255, 255, 255)
   if n < 17 then
@@ -421,8 +427,8 @@ function drawName(boxposx, boxposy)
     d = calcDistance(nameposx, nameposy, nameposx + 33 + n, nameposy)
   end
   love.graphics.setColor(75, 37, 58)
-  if currentspeaker ~= "player" then
-    love.graphics.printf(currentspeaker, nameposx, nameposy+4, d, "center")
+  if name ~= "player" then
+    love.graphics.printf(name, nameposx, nameposy+4, d, "center")
   else
     love.graphics.printf(player.name, nameposx, nameposy+4, d, "center")
   end
@@ -511,7 +517,7 @@ function drawMenuTabs(startx, starty, tab)
   love.graphics.setColor(75, 37, 58)
   for i = 1, menu.tabNum do
     local t = menu.allTabs[i]
-    love.graphics.printf(menu.tabData[t].text, startx+63*(i-1), starty+4, 63, "center")
+    love.graphics.printf(menu.tabData[t].text, startx+62*(i-1), starty+4, 64, "center")
   end
 end
 
@@ -533,7 +539,7 @@ function drawMenu(x, y, tab)
     --"Island Map"
     drawMap2(x + gridsize/2, y-offset.y + 26)
   elseif tab == "map1" then
-    drawMap1(x - (offset.x-20), y - (offset.y-24))
+    drawMap1(x - (offset.x-19), y - (offset.y-22))
   end
   -- if menu.position[1] == 1 then
   --   if timer[1].trigger == 1 then
@@ -626,8 +632,8 @@ function drawInventory(x, y, offX, offY)
       drawMenuBottom(x, y, offX, offY)
     end
     love.graphics.setColor(255, 255, 255)
-    love.graphics.draw(ui.textboxbg, boxposx, boxposy)
-    love.graphics.draw(ui.textboxbottom, boxposx, boxposy)
+    love.graphics.draw(ui.textboxbg, boxposx, boxposy - 2)
+    love.graphics.draw(ui.textboxbottom, boxposx, boxposy -2)
     if menu.position[3] == 1 then
       love.graphics.draw(ui.arrowright, boxposx + 8, boxposy + 8)
       a = 6
@@ -641,29 +647,62 @@ function drawInventory(x, y, offX, offY)
   end
 end
 
+function drawNPCprofiles(x, y, i)
+  love.graphics.setColor(255, 255, 255)
+  love.graphics.draw(canvas2, x, y)
+  love.graphics.draw(ui.portraitbox, x+4, y + 4)
+  drawPortrait(socialMap[i].name, x+2, y + 22, portraitsheet1)
+  love.graphics.draw(ui.portraitboxframe, x+4, y + 4)
+  drawName(x+46, y-4, socialMap[i].name)
+  local txt = "Position: " .. socialMap[i].info.pos .. "\nNotes: " .. socialMap[i].info.descriptionStart
+  love.graphics.printf(txt, x+60, y + 18, 128, "left")
+end
+
+--social mapping screen
 function drawMap1(x, y)
-  local c = 0
   local x2 = x
   local y2 = y
   local g = 44 -- gap between sprites
-  for i = 1, #npcs do
-    if npcs[i].mapping.added == 1 then
-      c = c + 1
-      local tbl = npcs[i].animations.walk
-      if c < 6 then
-        x2 = x + (c-1)*(g)
+  if menu.position[1] < 3 then
+    for i = 1, #socialMap do
+      local tbl = socialMap[i].animations.walk
+      if i < 6 then
+        x2 = x + (i-1)*(g)
         y2 = y
-      elseif c >= 6 and c < 11 then
-        x2 = x + (c-6)*(g)
+      elseif i >= 6 and i < 11 then
+        x2 = x + (i-6)*(g)
         y2 = y + 36
       else
-        x2 = x + (c-11)*(g)
+        x2 = x + (i-11)*(g)
         y2 = y + 2*36
       end
       love.graphics.setColor(255, 255, 255)
       love.graphics.draw(tbl[2]["anim"]["spriteSheet"], tbl[2]["anim"]["quads"][1], x2, y2)
       love.graphics.setColor(75, 37, 58)
-      love.graphics.printf(npcs[i].name, x2-((g-16)/2), y2+16, g, "center")
+      love.graphics.printf(socialMap[i].name, x2-((g-16)/2), y2+20, g, "center")
+    end
+    if menu.position[1] == 2 then
+      local j = menu.position[2]
+      local p = j
+      if timer[1].trigger == 1 then
+        if j >= 6 and j < 11 then
+          p = p - 5
+          y = y + 36
+        elseif j >= 11 then
+          p = p - 10
+          y = y + 2*36
+        end
+        love.graphics.setColor(255, 255, 255)
+        love.graphics.draw(ui.cornerLTop, x - 4 + (p-1)*g, y - 4)
+        love.graphics.draw(ui.cornerRTop, x + gridsize + (p-1)*g, y - 4)
+        love.graphics.draw(ui.cornerLBottom, x - 4 + (p-1)*g, y + gridsize)
+        love.graphics.draw(ui.cornerRBottom, x + gridsize + (p-1)*g, y + gridsize)
+      end
+    end
+  elseif menu.position[1] == 3 then
+    local j = menu.position[2]
+    if #socialMap > 0 then
+      drawNPCprofiles(x-1, y, j)
     end
   end
 end

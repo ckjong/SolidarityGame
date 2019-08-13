@@ -86,7 +86,7 @@ mapFile1 = nil
                  Durian = love.graphics.newQuad(9*46, 0, 46, 46, portraitsheet1:getDimensions()),
                  Brier = love.graphics.newQuad(10*46, 0, 46, 46, portraitsheet1:getDimensions()),
                  Lotus = love.graphics.newQuad(11*46, 0, 46, 46, portraitsheet1:getDimensions()),
-                 Eucalyptus = love.graphics.newQuad(12*46, 0, 46, 46, portraitsheet1:getDimensions()),
+                 Euca = love.graphics.newQuad(12*46, 0, 46, 46, portraitsheet1:getDimensions()),
                  Hawk = love.graphics.newQuad(13*46, 0, 46, 46, portraitsheet1:getDimensions()),
                  Kousa = love.graphics.newQuad(0, 1*46, 46, 46, portraitsheet1:getDimensions()),
                  Tulsi = love.graphics.newQuad(1*46, 1*46, 46, 46, portraitsheet1:getDimensions())
@@ -104,12 +104,16 @@ mapFile1 = nil
     cornerLBottom = love.graphics.newImage("images/solidarity_ui_11.png"),
     cornerRBottom = love.graphics.newImage("images/solidarity_ui_12.png"),
     textboxbg = love.graphics.newImage("images/solidarity_textboxfull.png"),
-    textboxbottom = love.graphics.newImage("images/solidarity_textboxbottom.png")}
+    textboxbottom = love.graphics.newImage("images/solidarity_textboxbottom.png"),
+    portraitbox = love.graphics.newImage("images/portrait_box_0.png"),
+    portraitboxframe = love.graphics.newImage("images/portrait_box_1.png")
+  }
 
   uiQuads =  {energyiconsquare = love.graphics.newQuad(0, 0, 16, 16, uiSheet:getDimensions()),
               energytextbg = love.graphics.newQuad(16, 0, 16, 16, uiSheet:getDimensions()),
               energytextbground = love.graphics.newQuad(2*16, 0, 16, 16, uiSheet:getDimensions()),
               speechbubblemedbot =  love.graphics.newQuad(3*16, 0, 16, 16, uiSheet:getDimensions()),
+              speechbubblemedtop =  love.graphics.newQuad(4*16, 2*16, 16, 16, uiSheet:getDimensions()),
               energytextbgsmleft = love.graphics.newQuad(0, 16, 16, 16, uiSheet:getDimensions()),
               energytextbgsmright = love.graphics.newQuad(16, 16, 16, 16, uiSheet:getDimensions()),
               speechbubblelgbotleft = love.graphics.newQuad(2*16, 16, 16, 16, uiSheet:getDimensions()),
@@ -136,7 +140,7 @@ mapFile1 = nil
               menutabdarkR = love.graphics.newQuad(6*16, 16, 16, 16, uiSheet:getDimensions())
               }
 
-  bubble = {x = 0, y = 0, on = 0, obj = "", timer = 0, static = 0}
+  bubble = {x = 0, y = 0, on = 0, obj = "", timer = 0, static = 0, type = 1}
 
   boxTilesSheet = love.graphics.newImage("images/solidarity_box_tiles.png")
 
@@ -164,7 +168,7 @@ mapFile1 = nil
 
   boxMap = {}
 
-  menu = {currentTab = "inventory", allTabs = {"inventory", "map2", "map1", "journal"}, tabData = {inventory = {text = "Inventory", x = 0}, map2 = {text = "Island Map", x = 64}, map1 = {text = "Social Map", x = 0,}, journal = {text = "Journal", x = 0}}, position = {1, 1, 1}, total = 3, tabNum = 3}
+  menu = {currentTab = "inventory", allTabs = {"inventory", "map2", "map1", "journal"}, tabData = {inventory = {text = "Inventory", x = 0, c = 8, r = 1}, map2 = {text = "Island Map", x = 64}, map1 = {text = "Social Map", x = 0, c = 5, r = 3}, journal = {text = "Journal", x = 0}}, position = {1, 1, 1}, grid = {1, 1}, total = 3, tabNum = 3}
 
   -- objects that are not part of static background
   animsheet3 = love.graphics.newImage("images/solidarity_objects.png")
@@ -247,6 +251,7 @@ npcs = {{
   location = "overworld",
   dialogue = 0, -- curently in dialogue
   mapping = {added = 0, dialogueCount = 0, notes = ""},
+  info = {pos = "Field Hand", time = 4, descriptionStart = "My best friend. She's very responsible, sometimes too responsible."},
   name = "Fennel",
   status = "worker",
   n = 1, --stage in single conversation
@@ -288,6 +293,7 @@ npcs = {{
     location = "overworld",
     dialogue = 0,
     mapping = {added = 0, dialogueCount = 0, notes = ""},
+    info = {pos = "Field Hand", time = 7, descriptionStart = "My childhood friend. They're kind and generous, but easily distracted."},
     name = "Mint", --2
     status = "worker",
     n = 1,
@@ -311,87 +317,6 @@ npcs = {{
           }
     },
     {
-      grid_x = 16*gridsize,
-      grid_y = 21*gridsize,
-      act_x = 16*gridsize,
-      act_y = 21*gridsize,
-      speed = 30,
-      canMove = 0,
-      moveDir = 0,
-      threshold = 0,
-      facing = 1,
-      start = 4,
-      randomturn = 0,
-      working = 0,
-      canWork = 0,
-      timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc.
-      location = "overworld",
-      dialogue = 0,
-      mapping = {added = 0, dialogueCount = 0, notes = ""},
-      name = "Finch", --4
-      status = "boss",
-      n = 1, --stage in single conversation
-      c = 1,
-      stats = {trust = {player = 5, Mint = 5, Fennel = 5, Lark = 70, Cress = 5, Agave = 0, Tarragon = 5, Robin = 30, Durian = 5},
-              battlestats = {maxhp = 3, damage = 1, moves = 1}
-            },
-      actions = {key = 0, index = 0, x = 0, y = 0, on = 0},
-      next = {{x = 16*gridsize, y = 21*gridsize, facing = 4, location = "overworld", canWork = 0},
-              {x = 16*gridsize, y = 20*gridsize, facing = 4, location = "overworld", canWork = 0},
-              {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
-              {x = 16*gridsize, y = 21*gridsize, facing = 4, location = "overworld", canWork = 0}},
-      animations = {walk = {{anim = newAnimation(animsheet1, 12*16, 4, 16, 16, .5 ), name = "up", loop = 0},
-                            {anim = newAnimation(animsheet1, 13*16, 4, 16, 16, .5 ), name = "down", loop = 0},
-                            {anim = newAnimation(animsheet1, 14*16, 4, 16, 16, .55 ), name = "left", loop = 0},
-                            {anim = newAnimation(animsheet1, 15*16, 4, 16, 16, .55 ), name = "right", loop = 0}},
-              act = {{anim = newAnimation(animsheet_act, 12*16, 4, 16, 16, .6), name = "up", loop = 0, current = 0, running = 0, count = 0},
-              {anim = newAnimation(animsheet_act, 13*16, 4, 16, 16, .6), name = "down", loop = 0, current = 0, running = 0, count = 0},
-              {anim = newAnimation(animsheet_act, 14*16, 4, 16, 16, .6), name = "left", loop = 0, current = 0, running = 0, count = 0},
-              {anim = newAnimation(animsheet_act, 15*16, 4, 16, 16, .6), name = "right", loop = 0, current = 0, running = 0, count = 0}}
-            }
-    },
-    {
-      grid_x = 10*gridsize,
-      grid_y = 27*gridsize,
-      act_x = 10*gridsize,
-      act_y = 27*gridsize,
-      speed = 30,
-      canMove = 1,
-      moveDir = 0,
-      threshold = 0,
-      facing = 1,
-      start = 4,
-      randomturn = 1,
-      working = 0,
-      canWork = 0,
-      timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc.
-      location = "overworld",
-      dialogue = 0,
-      mapping = {added = 0, dialogueCount = 0, notes = ""},
-      name = "Lark", -- 3
-      status = "boss",
-      n = 1, --stage in single conversation
-      c = 1,
-      stats = {trust = {player = 10, Mint = 10, Fennel = 10, Finch = 80, Agave = 10, Tarragon = 10, Robin = 20, Durian = 10},
-              battlestats = {maxhp = 5, damage = 1,  moves = 2}
-            },
-      actions = {key = 0, index = 0, x = 0, y = 0, on = 0},
-      next = {{x = 10*gridsize, y = 27*gridsize, facing = 4, location = "overworld", canWork = 0},
-              {x = 0, y = 0, facing = 0, location = "offscreen", canWork = 0},
-              {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
-              {x = 10*gridsize, y = 27*gridsize, facing = 4, location = "overworld", canWork = 0}
-            },
-      animations = {walk = {{anim = newAnimation(animsheet1, 16*16, 4, 16, 16, .5 ), name = "up", loop = 0},
-                            {anim = newAnimation(animsheet1, 17*16, 4, 16, 16, .5 ), name = "down", loop = 0},
-                            {anim = newAnimation(animsheet1, 18*16, 4, 16, 16, .55 ), name = "left", loop = 0},
-                            {anim = newAnimation(animsheet1, 19*16, 4, 16, 16, .55 ), name = "right", loop = 0}},
-              act = {{anim = newAnimation(animsheet_act, 16*16, 4, 16, 16, .6), name = "up", loop = 0, current = 0, running = 0, count = 0},
-              {anim = newAnimation(animsheet_act, 17*16, 4, 16, 16, .6), name = "down", loop = 0, current = 0, running = 0, count = 0},
-              {anim = newAnimation(animsheet_act, 18*16, 4, 16, 16, .6), name = "left", loop = 0, current = 0, running = 0, count = 0},
-              {anim = newAnimation(animsheet_act, 19*16, 4, 16, 16, .6), name = "right", loop = 0, current = 0, running = 0, count = 0}}
-            }
-    },
-    {
       grid_x = 21*gridsize,
       grid_y = 26*gridsize,
       act_x = 21*gridsize,
@@ -409,6 +334,7 @@ npcs = {{
       location = "overworld",
       dialogue = 0,
       mapping = {added = 0, dialogueCount = 0, notes = ""},
+      info = {pos = "Field Hand", time = 2, descriptionStart = "Shy and quiet, mostly keeps to herself."},
       name = "Cress", -- 5
       status = "worker",
       n = 1, --stage in single conversation
@@ -450,6 +376,7 @@ npcs = {{
       location = "overworld",
       dialogue = 0,
       mapping = {added = 0, dialogueCount = 0, notes = ""},
+      info = {pos = "Field Hand", descriptionStart = "Kind, often looks out for the younger field hands."},
       name = "Agave", --6
       status = "worker",
       n = 1, --stage in single conversation
@@ -491,6 +418,7 @@ npcs = {{
       location = "overworld",
       dialogue = 0,
       mapping = {added = 0, dialogueCount = 0, notes = ""},
+      info = {pos = "Field Hand", descriptionStart = "Doesn't talk much, hard to read."},
       name = "Tarragon", --7
       status = "worker",
       n = 1, --stage in single conversation
@@ -532,6 +460,7 @@ npcs = {{
       location = "overworld",
       dialogue = 0,
       mapping = {added = 0, dialogueCount = 0, notes = ""},
+      info = {pos = "Field Hand", descriptionStart = "Mean, especially to girls."},
       name = "Robin", --8
       status = "worker",
       n = 1, --stage in single conversation
@@ -573,6 +502,7 @@ npcs = {{
       location = "offscreen",
       dialogue = 0,
       mapping = {added = 0, dialogueCount = 0, notes = ""},
+      info = {pos = "Field Hand", descriptionStart = "Loud and obnoxious, full of himself."},
       name = "Durian", --9
       status = "worker",
       n = 1, --stage in single conversation
@@ -614,6 +544,7 @@ npcs = {{
       location = "offscreen",
       dialogue = 0,
       mapping = {added = 0, dialogueCount = 0, notes = ""},
+      info = {pos = "Field Hand, Dorm Supervisor", descriptionStart = "My uncle. He worries a lot."},
       name = "Brier", --9
       status = "worker",
       n = 1, --stage in single conversation
@@ -655,6 +586,7 @@ npcs = {{
       location = "offscreen",
       dialogue = 0,
       mapping = {added = 0, dialogueCount = 0, notes = ""},
+      info = {pos = "Field Hand", descriptionStart = "A bit strange, very ambitious."},
       name = "Lotus", --9
       status = "worker",
       n = 1, --stage in single conversation
@@ -696,7 +628,8 @@ npcs = {{
       location = "dininghall",
       dialogue = 0,
       mapping = {added = 0, dialogueCount = 0, notes = ""},
-      name = "Eucalyptus", --9
+      info = {pos = "Cook", descriptionStart = "Mostly nice, but don't get on her bad side."},
+      name = "Euca",
       status = "worker",
       offset = {x = 0, y = 16},
       n = 1, --stage in single conversation
@@ -721,6 +654,89 @@ npcs = {{
             }
     },
     {
+      grid_x = 16*gridsize,
+      grid_y = 21*gridsize,
+      act_x = 16*gridsize,
+      act_y = 21*gridsize,
+      speed = 30,
+      canMove = 0,
+      moveDir = 0,
+      threshold = 0,
+      facing = 1,
+      start = 4,
+      randomturn = 0,
+      working = 0,
+      canWork = 0,
+      timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc.
+      location = "overworld",
+      dialogue = 0,
+      mapping = {added = 0, dialogueCount = 0, notes = ""},
+      info = {pos = "Guard", descriptionStart = "A bully, avoid as much as possible."},
+      name = "Finch", --4
+      status = "boss",
+      n = 1, --stage in single conversation
+      c = 1,
+      stats = {trust = {player = 5, Mint = 5, Fennel = 5, Lark = 70, Cress = 5, Agave = 0, Tarragon = 5, Robin = 30, Durian = 5},
+              battlestats = {maxhp = 3, damage = 1, moves = 1}
+            },
+      actions = {key = 0, index = 0, x = 0, y = 0, on = 0},
+      next = {{x = 16*gridsize, y = 21*gridsize, facing = 4, location = "overworld", canWork = 0},
+              {x = 16*gridsize, y = 20*gridsize, facing = 4, location = "overworld", canWork = 0},
+              {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
+              {x = 16*gridsize, y = 21*gridsize, facing = 4, location = "overworld", canWork = 0}},
+      animations = {walk = {{anim = newAnimation(animsheet1, 12*16, 4, 16, 16, .5 ), name = "up", loop = 0},
+                            {anim = newAnimation(animsheet1, 13*16, 4, 16, 16, .5 ), name = "down", loop = 0},
+                            {anim = newAnimation(animsheet1, 14*16, 4, 16, 16, .55 ), name = "left", loop = 0},
+                            {anim = newAnimation(animsheet1, 15*16, 4, 16, 16, .55 ), name = "right", loop = 0}},
+              act = {{anim = newAnimation(animsheet_act, 12*16, 4, 16, 16, .6), name = "up", loop = 0, current = 0, running = 0, count = 0},
+              {anim = newAnimation(animsheet_act, 13*16, 4, 16, 16, .6), name = "down", loop = 0, current = 0, running = 0, count = 0},
+              {anim = newAnimation(animsheet_act, 14*16, 4, 16, 16, .6), name = "left", loop = 0, current = 0, running = 0, count = 0},
+              {anim = newAnimation(animsheet_act, 15*16, 4, 16, 16, .6), name = "right", loop = 0, current = 0, running = 0, count = 0}}
+            }
+    },
+    {
+      grid_x = 10*gridsize,
+      grid_y = 27*gridsize,
+      act_x = 10*gridsize,
+      act_y = 27*gridsize,
+      speed = 30,
+      canMove = 1,
+      moveDir = 0,
+      threshold = 0,
+      facing = 1,
+      start = 4,
+      randomturn = 1,
+      working = 0,
+      canWork = 0,
+      timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc.
+      location = "overworld",
+      dialogue = 0,
+      mapping = {added = 0, dialogueCount = 0, notes = ""},
+      info = {pos = "Foreman", descriptionStart = "The worst."},
+      name = "Lark", -- 3
+      status = "boss",
+      n = 1, --stage in single conversation
+      c = 1,
+      stats = {trust = {player = 10, Mint = 10, Fennel = 10, Finch = 80, Agave = 10, Tarragon = 10, Robin = 20, Durian = 10},
+              battlestats = {maxhp = 5, damage = 1,  moves = 2}
+            },
+      actions = {key = 0, index = 0, x = 0, y = 0, on = 0},
+      next = {{x = 10*gridsize, y = 27*gridsize, facing = 4, location = "overworld", canWork = 0},
+              {x = 0, y = 0, facing = 0, location = "offscreen", canWork = 0},
+              {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
+              {x = 10*gridsize, y = 27*gridsize, facing = 4, location = "overworld", canWork = 0}
+            },
+      animations = {walk = {{anim = newAnimation(animsheet1, 16*16, 4, 16, 16, .5 ), name = "up", loop = 0},
+                            {anim = newAnimation(animsheet1, 17*16, 4, 16, 16, .5 ), name = "down", loop = 0},
+                            {anim = newAnimation(animsheet1, 18*16, 4, 16, 16, .55 ), name = "left", loop = 0},
+                            {anim = newAnimation(animsheet1, 19*16, 4, 16, 16, .55 ), name = "right", loop = 0}},
+              act = {{anim = newAnimation(animsheet_act, 16*16, 4, 16, 16, .6), name = "up", loop = 0, current = 0, running = 0, count = 0},
+              {anim = newAnimation(animsheet_act, 17*16, 4, 16, 16, .6), name = "down", loop = 0, current = 0, running = 0, count = 0},
+              {anim = newAnimation(animsheet_act, 18*16, 4, 16, 16, .6), name = "left", loop = 0, current = 0, running = 0, count = 0},
+              {anim = newAnimation(animsheet_act, 19*16, 4, 16, 16, .6), name = "right", loop = 0, current = 0, running = 0, count = 0}}
+            }
+    },
+    {
       grid_x = 14*gridsize,
       grid_y = 10*gridsize,
       act_x = 14*gridsize,
@@ -738,6 +754,7 @@ npcs = {{
       location = "dininghall",
       dialogue = 0,
       mapping = {added = 0, dialogueCount = 0, notes = ""},
+      info = {pos = "Guard", descriptionStart = "Suspicious, takes his job too seriously."},
       name = "Hawk", --9
       status = "boss",
       n = 1, --stage in single conversation
@@ -764,6 +781,7 @@ npcs = {{
 }
 
 trustTable = {}
+socialMap = {}
 
 storedLocation = {x = 0, y = 0}
 storedIndex = {0}
@@ -983,7 +1001,7 @@ cutsceneList ={{
   triggered = false,
   type = 1, -- npc talks to you
   move = true, --does the NPC move?
-  npc = 4, --which NPC
+  npc = "Lark", --which NPC
   target = player, -- where do they move
   facing = {1}, --what direction are they facing at the end
   noden = 1, --what node are they walking to next
@@ -1000,7 +1018,7 @@ cutsceneList ={{
   triggered = false,
   type = 1, -- npc talks to you
   move = true, --does the NPC move?
-  npc = 6, --which NPC
+  npc = "Agave", --which NPC
   target = player, -- where do they move
   facing = {1}, --what direction are they facing at the end
   noden = 1, --what node are they walking to next
@@ -1026,7 +1044,7 @@ cutsceneList ={{
   triggered = false,
   type = 1, -- npc talks
   move = false, --does the NPC move?
-  npc = 1, --which NPC
+  npc = "Fennel", --which NPC
   dialoguekey = 1,
   fadeout = 3,
   black = 1,

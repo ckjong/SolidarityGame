@@ -40,6 +40,11 @@ function updateActionsTable(tbl, k, i, n)
 	if npcs[n].working == 1 then
 		tbl[k][i].running = 1
 		tbl[k][i].used = 1
+	-- else
+	-- 	if tbl[k][i].running == 1 then
+	-- 		tbl[k][i].running = 0
+	-- 		npcs[n].timer.ct = 0
+	-- 	end
 	end
 end
 
@@ -212,7 +217,7 @@ function useItem(i, item)
 	local text = ""
 	if itemEffects[i] ~= nil then
 		itemEffects[i].func(unpack(itemEffects[i].par))
-		menuView = 0
+		menuEscape()
 		usedItem = 1
 		startAction(i, itemEffects[i].text)
 		if itemEffects[i].type == "once" then
@@ -273,11 +278,18 @@ function setBubble(b, c)
 	if b == "barrelSmBerries" or b == "barrelLgBerries" then
 		bubble.static = 1
 		bubble.timer = 1.2
+		bubble.type = 1
 		bubble.x, bubble.y = movingObjectData[currentLocation][b][c].x, movingObjectData[currentLocation][b][c].y - 16
 	else
 		bubble.static = 0
 		bubble.timer = 1
-		bubble.x, bubble.y = player.act_x, player.act_y - 17
+		if player.facing == 1 then
+			bubble.type = 4
+			bubble.x, bubble.y = player.act_x, player.act_y + 17
+		else
+			bubble.type = 1
+			bubble.x, bubble.y = player.act_x, player.act_y - 17
+		end
 	end
 end
 
@@ -511,10 +523,19 @@ function resetBerries()
 	end
 	for k, v in pairs(movingObjectData.overworld.plantSmBerries) do
 		movingObjectData.overworld.plantSmBerries[k].anim = newAnimation(animsheet2, 0, 3, 16, 16, .3)
+		movingObjectData.overworld.plantSmBerries[k].trigger = 0
+		movingObjectData.overworld.plantSmBerries[k].picked = 0
 	end
 	for k, v in pairs(movingObjectData.overworld.plantLgBerries) do
 		movingObjectData.overworld.plantLgBerries[k].anim = newAnimation(animsheet2, 4*gridsize, 3, 16, 16, .3)
+		movingObjectData.overworld.plantLgBerries[k].trigger = 0
+		movingObjectData.overworld.plantLgBerries[k].picked = 0
 	end
+end
+
+function resetBarrels()
+	objectInventory.barrelSmBerries = 0
+	objectInventory.barrelLgBerries = 0
 end
 
 itemEffects = {platefull2 = {type = "once", description = "Restores Energy", text = 1, func = energyMod, par = {100}}

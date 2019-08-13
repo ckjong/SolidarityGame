@@ -140,7 +140,9 @@ function clearTempBlocks()
 		if tempBlocks[l] ~= nil then
 			for i = 1, #tempBlocks[l] do
 				if tempBlocks[l][i].on == 0 then
-					removeBlock(tempBlocks[l][i].x, tempBlocks[l][i].y)
+					if currentLocation == l then
+						removeBlock(tempBlocks[l][i].x, tempBlocks[l][i].y)
+					end
 				end
 			end
 		end

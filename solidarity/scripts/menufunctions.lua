@@ -1,9 +1,11 @@
 function menuEscape()
-  menu.position[1] = 1
-  menu.position[2] = 1
+  print("escape menu")
+  menu.position = {1, 1, 1}
+  menu.grid = {1,1}
   menu.currentTab = "inventory"
   player.canMove = 1
   menuView = 0
+  print("menu.grid: " .. menu.grid[1] .. menu.grid[2])
 end
 
 function switchTabs(key)
@@ -12,6 +14,8 @@ function switchTabs(key)
       if key == "right" then
         if i < menu.tabNum then
           i = i + 1
+          menu.grid = {1, 1}
+          menu.position[2] = 1
           return menu.allTabs[i]
         else
           i = 1
@@ -20,6 +24,8 @@ function switchTabs(key)
       elseif key == "left" then
         if i > 1 then
           i = i - 1
+          menu.grid = {1, 1}
+          menu.position[2] = 1
           return menu.allTabs[i]
         else
           i = menu.tabNum
@@ -30,32 +36,61 @@ function switchTabs(key)
   end
 end
 
-function inventorySelect(key)
+function inventorySelect(key, num, tab)
+  print("menu.position[1] " .. menu.position[1])
 	if key == "right" then
-		if menu.position[1] == 2 then
-			if menu.position[2] < #player.inventory then
-				menu.position[2] = menu.position[2] + 1
-			end
+		if menu.position[2] < num then
+			menu.position[2] = menu.position[2] + 1
+      if tab == "map1" then
+        if menu.grid[1] < menu.tabData[tab].c then
+          print("add to grid[1]")
+          menu.grid[1] = menu.grid[1] + 1
+        else
+          if menu.grid[2] < menu.tabData[tab].r then
+            print("add to grid[2]")
+            menu.grid[2] = menu.grid[2] + 1
+            menu.grid[1] = 1
+          end
+        end
+      end
 		end
 	elseif key == "left" then
-		if menu.position[1] == 2 then
-			if menu.position[2] > 1 then
-				menu.position[2] = menu.position[2] - 1
-			end
+		if menu.position[2] > 1 then
+			menu.position[2] = menu.position[2] - 1
+      if tab == "map1" then
+        print("social map ")
+        if menu.grid[1] > 1 then
+          print("subtract from grid[1]")
+          menu.grid[1] = menu.grid[1] - 1
+        else
+          if menu.grid[2] > 1 then
+            print("subtract from grid[2]")
+            menu.grid[2] = menu.grid[2] - 1
+            menu.grid[1] = menu.tabData[tab].c
+          end
+        end
+      end
 		end
-	-- elseif key == "up" then
-	-- 	if menu.position[1] == 3 then
-	-- 		if menu.position[3] > 1 then
-	-- 			menu.position[3] = menu.position[3] - 1
-	-- 		end
-	-- 	end
-	-- elseif key == "down" then
-	-- 	if menu.position[1] == 3 then
-	-- 		if menu.position[3] < 2 then
-	-- 			menu.position[3] = menu.position[3] + 1
-	-- 		end
-	-- 	end
+  elseif key == "up" then
+    if tab == "map1" and menu.position[1] == 2 then
+      if menu.grid[2] > 1 then
+        print("subtract from grid[2]")
+        menu.grid[2] = menu.grid[2] - 1
+        menu.position[2] = menu.position[2] - menu.tabData[tab].c
+      end
+    end
+  elseif key == "down" then
+    if tab == "map1" and menu.position[1] == 2 then
+      if menu.grid[2] < menu.tabData[tab].r then
+        if menu.position[2] + menu.tabData[tab].c <= num then
+          print("add to grid[2]")
+          menu.grid[2] = menu.grid[2] + 1
+          menu.position[2] = menu.position[2] + menu.tabData[tab].c
+        end
+      end
+    end
 	end
+  print("grid " .. menu.grid[1] .. menu.grid[2])
 end
 
 --move betweeen levels of the menu
@@ -83,6 +118,12 @@ function menuHierarchy(key)
           menu.total = 2
         end
 			end
+    elseif menu.currentTab == "map1" then
+      if #socialMap >= 1 then
+        menu.total = 3
+      else
+        menu.total = 1
+      end
 		else
 			menu.total = 1
 		end
@@ -101,8 +142,6 @@ function itemMenu()
 		if menu.position[3] == 1 then
 			print("menu position[1]: " .. menu.position[1])
 			useItem(player.inventory[i].icon, player.inventory[i].item)
-			menu.position[1] = 2
-			menu.position[3] = 1
 			if player.inventory[i] == nil then
 				menu.position[2] = 1
 			end

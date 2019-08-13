@@ -234,6 +234,7 @@ function DialogueSetup(tbl, n) -- iterate through npcs table, lookup text in NPC
 					currentspeaker = dialOpt.logic.speaker
 					if tbl[i].mapping.added == 0 then
 						tbl[i].mapping.added = 1
+						table.insert(socialMap, tbl[i])
 					end
 					if dialOpt.logic.cond == true then
 						if dialOpt.logic.display == 1 then
@@ -299,6 +300,7 @@ end
 
 function dialogueFreeze(tbl)
 	if dialogueMode == 0 then
+		tbl.facing = tbl.start
 		tbl.dialogue = 0
 		wait.triggered = 1
 		dialogueMode = 1
@@ -307,6 +309,7 @@ function dialogueFreeze(tbl)
 		text = "I'm too tired to talk."
 	else
 		print("dialogueFreeze set dialogueMode to 0")
+		tbl.facing = tbl.start
 		tbl.dialogue = 0
 		dialogueMode = 0
 		player.canMove = 1

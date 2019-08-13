@@ -114,8 +114,8 @@ NPCdialogue = {
   Lotus = {[1] = {text = {"Shhh. I'm in the middle of a water ceremony. Please don't interrupt."},
                 logic = {next = 1, speaker = "Lotus", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
         },
-  Eucalyptus = {[1] = {text = {"Sorry sprout, dinner's over."},
-                logic = {next = 1, speaker = "Eucalyptus", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
+  Euca = {[1] = {text = {"Sorry sprout, dinner's over."},
+                logic = {next = 1, speaker = "Euca", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
         },
   Hawk = {[1] = {text = {"Stop sneaking around."},
                 logic = {next = 1, speaker = "Hawk", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
@@ -193,8 +193,8 @@ NPCdialogue = {
            [2] = {text = {"*sniff* *sniff*"},
                 logic = {next = 2, speaker = "Lotus", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
         },
-  Eucalyptus = {[1] = {text = {"Sorry sprout, dinner's over."},
-                logic = {next = 1, speaker = "Eucalyptus", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
+  Euca = {[1] = {text = {"Sorry sprout, dinner's over."},
+                logic = {next = 1, speaker = "Euca", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
         },
   Hawk = {[1] = {text = {"Stop sneaking around."},
                 logic = {next = 1, speaker = "Hawk", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
@@ -276,8 +276,8 @@ NPCdialogue = {
            [4] = {text = {"The tides are changing, I can feel it."},
                logic = {next = 4, speaker = "Lotus", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
         },
-  Eucalyptus = {[1] = {text = {"Late again huh?"},
-                logic = {next = 1, speaker = "Eucalyptus", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
+  Euca = {[1] = {text = {"Late again huh?"},
+                logic = {next = 1, speaker = "Euca", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
         },
   Hawk = {[1] = {text = {"Looks like you missed breakfast. Too bad."},
                 logic = {next = 1, speaker = "Hawk", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
@@ -288,8 +288,8 @@ NPCdialogue = {
 
 objectText = {
   gardeningSign = {text = {"Field Supplies"}, logic = {off = false}},
-  kitchenSign = {text = {"Dining Hall"}, logic = {off = false}},
-  dormitorySign = {text = {"Dormitory"}, logic = {off = false}},
+  kitchenSign = {text = {"Dining Hall - Field Workers"}, logic = {off = false}},
+  dormitorySign = {text = {"Dormitory - Field Workers"}, logic = {off = false}},
   storeSign = {text = {"The Shiny Coin: Your Friendly Local Store and Tavern"}, logic = {off = false}},
   gardeningShed = {text = {"It's locked."}, logic = {off = false}},
   playerBed = {text = {"It's my bed.", "I still have things to do.", "Time for bed?"}, logic = {off = false, yesno = false}},

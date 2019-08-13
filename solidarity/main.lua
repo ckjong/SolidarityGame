@@ -48,7 +48,10 @@ function love.load()
 	font = love.graphics.setNewFont("fonts/pixel.ttf", 8)
 	menuW, menuH = 14*gridsize, 7*gridsize
 	canvas = love.graphics.newCanvas(menuW, menuH)
-	formBox(menuW, menuH)
+	formBox(menuW, menuH, canvas)
+	menuW2, menuH2 = 12*gridsize, 8*gridsize
+	canvas2 = love.graphics.newCanvas(menuW2, menuH2)
+	formBox(menuW2, menuH2, canvas2)
 	lockDialogue(locationTriggers.overworld)
 end
 
@@ -273,15 +276,15 @@ function love.draw()
 
 		--render dialogue box
 		love.graphics.setColor(255, 255, 255)
-		love.graphics.draw(ui.textboxbg, boxposx, boxposy)
+		love.graphics.draw(ui.textboxbg, boxposx, boxposy -2)
 
 		--draw name of character speaking and text box
-		drawName(boxposx, boxposy)
+		drawName(boxposx + 48, boxposy - 12, currentspeaker)
 
 		if dialogueMode == 1 then
 			drawPortrait(currentspeaker, boxposx-2, boxposy, portraitsheet1)
 		end
-		love.graphics.draw(ui.textboxbottom, boxposx, boxposy)
+		love.graphics.draw(ui.textboxbottom, boxposx, boxposy - 2)
 		--draw z or arrow if more text
 		drawArrow(boxposx, boxposy, scale.y, recwidth)
 		--draw arrow for choices, shift text if arrow present
@@ -350,7 +353,11 @@ function love.keypressed(key)
 		else
 			if menu.position[1] == 3 then
 				if menu.currentTab == "inventory" then
-					inventorySelect(key)
+					inventorySelect(key, #player.inventory)
+				end
+			elseif menu.position[1] == 2 then
+				if menu.currentTab == "map1" then
+					inventorySelect(key, #socialMap, menu.currentTab)
 				end
 			end
 		end
@@ -359,9 +366,14 @@ function love.keypressed(key)
 		if menuView == 1 then
 			if menu.position[1] == 1 then
 				menu.currentTab = switchTabs(key)
-			elseif menu.position[1] == 2 then
-				if menu.currentTab == "inventory" then
-					inventorySelect(key)
+			elseif menu.position[1] > 1 then
+				if menu.currentTab == "map1" then
+					inventorySelect(key, #socialMap, menu.currentTab)
+				end
+				if menu.position[1] == 2 then
+					if menu.currentTab == "inventory" then
+						inventorySelect(key, #player.inventory, menu.currentTab)
+					end
 				end
 			end
 		end
@@ -400,6 +412,7 @@ function love.keypressed(key)
 			scale.x, scale.y = getScale()
 		end
 	end
+
 	if key == "escape" then
 		if menuView == 0 then
 			removeTempBlocks("overworld", 2)
@@ -410,6 +423,9 @@ function love.keypressed(key)
 		end
 	end
 
+	if key == "r" then
+		love.event.quit( "restart" )
+	end
 
 		-- ====CHEAT KEYS===
 		--initiate debug/map editing mode
@@ -467,6 +483,13 @@ function love.keypressed(key)
 
 				if key == "6" then
 					addRemoveItem("You got 60 Plum Berries", "Plum Berries", 60, "plantSmBerries")
+				end
+
+				if key == "9" then
+					for i = 1, #npcs do
+						table.insert(socialMap, npcs[i])
+						npcs[i].mapping.added = 1
+					end
 				end
 
 				if key == "l" then
