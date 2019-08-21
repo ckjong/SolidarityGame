@@ -162,6 +162,18 @@ function itemMenu()
 	end
 end
 
+function setTitleScreen(n)
+  if n == 1 then
+    player.canMove = 0
+    titleScreen = 1
+    print("title screen on")
+  elseif n == 0 then
+    player.canMove = 1
+    titleScreen = 0
+    print("title screen off")
+  end
+end
+
 function saveGame(name, data)
   f = assert(io.open(name, "w"))
   f:write(data)

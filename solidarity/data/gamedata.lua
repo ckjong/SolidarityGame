@@ -1,3 +1,5 @@
+titleScreen = 1
+title = "Solidarity"
 gameStage = 0
 keyInput = 1
 freeze = {action = 0, dialogue = 0} -- 2 = stage freeze, 1 = energy too low, 0 = no freeze
@@ -54,9 +56,13 @@ mapFile1 = nil
   love.graphics.setColor(0, 0, 0)
   love.graphics.setBackgroundColor(255,255,255)
 
+  titleFont = love.graphics.newFont("fonts/yoster-island.regular.ttf", 24)
+  font = love.graphics.setNewFont("fonts/pixel.ttf", 8)
+
   -- scale for graphics
   scale = {x=4, y=4}
 
+  -- titleImage = love.graphics.newImage("images/solidarity_title.png")
   bg = {overworld = love.graphics.newImage("images/solidarity_overworld.png"),
         overworldnight = love.graphics.newImage("images/solidarity_overworld_night.png"),
         gardeningShed = love.graphics.newImage("images/gardeningshedbg.png"),
@@ -88,6 +94,7 @@ mapFile1 = nil
                  Lotus = love.graphics.newQuad(11*46, 0, 46, 46, portraitsheet1:getDimensions()),
                  Euca = love.graphics.newQuad(12*46, 0, 46, 46, portraitsheet1:getDimensions()),
                  Hawk = love.graphics.newQuad(13*46, 0, 46, 46, portraitsheet1:getDimensions()),
+                 Ani = love.graphics.newQuad(14*46, 0, 46, 46, portraitsheet1:getDimensions()),
                  Kousa = love.graphics.newQuad(0, 1*46, 46, 46, portraitsheet1:getDimensions()),
                  Tulsi = love.graphics.newQuad(1*46, 1*46, 46, 46, portraitsheet1:getDimensions())
                 }
@@ -219,7 +226,7 @@ player = {
   actions = {current = 0, max = 100, rate = 10, x = 0, y = 0, key = 0, index = 0},
   next = {{x = 0, y = 0, facing = 0, location = "overworld"},
           {x = 0, y = 0, facing = 0, location = "dininghall"},
-          {x = 15*gridsize, y = 16*gridsize, facing = 3, location = "dormitory"},
+          {x = 14*gridsize, y = 16*gridsize, facing = 3, location = "dormitory"},
           {x = 0, y = 0, facing = 0, location = "dormitory"}
         },
   animations = {walk = {{anim = newAnimation(animsheet1, 0, 4, 16, 16, .50), name = "up", loop = 0},
@@ -250,8 +257,8 @@ npcs = {{
   timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc.
   location = "overworld",
   dialogue = 0, -- curently in dialogue
-  mapping = {added = 0, dialogueCount = 0, notes = ""},
-  info = {pos = "Field Hand", time = 4, descriptionStart = "My best friend. She's very responsible, sometimes too responsible."},
+  mapping = {added = 0, dialogueCount = 0},
+  info = {pos = "Field Hand", time = 4, notes = " My best friend.", comp = "Plantation"},
   name = "Fennel",
   status = "worker",
   n = 1, --stage in single conversation
@@ -292,8 +299,8 @@ npcs = {{
     timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc.
     location = "overworld",
     dialogue = 0,
-    mapping = {added = 0, dialogueCount = 0, notes = ""},
-    info = {pos = "Field Hand", time = 7, descriptionStart = "My childhood friend. They're kind and generous, but easily distracted."},
+    mapping = {added = 0, dialogueCount = 0},
+    info = {pos = "Field Hand", time = 7, notes = " An old friend.", comp = "Plantation"},
     name = "Mint", --2
     status = "worker",
     n = 1,
@@ -333,8 +340,8 @@ npcs = {{
       timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc.
       location = "overworld",
       dialogue = 0,
-      mapping = {added = 0, dialogueCount = 0, notes = ""},
-      info = {pos = "Field Hand", time = 2, descriptionStart = "Shy and quiet, mostly keeps to herself."},
+      mapping = {added = 0, dialogueCount = 0},
+      info = {pos = "Field Hand", time = 2, notes = "", comp = "Plantation"},
       name = "Cress", -- 5
       status = "worker",
       n = 1, --stage in single conversation
@@ -375,8 +382,8 @@ npcs = {{
       timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc.
       location = "overworld",
       dialogue = 0,
-      mapping = {added = 0, dialogueCount = 0, notes = ""},
-      info = {pos = "Field Hand", descriptionStart = "Kind, often looks out for the younger field hands."},
+      mapping = {added = 0, dialogueCount = 0},
+      info = {pos = "Field Hand", notes = "", comp = "Plantation"},
       name = "Agave", --6
       status = "worker",
       n = 1, --stage in single conversation
@@ -417,8 +424,8 @@ npcs = {{
       timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc.
       location = "overworld",
       dialogue = 0,
-      mapping = {added = 0, dialogueCount = 0, notes = ""},
-      info = {pos = "Field Hand", descriptionStart = "Doesn't talk much, hard to read."},
+      mapping = {added = 0, dialogueCount = 0},
+      info = {pos = "Field Hand", notes = "", comp = "Plantation"},
       name = "Tarragon", --7
       status = "worker",
       n = 1, --stage in single conversation
@@ -459,8 +466,8 @@ npcs = {{
       timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc.
       location = "overworld",
       dialogue = 0,
-      mapping = {added = 0, dialogueCount = 0, notes = ""},
-      info = {pos = "Field Hand", descriptionStart = "Mean, especially to girls."},
+      mapping = {added = 0, dialogueCount = 0},
+      info = {pos = "Field Hand", notes = "", comp = "Plantation"},
       name = "Robin", --8
       status = "worker",
       n = 1, --stage in single conversation
@@ -501,8 +508,8 @@ npcs = {{
       timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc., current time, max time, wait time
       location = "offscreen",
       dialogue = 0,
-      mapping = {added = 0, dialogueCount = 0, notes = ""},
-      info = {pos = "Field Hand", descriptionStart = "Loud and obnoxious, full of himself."},
+      mapping = {added = 0, dialogueCount = 0},
+      info = {pos = "Field Hand", notes = "", comp = "Plantation"},
       name = "Durian", --9
       status = "worker",
       n = 1, --stage in single conversation
@@ -543,8 +550,8 @@ npcs = {{
       timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc., current time, max time, wait time
       location = "offscreen",
       dialogue = 0,
-      mapping = {added = 0, dialogueCount = 0, notes = ""},
-      info = {pos = "Field Hand, Dorm Supervisor", descriptionStart = "My uncle. He worries a lot."},
+      mapping = {added = 0, dialogueCount = 0},
+      info = {pos = "Field Hand, Dorm Supervisor", notes = " My uncle.", comp = "Plantation"},
       name = "Brier", --9
       status = "worker",
       n = 1, --stage in single conversation
@@ -585,8 +592,8 @@ npcs = {{
       timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc., current time, max time, wait time
       location = "offscreen",
       dialogue = 0,
-      mapping = {added = 0, dialogueCount = 0, notes = ""},
-      info = {pos = "Field Hand", descriptionStart = "A bit strange, very ambitious."},
+      mapping = {added = 0, dialogueCount = 0},
+      info = {pos = "Field Hand", notes = "", comp = "Plantation"},
       name = "Lotus", --9
       status = "worker",
       n = 1, --stage in single conversation
@@ -627,8 +634,8 @@ npcs = {{
       timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc., current time, max time, wait time
       location = "dininghall",
       dialogue = 0,
-      mapping = {added = 0, dialogueCount = 0, notes = ""},
-      info = {pos = "Cook", descriptionStart = "Mostly nice, but don't get on her bad side."},
+      mapping = {added = 0, dialogueCount = 0},
+      info = {pos = "Cook", notes = "", comp = "Plantation"},
       name = "Euca",
       status = "worker",
       offset = {x = 0, y = 16},
@@ -670,8 +677,8 @@ npcs = {{
       timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc.
       location = "overworld",
       dialogue = 0,
-      mapping = {added = 0, dialogueCount = 0, notes = ""},
-      info = {pos = "Guard", descriptionStart = "A bully, avoid as much as possible."},
+      mapping = {added = 0, dialogueCount = 0},
+      info = {pos = "Guard", notes = "", comp = "Plantation"},
       name = "Finch", --4
       status = "boss",
       n = 1, --stage in single conversation
@@ -711,8 +718,8 @@ npcs = {{
       timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc.
       location = "overworld",
       dialogue = 0,
-      mapping = {added = 0, dialogueCount = 0, notes = ""},
-      info = {pos = "Foreman", descriptionStart = "The worst."},
+      mapping = {added = 0, dialogueCount = 0},
+      info = {pos = "Foreman", notes = "", comp = "Plantation"},
       name = "Lark", -- 3
       status = "boss",
       n = 1, --stage in single conversation
@@ -753,9 +760,9 @@ npcs = {{
       timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc., current time, max time, wait time
       location = "dininghall",
       dialogue = 0,
-      mapping = {added = 0, dialogueCount = 0, notes = ""},
-      info = {pos = "Guard", descriptionStart = "Suspicious, takes his job too seriously."},
-      name = "Hawk", --9
+      mapping = {added = 0, dialogueCount = 0},
+      info = {pos = "Guard", notes = "", comp = "Plantation"},
+      name = "Hawk",
       status = "boss",
       n = 1, --stage in single conversation
       c = 1,
@@ -777,10 +784,70 @@ npcs = {{
               {anim = newAnimation(animsheet_act, 54*16, 4, 16, 16, .6), name = "left", loop = 0, current = 0, running = 0, count = 0},
               {anim = newAnimation(animsheet_act, 55*16, 4, 16, 16, .6), name = "right", loop = 0, current = 0, running = 0, count = 0}}
             }
+    },
+    {
+      grid_x = 22*gridsize,
+      grid_y = 31*gridsize,
+      act_x = 22*gridsize,
+      act_y = 31*gridsize,
+      speed = 30,
+      canMove = 0,
+      moveDir = 0,
+      threshold = 0,
+      facing = 1,
+      start = 2,
+      randomturn = 0,
+      working = 0,
+      canWork = 0,
+      timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc., current time, max time, wait time
+      location = "offscreen",
+      dialogue = 0,
+      mapping = {added = 0, dialogueCount = 0},
+      info = {pos = "Plantation Manager", notes = "", comp = "Plantation"},
+      name = "Ani",
+      status = "boss",
+      n = 1, --stage in single conversation
+      c = 1,
+      stats = {trust = {player = 20, Mint = 30, Fennel = 10, Finch = 5, Lark = 0, Cress = 15, Agave = 20, Tarragon = 60, Robin = 80},
+              battlestats = {maxhp = 3, damage = 1,  moves = 1}
+      },
+      actions = {key = 0, index = 0, x = 0, y = 0, on = 0},
+      next = {{x = 0, y = 0, facing = 0, location = "offscreen", canWork = 0},
+              {x = 0, y = 0, facing = 0, location = "offscreen", canWork = 0},
+              {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
+              {x = 0, y = 0, facing = 0, location = "offscreen", canWork = 0}
+            },
+      animations = {walk = {{anim = newAnimation(animsheet1, 56*16, 4, 16, 16, .5 ), name = "up", loop = 0},
+                            {anim = newAnimation(animsheet1, 57*16, 4, 16, 16, .5 ), name = "down", loop = 0},
+                            {anim = newAnimation(animsheet1, 58*16, 4, 16, 16, .55 ), name = "left", loop = 0},
+                            {anim = newAnimation(animsheet1, 59*16, 4, 16, 16, .55 ), name = "right", loop = 0}},
+              act = {{anim = newAnimation(animsheet_act, 52*16, 4, 16, 16, .6), name = "up", loop = 0, current = 0, running = 0, count = 0},
+              {anim = newAnimation(animsheet_act, 53*16, 4, 16, 16, .6), name = "down", loop = 0, current = 0, running = 0, count = 0},
+              {anim = newAnimation(animsheet_act, 54*16, 4, 16, 16, .6), name = "left", loop = 0, current = 0, running = 0, count = 0},
+              {anim = newAnimation(animsheet_act, 55*16, 4, 16, 16, .6), name = "right", loop = 0, current = 0, running = 0, count = 0}}
+            }
     }
 }
 
-trustTable = {}
+trustTable =
+{
+  {"", "player", "Fennel", "Mint", "Cress", "Agave", "Tarragon", "Robin", "Durian", "Brian", "Lotus", "Euca", "Finch", "Lark", "Hawk", "Ani"},
+  {"player", 100, 80, 70, 60, 70, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100},
+  {"Fennel", 80, 100, 80, 70, 60, 5, 5, 5, 30, 30, 50, 0, 0, 0, 10},
+  {"Mint", 60, 80, 100, 60, 70, 5, 5, 5, 30, 40, 80, 5, 5, 5, 5},
+  {"Cress", 50, 70, 30, 100, 40, 10, 0, 5, 40, 40, 50, 5, 0, 5, 10},
+  {"Agave", 100, 80, 70, 60, 70, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100},
+  {"Tarragon", 100, 80, 70, 60, 70, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100},
+  {"Robin", 100, 80, 70, 60, 70, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100},
+  {"Durian", 100, 80, 70, 60, 70, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100},
+  {"Brian", 100, 80, 70, 60, 70, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100},
+  {"Lotus", 100, 80, 70, 60, 70, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100},
+  {"Euca", 100, 80, 70, 60, 70, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100},
+  {"Finch", 100, 80, 70, 60, 70, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100},
+  {"Lark", 100, 80, 70, 60, 70, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100},
+  {"Hawk", 100, 80, 70, 60, 70, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100},
+  {"Ani", 100, 80, 70, 60, 70, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100}
+}
 socialMap = {}
 
 storedLocation = {x = 0, y = 0}
@@ -798,29 +865,39 @@ battleGlobal = {maxmoves = #player.party + 2, movesTaken = 0, turn = 0, phase = 
 
 require("scripts/battle")
 --object text index for background objects
-staticObjects = {overworld = {
-  gardeningSign = {{x = 16*gridsize, y = 17*gridsize}},
-  kitchenSign = {{x = 23*gridsize, y = 17*gridsize}},
-  dormitorySign = {{x = 29*gridsize, y = 26*gridsize}},
-  storeSign = {{x = 29*gridsize, y = 34*gridsize}},
-  gardeningShed = {
-    {x = locationTriggers.overworld[1].x, y = locationTriggers.overworld[1].y, visible = 0}
+staticObjects = {
+  overworld = {
+    gardeningSign = {{x = 16*gridsize, y = 17*gridsize}},
+    kitchenSign = {{x = 23*gridsize, y = 17*gridsize}},
+    dormitorySign = {{x = 29*gridsize, y = 26*gridsize}},
+    storeSign = {{x = 29*gridsize, y = 34*gridsize}},
+    gardeningShed = {
+      {x = locationTriggers.overworld[1].x, y = locationTriggers.overworld[1].y, visible = 0}
+    },
+    dormitory = {
+      {x = locationTriggers.overworld[2].x, y = locationTriggers.overworld[2].y, visible = 0},
+      {x = locationTriggers.overworld[3].x, y = locationTriggers.overworld[3].y, visible = 0}
+    },
+    dininghall = {
+      {x = locationTriggers.overworld[4].x, y = locationTriggers.overworld[4].y, visible = 0},
+      {x = locationTriggers.overworld[5].x, y = locationTriggers.overworld[5].y, visible = 0}
+    },
+    store = {
+      {x = locationTriggers.overworld[6].x, y = locationTriggers.overworld[6].y, visible = 0}
+    }
   },
   dormitory = {
-    {x = locationTriggers.overworld[2].x, y = locationTriggers.overworld[2].y, visible = 0},
-    {x = locationTriggers.overworld[3].x, y = locationTriggers.overworld[3].y, visible = 0}
-  },
-  dininghall = {
-    {x = locationTriggers.overworld[4].x, y = locationTriggers.overworld[4].y, visible = 0},
-    {x = locationTriggers.overworld[5].x, y = locationTriggers.overworld[5].y, visible = 0}
-  },
-  store = {
-    {x = locationTriggers.overworld[6].x, y = locationTriggers.overworld[6].y, visible = 0}
-  }
-},
-dormitory = {
-    playerBed = {{x = 15*gridsize, y = 16*gridsize}}
-  }
+      playerBed = {{x = 15*gridsize, y = 16*gridsize}},
+      LotusBed = {{x = 9*gridsize, y = 16*gridsize}},
+      CressBed = {{x = 9*gridsize, y = 9*gridsize}},
+      AgaveBed = {{x = 15*gridsize, y = 9*gridsize}},
+      FennelBed = {{x = 15*gridsize, y = 13*gridsize}, {x = 15*gridsize, y = 12*gridsize}},
+      MintBed = {{x = 21*gridsize, y = 12*gridsize}, {x = 21*gridsize, y = 13*gridsize}},
+      DurianBed = {{x = 24*gridsize, y = 12*gridsize}, {x = 24*gridsize, y = 13*gridsize}},
+      RobinBed = {{x = 27*gridsize, y = 12*gridsize}, {x = 27*gridsize, y = 13*gridsize}},
+      TarragonBed = {{x = 27*gridsize, y = 16*gridsize}},
+      BrierBed = {{x = 27*gridsize, y = 9*gridsize}},
+    }
 }
 
 objectInventory = {barrelSmBerries = 0, barrelLgBerries = 0}

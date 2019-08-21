@@ -59,6 +59,12 @@ function formBox(w, h, c)
         end
       end
     end
+    if c == canvasTitle then
+      love.graphics.setColor(75, 37, 58)
+      love.graphics.setFont( titleFont )
+      love.graphics.printf(title, 0, 16, menuW, "center")
+      love.graphics.setFont( font )
+    end
     love.graphics.setCanvas()
   else
     print("box not big enough")
@@ -71,6 +77,21 @@ function drawCustomBox(x, y, tbl)
     local v = boxMap[i][2]
     love.graphics.draw(boxTilesSheet, boxTilesQuads[k][v], x)
   end
+end
+
+function drawTitleScreen()
+  local width, height = love.graphics.getDimensions()
+  local boxX = player.act_x + gridsize/2 - menuW/2
+  local boxY = player.act_y - 48
+  -- local textW = 16
+  -- local textX = x + gridsize/2 - textW/2
+  -- local textY = y-offset.y+6
+  local width, height = love.graphics.getDimensions()
+  love.graphics.setColor(255, 255, 255)
+  love.graphics.draw(canvasTitle, boxX, boxY)
+  love.graphics.setColor(75, 37, 58)
+  love.graphics.setFont( font )
+  love.graphics.printf("Instructions:\nArrow keys to move. Z to talk/interact.\nX to exit menu or speed up dialogue.\nI for inventory. R to restart.\nEsc to quit or see instructions.\n\nPress Z to Start", boxX, boxY + 48, menuW, "center")
 end
 
 --animation
@@ -654,8 +675,10 @@ function drawNPCprofiles(x, y, i)
   drawPortrait(socialMap[i].name, x+2, y + 22, portraitsheet1)
   love.graphics.draw(ui.portraitboxframe, x+4, y + 4)
   drawName(x+46, y-4, socialMap[i].name)
-  local txt = "Position: " .. socialMap[i].info.pos .. "\nNotes: " .. socialMap[i].info.descriptionStart
+  local txt = "Position: " .. socialMap[i].info.pos .. "\nCompound: " .. socialMap[i].info.comp
+  local txt2 = "\nNotes:" .. socialMap[i].info.notes
   love.graphics.printf(txt, x+60, y + 18, 128, "left")
+  love.graphics.printf(txt2, x+6, y + 48, 176, "left")
 end
 
 --social mapping screen

@@ -152,20 +152,29 @@ end
 --dialogue off
 function dialogueOff(tbl, i, dialOpt) -- tbl = npcs
 	if dialOpt.logic.spoken == 0 then
+		print("not spoken")
 		if dialOpt.logic.energy ~= nil then
 			if player.energy > 0 then
 				player.energy = player.energy - 1
 			end
 		end
 		if dialOpt.logic.func ~= nil then
+			print("function not nil")
 			dialOpt.logic.func(unpack(dialOpt.logic.par))
+			print("function finished")
 			dialOpt.logic.spoken = 1
+			tbl[i].mapping.dialogueCount = tbl[i].mapping.dialogueCount + 1
 			return
 		end
 		dialOpt.logic.spoken = 1
 		tbl[i].mapping.dialogueCount = tbl[i].mapping.dialogueCount + 1
 	end
 	print("dialogueOff triggered")
+	resetDialogue(tbl, i)
+end
+
+function resetDialogue(tbl, i)
+	local dialOpt = NPCdialogue[gameStage][tbl[i].name][tbl[i].c]
 	choice.pos = 1
 	choice.more = 0
 	dialogueMode = 0
@@ -339,4 +348,15 @@ function changeDialogue(item, stage, npc, i, n)
 	if checkInventory(item) == false then
 		NPCdialogue[stage][npc][i].logic.next = n
 	end
+end
+
+function addInfo(txt, name)
+	local i = getCharIndex(name)
+	npcs[i].info.notes = npcs[i].info.notes .. " " .. txt
+	resetDialogue(npcs, i)
+end
+
+function quitGame(t)
+  print("restarting")
+  love.event.quit(t)
 end

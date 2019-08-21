@@ -250,6 +250,9 @@ function BerryHarvestStart(b, c)
 				player.energy = player.energy - 1
 			end
 		else
+			if player.energy > 0 then
+				player.energy = player.energy - 1
+			end
 			movingObjectData[currentLocation][b][c].trigger = 3
 		end
 		player.animations.act[player.facing].running = 1
@@ -264,6 +267,9 @@ function BerryHarvestStart(b, c)
 				player.energy = player.energy - 1
 			end
 		else
+			if player.energy > 0 then
+				player.energy = player.energy - 1
+			end
 			movingObjectData[currentLocation][b][c].trigger = 4
 		end
 		player.animations.act[player.facing].running = 1
@@ -402,10 +408,12 @@ function printObjText(b, c)
 					objectText[b].logic.yesno = true
 					choice.pos = 1
 					actionMode = 1
+				else
+					startAction(b, 1)
 				end
 			else
 				print("Not berries or barrel obj: " .. b)
-				startAction(b, 1)
+				startAction(b, c)
       end
 		else
 			print("printObjText set dialogueMode to 0")
@@ -538,5 +546,5 @@ function resetBarrels()
 	objectInventory.barrelLgBerries = 0
 end
 
-itemEffects = {platefull2 = {type = "once", description = "Restores Energy", text = 1, func = energyMod, par = {100}}
+itemEffects = {platefull2 = {type = "once", description = "Restores Energy", text = 1, func = energyMod, par = {50}}
 							}
