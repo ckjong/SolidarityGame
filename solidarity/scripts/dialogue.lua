@@ -231,10 +231,10 @@ NPCdialogue = {
                   logic = {next = 2, speaker = "Fennel", cond = true, off = false, display = 1, spoken = 0, energy = 1}}, -- say once
             [2] = {text = {"Oh, ok.", "Where were you last night?"},
                   logic = {next = 3, offset = 2, speaker = "player", cond = true, off = false, display = 2}},
-            [3] = {text = {"We should get to work."},
-                  logic = {next = 3, speaker = "Fennel", cond = true, off = true, display = 1, spoken = 0, energy = 0, statmod = 1, statpar = {"Fennel", "trust", "player", 5}}},
+            [3] = {text = {"Let's head to the field."},
+                  logic = {next = 3, speaker = "Fennel", cond = true, off = true, display = 1, spoken = 0, energy = 0, statmod = 1, statpar = {"Fennel", "trust", "player", 5}, func = addParty, par = {"Fennel"}}},
             [4] = {text = {"I.. look, let's just get to work ok? We're already late."},
-                  logic = {next = 3, speaker = "Fennel", cond = true, off = true, display = 1, spoken = 0, energy = 0}},
+                  logic = {next = 3, speaker = "Fennel", cond = true, off = false, display = 1, spoken = 0, energy = 0}},
         }, -- repeat
   Mint = {[1] = {text = {"I think it's even hotter than yesterday."},
                 logic = {next = 1, speaker = "Mint", cond = true, off = true, display = 1, spoken = 0, energy = 1}}, -- say once
@@ -244,7 +244,7 @@ NPCdialogue = {
           -- [4] = {text = {"Hah, get ready to lose, loser.", "Too bad."},
           --       logic = {next = 1, speaker = "Lark", cond = true, off = true, display = 3, trigger = {type = "battle", choice = 1}}},
         },
-  Finch = {[1] = {text = {"You're late, slacker.", "Better get to work if you're going to meet your daily quota."},
+  Finch = {[1] = {text = {"You're late, slacker.", "Better get to work if you're going to meet your daily quota.", "Boss says you need 50 berries."},
                 logic = {next = 1, speaker = "Finch", cond = true, off = true, display = 1}}
         },
   Cress = {[1] = {text = {"Fennel came back, I'm glad. I hope everything's ok."},

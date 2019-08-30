@@ -40,15 +40,17 @@ locationList = {"overworld", "gardeningShed", "dormitory", "dininghall", "store"
 currentLocation = "overworld"
 currentJournal = {}
 
-mapPath = {overworld = {"C:\\Users\\Carolyn\\Documents\\GitHub\\SolidarityGame\\solidarity\\maps\\1overworld.txt"},
-gardeningShed = {"C:\\Users\\Carolyn\\Documents\\GitHub\\SolidarityGame\\solidarity\\maps\\2gardeningShed.txt"},
-dormitory = {"C:\\Users\\Carolyn\\Documents\\GitHub\\SolidarityGame\\solidarity\\maps\\4dormitory.txt"},
-dininghall = {"C:\\Users\\Carolyn\\Documents\\GitHub\\SolidarityGame\\solidarity\\maps\\5dininghall.txt"},
-store = {"C:\\Users\\Carolyn\\Documents\\GitHub\\SolidarityGame\\solidarity\\maps\\6store.txt"}
+-- if love.filesystem.isFused() then
+--   local dir = love.filesystem.getSourceBaseDirectory()
+--   local success = love.filesystem.mount(dir, "solidarity")
+--
+--   if success then
+--
+--   end
+-- else
+--   local dir = love.filesystem.getSource()
+-- end
 
-}
-
-mapFile1 = nil
 
 
 --images
@@ -210,16 +212,19 @@ player = {
   grid_y = 23*gridsize,
   act_x = 17*gridsize,
   act_y = 23*gridsize,
+  path = {{x = 0, y = 0}, {x = 0, y = 0}},
+  newDir = 0,
   speed = 48,
   canMove = 1,
   moveDir = 0,
-  threshold = 0,
+  threshold = 0.02,
   facing = 2,
   name = "Saffron",
   battlestats = {maxhp = 2, damage = 1, moves = 2},
   inventory = {},
   maxInventory = 8,
-  party = {1, 2}, -- Fennel, Mint
+  party = {},
+  showParty = false,
   spells = {},
   energy = 100,
   sleep = false,
@@ -245,6 +250,7 @@ npcs = {{
   grid_y = 30*gridsize,
   act_x = 18*gridsize,
   act_y = 30*gridsize,
+  path = {{x = 0, y = 0}, {x = 0, y = 0}},
   speed = 30,
   canMove = 0,
   moveDir = 0,
@@ -287,6 +293,7 @@ npcs = {{
     grid_y = 23*gridsize,
     act_x = 13*gridsize,
     act_y = 23*gridsize,
+    path = {{x = 0, y = 0}, {x = 0, y = 0}},
     speed = 30,
     canMove = 0,
     moveDir = 0,
@@ -328,6 +335,7 @@ npcs = {{
       grid_y = 26*gridsize,
       act_x = 21*gridsize,
       act_y = 26*gridsize,
+      path = {{x = 0, y = 0}, {x = 0, y = 0}},
       speed = 30,
       canMove = 0,
       moveDir = 0,
@@ -370,6 +378,7 @@ npcs = {{
       grid_y = 31*gridsize,
       act_x = 13*gridsize,
       act_y = 31*gridsize,
+      path = {{x = 0, y = 0}, {x = 0, y = 0}},
       speed = 25,
       canMove = 0,
       moveDir = 0,
@@ -412,6 +421,7 @@ npcs = {{
       grid_y = 31*gridsize,
       act_x = 21*gridsize,
       act_y = 31*gridsize,
+      path = {{x = 0, y = 0}, {x = 0, y = 0}},
       speed = 30,
       canMove = 0,
       moveDir = 0,
@@ -454,6 +464,7 @@ npcs = {{
       grid_y = 27*gridsize,
       act_x = 14*gridsize,
       act_y = 27*gridsize,
+      path = {{x = 0, y = 0}, {x = 0, y = 0}},
       speed = 30,
       canMove = 0,
       moveDir = 0,
@@ -496,6 +507,7 @@ npcs = {{
       grid_y = 0*gridsize,
       act_x = 0*gridsize,
       act_y = 0*gridsize,
+      path = {{x = 0, y = 0}, {x = 0, y = 0}},
       speed = 30,
       canMove = 0,
       moveDir = 0,
@@ -538,6 +550,7 @@ npcs = {{
       grid_y = 0*gridsize,
       act_x = 0*gridsize,
       act_y = 0*gridsize,
+      path = {{x = 0, y = 0}, {x = 0, y = 0}},
       speed = 30,
       canMove = 0,
       moveDir = 0,
@@ -580,6 +593,7 @@ npcs = {{
       grid_y = 0*gridsize,
       act_x = 0*gridsize,
       act_y = 0*gridsize,
+      path = {{x = 0, y = 0}, {x = 0, y = 0}},
       speed = 30,
       canMove = 0,
       moveDir = 0,
@@ -622,6 +636,7 @@ npcs = {{
       grid_y = 9*gridsize,
       act_x = 18*gridsize,
       act_y = 9*gridsize,
+      path = {{x = 0, y = 0}, {x = 0, y = 0}},
       speed = 30,
       canMove = 0,
       moveDir = 0,
@@ -665,6 +680,7 @@ npcs = {{
       grid_y = 21*gridsize,
       act_x = 16*gridsize,
       act_y = 21*gridsize,
+      path = {{x = 0, y = 0}, {x = 0, y = 0}},
       speed = 30,
       canMove = 0,
       moveDir = 0,
@@ -706,6 +722,7 @@ npcs = {{
       grid_y = 27*gridsize,
       act_x = 10*gridsize,
       act_y = 27*gridsize,
+      path = {{x = 0, y = 0}, {x = 0, y = 0}},
       speed = 30,
       canMove = 1,
       moveDir = 0,
@@ -748,6 +765,7 @@ npcs = {{
       grid_y = 10*gridsize,
       act_x = 14*gridsize,
       act_y = 10*gridsize,
+      path = {{x = 0, y = 0}, {x = 0, y = 0}},
       speed = 30,
       canMove = 0,
       moveDir = 0,
@@ -790,6 +808,7 @@ npcs = {{
       grid_y = 31*gridsize,
       act_x = 22*gridsize,
       act_y = 31*gridsize,
+      path = {{x = 0, y = 0}, {x = 0, y = 0}},
       speed = 30,
       canMove = 0,
       moveDir = 0,

@@ -360,3 +360,23 @@ function quitGame(t)
   print("restarting")
   love.event.quit(t)
 end
+
+function addParty(char)
+	local added = false
+	for i = 1, #player.party do
+		print(player.party[i])
+		if player.party[i] == char then
+			added = true
+		end
+	end
+	if added == false then
+		local j = getCharIndex(char)
+		npcs[j].canMove = 1
+		npcs[j].canWork = 0
+		npcs[j].working = 0
+		table.insert(player.party, char)
+		print(char.." added to party")
+		print(#player.party)
+		resetDialogue(npcs, j)
+	end
+end

@@ -176,6 +176,7 @@ end
 --advance to next stage
 function cutsceneStage7Talk()
   print("stage 7 triggered")
+  clearMap(2)
   if cutsceneList[cutsceneControl.current].triggered == false then
     changeGameStage()
     cutsceneList[cutsceneControl.current].triggered = true

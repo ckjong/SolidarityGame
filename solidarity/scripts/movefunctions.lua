@@ -1,3 +1,12 @@
+function checkParty(char)
+	for i = 1, #player.party do
+		if player.party[i] == char.name then
+			return true
+		end
+	end
+	return false
+end
+
 --testmap for collision testing, update using map table
 function testMap(x1, y1, x2, y2)
 	if initTable[(y1 / gridsize) + y2][(x1 / gridsize) + x2] > 0 then
@@ -10,24 +19,29 @@ end
 function testNPC(dir, x, y)
 	for i = 1, #npcs do
 		if currentLocation == npcs[i].location then
+			local nCol = checkParty(npcs[i])
 			local x2 = npcs[i].act_x
 			local y2 = npcs[i].act_y
-			if dir == 1 then
-				if x == x2 and y - gridsize == y2 then
-					return true
+			if nCol == false then
+				if dir == 1 then
+					if x == x2 and y - gridsize == y2 then
+						return true
+					end
+				elseif dir == 2 then
+					if x == x2 and y + gridsize == y2 then
+						return true
+					end
+				elseif dir == 3 then
+					if y == y2 and x - gridsize == x2 then
+						return true
+					end
+				elseif dir == 4 then
+					if y == y2 and x + gridsize == x2 then
+						return true
+					end
 				end
-			elseif dir == 2 then
-				if x == x2 and y + gridsize == y2 then
-					return true
-				end
-			elseif dir == 3 then
-				if y == y2 and x - gridsize == x2 then
-					return true
-				end
-			elseif dir == 4 then
-				if y == y2 and x + gridsize == x2 then
-					return true
-				end
+			else
+				print("collision off for " .. npcs[i].name)
 			end
 		end
 	end
@@ -114,33 +128,50 @@ function positionCheck(x, y, char)
 	end
 end
 
+function checkDir(char)
+	if math.abs(char.act_x - char.grid_x) < math.abs(char.act_y - char.grid_y) or char.act_x == char.grid_x then
+		char.act_x = char.grid_x
+		if char.act_y > char.grid_y then
+			char.moveDir = 1
+			char.facing = 1
+		elseif char.act_y < char.grid_y then
+			char.moveDir = 2
+			char.facing = 2
+		else
+			char.moveDir = 0
+		end
+	elseif math.abs(char.act_x - char.grid_x) > math.abs(char.act_y - char.grid_y) or char.act_y == char.grid_y then
+		char.act_y = char.grid_y
+		if char.act_x > char.grid_x then
+			char.moveDir = 3
+			char.facing = 3
+		elseif char.act_x < char.grid_x then
+			char.moveDir = 4
+			char.facing = 4
+		else
+			char.moveDir = 0
+		end
+	end
+end
+
 --update grid position for moving NPCs during cutscenes
 function updateGridPosNPC(tbl, char, n)
   total = #tbl
   char.grid_x = tbl[n].x*gridsize
   char.grid_y = tbl[n].y*gridsize
-  if char.act_y > char.grid_y then
-    char.moveDir = 1
-    char.facing = 1
-  elseif char.act_y < char.grid_y then
-    char.moveDir = 2
-    char.facing = 2
-  elseif char.act_x > char.grid_x then
-    char.moveDir = 3
-    char.facing = 3
-  elseif char.act_x < char.grid_x then
-    char.moveDir = 4
-    char.facing = 4
-  end
+  checkDir(char)
 end
 
 --move character to another location if they enter a certain point
 function moveCharBack(x1, y1, x2, y2, d)
 	if math.abs(player.act_x - x1*gridsize) < .1 and math.abs(player.act_y - y1*gridsize) < .1 then
+		player.path[1] = {x = player.grid_x, y = player.grid_y}
 		player.grid_x = x2*gridsize
 		player.grid_y = y2*gridsize
+		player.path[2] = {x = player.grid_x, y = player.grid_y}
 		player.moveDir = d
 		player.facing = d
+		player.newDir = 1
 	elseif player.act_x == x2*gridsize and player.act_y == y2*gridsize then
     if trigger[1] == 1 then
 			player.canMove = 1
@@ -153,22 +184,27 @@ end
 --change grid coordinates, up and down
 function changeGridy(char, dir, x, y, s, col)
 	char.facing = dir
-	if col == 1 then
-		if testMap(char.grid_x, char.grid_y, x, y) then
-			if testNPC(dir, char.grid_x, char.grid_y) == false then
-				if math.abs(char.grid_x - char.act_x) <= player.threshold then
+	if math.abs(char.grid_x - char.act_x) <= player.threshold then
+		if col == 1 then
+			if testMap(char.grid_x, char.grid_y, x, y) then
+				if testNPC(dir, char.grid_x, char.grid_y) == false then
 					char.act_x = char.grid_x
+					char.path[1] = {x = char.grid_x, y = char.grid_y}
 					char.grid_y = char.grid_y + (s * gridsize)
 					char.moveDir = dir
+					char.path[2] = {x = char.grid_x, y = char.grid_y}
+					char.newDir = 1
+					print("path x, y: " .. char.path[1].x .. char.path[1].y)
 				end
 			end
-		end
-	else
-		if math.abs(char.grid_x - char.act_x) <= player.threshold then
+		else
 			char.act_x = char.grid_x
+			char.path[1] = {x = char.grid_x, y = char.grid_y}
 			char.grid_y = char.grid_y + (s * gridsize)
 			char.moveDir = dir
 			char.facing = dir
+			char.path[2] = {x = char.grid_x, y = char.grid_y}
+			char.newDir = 1
 		end
 	end
 end
@@ -176,22 +212,27 @@ end
 --change grid coordinates, left and right
 function changeGridx(char, dir, x, y, s, col)
 	char.facing = dir
-	if col == 1 then
-		if testMap(char.grid_x, char.grid_y, x, y) then
-			if testNPC(dir, char.grid_x, char.grid_y) == false then
-				if math.abs(char.grid_y - char.act_y) <= player.threshold then
+	if math.abs(char.grid_y - char.act_y) <= player.threshold then
+		if col == 1 then
+			if testMap(char.grid_x, char.grid_y, x, y) then
+				if testNPC(dir, char.grid_x, char.grid_y) == false then
 					char.act_y = char.grid_y
+					char.path[1] = {x = char.grid_x, y = char.grid_y}
 					char.grid_x = char.grid_x + (s * gridsize)
 					char.moveDir = dir
+					char.path[2] = {x = char.grid_x, y = char.grid_y}
+					char.newDir = 1
+					print("path x, y: " .. char.path[1].x .. char.path[1].y)
 				end
 			end
-		end
-	else
-		if math.abs(char.grid_y - char.act_y) <= player.threshold then
+		else
 			char.act_y = char.grid_y
+			char.path[1] = {x = char.grid_x, y = char.grid_y}
 			char.grid_x = char.grid_x + (s * gridsize)
 			char.moveDir = dir
 			char.facing = dir
+			char.path[2] = {x = char.grid_x, y = char.grid_y}
+			char.newDir = 1
 		end
 	end
 end
@@ -219,6 +260,8 @@ function updateGrid(char, c)
 		end
 	end
 end
+
+
 
 
 --move character in direction of destination
@@ -257,4 +300,43 @@ function moveChar(m, x1, x2, y1, y2, s)--moveDir, act_x, grid_x, act_y, grid_y, 
 		end
 	end
 	return m, x1, y1
+end
+
+function partyFollows(dt, i, char)
+	if dialogueMode == 0 then
+		if player.newDir == 1 then
+			npcs[i].path[1].x, npcs[i].path[1].y = npcs[i].grid_x, npcs[i].grid_y
+			npcs[i].grid_x = char.path[1].x
+			npcs[i].grid_y = char.path[1].y
+			npcs[i].path[2].x, npcs[i].path[2].y = npcs[i].grid_x, npcs[i].grid_y
+			checkDir(npcs[i])
+			print("npc x, y: " .. npcs[i].grid_x .. npcs[i].grid_y)
+		end
+	end
+end
+
+function limitDistance(x1, x2, y1, y2, dist) -- char x, player x
+	if math.abs(y2-y1) > dist then
+		if x1 == x2 then
+			if y1 > y2 then
+				y1 = y2 + dist
+				print(y1 .. " return y1")
+			elseif y1 < y2 then
+				y1 = y2 - dist
+				print(y1 .. " return y1")
+			end
+		end
+	end
+	if math.abs(x2-x1) > dist then
+		if y1 == y2 then
+			if x1 > x2 then
+				x1 = x2 + dist
+				print(x1 .. " return x1")
+			elseif x1 < x2 then
+				x1 = x2 - dist
+				print(x1 .. " return x1")
+			end
+		end
+	end
+	return x1, y1
 end

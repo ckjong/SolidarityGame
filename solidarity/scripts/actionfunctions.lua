@@ -328,6 +328,10 @@ function startAction(b, n)
 			text = objectText[b].text[n]
 			wait.triggered = 1
 			wait.n = string.len(text)
+		else
+			text = objectText[b].text[1]
+			wait.triggered = 1
+			wait.n = string.len(text)
 		end
 	end
 end

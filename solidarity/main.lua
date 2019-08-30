@@ -24,25 +24,23 @@ function love.load()
 
 
 --editor for creating new maps and other functions
+	require("maps/mapdata")
 	require("scripts/mapfunctions")
 
 	--generate maps
 
-	for k, v in pairs(mapPath) do
-		print(k)
-		mapFile1 =  mapPath[k][1]
-		currentLocation = k
-		mapGen (bg[k], mapFile1)
+	for k, v in pairs(locationList) do
+		print(v)
+		currentLocation = v
+		mapGen (bg[v], v)
 		clearMap(2)
 		saveMap()
 	end
 	currentLocation = "overworld"
-	mapFile1 = mapPath[currentLocation][1]
-	mapGen (bg[currentLocation], mapFile1)
+	mapGen (bg[currentLocation], currentLocation)
 	--table.save(initTable, "D:\\my game projects\\utopia\\scripts\\initTable.lua")
 
 	-- add location of NPCs or other moving obstacles to map collision
-	updateMap(npcs)
 	npcActSetup()
 	menuW, menuH = 14*gridsize, 7*gridsize
 	canvas = love.graphics.newCanvas(menuW, menuH)
@@ -58,6 +56,7 @@ end
 
 
 function love.update(dt)
+	player.newDir = 0
 	cutsceneTrigger()
 
 	--run timers for blinking text
@@ -128,9 +127,23 @@ function love.update(dt)
 	elseif debugView == 1 then
 		updateGrid(player, 0)
 	end
-
 	--update player move direction and actual position
 	player.moveDir, player.act_x, player.act_y = moveChar(player.moveDir, player.act_x, player.grid_x, player.act_y, player.grid_y, (player.speed *dt))
+
+	for j = 1, #player.party do
+		local i = getCharIndex(player.party[j])
+		if npcs[i] ~= nil then
+			if j == 1 then
+				partyFollows(dt, i, player)
+			else
+				local d = getCharIndex(player.party[j-1])
+				partyFollows(dt, i, npcs[d])
+			end
+			npcs[i].moveDir, npcs[i].act_x, npcs[i].act_y = moveChar(npcs[i].moveDir, npcs[i].act_x, npcs[i].grid_x, npcs[i].act_y, npcs[i].grid_y, (player.speed *dt))
+
+		end
+	end
+
 	--check if player enters location change trigger, update currentlocation
 	if player.canMove == 1 then
 		changeMap(player.act_x, player.act_y, locationTriggers[currentLocation])
@@ -198,8 +211,6 @@ function love.update(dt)
 		battleStart()
 		battleGlobal.phase = 1
 	end
-
-
 end
 
 
@@ -244,14 +255,13 @@ function love.draw()
 		drawInfo(player.act_x, player.act_y)
 	end
 
-	--render player
-	drawPlayer(player.animations.walk)
-
-
 	--render npcs
 	for i = 1, #npcs do
 		drawNPCs(npcs[i].animations.walk, i)
 	end
+
+	--render player
+	drawPlayer(player.animations.walk)
 	-- render tiles on top of player
 	if currentLocation ~= "overworld" then
 		drawStillObjects(currentLocation, toptileData, toptilesSheet, toptiles)
@@ -454,64 +464,64 @@ function love.keypressed(key)
 		end
 	end
 		-- ====CHEAT KEYS===
-		-- --initiate debug/map editing mode
-		--   if key == "p" then
-		-- 	 	if debugView == 0 then
-		--     	debugView = 1
-		-- 		elseif debugView == 1 then
-		-- 			debugView = 0
-		-- 		end
-		-- 		if infoView == 0 then
-		-- 			infoView = 1
-		-- 		else
-		-- 			infoView = 0
-		-- 		end
-		--   end
-		--
-		-- 	-- add block to editor
-		-- 		if key == "space" and debugView == 1 then
-		-- 			addBlock(initTable, player.grid_x, player.grid_y, 1) -- editor.lua
-		-- 		end
-		--
-		-- 		if key == "s" and debugView == 1 then
-		-- 			saveMap()
-		-- 		end
-		--
-		--
-		-- 		if key == "c" then --trigger cutscene for testing
-		-- 			if cutsceneControl.stage == 0 then
-		-- 				cutsceneControl.stage = 1
-		-- 			else
-		-- 				print("exit cutscene")
-		-- 				cutsceneControl.stage = 8
-		-- 				player.canMove = 1
-		-- 			end
-		-- 		end
-		--
-		-- 		if key == "1" then
-		-- 			player.energy = 100
-		-- 		end
-		--
-		-- 		if key == "0" then
-		-- 			player.energy = 0
-		-- 		end
-		--
-		-- 		if key == "6" then
-		-- 			addRemoveItem("You got 60 Plum Berries", "Plum Berries", 60, "plantSmBerries")
-		-- 		end
-		--
-		-- 		if key == "9" then
-		-- 			for i = 1, #npcs do
-		-- 				table.insert(socialMap, npcs[i])
-		-- 				npcs[i].mapping.added = 1
-		-- 			end
-		-- 		end
-		--
-		-- 		if key == "l" then
-		-- 			changeGameStage()
-		-- 			cutsceneControl.current = cutsceneControl.current + 1
-		-- 			cutsceneControl.stage = 0
-		-- 			print("gameStage: " .. gameStage)
-		-- 		end
+		--initiate debug/map editing mode
+		  if key == "p" then
+			 	if debugView == 0 then
+		    	debugView = 1
+				elseif debugView == 1 then
+					debugView = 0
+				end
+				if infoView == 0 then
+					infoView = 1
+				else
+					infoView = 0
+				end
+		  end
+
+			-- add block to editor
+				if key == "space" and debugView == 1 then
+					addBlock(initTable, player.grid_x, player.grid_y, 1) -- editor.lua
+				end
+
+				if key == "s" and debugView == 1 then
+					saveMap()
+				end
+
+
+				if key == "c" then --trigger cutscene for testing
+					if cutsceneControl.stage == 0 then
+						cutsceneControl.stage = 1
+					else
+						print("exit cutscene")
+						cutsceneControl.stage = 8
+						player.canMove = 1
+					end
+				end
+
+				if key == "1" then
+					player.energy = 100
+				end
+
+				if key == "0" then
+					player.energy = 0
+				end
+
+				if key == "6" then
+					addRemoveItem("You got 60 Plum Berries", "Plum Berries", 60, "plantSmBerries")
+				end
+
+				if key == "9" then
+					for i = 1, #npcs do
+						table.insert(socialMap, npcs[i])
+						npcs[i].mapping.added = 1
+					end
+				end
+
+				if key == "l" then
+					changeGameStage()
+					cutsceneControl.current = cutsceneControl.current + 1
+					cutsceneControl.stage = 0
+					print("gameStage: " .. gameStage)
+				end
 		-- ====END CHEAT KEYS===
 end

@@ -27,29 +27,23 @@
 --generate new maps or load old ones for each area
 function locationMaps(currentLocation)
 	if currentLocation == "overworld" then
-		mapFile1 = mapPath.overworld[1]
 		print(currentLocation)
-		mapGen (bg.overworld, mapFile1)
+		mapGen (bg.overworld, "overworld")
 	elseif currentLocation == "gardeningShed" then
-		mapFile1 = mapPath.gardeningShed[1]
 		print(currentLocation)
-		mapGen (bg.gardeningShed, mapFile1)
+		mapGen (bg.gardeningShed, "gardeningShed")
 	elseif currentLocation == "battlefield1" then
-		mapFile1 = mapPath.battlefield1[1]
 		print(currentLocation)
-		mapGen (bg.battlefield1, mapFile1)
+		mapGen (bg.battlefield1, "battlefield1")
 	elseif currentLocation == "dormitory" then
-		mapFile1 = mapPath.dormitory[1]
 		print(currentLocation)
-		mapGen (bg.dormitory, mapFile1)
+		mapGen (bg.dormitory, "dormitory")
 	elseif currentLocation == "dininghall" then
-		mapFile1 = mapPath.dininghall[1]
 		print(currentLocation)
-		mapGen (bg.dininghall, mapFile1)
+		mapGen (bg.dininghall, "dininghall")
 	elseif currentLocation == "store" then
-		mapFile1 = mapPath.store[1]
 		print(currentLocation)
-		mapGen (bg.store, mapFile1)
+		mapGen (bg.store, "store")
 	end
 end
 
@@ -66,6 +60,7 @@ function doorLock(tbl)
 	saveMap()
 end
 
+
 --change location and map to match new location
 function changeMap(px, py, tbl)
   for i = 1, #tbl do
@@ -78,6 +73,12 @@ function changeMap(px, py, tbl)
 				player.act_x = player.grid_x
 				player.grid_y = tbl[i].y2
 				player.act_y = player.grid_y
+				for j = 1, #player.party do
+					local n = getCharIndex(player.party[j])
+					npcs[n].location = currentLocation
+					npcs[n].grid_x, npcs[n].grid_y = player.grid_x, player.grid_y
+					npcs[n].act_x, npcs[n].act_y = player.grid_x, player.grid_y
+				end
 				print(currentLocation)
 			end
     end
@@ -155,14 +156,10 @@ function file_exists(name)
 end
 
 --generate map file or load current map to table
-function mapGen (img, file1)
-  print(mapExists)
-	if file_exists(file1) then
+function mapGen (img, l)
+  if mapdata[l] ~= nil then
 		mapExists = 1
-		f = assert(io.open(file1, "r"))
-		local content = f:read("*a")
-		initTable = json.decode(content)
-		io.close(f)
+		initTable = mapdata[l]
 		addTempBlocks(initTable)
 		clearTempBlocks()
 		doorLock(locationTriggers[currentLocation])
@@ -174,10 +171,7 @@ function mapGen (img, file1)
 		addTempBlocks(initTable)
 		clearTempBlocks()
 		doorLock(locationTriggers[currentLocation])
-		f = assert(io.open(file1, "w"))
-		initTableFile = json.encode(initTable)
-		f:write(initTableFile)
-		f:close(initTableFile)
+		mapdata[l] = initTable
 		mapExists = 1
 	end
 end
@@ -216,10 +210,7 @@ end
 
 function saveMap()
 	print("saved over old map")
-	f = assert(io.open(mapFile1, "w"))
-	initTableFile = json.encode(initTable)
-	f:write(initTableFile)
-	f:close(initTableFile)
+	mapdata[currentLocation] = initTable
 end
 
 -- add location of NPCs or other moving obstacles to map collision
