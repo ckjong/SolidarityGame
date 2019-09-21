@@ -1,3 +1,11 @@
+function countTbl(tbl)
+  local count = 0
+  for k, v in pairs(tbl) do
+    count = count + 1
+  end
+  return count
+end
+
 function sleepCheck()
   if time == 2 then
     if gameStage == 2 then
@@ -42,11 +50,17 @@ function cutsceneTrigger()
       end
     elseif gameStage == 4 then
       player.sleep = false
-      -- if NPCdialogue[3]["Fennel"][10].logic.spoken == 1 then
-      --   if cutsceneControl.stage == 0 then
-      --     cutsceneControl.stage = 5
-      --   end
-      -- end
+
+      if currentLocation == "dininghall" and workStage == 3 then
+        if cutsceneControl.stage == 0 then
+          local n = cutsceneControl.current
+          if cutsceneList[n].triggered == false then
+            print("cutscene 5 triggered")
+            player.canMove = 0
+            cutsceneControl.stage = 1
+          end
+        end
+      end
     end
   end
 end
@@ -64,8 +78,10 @@ function cutsceneStage1Talk()
     removeBlock(char.grid_x/gridsize, char.grid_y/gridsize)
     --enable movement for npc
     char.canMove = 1
+    char.canWork = 0
+    char.working = 0
     --find path between npc location and target location (usually player)
-    cutsceneList[n].path, cutsceneList[n].facing[1] = checkPaths(char, x1, y1)
+    cutsceneList[n].path, cutsceneList[n].facing[1] = checkPaths(char, x1, y1, true)
   end
   cutsceneControl.stage = 2
 end
@@ -109,7 +125,15 @@ function cutsceneStage3Talk()
   local n = cutsceneControl.current
   local i = getCharIndex(cutsceneList[n].npc)
   npcs[i].c = cutsceneList[n].dialoguekey
-  DialogueSetup(npcs, dialogueStage)
+  if cutsceneList[n].forcetalk ~= nil then
+    if cutsceneList[n].forcetalk == true then
+      -- if dialogueStage[npcs[i].name][gameStage][npcs[i].c].logic.spoken == 0 then
+      DialogueSetup(npcs, dialogueStage, i)
+      -- end
+    end
+  else
+    DialogueSetup(npcs, dialogueStage)
+  end
   cutsceneControl.stage = 4
 end
 
@@ -141,7 +165,6 @@ function cutsceneStage4Talk(dt)
         cutsceneControl.stage = 5
       end
     else
-      npcs[i].canMove = 0
       cutsceneControl.stage = 5
     end
   else
@@ -178,7 +201,9 @@ function cutsceneStage7Talk()
   print("stage 7 triggered")
   clearMap(2)
   if cutsceneList[cutsceneControl.current].triggered == false then
-    changeGameStage()
+    if cutsceneList[cutsceneControl.current].nextStage == true then
+      changeGameStage()
+    end
     cutsceneList[cutsceneControl.current].triggered = true
   end
   if cutsceneControl.current < cutsceneControl.total then -- if there are more cutscenes advance to next one
@@ -189,7 +214,7 @@ function cutsceneStage7Talk()
     else
       cutsceneControl.stage = 0
     end
-    cutsceneControl.current = cutsceneControl.current + 1
+    cutsceneControl.current = cutsceneList[cutsceneControl.current].next
   else
     cutsceneControl.stage = 8
   end
@@ -197,8 +222,11 @@ end
 
 function changeGameStage()
   local n = cutsceneControl.current
+  workStage = cutsceneList[cutsceneControl.current].workStage
   if cutsceneList[n].nextStage == true then
-    changeTime(cutsceneList[cutsceneControl.current].switchTime)
+    if cutsceneList[cutsceneControl.current].switchTime ~= 0 then
+      changeTime(cutsceneList[cutsceneControl.current].switchTime)
+    end
     clearMap(2)
     saveMap()
     gameStage = gameStage + 1
@@ -238,6 +266,12 @@ function changeGameStage()
       npcs[i].c = 1
       npcs[i].n = 1
       npcs[i].canMove = 0
+      for j = 1, #player.party do
+        if npcs[i].name == player.party[j] then
+          npcs[i].canMove = 1
+        end
+      end
+      makeObjectsInvisible(nonInteractiveObjects, "dininghall", "stool")
       -- npcs[i].actions.key = 0
       -- npcs[i].actions.index = 0
       npcActSetup()
@@ -262,11 +296,92 @@ function gameStageControl(g)
   end
 end
 
-function gameStageUpdate(dt)
+function followPath(char, dt, n)
+  local t = #char.leaveControl.path
+  if char.act_x == char.grid_x and char.act_y == char.grid_y then
+    if char.leaveControl.noden < t then
+      char.leaveControl.noden = char.leaveControl.noden + 1
+      updateGridPosNPC(char.leaveControl.path, char, char.leaveControl.noden)
+      print("node n:" .. char.leaveControl.noden)
+    end
+  end
+  char.moveDir, char.act_x, char.act_y = moveChar(char.moveDir, char.act_x, char.grid_x, char.act_y, char.grid_y, (char.speed *dt))
+  if char.act_x == char.leaveControl.path[t].x*gridsize and char.act_y == char.leaveControl.path[t].y*gridsize then
+   char.facing = char.leaveParty[n].facing
+   char.start = char.facing
+   char.moveDir = 0
+   print("moving set to 0")
+   char.leaveControl.moving = 0
+  end
+  player.leaveParty = checkPartyLeave()
+end
 
-  if gameStage == 1 then
+function checkPartyLeave()
+  if player.leaveParty == true then
+    for i = 1, #npcs do
+      if npcs[i].leaveControl ~= nil then
+          if npcs[i].leaveControl.moving == 1 then
+            return true
+          end
+      end
+    end
+    print("leave party false")
+    if dialogueMode == 0 and menuView == 0 and titleScreen == 0 then
+      player.canMove = 1
+    end
+    return false
+  end
+end
+
+function movePartyToPos(n)
+  -- updateMap(npcs)
+  addBlock (initTable, player.grid_x, player.grid_y, 2)
+  if tempBlocks[currentLocation] ~= nil then
+    for k = 1, #tempBlocks[currentLocation] do
+      if tempBlocks[currentLocation][k].on == 1 then
+        local x, y = tempBlocks[currentLocation][k].x, tempBlocks[currentLocation][k].y
+        removeBlock(x, y)
+      end
+    end
+  end
+  for i = 1, #player.party do
+    local j = getCharIndex(player.party[i])
+    local char = npcs[j]
+    removeBlock(char.grid_x/gridsize, char.grid_y/gridsize)
+    char.leaveControl.path = checkPaths(char, char.leaveParty[n].x, char.leaveParty[n].y, false)
+    char.leaveControl.moving = 1
+    char.canMove = 1
+    updateGridPosNPC(char.leaveControl.path, char, char.leaveControl.noden)
+    if player.leaveParty == false then
+      player.canMove = 0
+      player.leaveParty = true
+      print("leave party true")
+    end
+  end
+  addTempBlocks(initTable)
+  clearMap(2)
+  for i = 1, #player.party do
+    removeParty(player.party[i])
+  end
+end
+
+function workStageUpdate(dt)
+  --breakfast, before entering field
+  if workStage == 1 then
+    if areaCheck(17, 21, 17, 22, player) then
+      workStage = 2
+    end
+  --after entering field
+  elseif workStage == 2 then
+    if tempBlocks["overworld"][1].on == 0 and currentLocation == "overworld" then
+      tempBlocks["overworld"][1].on = 1
+      addTempBlocks(initTable)
+			saveMap()
+    end
+  --can leave field
+  elseif workStage == 3 then
 		local i = getCharIndex("Finch")
-		if objectInventory.barrelSmBerries + objectInventory.barrelLgBerries >= 60 then
+		if objectInventory.barrelSmBerries + objectInventory.barrelLgBerries >= player.quota then
 			if areaCheck(16, 21, 17, 22, player) then
 				local bool1, k = checkInventory("plantSmBerries")
 				local bool2, k = checkInventory("plantLgBerries")
@@ -276,6 +391,11 @@ function gameStageUpdate(dt)
 						removeTempBlocks(currentLocation, 1)
             keyInput = 1
 						npcs[i].c = 3
+            print("gameStage " .. gameStage)
+            if gameStage == 4 then
+              player.canMove = 0
+  						cutsceneControl.stage = 1
+            end
 					end
 				else
 					if npcs[i].c ~= 4 then
@@ -287,8 +407,7 @@ function gameStageUpdate(dt)
 				end
 			end
 		end
-	elseif gameStage == 2 then
-		local i = getCharIndex("Finch")
+	elseif workStage == 4 then
 		if tempBlocks.overworld[2].on == 0 then
 			tempBlocks.overworld[2].on = 1
 			tempBlocks.overworld[3].on = 1
@@ -420,6 +539,18 @@ function runCutscene(dt)
 	end
 end
 
-function addJournal(a, b) -- entry
-	table.insert(currentJournal, journalText[a][b])
+-- function addJournal(a, b) -- entry
+-- 	table.insert(currentJournal, journalText[a][b])
+-- end
+
+function makeObjectsInvisible(tbl, l, o)
+  for i = 1, #npcs do
+    for k = 1, #tbl[l][o] do
+      if npcs[i].location == l then
+        if npcs[i].grid_x == tbl[l][o][k].x and npcs[i].grid_y == tbl[l][o][k].y then
+          tbl[l][o][k].visible = 0
+        end
+      end
+    end
+  end
 end

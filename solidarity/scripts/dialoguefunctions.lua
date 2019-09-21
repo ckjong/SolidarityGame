@@ -184,6 +184,7 @@ function resetDialogue(tbl, i)
 	tbl[i].dialogue = 0
 	tbl[i].facing = tbl[i].start
 	wait.triggered = 0
+	storedIndex[1] = 0
 end
 
 
@@ -222,83 +223,103 @@ function choiceChange(key, tbl)
 	choiceText(tbl, choice.pos, choice.total)
 end
 
-function DialogueSetup(tbl, n) -- iterate through npcs table, lookup text in NPCdialogue
-	for i = 1, #tbl do
-		if initDialogue(tbl[i]) == true then
-			local name = tbl[i].name
-			local num = tbl[i].n
-			local case = tbl[i].c
-			if NPCdialogue[n][name] ~= nil then
-				local dialOpt = NPCdialogue[n][name][case]
-				local canSpeak = 1
-				if freeze.dialogue == 1 then
-					if dialOpt.logic.energy ~= nil then
-						canSpeak = 0
-						dialogueFreeze(tbl[i])
-					end
-				end
-				if canSpeak == 1 then
-					print("tbl[i].n " .. tbl[i].n)
-					wait.triggered = 1
-					currentspeaker = dialOpt.logic.speaker
-					if tbl[i].mapping.added == 0 then
-						tbl[i].mapping.added = 1
-						table.insert(socialMap, tbl[i])
-					end
-					if dialOpt.logic.cond == true then
-						if dialOpt.logic.display == 1 then
-							if num <= #dialOpt.text then -- if there are more lines to say, advance through table
-								print("advance " .. num .. #dialOpt.text)
-								textUpdate(num, dialOpt)
-								tbl[i].n = num + 1
-								print("tbl[i].n " .. tbl[i].n)
-								print("dialogueMode " .. dialogueMode)
-								return
-							else -- if not then move to next segment
-								print("turnning off dialogue")
-								if dialOpt.logic.off == true then
-									dialogueOff(tbl, i, dialOpt)
-									return
-								else
-									if dialOpt.logic.spoken ~= nil and dialOpt.logic.spoken == 0 then
-										if dialOpt.logic.statmod ~= nil then
-											print("statmod not nil")
-											changeCharStats(unpack(dialOpt.logic.statpar))
-										end
-										if dialOpt.logic.func ~= nil then
-											dialOpt.logic.func(unpack(dialOpt.logic.par))
-										end
-										dialOpt.logic.spoken = 1
-										tbl[i].mapping.dialogueCount = tbl[i].mapping.dialogueCount + 1
-									end
-									tbl[i].n = 1
-									tbl[i].c = dialOpt.logic.next
-									DialogueSetup(tbl, n)
-								end
-							end
+function DialogueSetup(tbl, n, index) -- iterate through npcs table, lookup text in NPCdialogue
+	if index then
+		dialogueRun(tbl, n, index, true)
+	else
+		for i = 1, #tbl do
+			if initDialogue(tbl[i]) == true then
+				dialogueRun(tbl, n, i)
+			end
+		end
+	end
+end
+
+function dialogueRun(tbl, n, i, r)
+	local name = tbl[i].name
+	local num = tbl[i].n
+	local case = tbl[i].c
+	if NPCdialogue[n][name] ~= nil then
+		local dialOpt = NPCdialogue[n][name][case]
+		local canSpeak = 1
+		if freeze.dialogue == 1 then
+			if dialOpt.logic.energy ~= nil then
+				canSpeak = 0
+				dialogueFreeze(tbl[i])
+			end
+		end
+		if canSpeak == 1 then
+			print("tbl[i].n " .. tbl[i].n)
+			wait.triggered = 1
+			currentspeaker = dialOpt.logic.speaker
+			if tbl[i].mapping.added == 0 then
+				tbl[i].mapping.added = 1
+				table.insert(socialMap, tbl[i])
+			end
+			if dialOpt.logic.cond == true then
+				if dialOpt.logic.display == 1 then
+					if num <= #dialOpt.text then -- if there are more lines to say, advance through table
+						print("advance " .. num .. #dialOpt.text)
+						textUpdate(num, dialOpt)
+						tbl[i].n = num + 1
+						print("tbl[i].n " .. tbl[i].n)
+						print("dialogueMode " .. dialogueMode)
+						if r then
+							storedIndex[1] = i
+						else
+							return
 						end
-						if dialOpt.logic.display == 2 then
-							print("triggered choice display")
-							if choice.mode == 0 then -- if choice has not been made yet
-								wait.current = wait.start
-								choice.mode = 1
-								choice.total = #dialOpt.text
-								choice.name = name
-								choice.case = case
-								choiceText(dialOpt.text, choice.pos, choice.total) -- display dialogue options
-								choice.type = "npc"
-								return
-							elseif choice.mode == 1 then
-								print("choice mode off case" .. case)
-								local o = dialOpt.logic.offset
+					else -- if not then move to next segment
+						print("turnning off dialogue")
+						if dialOpt.logic.off == true then
+							dialogueOff(tbl, i, dialOpt)
+							return
+						else
+							if dialOpt.logic.spoken ~= nil and dialOpt.logic.spoken == 0 then
+								if dialOpt.logic.statmod ~= nil then
+									print("statmod not nil")
+									changeCharStats(unpack(dialOpt.logic.statpar))
+								end
+								if dialOpt.logic.func ~= nil then
+									dialOpt.logic.func(unpack(dialOpt.logic.par))
+								end
 								dialOpt.logic.spoken = 1
-								dialOpt.logic.next = choice.pos + o
-								tbl[i].n = 1
-								tbl[i].c = dialOpt.logic.next
-								choice.mode = 0
-								choice.pos = 1
+								tbl[i].mapping.dialogueCount = tbl[i].mapping.dialogueCount + 1
+							end
+							tbl[i].n = 1
+							tbl[i].c = dialOpt.logic.next
+							if r then
+								DialogueSetup(tbl, n, i)
+							else
 								DialogueSetup(tbl, n)
 							end
+						end
+					end
+				end
+				if dialOpt.logic.display == 2 then
+					print("triggered choice display")
+					if choice.mode == 0 then -- if choice has not been made yet
+						wait.current = wait.start
+						choice.mode = 1
+						choice.total = #dialOpt.text
+						choice.name = name
+						choice.case = case
+						choiceText(dialOpt.text, choice.pos, choice.total) -- display dialogue options
+						choice.type = "npc"
+						return
+					elseif choice.mode == 1 then
+						print("choice mode off case" .. case)
+						local o = dialOpt.logic.offset
+						dialOpt.logic.spoken = 1
+						dialOpt.logic.next = choice.pos + o
+						tbl[i].n = 1
+						tbl[i].c = dialOpt.logic.next
+						choice.mode = 0
+						choice.pos = 1
+						if r then
+							DialogueSetup(tbl, n, i)
+						else
+							DialogueSetup(tbl, n)
 						end
 					end
 				end
@@ -379,4 +400,21 @@ function addParty(char)
 		print(#player.party)
 		resetDialogue(npcs, j)
 	end
+end
+
+function removeParty(char)
+	for i = 1, #player.party do
+		print(player.party[i])
+		if player.party[i] == char then
+			print("removing from party " .. player.party[i])
+			player.party[i] = nil
+			table.remove(player.party, i)
+		end
+	end
+end
+
+function changeQuota(n, name)
+	local i = getCharIndex(name)
+	player.quota = n
+	resetDialogue(npcs, i)
 end

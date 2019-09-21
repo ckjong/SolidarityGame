@@ -99,21 +99,28 @@ function randomFacing(char, x, ct, dt)
 end
 
 --check if there is a path to each open space, return path and direction npc facing at end
-function checkPaths(char, x1, y1)
+function checkPaths(char, x1, y1, r)
+	if math.abs(char.grid_x-char.act_x) < 0.1 then
+		char.act_x = char.grid_x
+	elseif math.abs(char.grid_y-char.act_y) < 0.1 then
+		char.act_y = char.grid_y
+	end
   local path = createPathNPC(math.floor(char.act_x/gridsize), math.floor(char.act_y/gridsize), x1/gridsize, y1/gridsize)
   if path ~= nil then
     print("path found")
-		table.remove(path) -- remove last entry (player location)
+		if r == true then
+			table.remove(path) -- remove last entry (player location)
+		end
 		local facing = changeFacing(path[#path].x, path[#path].y, x1, y1) -- check which direction NPC must be facing
 		return path, facing
 	else
-		error("no path found")
+		error("no path found " .. char.name)
 	end
 end
 
 function areaCheck(x1, y1, x2, y2, char)
 	local x1, y1, x2, y2 = x1*gridsize, y1*gridsize, x2*gridsize, y2*gridsize
-	if char.grid_x >= x1 and char.grid_x <= x2 and char.grid_y >= y1 and char.grid_y <= y2 then
+	if char.act_x >= x1 and char.act_x <= x2 and char.act_y >= y1 and char.act_y <= y2 then
 		return true
 	else
 		return false
@@ -305,6 +312,7 @@ end
 function partyFollows(dt, i, char)
 	if dialogueMode == 0 then
 		if player.newDir == 1 then
+			print("npcs[i].canMove " .. npcs[i].canMove)
 			npcs[i].path[1].x, npcs[i].path[1].y = npcs[i].grid_x, npcs[i].grid_y
 			npcs[i].grid_x = char.path[1].x
 			npcs[i].grid_y = char.path[1].y
@@ -339,4 +347,35 @@ function limitDistance(x1, x2, y1, y2, dist) -- char x, player x
 		end
 	end
 	return x1, y1
+end
+
+function areaTriggers()
+-- if player enters area, party leaves
+	local count = countTbl(player.party)
+	if areaCheck(15, 23, 18, 24, player) and currentLocation == "overworld" then
+		if count > 0 then
+			if gameStage == 4 then
+				for i = 1, #player.party do
+					local k = getCharIndex(player.party[i])
+					npcs[k].leaveControl.n = 1
+				end
+				movePartyToPos(1)
+			end
+		end
+		if workStage == 2 and gameStage > 2 then
+			print("workStage 3")
+			workStage = 3
+		end
+	end
+	if areaCheck(9, 11, 28, 14, player) and currentLocation == "dininghall" then
+		if gameStage == 5 then
+			if count > 0 then
+				for i = 1, #player.party do
+					local k = getCharIndex(player.party[i])
+					npcs[k].leaveControl.n = 2
+				end
+				movePartyToPos(2)
+			end
+		end
+	end
 end

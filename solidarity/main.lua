@@ -52,6 +52,8 @@ function love.load()
 	formBox(menuW2, menuH2, canvas2)
 	lockDialogue(locationTriggers.overworld)
 	setTitleScreen(1)
+	music.overworld:setLooping( true )
+	-- music.overworld:play()
 end
 
 
@@ -77,8 +79,8 @@ function love.update(dt)
 		end
 	end
 
-	-- do checks for each gamestage
-	gameStageUpdate(dt)
+	-- do checks for each work stage
+	workStageUpdate(dt)
 
 	if currentLocation == "dormitory" then
 		if time == 2 and player.sleep == false then
@@ -95,9 +97,9 @@ function love.update(dt)
 			keyInput = 0
 		end
 		if player.canMove == 1 and currentLocation == "overworld" then
-			if gameStage == 0 or gameStage == 4 then
+			if workStage == 1 or workStage == 2 then
 				moveCharBack(17, 21, 17, 22, 2)
-			elseif gameStage == 1 then
+			elseif workStage == 3 then
 				if objectInventory.barrelSmBerries + objectInventory.barrelLgBerries < 60 then
 					moveCharBack(17, 21, 17, 22, 2)
 				else
@@ -111,7 +113,8 @@ function love.update(dt)
 			end
 		end
 	end
-
+	--what to do when player enters area
+	areaTriggers()
 
 	--run through countdown
 	fadeCountdown(dt)
@@ -140,7 +143,6 @@ function love.update(dt)
 				partyFollows(dt, i, npcs[d])
 			end
 			npcs[i].moveDir, npcs[i].act_x, npcs[i].act_y = moveChar(npcs[i].moveDir, npcs[i].act_x, npcs[i].grid_x, npcs[i].act_y, npcs[i].grid_y, (player.speed *dt))
-
 		end
 	end
 
@@ -174,6 +176,14 @@ function love.update(dt)
 		if menuView == 0 then
 			if npcs[i].dialogue == 0 then
 				npcActUpdate(dt, i)
+				if player.leaveParty == true then
+					if npcs[i].leaveControl ~= nil then
+						if npcs[i].leaveControl.moving == 1 then
+							print("followPath " .. npcs[i].name)
+							followPath(npcs[i], dt, npcs[i].leaveControl.n)
+						end
+					end
+				end
 				if npcs[i].working == 1 then
 					if npcs[i].animations.act[npcs[i].start].running == 0 then
 						npcs[i].animations.act[npcs[i].start].running = 1
@@ -341,7 +351,11 @@ function love.keypressed(key)
 					if usedItem == 1 then
 						afterItemUse()
 					end
-					DialogueSetup(npcs, dialogueStage)
+					if storedIndex[1] ~= 0 then
+						DialogueSetup(npcs, dialogueStage, storedIndex[1])
+					else
+						DialogueSetup(npcs, dialogueStage)
+					end
 					faceObject(player, player.facing, staticObjects[currentLocation]) -- still objects
 					faceObject(player, player.facing, movingObjectData[currentLocation])
 					faceObject(player, player.facing, locationTriggers[currentLocation])

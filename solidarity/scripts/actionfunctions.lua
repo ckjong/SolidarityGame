@@ -246,15 +246,13 @@ function BerryHarvestStart(b, c)
 		if movingObjectData[currentLocation][b][c].picked < 3 then
 			movingObjectData[currentLocation][b][c].picked = movingObjectData[currentLocation][b][c].picked + 1
 			movingObjectData[currentLocation][b][c].trigger = 1
-			if player.energy > 0 then
-				player.energy = player.energy - 1
-			end
 		else
-			if player.energy > 0 then
-				player.energy = player.energy - 1
-			end
 			movingObjectData[currentLocation][b][c].trigger = 3
 		end
+		if player.energy > 0 then
+			player.energy = player.energy - 1
+		end
+		sfx.berryPickup:play()
 		player.animations.act[player.facing].running = 1
 		movingObjectData[currentLocation][b][c].running = 1
 
@@ -263,15 +261,13 @@ function BerryHarvestStart(b, c)
 		if movingObjectData[currentLocation][b][c].picked < 5 then
 			movingObjectData[currentLocation][b][c].picked = movingObjectData[currentLocation][b][c].picked + 1
 			movingObjectData[currentLocation][b][c].trigger = 2
-			if player.energy > 0 then
-				player.energy = player.energy - 1
-			end
 		else
-			if player.energy > 0 then
-				player.energy = player.energy - 1
-			end
 			movingObjectData[currentLocation][b][c].trigger = 4
 		end
+		if player.energy > 0 then
+			player.energy = player.energy - 1
+		end
+		sfx.berryPickup2:play()
 		player.animations.act[player.facing].running = 1
 		movingObjectData[currentLocation][b][c].running = 1
   end
@@ -307,6 +303,7 @@ function BerryBarrel(b, c, sub, icon)
 		movingObjectData[currentLocation][b][c].running = 1
 		objectInventory[b] = objectInventory[b] + total
 		setBubble(b, c)
+		sfx.berryDrop:play()
     addRemoveItem("Dropped " .. total .. " " .. sub .. ".", sub, -total, icon, true)
 		actionMode = 0
 		return
@@ -550,5 +547,6 @@ function resetBarrels()
 	objectInventory.barrelLgBerries = 0
 end
 
-itemEffects = {platefull2 = {type = "once", description = "Restores Energy", text = 1, func = energyMod, par = {50}}
+itemEffects = {platefull2 = {type = "once", description = "Restores Energy", text = 1, func = energyMod, par = {50}},
+							platefull3 = {type = "once", description = "Restores Energy", text = 1, func = energyMod, par = {50}}
 							}

@@ -1,6 +1,7 @@
 titleScreen = 1
 title = "Solidarity"
 gameStage = 0
+workStage = 2
 keyInput = 1
 freeze = {action = 0, dialogue = 0} -- 2 = stage freeze, 1 = energy too low, 0 = no freeze
 --map
@@ -190,6 +191,7 @@ currentJournal = {}
                        barrelSmBerries = love.graphics.newQuad(6*gridsize, 0, 16, 16, animsheet3:getDimensions()),
                        barrelLgBerries = love.graphics.newQuad(7*gridsize, 0, 16, 16, animsheet3:getDimensions()),
                        platefull2 = love.graphics.newQuad(8*gridsize, 0, 16, 16, animsheet3:getDimensions()),
+                       platefull3 = love.graphics.newQuad(13*gridsize, 0, 16, 16, animsheet3:getDimensions()),
                        fenceopenL = love.graphics.newQuad(9*gridsize, 0, 16, 16, animsheet3:getDimensions()),
                        fenceopenR = love.graphics.newQuad(10*gridsize, 0, 16, 16, animsheet3:getDimensions()),
                        fenceclosedL = love.graphics.newQuad(11*gridsize, 0, 16, 16, animsheet3:getDimensions()),
@@ -225,14 +227,17 @@ player = {
   maxInventory = 8,
   party = {},
   showParty = false,
+  leaveParty = false,
   spells = {},
   energy = 100,
+  quota = 60,
   sleep = false,
   actions = {current = 0, max = 100, rate = 10, x = 0, y = 0, key = 0, index = 0},
   next = {{x = 0, y = 0, facing = 0, location = "overworld"},
           {x = 0, y = 0, facing = 0, location = "dininghall"},
           {x = 14*gridsize, y = 16*gridsize, facing = 3, location = "dormitory"},
-          {x = 0, y = 0, facing = 0, location = "dormitory"}
+          {x = 0, y = 0, facing = 0, location = "dormitory"},
+          {x = 0, y = 0, facing = 0, location = "overworld"}
         },
   animations = {walk = {{anim = newAnimation(animsheet1, 0, 4, 16, 16, .50), name = "up", loop = 0},
                         {anim = newAnimation(animsheet1, 1*16, 4, 16, 16, .50), name = "down", loop = 0},
@@ -260,11 +265,13 @@ npcs = {{
   randomturn = 0, --randomly faces different directions
   working = 1, -- use action anims
   canWork = 1,
+  leaveControl = {moving = 0, path = {}, noden = 1, n = 1},
+  leaveParty = {{facing = 1, x = 18*gridsize, y = 30*gridsize, canWork = 1}},
   timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc.
   location = "overworld",
   dialogue = 0, -- curently in dialogue
   mapping = {added = 0, dialogueCount = 0},
-  info = {pos = "Field Hand", time = 4, notes = " My best friend.", comp = "Plantation"},
+  info = {pos = "Field Hand", time = 4, notes = " My best friend.", comp = "Berry Fields"},
   name = "Fennel",
   status = "worker",
   n = 1, --stage in single conversation
@@ -277,6 +284,7 @@ npcs = {{
           {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
           {x = 13*gridsize, y = 16*gridsize, facing = 4, location = "dormitory", canWork = 0},
           {x = 16*gridsize, y = 13*gridsize, facing = 2, location = "dormitory", canWork = 0},
+          {x = 13*gridsize, y = 14*gridsize, facing = 1, location = "dininghall", canWork = 0}
         },
   animations = {walk = {{anim = newAnimation(animsheet1, 4*16, 4, 16, 16, .5 ), name = "up", loop = 0},
                         {anim = newAnimation(animsheet1, 5*16, 4, 16, 16, .5 ), name = "down", loop = 0},
@@ -303,11 +311,14 @@ npcs = {{
     randomturn = 0, --randomly faces different directions
     working = 1, -- use action anims
     canWork = 1,
+    leaveControl = {moving = 0, path = {}, noden = 1, n = 1},
+    leaveParty = {{facing = 1, x = 18*gridsize, y = 30*gridsize, canWork = 0},
+                  {facing = 1, x = 14*gridsize, y = 14*gridsize, canWork = 0}},
     timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc.
     location = "overworld",
     dialogue = 0,
     mapping = {added = 0, dialogueCount = 0},
-    info = {pos = "Field Hand", time = 7, notes = " An old friend.", comp = "Plantation"},
+    info = {pos = "Field Hand", time = 7, notes = " An old friend.", comp = "Berry Fields"},
     name = "Mint", --2
     status = "worker",
     n = 1,
@@ -319,7 +330,9 @@ npcs = {{
     next = {{x = 21*gridsize, y = 23*gridsize, facing = 2, location = "overworld", canWork = 1},
             {x = 21*gridsize, y = 15*gridsize, facing = 4, location = "dormitory", canWork = 0},
             {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
-            {x = 21*gridsize, y = 23*gridsize, facing = 2, location = "overworld", canWork = 1}},
+            {x = 21*gridsize, y = 23*gridsize, facing = 2, location = "overworld", canWork = 1},
+            {x = 0, y = 0, facing = 0, location = "overworld", canWork = 0}
+          },
     animations = {walk = {{anim = newAnimation(animsheet1, 8*16, 4, 16, 16, .5 ), name = "up", loop = 0},
                           {anim = newAnimation(animsheet1, 9*16, 4, 16, 16, .5 ), name = "down", loop = 0},
                           {anim = newAnimation(animsheet1, 10*16, 4, 16, 16, .55 ), name = "left", loop = 0},
@@ -345,11 +358,13 @@ npcs = {{
       randomturn = 0,
       working = 1,
       canWork = 1,
+      leaveControl = {moving = 0, path = {}, noden = 1, n = 1},
+      leaveParty = {{facing = 1, x = 21*gridsize, y = 26*gridsize, canWork = 1}},
       timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc.
       location = "overworld",
       dialogue = 0,
       mapping = {added = 0, dialogueCount = 0},
-      info = {pos = "Field Hand", time = 2, notes = "", comp = "Plantation"},
+      info = {pos = "Field Hand", time = 2, notes = "", comp = "Berry Fields"},
       name = "Cress", -- 5
       status = "worker",
       n = 1, --stage in single conversation
@@ -361,7 +376,8 @@ npcs = {{
       next = {{x = 10*gridsize, y = 9*gridsize, facing = 2, location = "dormitory", canWork = 0},
               {x = 10*gridsize, y = 9*gridsize, facing = 2, location = "dormitory", canWork = 0},
               {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
-              {x = 10*gridsize, y = 9*gridsize, facing = 2, location = "dormitory", canWork = 0}
+              {x = 10*gridsize, y = 9*gridsize, facing = 2, location = "dormitory", canWork = 0},
+              {x = 14*gridsize, y = 12*gridsize, facing = 2, location = "dininghall", canWork = 0}
             },
       animations = {walk = {{anim = newAnimation(animsheet1, 20*16, 4, 16, 16, .5 ), name = "up", loop = 0},
                             {anim = newAnimation(animsheet1, 21*16, 4, 16, 16, .5 ), name = "down", loop = 0},
@@ -388,11 +404,13 @@ npcs = {{
       randomturn = 0,
       working = 0,
       canWork = 0,
+      leaveControl = {moving = 0, path = {}, noden = 1, n = 1},
+      leaveParty = {{facing = 1, x = 13*gridsize, y = 31*gridsize, canWork = 0}},
       timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc.
       location = "overworld",
       dialogue = 0,
       mapping = {added = 0, dialogueCount = 0},
-      info = {pos = "Field Hand", notes = "", comp = "Plantation"},
+      info = {pos = "Field Hand", notes = "", comp = "Berry Fields"},
       name = "Agave", --6
       status = "worker",
       n = 1, --stage in single conversation
@@ -404,7 +422,8 @@ npcs = {{
       next = {{x = 18*gridsize, y = 19*gridsize, facing = 2, location = "dininghall", canWork = 0},
               {x = 0, y = 0, facing = 0, location = "dininghall", canWork = 0},
               {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
-              {x = 13*gridsize, y = 31*gridsize, facing = 2, location = "overworld", canWork = 0}
+              {x = 13*gridsize, y = 31*gridsize, facing = 2, location = "overworld", canWork = 0},
+              {x = 23*gridsize, y = 14*gridsize, facing = 1, location = "dininghall", canWork = 0},
             },
       animations = {walk = {{anim = newAnimation(animsheet1, 24*16, 4, 16, 16, .6 ), name = "up", loop = 0},
                             {anim = newAnimation(animsheet1, 25*16, 4, 16, 16, .6 ), name = "down", loop = 0},
@@ -431,11 +450,12 @@ npcs = {{
       randomturn = 0,
       working = 0,
       canWork = 0,
+      leaveControl = {moving = 0, path = {}, noden = 1, n = 1},
       timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc.
       location = "overworld",
       dialogue = 0,
       mapping = {added = 0, dialogueCount = 0},
-      info = {pos = "Field Hand", notes = "", comp = "Plantation"},
+      info = {pos = "Field Hand", notes = "", comp = "Berry Fields"},
       name = "Tarragon", --7
       status = "worker",
       n = 1, --stage in single conversation
@@ -448,6 +468,7 @@ npcs = {{
               {x = 26*gridsize, y = 16*gridsize, facing = 2, location = "dormitory", canWork = 0},
               {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
               {x = 21*gridsize, y = 31*gridsize, facing = 2, location = "overworld", canWork = 0},
+              {x = 23*gridsize, y = 16*gridsize, facing = 2, location = "dininghall", canWork = 0}
             },
       animations = {walk = {{anim = newAnimation(animsheet1, 28*16, 4, 16, 16, .5), name = "up", loop = 0},
                             {anim = newAnimation(animsheet1, 29*16, 4, 16, 16, .5), name = "down", loop = 0},
@@ -474,11 +495,12 @@ npcs = {{
       randomturn = 0,
       working = 1,
       canWork = 1,
+      leaveControl = {moving = 0, path = {}, noden = 1, n = 1},
       timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc.
       location = "overworld",
       dialogue = 0,
       mapping = {added = 0, dialogueCount = 0},
-      info = {pos = "Field Hand", notes = "", comp = "Plantation"},
+      info = {pos = "Field Hand", notes = "", comp = "Berry Fields"},
       name = "Robin", --8
       status = "worker",
       n = 1, --stage in single conversation
@@ -490,7 +512,8 @@ npcs = {{
       next = {{x = 28*gridsize, y = 13*gridsize, facing = 2, location = "dormitory", canWork = 0},
               {x = 28*gridsize, y = 13*gridsize, facing = 2, location = "dormitory", canWork = 0},
               {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
-              {x = 14*gridsize, y = 27*gridsize, facing = 2, location = "overworld", canWork = 0}
+              {x = 14*gridsize, y = 27*gridsize, facing = 2, location = "overworld", canWork = 0},
+              {x = 22*gridsize, y = 16*gridsize, facing = 2, location = "dininghall", canWork = 0}
             },
       animations = {walk = {{anim = newAnimation(animsheet1, 32*16, 4, 16, 16, .5), name = "up", loop = 0},
                             {anim = newAnimation(animsheet1, 33*16, 4, 16, 16, .5), name = "down", loop = 0},
@@ -517,11 +540,12 @@ npcs = {{
       randomturn = 0,
       working = 0,
       canWork = 0,
+      leaveControl = {moving = 0, path = {}, noden = 1, n = 1},
       timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc., current time, max time, wait time
       location = "offscreen",
       dialogue = 0,
       mapping = {added = 0, dialogueCount = 0},
-      info = {pos = "Field Hand", notes = "", comp = "Plantation"},
+      info = {pos = "Field Hand", notes = "", comp = "Berry Fields"},
       name = "Durian", --9
       status = "worker",
       n = 1, --stage in single conversation
@@ -533,7 +557,8 @@ npcs = {{
       next = {{x = 27*gridsize, y = 14*gridsize, facing = 4, location = "dormitory", canWork = 0},
               {x = 27*gridsize, y = 14*gridsize, facing = 4, location = "dormitory", canWork = 0},
               {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
-              {x = 14*gridsize, y = 16*gridsize, facing = 4, location = "overworld", canWork = 0}
+              {x = 14*gridsize, y = 16*gridsize, facing = 4, location = "overworld", canWork = 0},
+              {x = 22*gridsize, y = 18*gridsize, facing = 1, location = "dininghall", canWork = 0}
             },
       animations = {walk = {{anim = newAnimation(animsheet1, 36*16, 4, 16, 16, .5 ), name = "up", loop = 0},
                             {anim = newAnimation(animsheet1, 37*16, 4, 16, 16, .5 ), name = "down", loop = 0},
@@ -560,11 +585,13 @@ npcs = {{
       randomturn = 0,
       working = 0,
       canWork = 0,
+      leaveControl = {moving = 0, path = {}, noden = 1, n = 1},
+      leaveParty = {{facing = 1, x = 13*gridsize, y = 31*gridsize, canWork = 0}},
       timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc., current time, max time, wait time
       location = "offscreen",
       dialogue = 0,
       mapping = {added = 0, dialogueCount = 0},
-      info = {pos = "Field Hand, Dorm Supervisor", notes = " My uncle.", comp = "Plantation"},
+      info = {pos = "Field Hand, Dorm Supervisor", notes = " My uncle.", comp = "Berry Fields"},
       name = "Brier", --9
       status = "worker",
       n = 1, --stage in single conversation
@@ -576,7 +603,8 @@ npcs = {{
       next = {{x = 25*gridsize, y = 9*gridsize, facing = 1, location = "dormitory", canWork = 0},
               {x = 24*gridsize, y = 9*gridsize, facing = 1, location = "dormitory", canWork = 0},
               {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
-              {x = 24*gridsize, y = 9*gridsize, facing = 1, location = "dormitory", canWork = 0}
+              {x = 24*gridsize, y = 9*gridsize, facing = 1, location = "dormitory", canWork = 0},
+              {x = 23*gridsize, y = 12*gridsize, facing = 1, location = "dormitory", canWork = 0}
             },
       animations = {walk = {{anim = newAnimation(animsheet1, 40*16, 4, 16, 16, .5 ), name = "up", loop = 0},
                             {anim = newAnimation(animsheet1, 41*16, 4, 16, 16, .5 ), name = "down", loop = 0},
@@ -603,11 +631,13 @@ npcs = {{
       randomturn = 0,
       working = 0,
       canWork = 0,
+      leaveControl = {moving = 0, path = {}, noden = 1, n = 1},
+      leaveParty = {{facing = 1, x = 15*gridsize, y = 14*gridsize}},
       timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc., current time, max time, wait time
       location = "offscreen",
       dialogue = 0,
       mapping = {added = 0, dialogueCount = 0},
-      info = {pos = "Field Hand", notes = "", comp = "Plantation"},
+      info = {pos = "Field Hand", notes = "", comp = "Berry Fields"},
       name = "Lotus", --9
       status = "worker",
       n = 1, --stage in single conversation
@@ -619,7 +649,8 @@ npcs = {{
       next = {{x = 14*gridsize, y = 10*gridsize, facing = 2, location = "overworld", canWork = 0},
               {x = 10*gridsize, y = 15*gridsize, facing = 4, location = "dormitory", canWork = 0},
               {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
-              {x = 10*gridsize, y = 15*gridsize, facing = 4, location = "dormitory", canWork = 0}
+              {x = 14*gridsize, y = 14*gridsize, facing = 2, location = "overworld", canWork = 0},
+              {x = 19*gridsize, y = 14*gridsize, facing = 1, location = "dininghall", canWork = 0}
             },
       animations = {walk = {{anim = newAnimation(animsheet1, 44*16, 4, 16, 16, .5 ), name = "up", loop = 0},
                             {anim = newAnimation(animsheet1, 45*16, 4, 16, 16, .5 ), name = "down", loop = 0},
@@ -650,7 +681,7 @@ npcs = {{
       location = "dininghall",
       dialogue = 0,
       mapping = {added = 0, dialogueCount = 0},
-      info = {pos = "Cook", notes = "", comp = "Plantation"},
+      info = {pos = "Cook", notes = "", comp = "Berry Fields"},
       name = "Euca",
       status = "worker",
       offset = {x = 0, y = 16},
@@ -663,6 +694,7 @@ npcs = {{
       next = {{x = 0, y = 0, facing = 0, location = "dininghall", canWork = 0},
               {x = 0, y = 0, facing = 0, location = "dininghall", canWork = 0},
               {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
+              {x = 0, y = 0, facing = 0, location = "dininghall", canWork = 0},
               {x = 0, y = 0, facing = 0, location = "dininghall", canWork = 0}
             },
       animations = {walk = {{anim = newAnimation(animsheet1, 48*16, 4, 16, 16, .5 ), name = "up", loop = 0},
@@ -694,7 +726,7 @@ npcs = {{
       location = "overworld",
       dialogue = 0,
       mapping = {added = 0, dialogueCount = 0},
-      info = {pos = "Guard", notes = "", comp = "Plantation"},
+      info = {pos = "Guard", notes = "", comp = "Berry Fields"},
       name = "Finch", --4
       status = "boss",
       n = 1, --stage in single conversation
@@ -706,7 +738,9 @@ npcs = {{
       next = {{x = 16*gridsize, y = 21*gridsize, facing = 4, location = "overworld", canWork = 0},
               {x = 16*gridsize, y = 20*gridsize, facing = 4, location = "overworld", canWork = 0},
               {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
-              {x = 16*gridsize, y = 21*gridsize, facing = 4, location = "overworld", canWork = 0}},
+              {x = 16*gridsize, y = 21*gridsize, facing = 4, location = "overworld", canWork = 0},
+              {x = 16*gridsize, y = 21*gridsize, facing = 4, location = "overworld", canWork = 0}
+            },
       animations = {walk = {{anim = newAnimation(animsheet1, 12*16, 4, 16, 16, .5 ), name = "up", loop = 0},
                             {anim = newAnimation(animsheet1, 13*16, 4, 16, 16, .5 ), name = "down", loop = 0},
                             {anim = newAnimation(animsheet1, 14*16, 4, 16, 16, .55 ), name = "left", loop = 0},
@@ -736,7 +770,7 @@ npcs = {{
       location = "overworld",
       dialogue = 0,
       mapping = {added = 0, dialogueCount = 0},
-      info = {pos = "Foreman", notes = "", comp = "Plantation"},
+      info = {pos = "Foreman", notes = "", comp = "Berry Fields"},
       name = "Lark", -- 3
       status = "boss",
       n = 1, --stage in single conversation
@@ -748,7 +782,8 @@ npcs = {{
       next = {{x = 10*gridsize, y = 27*gridsize, facing = 4, location = "overworld", canWork = 0},
               {x = 0, y = 0, facing = 0, location = "offscreen", canWork = 0},
               {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
-              {x = 10*gridsize, y = 27*gridsize, facing = 4, location = "overworld", canWork = 0}
+              {x = 10*gridsize, y = 27*gridsize, facing = 4, location = "overworld", canWork = 0},
+              {x = 10*gridsize, y = 27*gridsize, facing = 4, location = "overworld", canWork = 0},
             },
       animations = {walk = {{anim = newAnimation(animsheet1, 16*16, 4, 16, 16, .5 ), name = "up", loop = 0},
                             {anim = newAnimation(animsheet1, 17*16, 4, 16, 16, .5 ), name = "down", loop = 0},
@@ -779,7 +814,7 @@ npcs = {{
       location = "dininghall",
       dialogue = 0,
       mapping = {added = 0, dialogueCount = 0},
-      info = {pos = "Guard", notes = "", comp = "Plantation"},
+      info = {pos = "Guard", notes = "", comp = "Berry Fields"},
       name = "Hawk",
       status = "boss",
       n = 1, --stage in single conversation
@@ -791,6 +826,7 @@ npcs = {{
       next = {{x = 0, y = 0, facing = 0, location = "dininghall", canWork = 0},
               {x = 0, y = 0, facing = 0, location = "dininghall", canWork = 0},
               {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
+              {x = 0, y = 0, facing = 0, location = "dininghall", canWork = 0},
               {x = 0, y = 0, facing = 0, location = "dininghall", canWork = 0}
             },
       animations = {walk = {{anim = newAnimation(animsheet1, 52*16, 4, 16, 16, .5 ), name = "up", loop = 0},
@@ -822,7 +858,7 @@ npcs = {{
       location = "offscreen",
       dialogue = 0,
       mapping = {added = 0, dialogueCount = 0},
-      info = {pos = "Plantation Manager", notes = "", comp = "Plantation"},
+      info = {pos = "Berry Fields Manager", notes = "", comp = "Berry Fields"},
       name = "Ani",
       status = "boss",
       n = 1, --stage in single conversation
@@ -834,6 +870,7 @@ npcs = {{
       next = {{x = 0, y = 0, facing = 0, location = "offscreen", canWork = 0},
               {x = 0, y = 0, facing = 0, location = "offscreen", canWork = 0},
               {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
+              {x = 0, y = 0, facing = 0, location = "offscreen", canWork = 0},
               {x = 0, y = 0, facing = 0, location = "offscreen", canWork = 0}
             },
       animations = {walk = {{anim = newAnimation(animsheet1, 56*16, 4, 16, 16, .5 ), name = "up", loop = 0},
@@ -923,7 +960,8 @@ objectInventory = {barrelSmBerries = 0, barrelLgBerries = 0}
 
 itemStats = {plantSmBerries = {max = 60, stackable = 1},
             plantLgBerries = {max = 60, stackable = 1},
-            platefull2 = {max = 60, stackable = 0, use = "Eat"}
+            platefull2 = {max = 60, stackable = 0, use = "Eat"},
+            platefull3 = {max = 60, stackable = 0, use = "Eat"}
             }
 itemText = ""
 animsheet2 = love.graphics.newImage("images/solidarity_object_anim.png")
@@ -1000,19 +1038,41 @@ nonInteractiveObjects = {overworld = {fenceopenL = {
                                     },
                         dininghall = {stool = {
                                         {x = 12*gridsize, y = 12*gridsize, visible = 1},
+                                        {x = 13*gridsize, y = 12*gridsize, visible = 1},
                                         {x = 14*gridsize, y = 12*gridsize, visible = 1},
                                         {x = 17*gridsize, y = 12*gridsize, visible = 1},
                                         {x = 18*gridsize, y = 12*gridsize, visible = 1},
                                         {x = 19*gridsize, y = 12*gridsize, visible = 1},
+                                        {x = 22*gridsize, y = 12*gridsize, visible = 1},
                                         {x = 23*gridsize, y = 12*gridsize, visible = 1},
                                         {x = 24*gridsize, y = 12*gridsize, visible = 1},
+                                        {x = 12*gridsize, y = 14*gridsize, visible = 1},
+                                        {x = 13*gridsize, y = 14*gridsize, visible = 1},
+                                        {x = 14*gridsize, y = 14*gridsize, visible = 1},
+                                        {x = 17*gridsize, y = 14*gridsize, visible = 1},
+                                        {x = 18*gridsize, y = 14*gridsize, visible = 1},
+                                        {x = 19*gridsize, y = 14*gridsize, visible = 1},
+                                        {x = 22*gridsize, y = 14*gridsize, visible = 1},
+                                        {x = 23*gridsize, y = 14*gridsize, visible = 1},
+                                        {x = 24*gridsize, y = 14*gridsize, visible = 1},
                                         {x = 12*gridsize, y = 16*gridsize, visible = 1},
                                         {x = 13*gridsize, y = 16*gridsize, visible = 1},
                                         {x = 14*gridsize, y = 16*gridsize, visible = 1},
+                                        {x = 17*gridsize, y = 16*gridsize, visible = 1},
                                         {x = 18*gridsize, y = 16*gridsize, visible = 1},
                                         {x = 19*gridsize, y = 16*gridsize, visible = 1},
                                         {x = 22*gridsize, y = 16*gridsize, visible = 1},
-                                        {x = 23*gridsize, y = 16*gridsize, visible = 1}
+                                        {x = 23*gridsize, y = 16*gridsize, visible = 1},
+                                        {x = 24*gridsize, y = 16*gridsize, visible = 1},
+                                        {x = 12*gridsize, y = 18*gridsize, visible = 1},
+                                        {x = 13*gridsize, y = 18*gridsize, visible = 1},
+                                        {x = 14*gridsize, y = 18*gridsize, visible = 1},
+                                        {x = 17*gridsize, y = 18*gridsize, visible = 1},
+                                        {x = 18*gridsize, y = 18*gridsize, visible = 1},
+                                        {x = 19*gridsize, y = 18*gridsize, visible = 1},
+                                        {x = 22*gridsize, y = 18*gridsize, visible = 1},
+                                        {x = 23*gridsize, y = 18*gridsize, visible = 1},
+                                        {x = 24*gridsize, y = 18*gridsize, visible = 1}
                                     }
                                   },
                         dormitory = {
@@ -1091,7 +1151,7 @@ animsheet_act = love.graphics.newImage("images/solidarity_anim_act.png")
 --fading
 fading = {on = false, type = 1, start = 0, goal = 0, rate = 0, a = 0, countdown = 0, triggered = 0} -- type 1 = fade in from 0 to 255; 2 = fade out from 255 to 0
 --cutscene
-cutsceneControl = {stage = 0, total = 4, current = 1}
+cutsceneControl = {stage = 0, total = 6, current = 1}
 -- types: 1 = talk, 2 = changeScene
 cutsceneList ={{
   triggered = false,
@@ -1108,7 +1168,9 @@ cutsceneList ={{
   goback = true, -- npc goes back to starting position
   skipnext = false, -- do we go directly to next cutscene?
   nextStage = true, -- do we go to the next game scene
-  switchTime = 2 -- what time of day is it after the end
+  switchTime = 2, -- what time of day is it after the end
+  workStage = 3, -- settings for gate, pushback, etc.
+  next = 2,
 },
 {
   triggered = false,
@@ -1125,7 +1187,9 @@ cutsceneList ={{
   goback = true, -- npc goes back to starting position
   skipnext = false, -- do we go directly to next cutscene?
   nextStage = true, -- do we go to the next game scene
-  switchTime = 2 -- what time of day is it after the end
+  switchTime = 2, -- what time of day is it after the end
+  workStage = 4, -- settings for gate, pushback, etc.
+  next = 3,
 },
 {
   triggered = false,
@@ -1134,7 +1198,9 @@ cutsceneList ={{
   black = 1,
   skipnext = true, -- do we go directly to next cutscene?
   nextStage = true, -- do we go to the next game scene
-  switchTime = 3 -- what time of day is it after the end
+  switchTime = 3, -- what time of day is it after the end
+  workStage = 4, -- settings for gate, pushback, etc.
+  next = 4,
 },
 {
   triggered = false,
@@ -1146,8 +1212,44 @@ cutsceneList ={{
   black = 1,
   skipnext = false, -- do we go directly to next cutscene?
   nextStage = true, -- do we go to the next game scene
-  switchTime = 1 -- what time of day is it after the end
-}
+  switchTime = 1, -- what time of day is it after the end
+  workStage = 1, -- settings for gate, pushback, etc.
+  next = 5,
+},
+{
+  triggered = false,
+  type = 1, -- npc talks
+  move = false, --does the NPC move?
+  forcetalk = true,
+  npc = "Lark", --which NPC
+  dialoguekey = 2,
+  fadeout = 1,
+  black = 1,
+  skipnext = true, -- do we go directly to next cutscene?
+  nextStage = true,
+  switchTime = 0, -- what time of day is it after the end
+  workStage = 3, -- settings for gate, pushback, etc.
+  next = 6,
+},
+{
+  triggered = false,
+  type = 1, -- npc talks to you
+  move = true, --does the NPC move?
+  npc = "Mint", --which NPC
+  target = player, -- where do they move
+  facing = {1}, --what direction are they facing at the end
+  noden = 1, --what node are they walking to next
+  dialoguekey = 1,
+  path = {},
+  fadeout = 0,
+  black = 0,
+  goback = false, -- npc goes back to starting position
+  skipnext = false, -- do we go directly to next cutscene?
+  nextStage = false, -- do we go to the next game scene
+  switchTime = 0, -- what time of day is it after the end
+  workStage = 3, -- settings for gate, pushback, etc.
+  next = 7,
+},
 }
 
 
@@ -1166,6 +1268,14 @@ wait = {start = .8, rate = 1, current = 0, triggered = 0, n = 0}
 timer = {{base = .5, current = 0, trigger = 0}, -- blinking arrow
           {base = .03, current = 0, trigger = 0}} --unrolling text
 
+
+--audio
+sfx = {berryPickup = love.audio.newSource("audio/berrypickup.wav", "static"),
+      berryPickup2 = love.audio.newSource("audio/berrypickup2.wav", "static"),
+      berryDrop = love.audio.newSource("audio/berrydrop.wav", "static")
+}
+
+music ={overworld = love.audio.newSource("audio/Yellow_Forest.ogg")}
 
 -- save files
 save = {total = 0, current = 0, name = ""}

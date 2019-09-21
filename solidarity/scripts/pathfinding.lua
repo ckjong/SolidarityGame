@@ -160,7 +160,12 @@ function createPathNPC(x1, y1, x2, y2)
   pathfinding.initMap(gameMap)
   local path = pathfinding.findPath(x1, y1, x2, y2)
   if path then
-    for k, node in ipairs(path) do print(node.x, node.y) end
+    for k, node in ipairs(path) do
+      if math.abs(node.x-(player.grid_x/gridsize)) > 8 or math.abs(node.y-(player.grid_y/gridsize)) > 8 then
+        print("removing " .. node.x, node.y)
+        table.remove(path, k)
+      end
+    end
     return path
   end
 end
