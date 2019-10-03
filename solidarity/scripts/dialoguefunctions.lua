@@ -114,26 +114,28 @@ function initDialogue (char)
 			x = x + char.offset.x
 			y = y + char.offset.y
 		end
-		if player.act_y == y then
-			if player.act_x == x - gridsize and player.facing == 4 then
-				char.dialogue = 1
-				char.facing = 3
-				return true
-			elseif player.act_x == x + gridsize and player.facing == 3 then
-				char.dialogue = 1
-				char.facing = 4
-				return true
+		if checkParty(char) == false then
+			if player.act_y == y then
+				if player.act_x == x - gridsize and player.facing == 4 then
+					char.dialogue = 1
+					char.facing = 3
+					return true
+				elseif player.act_x == x + gridsize and player.facing == 3 then
+					char.dialogue = 1
+					char.facing = 4
+					return true
+				end
 			end
-		end
-		if player.act_x == x then
-			if player.act_y == y - gridsize and player.facing == 2 then
-				char.dialogue = 1
-				char.facing = 1
-				return true
-			elseif player.act_y == y + gridsize and player.facing == 1 then
-				char.dialogue = 1
-				char.facing = 2
-				return true
+			if player.act_x == x then
+				if player.act_y == y - gridsize and player.facing == 2 then
+					char.dialogue = 1
+					char.facing = 1
+					return true
+				elseif player.act_y == y + gridsize and player.facing == 1 then
+					char.dialogue = 1
+					char.facing = 2
+					return true
+				end
 			end
 		end
 	end
@@ -175,6 +177,7 @@ end
 
 function resetDialogue(tbl, i)
 	local dialOpt = NPCdialogue[gameStage][tbl[i].name][tbl[i].c]
+	sfx.textSelect:play()
 	choice.pos = 1
 	choice.more = 0
 	dialogueMode = 0
@@ -212,11 +215,13 @@ function choiceChange(key, tbl)
 	if key == "down" then
 		if choice.pos >= 1 and choice.pos < choice.total then
 			choice.pos = choice.pos + 1
+			sfx.textSelect:play()
 			print("choice.pos d " .. choice.pos)
 		end
 	elseif key == "up" then
 		if choice.pos > 1 then
 			choice.pos = choice.pos - 1
+			sfx.textSelect:play()
 			print("choice.pos u " .. choice.pos)
 		end
 	end
@@ -242,12 +247,12 @@ function dialogueRun(tbl, n, i, r)
 	if NPCdialogue[n][name] ~= nil then
 		local dialOpt = NPCdialogue[n][name][case]
 		local canSpeak = 1
-		if freeze.dialogue == 1 then
-			if dialOpt.logic.energy ~= nil then
-				canSpeak = 0
-				dialogueFreeze(tbl[i])
-			end
-		end
+		-- if freeze.dialogue == 1 then
+		-- 	if dialOpt.logic.energy ~= nil then
+		-- 		canSpeak = 0
+		-- 		dialogueFreeze(tbl[i])
+		-- 	end
+		-- end
 		if canSpeak == 1 then
 			print("tbl[i].n " .. tbl[i].n)
 			wait.triggered = 1
@@ -261,6 +266,9 @@ function dialogueRun(tbl, n, i, r)
 					if num <= #dialOpt.text then -- if there are more lines to say, advance through table
 						print("advance " .. num .. #dialOpt.text)
 						textUpdate(num, dialOpt)
+						if num > 1 then
+							sfx.textSelect:play()
+						end
 						tbl[i].n = num + 1
 						print("tbl[i].n " .. tbl[i].n)
 						print("dialogueMode " .. dialogueMode)
@@ -288,6 +296,7 @@ function dialogueRun(tbl, n, i, r)
 							end
 							tbl[i].n = 1
 							tbl[i].c = dialOpt.logic.next
+							sfx.textSelect:play()
 							if r then
 								DialogueSetup(tbl, n, i)
 							else
@@ -308,6 +317,7 @@ function dialogueRun(tbl, n, i, r)
 						choice.type = "npc"
 						return
 					elseif choice.mode == 1 then
+						sfx.textSelect:play()
 						print("choice mode off case" .. case)
 						local o = dialOpt.logic.offset
 						dialOpt.logic.spoken = 1
@@ -353,7 +363,9 @@ function checkSpoken(tbl1, tbl2, num) -- npcs, NPCdialogue[stage]
 		if tbl2[name] ~= nil then
 			for k = 1, #tbl2[name] do
 				if tbl2[name][k].logic.spoken == 1 then
-					count = count + 1
+					if tbl2[name][k].logic.off == true then
+						count = count + 1
+					end
 				end
 			end
 		end
@@ -383,13 +395,7 @@ function quitGame(t)
 end
 
 function addParty(char)
-	local added = false
-	for i = 1, #player.party do
-		print(player.party[i])
-		if player.party[i] == char then
-			added = true
-		end
-	end
+	local added = checkParty(char)
 	if added == false then
 		local j = getCharIndex(char)
 		npcs[j].canMove = 1
@@ -400,6 +406,15 @@ function addParty(char)
 		print(#player.party)
 		resetDialogue(npcs, j)
 	end
+end
+
+function checkParty(char)
+	for i = 1, #player.party do
+		if player.party[i] == char then
+			return true
+		end
+	end
+	return false
 end
 
 function removeParty(char)

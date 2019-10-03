@@ -237,7 +237,8 @@ player = {
           {x = 0, y = 0, facing = 0, location = "dininghall"},
           {x = 14*gridsize, y = 16*gridsize, facing = 3, location = "dormitory"},
           {x = 0, y = 0, facing = 0, location = "dormitory"},
-          {x = 0, y = 0, facing = 0, location = "overworld"}
+          {x = 0, y = 0, facing = 0, location = "overworld"},
+          {x = 0, y = 0, facing = 0, location = "dininghall"}
         },
   animations = {walk = {{anim = newAnimation(animsheet1, 0, 4, 16, 16, .50), name = "up", loop = 0},
                         {anim = newAnimation(animsheet1, 1*16, 4, 16, 16, .50), name = "down", loop = 0},
@@ -284,6 +285,7 @@ npcs = {{
           {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
           {x = 13*gridsize, y = 16*gridsize, facing = 4, location = "dormitory", canWork = 0},
           {x = 16*gridsize, y = 13*gridsize, facing = 2, location = "dormitory", canWork = 0},
+          {x = 13*gridsize, y = 14*gridsize, facing = 1, location = "dininghall", canWork = 0},
           {x = 13*gridsize, y = 14*gridsize, facing = 1, location = "dininghall", canWork = 0}
         },
   animations = {walk = {{anim = newAnimation(animsheet1, 4*16, 4, 16, 16, .5 ), name = "up", loop = 0},
@@ -331,7 +333,8 @@ npcs = {{
             {x = 21*gridsize, y = 15*gridsize, facing = 4, location = "dormitory", canWork = 0},
             {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
             {x = 21*gridsize, y = 23*gridsize, facing = 2, location = "overworld", canWork = 1},
-            {x = 0, y = 0, facing = 0, location = "overworld", canWork = 0}
+            {x = 0, y = 0, facing = 0, location = "overworld", canWork = 0},
+            {x = 0, y = 0, facing = 0, location = "dininghall", canWork = 0}
           },
     animations = {walk = {{anim = newAnimation(animsheet1, 8*16, 4, 16, 16, .5 ), name = "up", loop = 0},
                           {anim = newAnimation(animsheet1, 9*16, 4, 16, 16, .5 ), name = "down", loop = 0},
@@ -377,6 +380,7 @@ npcs = {{
               {x = 10*gridsize, y = 9*gridsize, facing = 2, location = "dormitory", canWork = 0},
               {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
               {x = 10*gridsize, y = 9*gridsize, facing = 2, location = "dormitory", canWork = 0},
+              {x = 14*gridsize, y = 12*gridsize, facing = 2, location = "dininghall", canWork = 0},
               {x = 14*gridsize, y = 12*gridsize, facing = 2, location = "dininghall", canWork = 0}
             },
       animations = {walk = {{anim = newAnimation(animsheet1, 20*16, 4, 16, 16, .5 ), name = "up", loop = 0},
@@ -424,6 +428,7 @@ npcs = {{
               {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
               {x = 13*gridsize, y = 31*gridsize, facing = 2, location = "overworld", canWork = 0},
               {x = 23*gridsize, y = 14*gridsize, facing = 1, location = "dininghall", canWork = 0},
+              {x = 23*gridsize, y = 14*gridsize, facing = 1, location = "dininghall", canWork = 0},
             },
       animations = {walk = {{anim = newAnimation(animsheet1, 24*16, 4, 16, 16, .6 ), name = "up", loop = 0},
                             {anim = newAnimation(animsheet1, 25*16, 4, 16, 16, .6 ), name = "down", loop = 0},
@@ -468,7 +473,8 @@ npcs = {{
               {x = 26*gridsize, y = 16*gridsize, facing = 2, location = "dormitory", canWork = 0},
               {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
               {x = 21*gridsize, y = 31*gridsize, facing = 2, location = "overworld", canWork = 0},
-              {x = 23*gridsize, y = 16*gridsize, facing = 2, location = "dininghall", canWork = 0}
+              {x = 17*gridsize, y = 14*gridsize, facing = 1, location = "dininghall", canWork = 0},
+              {x = 17*gridsize, y = 14*gridsize, facing = 1, location = "dininghall", canWork = 0}
             },
       animations = {walk = {{anim = newAnimation(animsheet1, 28*16, 4, 16, 16, .5), name = "up", loop = 0},
                             {anim = newAnimation(animsheet1, 29*16, 4, 16, 16, .5), name = "down", loop = 0},
@@ -513,7 +519,8 @@ npcs = {{
               {x = 28*gridsize, y = 13*gridsize, facing = 2, location = "dormitory", canWork = 0},
               {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
               {x = 14*gridsize, y = 27*gridsize, facing = 2, location = "overworld", canWork = 0},
-              {x = 22*gridsize, y = 16*gridsize, facing = 2, location = "dininghall", canWork = 0}
+              {x = 17*gridsize, y = 12*gridsize, facing = 2, location = "dininghall", canWork = 0},
+              {x = 17*gridsize, y = 12*gridsize, facing = 2, location = "dininghall", canWork = 0}
             },
       animations = {walk = {{anim = newAnimation(animsheet1, 32*16, 4, 16, 16, .5), name = "up", loop = 0},
                             {anim = newAnimation(animsheet1, 33*16, 4, 16, 16, .5), name = "down", loop = 0},
@@ -558,7 +565,8 @@ npcs = {{
               {x = 27*gridsize, y = 14*gridsize, facing = 4, location = "dormitory", canWork = 0},
               {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
               {x = 14*gridsize, y = 16*gridsize, facing = 4, location = "overworld", canWork = 0},
-              {x = 22*gridsize, y = 18*gridsize, facing = 1, location = "dininghall", canWork = 0}
+              {x = 18*gridsize, y = 14*gridsize, facing = 1, location = "dininghall", canWork = 0},
+              {x = 18*gridsize, y = 14*gridsize, facing = 1, location = "dininghall", canWork = 0}
             },
       animations = {walk = {{anim = newAnimation(animsheet1, 36*16, 4, 16, 16, .5 ), name = "up", loop = 0},
                             {anim = newAnimation(animsheet1, 37*16, 4, 16, 16, .5 ), name = "down", loop = 0},
@@ -604,7 +612,8 @@ npcs = {{
               {x = 24*gridsize, y = 9*gridsize, facing = 1, location = "dormitory", canWork = 0},
               {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
               {x = 24*gridsize, y = 9*gridsize, facing = 1, location = "dormitory", canWork = 0},
-              {x = 23*gridsize, y = 12*gridsize, facing = 1, location = "dormitory", canWork = 0}
+              {x = 23*gridsize, y = 12*gridsize, facing = 2, location = "dininghall", canWork = 0},
+              {x = 23*gridsize, y = 12*gridsize, facing = 2, location = "dininghall", canWork = 0}
             },
       animations = {walk = {{anim = newAnimation(animsheet1, 40*16, 4, 16, 16, .5 ), name = "up", loop = 0},
                             {anim = newAnimation(animsheet1, 41*16, 4, 16, 16, .5 ), name = "down", loop = 0},
@@ -650,7 +659,8 @@ npcs = {{
               {x = 10*gridsize, y = 15*gridsize, facing = 4, location = "dormitory", canWork = 0},
               {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
               {x = 14*gridsize, y = 14*gridsize, facing = 2, location = "overworld", canWork = 0},
-              {x = 19*gridsize, y = 14*gridsize, facing = 1, location = "dininghall", canWork = 0}
+              {x = 22*gridsize, y = 12*gridsize, facing = 2, location = "dininghall", canWork = 0},
+              {x = 22*gridsize, y = 12*gridsize, facing = 2, location = "dininghall", canWork = 0}
             },
       animations = {walk = {{anim = newAnimation(animsheet1, 44*16, 4, 16, 16, .5 ), name = "up", loop = 0},
                             {anim = newAnimation(animsheet1, 45*16, 4, 16, 16, .5 ), name = "down", loop = 0},
@@ -694,6 +704,7 @@ npcs = {{
       next = {{x = 0, y = 0, facing = 0, location = "dininghall", canWork = 0},
               {x = 0, y = 0, facing = 0, location = "dininghall", canWork = 0},
               {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
+              {x = 0, y = 0, facing = 0, location = "dininghall", canWork = 0},
               {x = 0, y = 0, facing = 0, location = "dininghall", canWork = 0},
               {x = 0, y = 0, facing = 0, location = "dininghall", canWork = 0}
             },
@@ -739,7 +750,8 @@ npcs = {{
               {x = 16*gridsize, y = 20*gridsize, facing = 4, location = "overworld", canWork = 0},
               {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
               {x = 16*gridsize, y = 21*gridsize, facing = 4, location = "overworld", canWork = 0},
-              {x = 16*gridsize, y = 21*gridsize, facing = 4, location = "overworld", canWork = 0}
+              {x = 16*gridsize, y = 21*gridsize, facing = 4, location = "overworld", canWork = 0},
+              {x = 16*gridsize, y = 20*gridsize, facing = 4, location = "overworld", canWork = 0}
             },
       animations = {walk = {{anim = newAnimation(animsheet1, 12*16, 4, 16, 16, .5 ), name = "up", loop = 0},
                             {anim = newAnimation(animsheet1, 13*16, 4, 16, 16, .5 ), name = "down", loop = 0},
@@ -784,6 +796,7 @@ npcs = {{
               {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
               {x = 10*gridsize, y = 27*gridsize, facing = 4, location = "overworld", canWork = 0},
               {x = 10*gridsize, y = 27*gridsize, facing = 4, location = "overworld", canWork = 0},
+              {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
             },
       animations = {walk = {{anim = newAnimation(animsheet1, 16*16, 4, 16, 16, .5 ), name = "up", loop = 0},
                             {anim = newAnimation(animsheet1, 17*16, 4, 16, 16, .5 ), name = "down", loop = 0},
@@ -825,7 +838,8 @@ npcs = {{
       actions = {key = 0, index = 0, x = 0, y = 0, on = 0},
       next = {{x = 0, y = 0, facing = 0, location = "dininghall", canWork = 0},
               {x = 0, y = 0, facing = 0, location = "dininghall", canWork = 0},
-              {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
+              {x = 0, y = 0, facing = 0, location = "offscreen", canWork = 0},
+              {x = 0, y = 0, facing = 0, location = "dininghall", canWork = 0},
               {x = 0, y = 0, facing = 0, location = "dininghall", canWork = 0},
               {x = 0, y = 0, facing = 0, location = "dininghall", canWork = 0}
             },
@@ -840,10 +854,10 @@ npcs = {{
             }
     },
     {
-      grid_x = 22*gridsize,
-      grid_y = 31*gridsize,
-      act_x = 22*gridsize,
-      act_y = 31*gridsize,
+      grid_x = 23*gridsize,
+      grid_y = 20*gridsize,
+      act_x = 23*gridsize,
+      act_y = 20*gridsize,
       path = {{x = 0, y = 0}, {x = 0, y = 0}},
       speed = 30,
       canMove = 0,
@@ -871,7 +885,8 @@ npcs = {{
               {x = 0, y = 0, facing = 0, location = "offscreen", canWork = 0},
               {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
               {x = 0, y = 0, facing = 0, location = "offscreen", canWork = 0},
-              {x = 0, y = 0, facing = 0, location = "offscreen", canWork = 0}
+              {x = 23*gridsize, y = 20*gridsize, facing = 1, location = "offscreen", canWork = 0},
+              {x = 0, y = 0, facing = 2, location = "dininghall", canWork = 0}
             },
       animations = {walk = {{anim = newAnimation(animsheet1, 56*16, 4, 16, 16, .5 ), name = "up", loop = 0},
                             {anim = newAnimation(animsheet1, 57*16, 4, 16, 16, .5 ), name = "down", loop = 0},
@@ -1151,7 +1166,9 @@ animsheet_act = love.graphics.newImage("images/solidarity_anim_act.png")
 --fading
 fading = {on = false, type = 1, start = 0, goal = 0, rate = 0, a = 0, countdown = 0, triggered = 0} -- type 1 = fade in from 0 to 255; 2 = fade out from 255 to 0
 --cutscene
-cutsceneControl = {stage = 0, total = 6, current = 1}
+
+coords = {{grid_x = 18*gridsize, grid_y = 11*gridsize, act_x = 18*gridsize, act_y = 11*gridsize, facing = 2}}
+cutsceneControl = {stage = 0, total = 7, current = 1}
 -- types: 1 = talk, 2 = changeScene
 cutsceneList ={{
   triggered = false,
@@ -1250,6 +1267,26 @@ cutsceneList ={{
   workStage = 3, -- settings for gate, pushback, etc.
   next = 7,
 },
+{
+  triggered = false,
+  type = 1, -- npc talks
+  move = true, --does the NPC move?
+  forcetalk = true,
+  npc = "Ani", --which NPC
+  targetIndex = 1,
+  target = coords[1], -- where do they move
+  facing = {2}, --what direction are they facing at the end
+  noden = 1,
+  dialoguekey = 1,
+  path = {},
+  fadeout = 0,
+  black = 0,
+  skipnext = false, -- do we go directly to next cutscene?
+  nextStage = true,
+  switchTime = 0, -- what time of day is it after the end
+  workStage = 4, -- settings for gate, pushback, etc.
+  next = 7,
+},
 }
 
 
@@ -1272,10 +1309,16 @@ timer = {{base = .5, current = 0, trigger = 0}, -- blinking arrow
 --audio
 sfx = {berryPickup = love.audio.newSource("audio/berrypickup.wav", "static"),
       berryPickup2 = love.audio.newSource("audio/berrypickup2.wav", "static"),
-      berryDrop = love.audio.newSource("audio/berrydrop.wav", "static")
+      berryDrop = love.audio.newSource("audio/berrydrop.wav", "static"),
+      textSelect = love.audio.newSource("audio/menu_select.wav", "static")
 }
 
-music ={overworld = love.audio.newSource("audio/Yellow_Forest.ogg")}
+music ={overworld = love.audio.newSource("audio/8Bit_ghibli_1.wav")}
+
+masterVolume = 0.5 -- Maximum volume for all sounds
+effectVolume = 0.75
+musicVolume = 1
+
 
 -- save files
 save = {total = 0, current = 0, name = ""}

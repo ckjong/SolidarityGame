@@ -422,6 +422,7 @@ function printObjText(b, c)
 			player.canMove = 1
       wait.triggered = 0
 			print("printObjText set wait off")
+			sfx.textSelect:play()
 		end
 	elseif actionMode == 1 then
 		if b == "barrelSmBerries" then

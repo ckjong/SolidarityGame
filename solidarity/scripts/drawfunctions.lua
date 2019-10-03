@@ -301,6 +301,10 @@ function drawNPCs(tbl, i)
     local j = npcs[i].moveDir
     local f = npcs[i].facing
     local s = npcs[i].start
+    if f == nil then
+      print("facing is nil")
+      f = 2
+    end
     if npcs[i].dialogue == 1 then
       love.graphics.draw(tbl[f]["anim"]["spriteSheet"], tbl[f]["anim"]["quads"][1], npcs[i].act_x, npcs[i].act_y, 0, 1)
     else
@@ -319,7 +323,6 @@ function drawNPCs(tbl, i)
       else
         if npcs[i].working == 1 then
           drawActAnims(npcs[i].animations.act, f, npcs[i].act_x, npcs[i].act_y)
-
         else
           tbl = npcs[i].animations.walk
           love.graphics.draw(tbl[s]["anim"]["spriteSheet"], tbl[s]["anim"]["quads"][1], npcs[i].act_x, npcs[i].act_y, 0, 1)

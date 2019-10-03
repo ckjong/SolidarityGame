@@ -53,7 +53,17 @@ function love.load()
 	lockDialogue(locationTriggers.overworld)
 	setTitleScreen(1)
 	music.overworld:setLooping( true )
-	-- music.overworld:play()
+
+
+
+	for k, v in pairs(sfx) do
+		sfx[k]:setVolume(masterVolume * effectVolume)
+	end
+	sfx.textSelect:setVolume(masterVolume * 0.25)
+	for k, v in pairs(music) do
+		music[k]:setVolume(masterVolume * musicVolume)
+	end
+	music.overworld:play()
 end
 
 

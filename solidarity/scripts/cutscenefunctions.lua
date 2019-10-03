@@ -50,13 +50,24 @@ function cutsceneTrigger()
       end
     elseif gameStage == 4 then
       player.sleep = false
-
       if currentLocation == "dininghall" and workStage == 3 then
         if cutsceneControl.stage == 0 then
           local n = cutsceneControl.current
           if cutsceneList[n].triggered == false then
             print("cutscene 5 triggered")
             player.canMove = 0
+            cutsceneControl.stage = 1
+          end
+        end
+      end
+    elseif gameStage == 5 then
+      if checkSpoken(npcs, NPCdialogue[dialogueStage], 11) == true then
+        if cutsceneControl.stage == 0 then
+          local n = cutsceneControl.current
+          if cutsceneList[n].triggered == false then
+            print("spoken to everyone, cutscene 6 triggered")
+            local i = getCharIndex("Ani")
+            changeCharLoc(npcs[i], "dininghall")
             cutsceneControl.stage = 1
           end
         end
@@ -81,7 +92,11 @@ function cutsceneStage1Talk()
     char.canWork = 0
     char.working = 0
     --find path between npc location and target location (usually player)
-    cutsceneList[n].path, cutsceneList[n].facing[1] = checkPaths(char, x1, y1, true)
+    if cutsceneList[n].targetIndex ~= nil then
+      cutsceneList[n].path, cutsceneList[n].facing[1] = checkPaths(char, x1, y1, true, target.facing)
+    else
+      cutsceneList[n].path, cutsceneList[n].facing[1] = checkPaths(char, x1, y1, true)
+    end
   end
   cutsceneControl.stage = 2
 end
@@ -96,7 +111,7 @@ function cutsceneStage2Talk(dt)
   if cutsceneList[n].move == true then
     local path = cutsceneList[n].path
     local target = cutsceneList[n].target
-    local x1, y1 = target.act_x, target.act_y
+    local x1, y1 = target.grid_x, target.grid_y
     local t = #cutsceneList[n].path
     if path then
       char.canMove = 1
@@ -110,10 +125,11 @@ function cutsceneStage2Talk(dt)
     end
     char.moveDir, char.act_x, char.act_y = moveChar(char.moveDir, char.act_x, char.grid_x, char.act_y, char.grid_y, (char.speed *dt))
     if char.act_x == cutsceneList[n].path[t].x*gridsize and char.act_y == cutsceneList[n].path[t].y*gridsize then
-     char.facing = cutsceneList[n].facing[1]
-     target.facing = changeFacing(x1, y1, char.act_x, char.act_y)
-     npcs[i].moveDir = 0
-     cutsceneControl.stage = 3
+      npcs[i].facing = cutsceneList[n].facing[1]
+      print(npcs[i].facing)
+      target.facing = changeFacing(x1, y1, char.act_x, char.act_y, 1)
+      npcs[i].moveDir = 0
+      cutsceneControl.stage = 3
     end
   else
     cutsceneControl.stage = 3
@@ -296,74 +312,7 @@ function gameStageControl(g)
   end
 end
 
-function followPath(char, dt, n)
-  local t = #char.leaveControl.path
-  if char.act_x == char.grid_x and char.act_y == char.grid_y then
-    if char.leaveControl.noden < t then
-      char.leaveControl.noden = char.leaveControl.noden + 1
-      updateGridPosNPC(char.leaveControl.path, char, char.leaveControl.noden)
-      print("node n:" .. char.leaveControl.noden)
-    end
-  end
-  char.moveDir, char.act_x, char.act_y = moveChar(char.moveDir, char.act_x, char.grid_x, char.act_y, char.grid_y, (char.speed *dt))
-  if char.act_x == char.leaveControl.path[t].x*gridsize and char.act_y == char.leaveControl.path[t].y*gridsize then
-   char.facing = char.leaveParty[n].facing
-   char.start = char.facing
-   char.moveDir = 0
-   print("moving set to 0")
-   char.leaveControl.moving = 0
-  end
-  player.leaveParty = checkPartyLeave()
-end
 
-function checkPartyLeave()
-  if player.leaveParty == true then
-    for i = 1, #npcs do
-      if npcs[i].leaveControl ~= nil then
-          if npcs[i].leaveControl.moving == 1 then
-            return true
-          end
-      end
-    end
-    print("leave party false")
-    if dialogueMode == 0 and menuView == 0 and titleScreen == 0 then
-      player.canMove = 1
-    end
-    return false
-  end
-end
-
-function movePartyToPos(n)
-  -- updateMap(npcs)
-  addBlock (initTable, player.grid_x, player.grid_y, 2)
-  if tempBlocks[currentLocation] ~= nil then
-    for k = 1, #tempBlocks[currentLocation] do
-      if tempBlocks[currentLocation][k].on == 1 then
-        local x, y = tempBlocks[currentLocation][k].x, tempBlocks[currentLocation][k].y
-        removeBlock(x, y)
-      end
-    end
-  end
-  for i = 1, #player.party do
-    local j = getCharIndex(player.party[i])
-    local char = npcs[j]
-    removeBlock(char.grid_x/gridsize, char.grid_y/gridsize)
-    char.leaveControl.path = checkPaths(char, char.leaveParty[n].x, char.leaveParty[n].y, false)
-    char.leaveControl.moving = 1
-    char.canMove = 1
-    updateGridPosNPC(char.leaveControl.path, char, char.leaveControl.noden)
-    if player.leaveParty == false then
-      player.canMove = 0
-      player.leaveParty = true
-      print("leave party true")
-    end
-  end
-  addTempBlocks(initTable)
-  clearMap(2)
-  for i = 1, #player.party do
-    removeParty(player.party[i])
-  end
-end
 
 function workStageUpdate(dt)
   --breakfast, before entering field
@@ -392,11 +341,13 @@ function workStageUpdate(dt)
             keyInput = 1
 						npcs[i].c = 3
             print("gameStage " .. gameStage)
-            if gameStage == 4 then
-              player.canMove = 0
-  						cutsceneControl.stage = 1
-            end
 					end
+          if gameStage == 4 then
+            player.canMove = 0
+            if dialogueMode == 0 and cutsceneControl.stage == 0 then
+              cutsceneControl.stage = 1
+            end
+          end
 				else
 					if npcs[i].c ~= 4 then
             tempBlocks["overworld"][1].on = 1

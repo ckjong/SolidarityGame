@@ -192,7 +192,6 @@ function drawEditor (tbl)
 end
 
 function addBlock (tbl, x, y, n)
-  print("triggered addblock")
   local k = math.floor(x/gridsize)
   local v = math.floor(y/gridsize)
 	if debugView == 1 then
@@ -202,8 +201,13 @@ function addBlock (tbl, x, y, n)
 	    tbl[v][k] = 0
 	  end
 	else
-		if tbl[v][k] ~= n then
-			tbl[v][k] = n
+		if tbl[v]~= nil then
+			if tbl[v][k] ~= nil then
+				if tbl[v][k] ~= n then
+					print("add n to map x y " .. k .. " " .. v .. " " .. n)
+					tbl[v][k] = n
+				end
+			end
 		end
 	end
 end
@@ -230,9 +234,12 @@ end
 
 --remove block from location
 function removeBlock(x, y)
-	if initTable[y][x] ~= nil then
-		initTable[y][x] = 0
-		saveMap()
+	if initTable[y] ~= nil then
+		if initTable[y][x] ~= nil then
+			initTable[y][x] = 0
+			print("remove from map x y " .. x .. " " .. y)
+			saveMap()
+		end
 	end
 end
 

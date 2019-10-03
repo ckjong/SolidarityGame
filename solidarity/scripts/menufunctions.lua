@@ -170,6 +170,7 @@ function setTitleScreen(n)
   elseif n == 0 then
     player.canMove = 1
     titleScreen = 0
+    sfx.textSelect:play()
     print("title screen off")
   end
 end
