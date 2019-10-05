@@ -1167,7 +1167,7 @@ animsheet_act = love.graphics.newImage("images/solidarity_anim_act.png")
 fading = {on = false, type = 1, start = 0, goal = 0, rate = 0, a = 0, countdown = 0, triggered = 0} -- type 1 = fade in from 0 to 255; 2 = fade out from 255 to 0
 --cutscene
 
-coords = {{grid_x = 18*gridsize, grid_y = 11*gridsize, act_x = 18*gridsize, act_y = 11*gridsize, facing = 2}}
+coords = {{grid_x = 19*gridsize, grid_y = 11*gridsize, act_x = 18*gridsize, act_y = 11*gridsize, facing = 2}}
 cutsceneControl = {stage = 0, total = 7, current = 1}
 -- types: 1 = talk, 2 = changeScene
 cutsceneList ={{

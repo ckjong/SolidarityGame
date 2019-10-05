@@ -94,7 +94,7 @@ function cutsceneStage1Talk()
     char.working = 0
     --find path between npc location and target location (usually player)
     if cutsceneList[n].targetIndex ~= nil then
-      cutsceneList[n].path, cutsceneList[n].facing[1] = checkPaths(char, x1, y1, true, target.facing)
+      cutsceneList[n].path, cutsceneList[n].facing[1] = checkPaths(char, x1, y1, false, target.facing)
     else
       cutsceneList[n].path, cutsceneList[n].facing[1] = checkPaths(char, x1, y1, true)
     end
