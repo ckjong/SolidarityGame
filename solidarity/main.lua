@@ -457,9 +457,11 @@ function love.keypressed(key)
 	if key == "f11" then
 		local fullscreen, fstype = love.window.getFullscreen( )
 		if fullscreen == false then
+			love.mouse.setVisible(false)
 			love.window.setFullscreen(true, "exclusive")
 			scale.x, scale.y = getScale()
 		else
+			love.mouse.setVisible(true)
 			love.window.setFullscreen(false, "exclusive")
 			scale.x, scale.y = getScale()
 		end

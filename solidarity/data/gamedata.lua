@@ -1,4 +1,5 @@
 titleScreen = 1
+cursor = false
 title = "Solidarity"
 gameStage = 0
 workStage = 2
