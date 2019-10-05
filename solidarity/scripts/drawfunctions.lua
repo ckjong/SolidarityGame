@@ -62,7 +62,7 @@ function formBox(w, h, c)
     if c == canvasTitle then
       love.graphics.setColor(75, 37, 58)
       love.graphics.setFont( titleFont )
-      love.graphics.printf(title, 0, 16, menuW, "center")
+      love.graphics.printf(title, 0, 8, menuW, "center")
       love.graphics.setFont( font )
     end
     love.graphics.setCanvas()
@@ -91,7 +91,7 @@ function drawTitleScreen()
   love.graphics.draw(canvasTitle, boxX, boxY)
   love.graphics.setColor(75, 37, 58)
   love.graphics.setFont( font )
-  love.graphics.printf("Instructions:\nArrow keys to move. Z to talk/interact.\nX to exit menu or speed up dialogue.\nI for inventory. R to restart.\nEsc to quit or see instructions.\n\nPress Z to Start", boxX, boxY + 48, menuW, "center")
+  love.graphics.printf("Instructions:\nArrow keys to move. Z to talk/interact.\nX to exit menu or speed up dialogue.\nI for inventory. R to restart.\nEsc to quit or see instructions.\nMusic by The Platinum Hawk\n\nPress Z to Start", boxX, boxY + 40, menuW, "center")
 end
 
 --animation
@@ -742,4 +742,13 @@ end
 function fadeBlack(alpha, width, height)
   love.graphics.setColor(75, 37, 58, alpha)
   love.graphics.rectangle("fill", player.act_x-width/2, player.act_y-height/2, width, height)
+end
+
+function drawWorldUI()
+  if player.sleep == true and currentLocation == "dormitory" then
+    if timer[1].trigger == 1 then
+      love.graphics.setColor(255, 255, 255)
+      love.graphics.draw(ui.arrowdown, 15*gridsize + 4, 15*gridsize + 8)
+    end
+  end
 end

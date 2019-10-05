@@ -963,7 +963,7 @@ staticObjects = {
       CressBed = {{x = 9*gridsize, y = 9*gridsize}},
       AgaveBed = {{x = 15*gridsize, y = 9*gridsize}},
       FennelBed = {{x = 15*gridsize, y = 13*gridsize}, {x = 15*gridsize, y = 12*gridsize}},
-      MintBed = {{x = 21*gridsize, y = 12*gridsize}, {x = 21*gridsize, y = 13*gridsize}},
+      MintBed = {{x = 21*gridsize, y = 16*gridsize}},
       DurianBed = {{x = 24*gridsize, y = 12*gridsize}, {x = 24*gridsize, y = 13*gridsize}},
       RobinBed = {{x = 27*gridsize, y = 12*gridsize}, {x = 27*gridsize, y = 13*gridsize}},
       TarragonBed = {{x = 27*gridsize, y = 16*gridsize}},

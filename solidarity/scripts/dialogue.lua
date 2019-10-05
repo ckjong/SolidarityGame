@@ -413,6 +413,30 @@ NPCdialogue = {
   Mint = {[1] = {text = {"Looks like you reached the end of the demo.", "Time to restart."},
                   logic = {next = 1, speaker = "Mint", cond = true, off = true, display = 1, spoken = 0, energy = 0, func = quitGame, par = {"restart"}}} -- say once
         },
+  Cress = {[1] = {text = {"Looks like you reached the end of the demo.", "Time to restart."},
+                  logic = {next = 1, speaker = "Cress", cond = true, off = true, display = 1, spoken = 0, energy = 0, func = quitGame, par = {"restart"}}} -- say once
+        },
+  Tarragon = {[1] = {text = {"Looks like you reached the end of the demo.", "Time to restart."},
+                  logic = {next = 1, speaker = "Tarragon", cond = true, off = true, display = 1, spoken = 0, energy = 0, func = quitGame, par = {"restart"}}} -- say once
+        },
+  Durian = {[1] = {text = {"Looks like you reached the end of the demo.", "Time to restart."},
+                  logic = {next = 1, speaker = "Durian", cond = true, off = true, display = 1, spoken = 0, energy = 0, func = quitGame, par = {"restart"}}} -- say once
+        },
+  Robin = {[1] = {text = {"Looks like you reached the end of the demo.", "Time to restart."},
+                  logic = {next = 1, speaker = "Robin", cond = true, off = true, display = 1, spoken = 0, energy = 0, func = quitGame, par = {"restart"}}} -- say once
+        },
+  Hawk = {[1] = {text = {"Looks like you reached the end of the demo.", "Time to restart."},
+                  logic = {next = 1, speaker = "Hawk", cond = true, off = true, display = 1, spoken = 0, energy = 0, func = quitGame, par = {"restart"}}} -- say once
+        },
+  Brier = {[1] = {text = {"Looks like you reached the end of the demo.", "Time to restart."},
+                  logic = {next = 1, speaker = "Brier", cond = true, off = true, display = 1, spoken = 0, energy = 0, func = quitGame, par = {"restart"}}} -- say once
+        },
+  Agave = {[1] = {text = {"Looks like you reached the end of the demo.", "Time to restart."},
+                  logic = {next = 1, speaker = "Agave", cond = true, off = true, display = 1, spoken = 0, energy = 0, func = quitGame, par = {"restart"}}} -- say once
+        },
+  Euca = {[1] = {text = {"Looks like you reached the end of the demo.", "Time to restart."},
+                  logic = {next = 1, speaker = "Euca", cond = true, off = true, display = 1, spoken = 0, energy = 0, func = quitGame, par = {"restart"}}} -- say once
+        },
   Ani = {[1] = {text = {"Looks like you reached the end of the demo.", "Time to restart."},
                   logic = {next = 1, speaker = "Ani", cond = true, off = true, display = 1, spoken = 0, energy = 0, func = quitGame, par = {"restart"}}} -- say once
         },
@@ -432,11 +456,12 @@ objectText = {
   CressBed = {text = {"This bed belongs to Cress."}, logic = {off = false}},
   AgaveBed = {text = {"This bed belongs to Agave."}, logic = {off = false}},
   FennelBed = {text = {"This bed belongs to Fennel.", "This bed belongs to Fennel."}, logic = {off = false}},
-  MintBed = {text = {"This bed belongs to Mint.", "This bed belongs to Mint."}, logic = {off = false}},
+  MintBed = {text = {"This bed belongs to Mint."}, logic = {off = false}},
   DurianBed = {text = {"This bed belongs to Durian.", "This bed belongs to Durian."}, logic = {off = false}},
   RobinBed = {text = {"This bed belongs to Robin.", "This bed belongs to Robin."}, logic = {off = false}},
   TarragonBed = {text = {"This bed belongs to Tarragon."}, logic = {off = false}},
   BrierBed = {text = {"This bed belongs to Brier."}, logic = {off = false}},
+  EmptyBed = {text = {"This bed doesn't belong to anyone."}, logic = {off = false}},
   dormitory = {text = {"It's locked."}, logic = {off = false}},
   dininghall = {text = {"It's locked."}, logic = {off = false}},
   store = {text = {"It's locked."}, logic = {off = false}},

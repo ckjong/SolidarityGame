@@ -74,14 +74,19 @@ end
 --adjust char position to be facing direction based on location of other character, up down left right, or stay same
 function changeFacing(x1, y1, x2, y2, f)
   if x1 == x2 and y1 > y2 then
+		print("change facing 1")
     return 1
   elseif x1 == x2 and y1 < y2 then
+		print("change facing 2")
     return 2
   elseif x1 > x2 and y1 == y2 then
+		print("change facing 3")
     return 3
   elseif x1 < x2 and y1 == y2 then
+		print("change facing 4")
     return 4
   else
+		print("change facing f")
     return f
   end
 end
@@ -113,10 +118,20 @@ function checkPaths(char, x1, y1, r, f)
   local path = createPathNPC(round(char.act_x/gridsize), round(char.act_y/gridsize), x1/gridsize, y1/gridsize)
   if path ~= nil then
     print("path found")
+		if char.grid_x ~= path[1].x*gridsize then
+			print("move char " .. 	char.grid_x)
+			char.grid_x = path[1].x*gridsize
+			char.act_x = char.grid_x
+		end
+		if char.grid_y ~= path[1].y*gridsize then
+			char.grid_y = path[1].y*gridsize
+			char.act_y = char.grid_y
+		end
 		if r == true then
 			table.remove(path) -- remove last entry (player location)
 		end
-		local facing = changeFacing(path[#path].x, path[#path].y, x1, y1, f) -- check which direction NPC must be facing
+		print("path x " .. path[#path].x .. "path y " .. path[#path].y .."x1 y1 " .. x1, y1)
+		local facing = changeFacing(path[#path].x*gridsize, path[#path].y*gridsize, x1, y1, f) -- check which direction NPC must be facing
 		return path, facing
 	else
 		error("no path found " .. char.name)
@@ -356,21 +371,33 @@ end
 
 
 function followPath(char, dt, n)
-  local t = #char.leaveControl.path
+	local path = char.leaveControl.path
+  local t = #path
   if char.act_x == char.grid_x and char.act_y == char.grid_y then
     if char.leaveControl.noden < t then
       char.leaveControl.noden = char.leaveControl.noden + 1
-      updateGridPosNPC(char.leaveControl.path, char, char.leaveControl.noden)
+      updateGridPosNPC(path, char, char.leaveControl.noden)
       print("node n:" .. char.leaveControl.noden)
     end
   end
   char.moveDir, char.act_x, char.act_y = moveChar(char.moveDir, char.act_x, char.grid_x, char.act_y, char.grid_y, (char.speed *dt))
-  if char.act_x == char.leaveControl.path[t].x*gridsize and char.act_y == char.leaveControl.path[t].y*gridsize then
+  if char.act_x == path[t].x*gridsize and char.act_y == path[t].y*gridsize then
    char.facing = char.leaveParty[n].facing
    char.start = char.facing
    char.moveDir = 0
    print("moving set to 0")
    char.leaveControl.moving = 0
+	 local tx, ty = char.leaveParty[n].x, char.leaveParty[n].y
+	 if path[t].x*gridsize ~= tx then
+		 print("change grid x to tx " .. tx)
+		 char.grid_x = tx
+		 char.act_x = char.grid_x
+	 end
+	 if path[t].y*gridsize ~= ty then
+		 print("change grid y to ty " .. ty)
+		 char.grid_y = ty
+		 char.act_y = char.grid_y
+	 end
   end
   player.leaveParty = checkPartyLeave()
 end

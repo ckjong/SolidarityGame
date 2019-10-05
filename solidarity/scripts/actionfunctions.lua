@@ -108,7 +108,7 @@ function inventoryFull(m)
 	end
 end
 
-function checkInventory(b) -- i = player.inventory[k].item
+function checkInventory(b) -- b= icon
   if #player.inventory > 0 then
     for k = 1, #player.inventory do
       if player.inventory[k].icon == b then
@@ -146,18 +146,21 @@ function addRemoveItem(txt, i, a, b, w) -- text to display, item, amount, icon n
 		if a > 0 then
 			if inventoryFull (player.maxInventory) == false then
 				if itemStats[b].stackable == 1 then
+					print(b.." is stackable")
 					if present then
 						print("item present")
 						if player.inventory[k] ~= nil then
 							player.inventory[k].amount = player.inventory[k].amount + a
 						end
 					else
+						print("create new stack")
 						table.insert(player.inventory, {item = i, amount = a, icon = b})
 					end
 					-- table.insert(player.inventory, {item = i, amount = a, icon = b})
 				else
 					for j = 1, a do
 						if inventoryFull (player.maxInventory) == false then
+							print(b.." not stackable")
 							table.insert(player.inventory, {item = i, amount = 1, icon = b})
 						end
 					end
@@ -166,23 +169,25 @@ function addRemoveItem(txt, i, a, b, w) -- text to display, item, amount, icon n
 				text = "I can't carry any more."
 			end
 		else
-			if math.abs(a) > player.inventory[k].amount then
-				print("amount" .. a)
-				local div = math.floor(math.abs(a) / player.inventory[k].amount)
-				while div > 0 do
-					local p, j = checkInventory(b)
-					if p then
-						print("item present")
-						if player.inventory[j] ~= nil then
-							player.inventory[j] = nil
-							table.remove(player.inventory, j)
-						end
-					end
-					div = div - 1
+			if player.inventory[k] ~= nil then
+				if math.abs(a) >= player.inventory[k].amount then
+					print("amount " .. a .. "remove all item " .. i)
+					table.remove(player.inventory, k)
+					-- local div = math.floor(math.abs(a) / player.inventory[k].amount)
+					-- while div > 0 do
+					-- 	local p, j = checkInventory(b)
+					-- 	if p then
+					-- 		print("item present")
+					-- 		if player.inventory[j] ~= nil then
+					-- 			table.remove(player.inventory, j)
+					-- 		end
+					-- 	end
+					-- 	div = div - 1
+					-- end
+				else
+					print("amount " .. a .. "remove some " .. i)
+					player.inventory[k].amount = player.inventory[k].amount + a
 				end
-			else
-				player.inventory[k] = nil
-				table.remove(player.inventory, k)
 			end
 		end
 	-- 	end
@@ -213,7 +218,7 @@ function afterItemUse()
 end
 
 
-function useItem(i, item)
+function useItem(i, item) -- i = icon
 	local text = ""
 	if itemEffects[i] ~= nil then
 		itemEffects[i].func(unpack(itemEffects[i].par))
@@ -221,7 +226,7 @@ function useItem(i, item)
 		usedItem = 1
 		startAction(i, itemEffects[i].text)
 		if itemEffects[i].type == "once" then
-			print("remove used item")
+			print("remove used item" .. i)
 			addRemoveItem(objectText[i].text[itemEffects[i].text], item, -1, i, false)
 		end
 	else
@@ -425,13 +430,13 @@ function printObjText(b, c)
 			sfx.textSelect:play()
 		end
 	elseif actionMode == 1 then
-		if b == "barrelSmBerries" then
-      BerryBarrel(b, c, "Plum Berries")
-      return
-    elseif b == "barrelLgBerries" then
-      BerryBarrel(b, c, "Rose Berries")
-      return
-		elseif b == "playerBed" then
+		-- if b == "barrelSmBerries" then
+    --   BerryBarrel(b, c, "Plum Berries")
+    --   return
+    -- elseif b == "barrelLgBerries" then
+    --   BerryBarrel(b, c, "Rose Berries")
+    --   return
+		if b == "playerBed" then
 			if objectText[b].logic.yesno == true and player.sleep == true then
 				if choice.mode == 0 then
 					choice.mode = 1

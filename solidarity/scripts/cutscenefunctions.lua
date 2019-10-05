@@ -78,6 +78,7 @@ end
 
 --update map and find path
 function cutsceneStage1Talk()
+  print("cutscene stage 1")
   updateMap(npcs) -- add NPC locations to map and save
   local n = cutsceneControl.current
   if cutsceneList[n].move == true then -- if npc is supposed to move
@@ -103,6 +104,7 @@ end
 
 --walk to target
 function cutsceneStage2Talk(dt)
+  print("cutscene stage 2")
   player.canMove = 0
   keyInput = 0
 	local n = cutsceneControl.current
@@ -116,11 +118,22 @@ function cutsceneStage2Talk(dt)
     if path then
       char.canMove = 1
       if char.act_x == char.grid_x and char.act_y == char.grid_y then
-       if cutsceneList[n].noden < t then
-         cutsceneList[n].noden = cutsceneList[n].noden + 1
-         updateGridPosNPC(path, char, cutsceneList[n].noden)
-         print("node n:" .. cutsceneList[n].noden)
-       end
+        if cutsceneList[n].noden < t then
+          cutsceneList[n].noden = cutsceneList[n].noden + 1
+          updateGridPosNPC(path, char, cutsceneList[n].noden)
+          print("node n:" .. cutsceneList[n].noden)
+        else
+          if math.abs(path[t].x - target.grid_x/gridsize) > 1 then
+            cutsceneList[n].path[t].x = target.grid_x/gridsize
+            char.grid_x = target.grid_x
+            char.act_x = char.grid_x
+          end
+          if math.abs(path[t].x - target.grid_x/gridsize) > 1 then
+            cutsceneList[n].path[t].y = target.grid_y
+            char.grid_y = target.grid_y
+            char.act_y = char.grid_y
+          end
+        end
      end
     end
     char.moveDir, char.act_x, char.act_y = moveChar(char.moveDir, char.act_x, char.grid_x, char.act_y, char.grid_y, (char.speed *dt))
@@ -138,6 +151,7 @@ end
 
 --dialogue
 function cutsceneStage3Talk()
+  print("cutscene stage 3")
   local n = cutsceneControl.current
   local i = getCharIndex(cutsceneList[n].npc)
   npcs[i].c = cutsceneList[n].dialoguekey
@@ -155,6 +169,7 @@ end
 
 --return to starting position
 function cutsceneStage4Talk(dt)
+  print("cutscene stage 4")
   local n = cutsceneControl.current
   local i = getCharIndex(cutsceneList[n].npc)
   local char = npcs[i]
@@ -190,6 +205,7 @@ end
 
 --set conditions for screen fade, or skip to stage 7 if no fade
 function cutsceneStage5Talk()
+  print("cutscene stage 4")
   if cutsceneList[cutsceneControl.current].fadeout ~= 0 then
     fading.type = cutsceneList[cutsceneControl.current].fadeout
     fadeControl(fading.type)

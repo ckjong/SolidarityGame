@@ -59,7 +59,7 @@ function love.load()
 	for k, v in pairs(sfx) do
 		sfx[k]:setVolume(masterVolume * effectVolume)
 	end
-	sfx.textSelect:setVolume(masterVolume * 0.25)
+	sfx.textSelect:setVolume(masterVolume * 0.35)
 	for k, v in pairs(music) do
 		music[k]:setVolume(masterVolume * musicVolume)
 	end
@@ -77,6 +77,10 @@ function love.update(dt)
 
 	-- run timer for scrolling text
 		timerText(dt, 2)
+	else
+		if player.sleep == true and currentLocation == "dormitory" then
+			timerBlink(dt, 1)
+		end
 	end
 
 	if menuView == 1 then
@@ -321,7 +325,9 @@ function love.draw()
 		--draw arrow for choices, shift text if arrow present
 		drawText(boxposx + 52, boxposy + 8, scale.x, recwidth)
 	end
-
+	if dialogueMode == 0 then
+		drawWorldUI()
+	end
 	--draw UI for battles
 	if battleMode == 1 then
 		love.graphics.print("turn: " .. battleGlobal.turn .."   phase: " .. battleGlobal.phase, player.act_x - 48, player.act_y - 40)
