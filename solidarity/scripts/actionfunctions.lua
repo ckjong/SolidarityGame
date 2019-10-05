@@ -214,6 +214,7 @@ function afterItemUse()
 	dialogueMode = 0
 	actionMode = 0
 	usedItem = 0
+	sfx.textSelect:play()
 	return
 end
 

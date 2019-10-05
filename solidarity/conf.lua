@@ -8,5 +8,5 @@ function love.conf(t)
 	t.window.vsync = 1
 
 	-- For Windows debugging
-	t.console = true
+	t.console = false
 end

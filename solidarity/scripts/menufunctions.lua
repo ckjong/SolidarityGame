@@ -141,6 +141,7 @@ function itemMenu()
 	if menu.position[1] == 3 and menu.currentTab == "inventory" then
 		if menu.position[3] == 1 then
 			print("menu position[1]: " .. menu.position[1])
+      sfx.textSelect:play()
 			useItem(player.inventory[i].icon, player.inventory[i].item)
 			if player.inventory[i] == nil then
 				menu.position[2] = 1
