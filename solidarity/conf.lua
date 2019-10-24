@@ -7,6 +7,7 @@ function love.conf(t)
 	t.window.resizable = false
 	t.window.vsync = 1
 
+
 	-- For Windows debugging
 	t.console = false
 end

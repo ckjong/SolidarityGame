@@ -64,6 +64,10 @@ function love.load()
 		music[k]:setVolume(masterVolume * musicVolume)
 	end
 	music.overworld:play()
+
+	love.mouse.setVisible(false)
+	love.window.setFullscreen(true, "exclusive")
+	scale.x, scale.y = getScale()
 end
 
 
@@ -72,6 +76,7 @@ function love.update(dt)
 	cutsceneTrigger()
 
 	--run timers for blinking text
+	 
 	if dialogueMode == 1 then
 		timerBlink(dt, 1)
 
@@ -541,7 +546,7 @@ function love.keypressed(key)
 			-- 	if key == "6" then
 			-- 		addRemoveItem("You got 60 Plum Berries", "Plum Berries", 60, "plantSmBerries")
 			-- 	end
-			-- 
+			--
 			-- 	if key == "9" then
 			-- 		for i = 1, #npcs do
 			-- 			table.insert(socialMap, npcs[i])
