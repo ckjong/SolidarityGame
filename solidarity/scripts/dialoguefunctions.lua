@@ -377,7 +377,13 @@ function checkSpoken(tbl1, tbl2, num) -- npcs, NPCdialogue[stage]
 	end
 end
 
-function changeDialogue(item, stage, npc, i, n)
+function changeDialogue(npc, n)
+	local i = getCharIndex(npc)
+	print("Change dialogue for " .. npc)
+	npcs[i].c = n
+end
+
+function changeDialogueNext(item, stage, npc, i, n)
 	if checkInventory(item) == false then
 		NPCdialogue[stage][npc][i].logic.next = n
 	end
@@ -431,5 +437,14 @@ end
 function changeQuota(n, name)
 	local i = getCharIndex(name)
 	player.quota = n
+	resetDialogue(npcs, i)
+end
+
+function updateUI (element, b, name)
+	local i = getCharIndex(name)
+	uiSwitches[element] = b
+	if element == "bedArrow" and b == true then
+		sleepCheck(true)
+	end
 	resetDialogue(npcs, i)
 end

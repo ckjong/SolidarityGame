@@ -108,6 +108,10 @@ function randomFacing(char, x, ct, dt)
 	end
 end
 
+function findClosestGridCoord(char)
+	return round(char.act_x/gridsize), round(char.act_y/gridsize)
+end
+
 --check if there is a path to each open space, return path and direction npc facing at end
 function checkPaths(char, x1, y1, r, f)
 	if math.abs(char.grid_x-char.act_x) < 0.1 then
@@ -382,22 +386,24 @@ function followPath(char, dt, n)
   end
   char.moveDir, char.act_x, char.act_y = moveChar(char.moveDir, char.act_x, char.grid_x, char.act_y, char.grid_y, (char.speed *dt))
   if char.act_x == path[t].x*gridsize and char.act_y == path[t].y*gridsize then
-   char.facing = char.leaveParty[n].facing
-   char.start = char.facing
-   char.moveDir = 0
-   print("moving set to 0")
-   char.leaveControl.moving = 0
-	 local tx, ty = char.leaveParty[n].x, char.leaveParty[n].y
-	 if path[t].x*gridsize ~= tx then
-		 print("change grid x to tx " .. tx)
-		 char.grid_x = tx
-		 char.act_x = char.grid_x
-	 end
-	 if path[t].y*gridsize ~= ty then
-		 print("change grid y to ty " .. ty)
-		 char.grid_y = ty
-		 char.act_y = char.grid_y
-	 end
+	  char.facing = char.leaveParty[n].facing
+	  char.start = char.facing
+		char.canWork = char.leaveParty[n].canWork
+	  char.moveDir = 0
+		char.canMove = 0
+	  print("moving set to 0")
+	  char.leaveControl.moving = 0
+		local tx, ty = char.leaveParty[n].x, char.leaveParty[n].y
+		if path[t].x*gridsize ~= tx then
+			print("change grid x to tx " .. tx)
+			char.grid_x = tx
+			char.act_x = char.grid_x
+		end
+		if path[t].y*gridsize ~= ty then
+			print("change grid y to ty " .. ty)
+			char.grid_y = ty
+			char.act_y = char.grid_y
+		end
   end
   player.leaveParty = checkPartyLeave()
 end

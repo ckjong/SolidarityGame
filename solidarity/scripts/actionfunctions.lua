@@ -239,6 +239,14 @@ end
 
 function charGivesObject(a, b, c, d, e)
 	print("character gives object")
+	if b == "Bowl of Gruel" then
+		if workStage == 4 then
+			local i = getCharIndex("Finch")
+			workStage = 1
+			openGates()
+			npcs[i].location = "overworld"
+		end
+	end
 	currentspeaker = "player"
 	addRemoveItem(a, b, c, d, e)
 	return

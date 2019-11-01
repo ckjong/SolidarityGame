@@ -6,12 +6,36 @@ function countTbl(tbl)
   return count
 end
 
-function sleepCheck()
-  if time == 2 then
-    if gameStage == 2 then
+function sleepCheck(bool)
+  if bool == true then
+    if time == 2 then
       player.sleep = true
     end
+  else
+    player.sleep = false
   end
+end
+
+function closeGates()
+  tempBlocks.overworld[2].on = 1
+  tempBlocks.overworld[3].on = 1
+  print("tempblocks 2 and 3 on")
+  nonInteractiveObjects.overworld.fenceopenL[1].visible = 0
+  nonInteractiveObjects.overworld.fenceopenR[1].visible = 0
+  nonInteractiveObjects.overworld.fenceclosedL[1].visible = 1
+  nonInteractiveObjects.overworld.fenceclosedR[1].visible = 1
+  addTempBlocks(initTable)
+  saveMap()
+end
+
+function openGates()
+  for i = 1, #tempBlocks.overworld do
+    tempBlocks.overworld[i].on = 0
+  end
+  nonInteractiveObjects.overworld.fenceopenL[1].visible = 1
+  nonInteractiveObjects.overworld.fenceopenR[1].visible = 1
+  nonInteractiveObjects.overworld.fenceclosedL[1].visible = 0
+  nonInteractiveObjects.overworld.fenceclosedR[1].visible = 0
 end
 
 function cutsceneTrigger()
@@ -49,7 +73,6 @@ function cutsceneTrigger()
         end
       end
     elseif gameStage == 4 then
-      player.sleep = false
       if currentLocation == "dininghall" and workStage == 3 then
         if cutsceneControl.stage == 0 then
           local n = cutsceneControl.current
@@ -92,6 +115,10 @@ function cutsceneStage1Talk()
     char.canMove = 1
     char.canWork = 0
     char.working = 0
+    local x2, y2 = round(player.act_x/gridsize)*gridsize, round(player.act_y/gridsize)*gridsize
+    if target ~= player then
+      addBlock(initTable, x2, y2, 2)
+    end
     --find path between npc location and target location (usually player)
     if cutsceneList[n].targetIndex ~= nil then
       cutsceneList[n].path, cutsceneList[n].facing[1] = checkPaths(char, x1, y1, false, target.facing)
@@ -333,11 +360,13 @@ end
 function workStageUpdate(dt)
   --breakfast, before entering field
   if workStage == 1 then
-    if areaCheck(17, 21, 17, 22, player) then
+    sleepCheck(false)
+    if currentLocation == "overworld" and areaCheck(17, 21, 17, 22, player) then
       workStage = 2
     end
   --after entering field
   elseif workStage == 2 then
+    sleepCheck(false)
     if tempBlocks["overworld"][1].on == 0 and currentLocation == "overworld" then
       tempBlocks["overworld"][1].on = 1
       addTempBlocks(initTable)
@@ -347,7 +376,7 @@ function workStageUpdate(dt)
   elseif workStage == 3 then
 		local i = getCharIndex("Finch")
 		if objectInventory.barrelSmBerries + objectInventory.barrelLgBerries >= player.quota then
-			if areaCheck(16, 21, 17, 22, player) then
+			if currentLocation == "overworld" and areaCheck(16, 21, 17, 22, player) then
 				local bool1, k = checkInventory("plantSmBerries")
 				local bool2, k = checkInventory("plantLgBerries")
         --if there are no berries in the player's inventory
@@ -376,36 +405,26 @@ function workStageUpdate(dt)
 		end
 	elseif workStage == 4 then
 		if tempBlocks.overworld[2].on == 0 then
-			tempBlocks.overworld[2].on = 1
-			tempBlocks.overworld[3].on = 1
-      print("tempblocks 2 and 3 on")
-			nonInteractiveObjects.overworld.fenceopenL[1].visible = 0
-			nonInteractiveObjects.overworld.fenceopenR[1].visible = 0
-			nonInteractiveObjects.overworld.fenceclosedL[1].visible = 1
-			nonInteractiveObjects.overworld.fenceclosedR[1].visible = 1
-			addTempBlocks(initTable)
-			saveMap()
+			closeGates()
 		end
+    if time == 1 then
+      sleepCheck(false)
+    end
 	end
 end
 
 function changeTime(t)
   time = t
   if time == 1 then
-    for i = 1, #tempBlocks.overworld do
-      tempBlocks.overworld[i].on = 0
-    end
     clearTempBlocks()
     resetBerries()
     resetBarrels()
-    nonInteractiveObjects.overworld.fenceopenL[1].visible = 1
-    nonInteractiveObjects.overworld.fenceopenR[1].visible = 1
-    nonInteractiveObjects.overworld.fenceclosedL[1].visible = 0
-    nonInteractiveObjects.overworld.fenceclosedR[1].visible = 0
     day = day + 1
   end
   print("time " .. time)
 end
+
+
 
 function fadeControl(t) -- arg: fading.type
   if t == 1 then

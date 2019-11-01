@@ -63,10 +63,10 @@ function love.load()
 	for k, v in pairs(music) do
 		music[k]:setVolume(masterVolume * musicVolume)
 	end
-	music.overworld:play()
+	-- music.overworld:play()
 
 	love.mouse.setVisible(false)
-	love.window.setFullscreen(true, "exclusive")
+	-- love.window.setFullscreen(true, "exclusive")
 	scale.x, scale.y = getScale()
 end
 
@@ -76,7 +76,7 @@ function love.update(dt)
 	cutsceneTrigger()
 
 	--run timers for blinking text
-	 
+
 	if dialogueMode == 1 then
 		timerBlink(dt, 1)
 
@@ -84,6 +84,9 @@ function love.update(dt)
 		timerText(dt, 2)
 	else
 		if player.sleep == true and currentLocation == "dormitory" then
+			timerBlink(dt, 1)
+		end
+		if gameStage == 1 and currentLocation == "overworld" then
 			timerBlink(dt, 1)
 		end
 	end
@@ -100,12 +103,6 @@ function love.update(dt)
 
 	-- do checks for each work stage
 	workStageUpdate(dt)
-
-	if currentLocation == "dormitory" then
-		if time == 2 and player.sleep == false then
-			sleepCheck()
-		end
-	end
 
 	-- initiate dialogue and move character back if they enter a location
 
@@ -296,6 +293,10 @@ function love.draw()
 		drawStillObjects(currentLocation, toptileData, toptilesSheet, toptiles)
 	end
 
+	if dialogueMode == 0 and menuView == 0 then
+		drawWorldUI()
+	end
+
 	if bubble.on == 1 then
 		drawBubble(bubble.x, bubble.y, bubble.obj)
 	end
@@ -330,9 +331,7 @@ function love.draw()
 		--draw arrow for choices, shift text if arrow present
 		drawText(boxposx + 52, boxposy + 8, scale.x, recwidth)
 	end
-	if dialogueMode == 0 then
-		drawWorldUI()
-	end
+
 	--draw UI for battles
 	if battleMode == 1 then
 		love.graphics.print("turn: " .. battleGlobal.turn .."   phase: " .. battleGlobal.phase, player.act_x - 48, player.act_y - 40)
@@ -500,65 +499,65 @@ function love.keypressed(key)
 			end
 		end
 	end
-		-- ====CHEAT KEYS===
-		--initiate debug/map editing mode
-		  -- if key == "p" then
-			--  	if debugView == 0 then
-		  --   	debugView = 1
-			-- 	elseif debugView == 1 then
-			-- 		debugView = 0
-			-- 	end
-			-- 	if infoView == 0 then
-			-- 		infoView = 1
-			-- 	else
-			-- 		infoView = 0
-			-- 	end
-		  -- end
-			--
-			-- -- add block to editor
-			-- 	if key == "space" and debugView == 1 then
-			-- 		addBlock(initTable, player.grid_x, player.grid_y, 1) -- editor.lua
-			-- 	end
-			--
-			-- 	if key == "s" and debugView == 1 then
-			-- 		saveMap()
-			-- 	end
-			--
-			--
-			-- 	if key == "c" then --trigger cutscene for testing
-			-- 		if cutsceneControl.stage == 0 then
-			-- 			cutsceneControl.stage = 1
-			-- 		else
-			-- 			print("exit cutscene")
-			-- 			cutsceneControl.stage = 8
-			-- 			player.canMove = 1
-			-- 		end
-			-- 	end
-			--
-			-- 	if key == "1" then
-			-- 		player.energy = 100
-			-- 	end
-			--
-			-- 	if key == "0" then
-			-- 		player.energy = 0
-			-- 	end
-			--
-			-- 	if key == "6" then
-			-- 		addRemoveItem("You got 60 Plum Berries", "Plum Berries", 60, "plantSmBerries")
-			-- 	end
-			--
-			-- 	if key == "9" then
-			-- 		for i = 1, #npcs do
-			-- 			table.insert(socialMap, npcs[i])
-			-- 			npcs[i].mapping.added = 1
-			-- 		end
-			-- 	end
-			--
-			-- 	if key == "l" then
-			-- 		changeGameStage()
-			-- 		cutsceneControl.current = cutsceneControl.current + 1
-			-- 		cutsceneControl.stage = 0
-			-- 		print("gameStage: " .. gameStage)
-			-- 	end
-		-- ====END CHEAT KEYS===
+-- ====CHEAT KEYS===
+-- initiate debug/map editing mode
+  if key == "p" then
+	 	if debugView == 0 then
+    	debugView = 1
+		elseif debugView == 1 then
+			debugView = 0
+		end
+		if infoView == 0 then
+			infoView = 1
+		else
+			infoView = 0
+		end
+  end
+
+	-- add block to editor
+		if key == "space" and debugView == 1 then
+			addBlock(initTable, player.grid_x, player.grid_y, 1) -- editor.lua
+		end
+
+		if key == "s" and debugView == 1 then
+			saveMap()
+		end
+
+
+		if key == "c" then --trigger cutscene for testing
+			if cutsceneControl.stage == 0 then
+				cutsceneControl.stage = 1
+			else
+				print("exit cutscene")
+				cutsceneControl.stage = 8
+				player.canMove = 1
+			end
+		end
+
+		if key == "1" then
+			player.energy = 100
+		end
+
+		if key == "0" then
+			player.energy = 0
+		end
+
+		if key == "6" then
+			addRemoveItem("You got 60 Plum Berries", "Plum Berries", 60, "plantSmBerries")
+		end
+
+		if key == "9" then
+			for i = 1, #npcs do
+				table.insert(socialMap, npcs[i])
+				npcs[i].mapping.added = 1
+			end
+		end
+
+		if key == "l" then
+			changeGameStage()
+			cutsceneControl.current = cutsceneControl.current + 1
+			cutsceneControl.stage = 0
+			print("gameStage: " .. gameStage)
+		end
+-- ====END CHEAT KEYS===
 end

@@ -745,10 +745,19 @@ function fadeBlack(alpha, width, height)
 end
 
 function drawWorldUI()
-  if player.sleep == true and currentLocation == "dormitory" then
-    if timer[1].trigger == 1 then
-      love.graphics.setColor(255, 255, 255)
-      love.graphics.draw(ui.arrowdown, 15*gridsize + 4, 15*gridsize + 8)
+  if timer[1].trigger == 1 then
+    if player.sleep == true and currentLocation == "dormitory" then
+      if uiSwitches.bedArrow == true then
+        love.graphics.setColor(255, 255, 255)
+        love.graphics.draw(ui.wharrowdown, 15*gridsize + 5, 15*gridsize + 8)
+      end
+    end
+    if gameStage == 1 and currentLocation == "overworld" then
+      if objectInventory.barrelSmBerries + objectInventory.barrelLgBerries == 0 then
+        love.graphics.setColor(255, 255, 255)
+        love.graphics.draw(ui.wharrowdown, 15*gridsize + 5, 21*gridsize + 8)
+        love.graphics.draw(ui.wharrowdown, 18*gridsize + 5, 21*gridsize + 8)
+      end
     end
   end
 end

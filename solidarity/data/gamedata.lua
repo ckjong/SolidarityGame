@@ -114,11 +114,15 @@ currentJournal = {}
     cornerRTop = love.graphics.newImage("images/solidarity_ui_10.png"),
     cornerLBottom = love.graphics.newImage("images/solidarity_ui_11.png"),
     cornerRBottom = love.graphics.newImage("images/solidarity_ui_12.png"),
+    wharrowup = love.graphics.newImage("images/solidarity_ui_13.png"),
+    wharrowdown = love.graphics.newImage("images/solidarity_ui_14.png"),
     textboxbg = love.graphics.newImage("images/solidarity_textboxfull.png"),
     textboxbottom = love.graphics.newImage("images/solidarity_textboxbottom.png"),
     portraitbox = love.graphics.newImage("images/portrait_box_0.png"),
     portraitboxframe = love.graphics.newImage("images/portrait_box_1.png")
   }
+
+  uiSwitches = {bedArrow = false}
 
   uiQuads =  {energyiconsquare = love.graphics.newQuad(0, 0, 16, 16, uiSheet:getDimensions()),
               energytextbg = love.graphics.newQuad(16, 0, 16, 16, uiSheet:getDimensions()),
@@ -519,7 +523,7 @@ npcs = {{
       next = {{x = 28*gridsize, y = 13*gridsize, facing = 2, location = "dormitory", canWork = 0},
               {x = 28*gridsize, y = 13*gridsize, facing = 2, location = "dormitory", canWork = 0},
               {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
-              {x = 14*gridsize, y = 27*gridsize, facing = 2, location = "overworld", canWork = 0},
+              {x = 14*gridsize, y = 27*gridsize, facing = 2, location = "overworld", canWork = 1},
               {x = 17*gridsize, y = 12*gridsize, facing = 2, location = "dininghall", canWork = 0},
               {x = 17*gridsize, y = 12*gridsize, facing = 2, location = "dininghall", canWork = 0}
             },
@@ -610,7 +614,7 @@ npcs = {{
       },
       actions = {key = 0, index = 0, x = 0, y = 0, on = 0},
       next = {{x = 25*gridsize, y = 9*gridsize, facing = 1, location = "dormitory", canWork = 0},
-              {x = 24*gridsize, y = 9*gridsize, facing = 1, location = "dormitory", canWork = 0},
+              {x = 25*gridsize, y = 37*gridsize, facing = 2, location = "overworld", canWork = 0},
               {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
               {x = 24*gridsize, y = 9*gridsize, facing = 1, location = "dormitory", canWork = 0},
               {x = 23*gridsize, y = 12*gridsize, facing = 2, location = "dininghall", canWork = 0},
@@ -750,7 +754,7 @@ npcs = {{
       next = {{x = 16*gridsize, y = 21*gridsize, facing = 4, location = "overworld", canWork = 0},
               {x = 16*gridsize, y = 20*gridsize, facing = 4, location = "overworld", canWork = 0},
               {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
-              {x = 16*gridsize, y = 21*gridsize, facing = 4, location = "overworld", canWork = 0},
+              {x = 16*gridsize, y = 21*gridsize, facing = 4, location = "gardeningShed", canWork = 0},
               {x = 16*gridsize, y = 21*gridsize, facing = 4, location = "overworld", canWork = 0},
               {x = 16*gridsize, y = 20*gridsize, facing = 4, location = "overworld", canWork = 0}
             },
@@ -1231,7 +1235,7 @@ cutsceneList ={{
   skipnext = false, -- do we go directly to next cutscene?
   nextStage = true, -- do we go to the next game scene
   switchTime = 1, -- what time of day is it after the end
-  workStage = 1, -- settings for gate, pushback, etc.
+  workStage = 4, -- settings for gate, pushback, etc.
   next = 5,
 },
 {
@@ -1265,7 +1269,7 @@ cutsceneList ={{
   skipnext = false, -- do we go directly to next cutscene?
   nextStage = false, -- do we go to the next game scene
   switchTime = 0, -- what time of day is it after the end
-  workStage = 3, -- settings for gate, pushback, etc.
+  workStage = 4, -- settings for gate, pushback, etc.
   next = 7,
 },
 {

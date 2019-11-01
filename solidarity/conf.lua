@@ -9,5 +9,6 @@ function love.conf(t)
 
 
 	-- For Windows debugging
-	t.console = false
+	t.console = true
+	
 end

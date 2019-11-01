@@ -89,7 +89,9 @@ NPCdialogue = {
           [4] = {text = {"Yeah..."},
                 logic = {next = 5, speaker = "Cress", cond = true, off = false, display = 1, spoken = 0}},
           [5] = {text = {"Hopefully tomorrow will be better."},
-                logic = {next = 5, speaker = "Cress", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
+                logic = {next = 6, speaker = "Cress", cond = true, off = true, display = 1, spoken = 0, energy = 1}},
+          [6] = {text = {"Oh I almost forgot, you should go talk to Agave.", "She should be in the dining hall."},
+                logic = {next = 6, speaker = "Cress", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
         },
   Agave = {[1] = {text = {"Oh there you are! I was worried they'd keep you all night.", "Don't worry we saved some dinner for you. And Mint too."},
                 logic = {next = 2, speaker = "Agave", cond = true, off = false, display = 1, spoken = 0, func = addInfo, par = {"Kind, often looks out for the younger field hands.", "Agave"}}},
@@ -127,7 +129,7 @@ NPCdialogue = {
   --                 logic = {next = 2, speaker = "Fennel", cond = true, off = true, display = 1, spoken = 0, energy = 1}} -- say once
   --       }, -- repeat
   Mint = {[1] = {text = {"I don't think Lark likes me very much." , "He makes me work overtime almost every day."},
-                logic = {next = 2, speaker = "Mint", cond = true, off = false, display = 1, spoken = 0, energy = 1, func = changeDialogue, par = {"platefull2", 2, "Mint", 1, 4}}}, -- say once
+                logic = {next = 2, speaker = "Mint", cond = true, off = false, display = 1, spoken = 0, energy = 1, func = changeDialogueNext, par = {"platefull2", 2, "Mint", 1, 4}}}, -- say once
           [2] = {text = {"I brought you some dinner.", "*say nothing*"},
                 logic = {next = 6, offset = 2, speaker = "player", cond = true, off = false, display = 2}},
           [3] = {text = {"Agave gave it to me."},
@@ -137,7 +139,7 @@ NPCdialogue = {
           [5] = {text = {"Wow, thank you! Please tell her I said thanks!"},
                 logic = {next = 6, speaker = "Mint", cond = true, off = true, display = 1, spoken = 0, energy = 1}},
           [6] = {text = {"*yawn* Well, guess it's time for bed."},
-                logic = {next = 6, speaker = "Mint", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
+                logic = {next = 6, speaker = "Mint", cond = true, off = true, display = 1, spoken = 0, energy = 1, func = updateUI, par = {"bedArrow", true, "Mint"}}}
         },
   Finch = {[1] = {text = {"Day's over. Go back to whatever hole you crawled out of."},
                logic = {next = 1, speaker = "Finch", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
@@ -145,7 +147,7 @@ NPCdialogue = {
   Cress = {[1] = {text = {"Have you seen Fennel?", "She said she was going to get something, but it's getting late."},
                 logic = {next = 2, speaker = "Cress", cond = true, off = false, display = 1, spoken = 0, func = addInfo, par = {"Notices things others miss.", "Cress"}}},
           [2] = {text = {"No, I haven't."},
-                logic = {next = 3, offset = 2, speaker = "player", cond = true, off = false, display = 1}},
+                logic = {next = 3, offset = 2, speaker = "player", cond = true, off = false, display = 1, spoken = 0, func = changeDialogue, par = {"Brier", 2}}},
           [3] = {text = {"I'll go look for her.", "I'm sure she'll turn up."},
                 logic = {next = 4, offset = 3, speaker = "player", cond = true, off = false, display = 2}},
           [4] = {text = {"Ok, I hope she's ok."},
@@ -185,11 +187,12 @@ NPCdialogue = {
   Durian = {[1] = {text = {"Get out of here pipsqueak. Can't you see the adults are talking?"},
                 logic = {next = 1, speaker = "Durian", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
         },
-  Brier = {[1] = {text = {"I hope we don't run out of wood.", "The days are hot but the nights are still chilly."},
-                logic = {next = 2, speaker = "Brier", cond = true, off = false, display = 1, spoken = 0, energy = 1}},
-          [2] = {text = {"Hmm... shouldn't you be heading to bed soon?"},
-                logic = {next = 2, speaker = "Brier", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
-
+  Brier = {[1] = {text = {"Shouldn't you be heading to bed soon?"},
+                logic = {next = 1, speaker = "Brier", cond = true, off = true, display = 1, spoken = 0, energy = 1, func = updateUI, par = {"bedArrow", true, "Brier"}}},
+          [2] = {text = {"Have you seen Fennel?"},
+                logic = {next = 3, speaker = "player", cond = true, off = false, display = 1, spoken = 0, energy = 1}},
+          [3] = {text = {"I saw her leave the compound earlier.", "But it's too late to be wandering around.", "Don't worry, I'll stay here and wait for her to come back.", "You should head to bed.", "You don't want to be tired for work tomorrow."},
+                logic = {next = 1, speaker = "Brier", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
         },
   Lotus = {[1] = {text = {"Is it just me or does it smell funny in here?", "I can't tell if it's the mould or someone's feet.", "Can I smell your... wait, that would be weird wouldn't it?", "Never mind."},
                 logic = {next = 2, speaker = "Lotus", cond = true, off = true, display = 1, spoken = 0, energy = 1, func = addInfo, par = {"A bit strange.", "Lotus"}}},
@@ -261,7 +264,7 @@ NPCdialogue = {
                logic = {next = 5, speaker = "Finch", cond = true, off = true, display = 1}}
         },
   Cress = {[1] = {text = {"Fennel came back, I'm glad. I hope everything's ok."},
-                logic = {next = 2, speaker = "Cress", cond = true, off = true, display = 1, spoken = 0, energy = 1}},
+                logic = {next = 2, speaker = "Cress", cond = true, off = false, display = 1, spoken = 0, energy = 0}},
           [2] = {text = {"I guess we should get breakfast."},
                 logic = {next = 3, speaker = "Cress", cond = true, off = true, display = 1, spoken = 0, energy = 1, func = addParty, par = {"Cress"}}},
           [3] = {text = {"Ouch, I pricked myself again."},
@@ -363,7 +366,7 @@ NPCdialogue = {
   Agave = {[1] = {text = {"Oof, it feels good to sit down."},
                 logic = {next = 2, speaker = "Agave", cond = true, off = false, display = 1, spoken = 0, energy = 0}},
            [2] = {text = {"Are you ok?"},
-                logic = {next = 1, speaker = "player", cond = true, off = true, display = 1, spoken = 0, energy = 0}},
+                logic = {next = 3, speaker = "player", cond = true, off = false, display = 1, spoken = 0, energy = 0}},
            [3] = {text = {"Oh don't worry I'll be fine. Just some creaky old bones."},
                 logic = {next = 1, speaker = "Agave", cond = true, off = true, display = 1, spoken = 0, energy = 1}},
         },
@@ -372,7 +375,7 @@ NPCdialogue = {
         },
   Durian = {[1] = {text = {"Hey did you hear about the dock worker that went missing?", "He got sick so they sent him to see the alchemists.", "But he never came back to work..."},
                 logic = {next = 2, speaker = "Durian", cond = true, off = false, display = 1, spoken = 0, energy = 0}},
-            [2] = {text = {"Those dock workers are all liars, cheaters, and drunks.", "They're probably just messsing with you."},
+            [2] = {text = {"Those dock workers are all liars, cheaters, and drunks.", "They're probably just messing with you."},
                 logic = {next = 3, speaker = "Robin", cond = true, off = false, display = 1, spoken = 0, energy = 0}},
             [3] = {text = {"Yeah you're probably right... It's still weird though."},
                 logic = {next = 4, speaker = "Durian", cond = true, off = false, display = 1, spoken = 0, energy = 0}},
@@ -391,16 +394,20 @@ NPCdialogue = {
                 logic = {next = 1, speaker = "Robin", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
         },
   Euca = {[1] = {text = {"Here's your supper. I'd tell you to enjoy, but... yeah."},
-                logic = {next = 1, speaker = "Euca", cond = true, off = true, display = 1, spoken = 0, energy = 1, func = charGivesObject, par = {"I got 1 Thin Soup", "Thin Soup", 1, "platefull2", false}}}
+                logic = {next = 1, speaker = "Euca", cond = true, off = true, display = 1, spoken = 0, energy = 1, func = charGivesObject, par = {"I got 1 Thin Soup", "Thin Soup", 1, "platefull2", false}}},
+          [2] = {text = {"Sorry only one meal per person allowed."},
+                 logic = {next = 2, speaker = "Euca", cond = true, off = true, display = 1, spoken = 0, energy = 0}}
         },
   Hawk = {[1] = {text = {"Get your food and take a seat.", "Ms. Ani will be arriving soon."},
-                logic = {next = 1, speaker = "Hawk", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
+                logic = {next = 2, speaker = "Hawk", cond = true, off = true, display = 1, spoken = 0, energy = 1}},
+          [2] = {text = {"Don't try anything sneaky. I've got my eye on you."},
+                 logic = {next = 2, speaker = "Hawk", cond = true, off = true, display = 1, spoken = 0, energy = 0}}
         },
-  Ani = {[1] = {text = {"Good evening everyone!", " I have some important announcements to make.", "As you know, the Purple Isle Potions family has been growing.", "We now have three new shops open on the mainland!", "All thanks to your hard work and the visionary leadership of our", "illustrious founder, Sir Eagle Black."},
+  Ani = {[1] = {text = {"Good evening everyone!", "I have some exciting announcements to make.", "As you know, the Purple Isle Potions family has been growing.", "We now have three new shops open on the mainland!", "All thanks to your hard work and dedication.", "And the visionary leadership of our esteemed founder, Sir Eagle Black."},
                 logic = {next = 2, speaker = "Ani", cond = true, off = false, display = 1, spoken = 0, energy = 0}},
-         [2] = {text = {"The increased demand for our miraculous potions means that each", "and every one of us will have to step up our game.", "Starting tomorrow, your daily quotas will be increased to 80.", "Now I know that might seem like a lot, but I have absolute faith", "that you are all more than up to the task."},
+         [2] = {text = {"The increased demand means we all have to up our game.", "Starting tomorrow, your daily quotas will be increased to 80.", "Yes, that might seem like a lot, but I know you'll make me proud!"},
                 logic = {next = 3, speaker = "Ani", cond = true, off = false, display = 1, spoken = 0, energy = 0}},
-         [3] = {text = {"I hope that, like me, you'll see this as an opportunity to prove your", "merit and rise through the ranks.", "I was once a humble field hand just like you.", "But through hard work, grit, and determination I was promoted to", "compound manager!"},
+         [3] = {text = {"This is a golden opportunity to show us what you're made of.", "Don't forget that I was once a humble field hand just like you.", "But with hard work and determination I rose through the ranks.", "That's how I became compound manager!", "Those that not only meet but exceed their quotas will be rewarded.", "Remember, we're more than a company, we're a family! ^_^"},
                 logic = {next = 4, speaker = "Ani", cond = true, off = true, display = 1, spoken = 0, energy = 1}},
          [4] = {text = {"Is my hair ok?"},
                 logic = {next = 4, speaker = "Ani", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
@@ -467,9 +474,9 @@ objectText = {
   store = {text = {"It's locked."}, logic = {off = false}},
   barrelSmBerriesStatic = {text = {"Berries in barrel: " .. objectInventory["barrelSmBerries"]}, logic = {off = false}},
   barrelLgBerriesStatic = {text = {"Berries in barrel: " .. objectInventory["barrelLgBerries"]}, logic = {off = false}},
-  plantSm = {text = {"The berries have already been harvested from this plant."}, logic = {off = false}},
+  plantSm = {text = {"The berries have already been harvested from this plant."}, logic = {off = true}},
   plantSmBerries = {text = {"I got 1 Plum Berry.", "That's the last one.", "I'm too tired to work.", "I can't carry any more."}, logic = {off = false}},
-  plantLg = {text = {"The berries have already been harvested from this plant."}, logic = {off = false}},
+  plantLg = {text = {"The berries have already been harvested from this plant."}, logic = {off = true}},
   plantLgBerries = {text = {"I got 1 Rose Berry.", "That's the last one.", "I'm too tired to work.", "I can't carry any more."}, logic = {off = false}},
   barrelSmBerries = {text = {"Press Z to drop the Plum Berries in the Barrel"}, logic = {off = false}},
   barrelLgBerries = {text = {"Press Z to drop the Rose Berries in the Barrel"}, logic = {off = false}},
