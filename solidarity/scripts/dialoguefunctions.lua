@@ -15,6 +15,22 @@ function changeCharStats(char, stat1, stat2, amount)
 	end
 end
 
+function changeTrust(char1, char2, amount)
+	local k = 0
+	for i = 1, #trustTable do
+		if trustTable[1][i] == char1 then
+			k = i
+		else
+			print("char1 not found")
+		end
+	end
+	for j = 1, #trustTable do
+		if trustTable[j][1] == char2 then
+			trustTable[j][k] = trustTable[j][k] + amount
+		end
+	end
+end
+
 --initiate dialogue if char enters a certain square
 function DialogueTrigger(x1, y1, f)
 	if math.abs(player.act_x - x1*gridsize) < 0.1 and math.abs(player.act_y - y1*gridsize) < 0.1 then
@@ -284,9 +300,9 @@ function dialogueRun(tbl, n, i, r)
 							return
 						else
 							if dialOpt.logic.spoken ~= nil and dialOpt.logic.spoken == 0 then
-								if dialOpt.logic.statmod ~= nil then
-									print("statmod not nil")
-									changeCharStats(unpack(dialOpt.logic.statpar))
+								if dialOpt.logic.trustmod ~= nil then
+									print("trustmod not nil")
+									changeTrust(unpack(dialOpt.logic.statpar))
 								end
 								if dialOpt.logic.func ~= nil then
 									dialOpt.logic.func(unpack(dialOpt.logic.par))
