@@ -455,6 +455,7 @@ function printObjText(b, c)
 					return
 				elseif choice.mode == 1 then
 					if choice.pos == 1 then
+						energyMod(60)
 						cutsceneControl.stage = 5
 					end
 					choice.mode = 0
@@ -562,6 +563,6 @@ function resetBarrels()
 	objectInventory.barrelLgBerries = 0
 end
 
-itemEffects = {platefull2 = {type = "once", description = "Restores Energy", text = 1, func = energyMod, par = {50}},
-							platefull3 = {type = "once", description = "Restores Energy", text = 1, func = energyMod, par = {50}}
+itemEffects = {platefull2 = {type = "once", description = "Restores Energy", text = 1, func = energyMod, par = {40}},
+							platefull3 = {type = "once", description = "Restores Energy", text = 1, func = energyMod, par = {40}}
 							}

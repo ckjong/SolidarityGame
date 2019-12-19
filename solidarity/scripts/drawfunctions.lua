@@ -467,14 +467,14 @@ function drawText(x, y, scalex, recwidth)
       y = y + 4
     end
     if choice.pos == 1 then
-        love.graphics.draw(ui.arrowright, x, y-3)
+        love.graphics.draw(uiSheetSm, uiQuadsSm.arrowright, x, y-3)
     elseif choice.pos < choice.total then
-      love.graphics.draw(ui.arrowright, x, y + 5)
+      love.graphics.draw(uiSheetSm, uiQuadsSm.arrowright, x, y + 5)
     elseif choice.pos == choice.total then
       if choice.total == 2 then
-        love.graphics.draw(ui.arrowright, x, y + 5)
+        love.graphics.draw(uiSheetSm, uiQuadsSm.arrowright, x, y + 5)
       else
-        love.graphics.draw(ui.arrowright, x, y + 13)
+        love.graphics.draw(uiSheetSm, uiQuadsSm.arrowright, x, y + 13)
       end
     end
     love.graphics.setColor(75, 37, 58)
@@ -492,13 +492,13 @@ function drawArrow(x, y, scaley, recwidth)
     love.graphics.setColor(255, 255, 255)
     if choice.mode == 1 then
       if choice.pos < choice.total then
-        love.graphics.draw(ui.arrowdown, x + recwidth - 12, player.act_y + height)
+        love.graphics.draw(uiSheetSm, uiQuadsSm.arrowdown, x + recwidth - 12, player.act_y + height)
       end
       if choice.pos > 1 then
-        love.graphics.draw(ui.arrowup, x + recwidth - 12, player.act_y + height - 20)
+        love.graphics.draw(uiSheetSm, uiQuadsSm.arrowup, x + recwidth - 12, player.act_y + height - 20)
       end
     else
-      love.graphics.draw(ui.pressz, x + recwidth - 12, player.act_y + height)
+      love.graphics.draw(uiSheetSm, uiQuadsSm.pressz, x + recwidth - 12, player.act_y + height)
     end
   end
 end
@@ -536,7 +536,7 @@ function drawMenuTabs(startx, starty, tab)
   love.graphics.draw(uiSheet, uiQuads.menutablightM, x+32, starty)
   love.graphics.draw(uiSheet, uiQuads.menutablightR, x+48, starty)
   if menu.position[1] == 1 then
-    love.graphics.draw(ui.arrowright, x+4, starty+4)
+    love.graphics.draw(uiSheetSm, uiQuadsSm.arrowright, x+4, starty+4)
   end
   love.graphics.setColor(75, 37, 58)
   for i = 1, menu.tabNum do
@@ -558,7 +558,7 @@ function drawMenu(x, y, tab)
   love.graphics.draw(canvas, boxX, y-offset.y+14)
   drawMenuTabs(boxX+6, y-offset.y, tab)
   if tab == "inventory" then
-    drawInventory(x, y, offset.x - 14, offset.y - 34)
+    drawInventory(x, y, offset.x - 21, offset.y - 26)
   elseif tab == "map2" then
     --"Island Map"
     drawMap2(x + gridsize/2, y-offset.y + 26)
@@ -606,9 +606,10 @@ function drawInventory(x, y, offX, offY)
   local objText = ""
   local selectText = ""
   local descriptionText = ""
+  local g = 34
   for i = 1, player.maxInventory do
     love.graphics.setColor(255, 255, 255)
-    love.graphics.draw(uiSheet, uiQuads.itembg, x - offX + (i-1)*(26), y - offY)
+    love.graphics.draw(uiSheet, uiQuads.itembg, x - offX + (i-1)*g, y - offY)
   end
   for i = 1, #player.inventory do
     local n = player.inventory[i].icon
@@ -616,12 +617,12 @@ function drawInventory(x, y, offX, offY)
       offY = offY - 24
     end
     love.graphics.setColor(75, 37, 58)
-    love.graphics.rectangle("line",  x - offX + (i-1)*(26), y - offY, 16, 16)
+    love.graphics.rectangle("line",  x - offX + (i-1)*g, y - offY, 16, 16)
     love.graphics.setColor(255, 255, 255)
-    love.graphics.draw(animsheet3, movingObjectQuads[n], x - offX + (i-1)*(26), y - offY)
+    love.graphics.draw(animsheet3, movingObjectQuads[n], x - offX + (i-1)*g, y - offY)
     objText = tostring(player.inventory[i].amount)
     love.graphics.setColor(75, 37, 58)
-    love.graphics.printf(objText, x - offX + (i-1)*(26), y - offY + 18, 16, "center")
+    love.graphics.printf(objText, x - offX + (i-1)*g, y - offY + 18, 16, "center")
   end
   if menu.position[1] == 2 then
     local i = menu.position[2]
@@ -630,10 +631,10 @@ function drawInventory(x, y, offX, offY)
     end
     if timer[1].trigger == 1 then
       love.graphics.setColor(255, 255, 255)
-      love.graphics.draw(ui.cornerLTop, x - offX - 5 + (i-1)*(26), y - offY - 5)
-      love.graphics.draw(ui.cornerRTop, x - offX + gridsize + (i-1)*(26) + 1, y - offY - 5)
-      love.graphics.draw(ui.cornerLBottom, x - offX - 5 + (i-1)*(26), y - offY + gridsize + 1)
-      love.graphics.draw(ui.cornerRBottom, x - offX + gridsize + (i-1)*(26) + 1, y - offY + gridsize + 1)
+      love.graphics.draw(uiSheetSm, uiQuadsSm.cornerLTop, x - offX - 5 + (i-1)*g, y - offY - 5)
+      love.graphics.draw(uiSheetSm, uiQuadsSm.cornerRTop, x - offX + gridsize + (i-1)*g + 1, y - offY - 5)
+      love.graphics.draw(uiSheetSm, uiQuadsSm.cornerLBottom, x - offX - 5 + (i-1)*g, y - offY + gridsize + 1)
+      love.graphics.draw(uiSheetSm, uiQuadsSm.cornerRBottom, x - offX + gridsize + (i-1)*g + 1, y - offY + gridsize + 1)
     end
   elseif menu.position[1] == 3 then
     local i = menu.position[2]
@@ -648,10 +649,10 @@ function drawInventory(x, y, offX, offY)
 		local boxposx = player.act_x + gridsize/2 - recwidth/2
 		local boxposy = player.act_y + gridsize/2 + (height/scale.y)/2 - recheight - ynudge
     love.graphics.setColor(255, 255, 255)
-    love.graphics.draw(ui.cornerLTop, x - offX - 4 + (i-1)*(26), y - offY - 4)
-    love.graphics.draw(ui.cornerRTop, x - offX + gridsize + (i-1)*(26), y - offY - 4)
-    love.graphics.draw(ui.cornerLBottom, x - offX - 4 + (i-1)*(26), y - offY + gridsize)
-    love.graphics.draw(ui.cornerRBottom, x - offX + gridsize + (i-1)*(26), y - offY + gridsize)
+    love.graphics.draw(uiSheetSm, uiQuadsSm.cornerLTop, x - offX - 4 + (i-1)*g, y - offY - 4)
+    love.graphics.draw(uiSheetSm, uiQuadsSm.cornerRTop, x - offX + gridsize + (i-1)*g, y - offY - 4)
+    love.graphics.draw(uiSheetSm, uiQuadsSm.cornerLBottom, x - offX - 4 + (i-1)*g, y - offY + gridsize)
+    love.graphics.draw(uiSheetSm, uiQuadsSm.cornerRBottom, x - offX + gridsize + (i-1)*g, y - offY + gridsize)
     if #player.inventory > 0 then
       drawMenuBottom(x, y, offX, offY)
     end
@@ -659,7 +660,7 @@ function drawInventory(x, y, offX, offY)
     love.graphics.draw(ui.textboxbg, boxposx, boxposy - 2)
     love.graphics.draw(ui.textboxbottom, boxposx, boxposy -2)
     if menu.position[3] == 1 then
-      love.graphics.draw(ui.arrowright, boxposx + 8, boxposy + 8)
+      love.graphics.draw(uiSheetSm, uiQuadsSm.arrowright, boxposx + 8, boxposy + 8)
       a = 6
     -- elseif menu.position[3] == 2 then
     --   love.graphics.draw(ui.arrowright, boxposx + 8, boxposy + 16)
@@ -678,10 +679,39 @@ function drawNPCprofiles(x, y, i)
   drawPortrait(socialMap[i].name, x+2, y + 22, portraitsheet1)
   love.graphics.draw(ui.portraitboxframe, x+4, y + 4)
   drawName(x+46, y-4, socialMap[i].name)
-  local txt = "Position: " .. socialMap[i].info.pos .. "\nCompound: " .. socialMap[i].info.comp
-  local txt2 = "\nNotes:" .. socialMap[i].info.notes
-  love.graphics.printf(txt, x+60, y + 18, 128, "left")
-  love.graphics.printf(txt2, x+6, y + 48, 176, "left")
+  local txt = "Position: " .. socialMap[i].info.pos .. "\nCompound: " .. socialMap[i].info.comp .. "\n\nSupport: " .. socialMap[i].mapping.lvl .. "\nAdd Notes"
+  local txt2 = socialMap[i].info.notes
+  love.graphics.setColor(75, 37, 58)
+  love.graphics.printf(txt, x+60, y + 14, 128, "left")
+  love.graphics.printf(txt2, x+6, y + 58, 180, "left")
+  if menu.position[1] == 3 then
+    if menu.position[3] == 2 then
+      y = y + 8
+    end
+    if timer[1].trigger == 1 then
+      love.graphics.setColor(255, 255, 255)
+      love.graphics.draw(uiSheetSm, uiQuadsSm.arrowleft, x+105, y + 38)
+    end
+  elseif menu.position[1] == 4 then
+    if menu.position[3] == 1 then
+      local b = 0
+      if menu.position[4] ~= nil then
+        b = menu.position[4] - 1
+      end
+      local txt3 = "?\n1\n2\n3\n4\n5"
+      love.graphics.setColor(255, 255, 255)
+      love.graphics.draw(canvas3, x+108, y + 20)
+      love.graphics.setColor(75, 37, 58)
+      love.graphics.print(txt3, x+118, y + 28)
+      love.graphics.setColor(255, 255, 255)
+      love.graphics.draw(uiSheetSm, uiQuadsSm.arrowleft, x+126, y + 28 + (b*8))
+    elseif menu.position[3] == 2 then
+      love.graphics.setColor(255, 255, 255)
+      love.graphics.draw(uiSheetSm, uiQuadsSm.arrowleft, x+105, y + 46)
+      love.graphics.setColor(75, 37, 58)
+      love.graphics.printf("Press Escape to finish notes", x+6, y + 118, 180, "center")
+    end
+  end
 end
 
 --social mapping screen
@@ -705,6 +735,7 @@ function drawMap1(x, y)
       love.graphics.setColor(255, 255, 255)
       love.graphics.draw(tbl[2]["anim"]["spriteSheet"], tbl[2]["anim"]["quads"][1], x2, y2)
       love.graphics.setColor(75, 37, 58)
+      love.graphics.print(socialMap[i].mapping.lvl, x2+18, y2)
       love.graphics.printf(socialMap[i].name, x2-((g-16)/2), y2+20, g, "center")
     end
     if menu.position[1] == 2 then
@@ -719,13 +750,13 @@ function drawMap1(x, y)
           y = y + 2*36
         end
         love.graphics.setColor(255, 255, 255)
-        love.graphics.draw(ui.cornerLTop, x - 4 + (p-1)*g, y - 4)
-        love.graphics.draw(ui.cornerRTop, x + gridsize + (p-1)*g, y - 4)
-        love.graphics.draw(ui.cornerLBottom, x - 4 + (p-1)*g, y + gridsize)
-        love.graphics.draw(ui.cornerRBottom, x + gridsize + (p-1)*g, y + gridsize)
+        love.graphics.draw(uiSheetSm, uiQuadsSm.cornerLTop, x - 4 + (p-1)*g, y - 4)
+        love.graphics.draw(uiSheetSm, uiQuadsSm.cornerRTop, x + gridsize + (p-1)*g, y - 4)
+        love.graphics.draw(uiSheetSm, uiQuadsSm.cornerLBottom, x - 4 + (p-1)*g, y + gridsize)
+        love.graphics.draw(uiSheetSm, uiQuadsSm.cornerRBottom, x + gridsize + (p-1)*g, y + gridsize)
       end
     end
-  elseif menu.position[1] == 3 then
+  elseif menu.position[1] >= 3 then
     local j = menu.position[2]
     if #socialMap > 0 then
       drawNPCprofiles(x-1, y, j)
@@ -749,14 +780,14 @@ function drawWorldUI()
     if player.sleep == true and currentLocation == "dormitory" then
       if uiSwitches.bedArrow == true then
         love.graphics.setColor(255, 255, 255)
-        love.graphics.draw(ui.wharrowdown, 15*gridsize + 5, 15*gridsize + 8)
+        love.graphics.draw(uiSheetSm, uiQuadsSm.wharrowdown, 15*gridsize + 5, 15*gridsize + 8)
       end
     end
     if gameStage == 1 and currentLocation == "overworld" then
       if objectInventory.barrelSmBerries + objectInventory.barrelLgBerries == 0 then
         love.graphics.setColor(255, 255, 255)
-        love.graphics.draw(ui.wharrowdown, 15*gridsize + 5, 21*gridsize + 8)
-        love.graphics.draw(ui.wharrowdown, 18*gridsize + 5, 21*gridsize + 8)
+        love.graphics.draw(uiSheetSm, uiQuadsSm.wharrowdown, 15*gridsize + 5, 21*gridsize + 8)
+        love.graphics.draw(uiSheetSm, uiQuadsSm.wharrowdown, 18*gridsize + 5, 21*gridsize + 8)
       end
     end
   end

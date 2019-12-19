@@ -50,6 +50,8 @@ function love.load()
 	menuW2, menuH2 = 12*gridsize, 8*gridsize
 	canvas2 = love.graphics.newCanvas(menuW2, menuH2)
 	formBox(menuW2, menuH2, canvas2)
+	canvas3 = love.graphics.newCanvas(32, 64) -- box for support select
+	formBox(32, 64, canvas3)
 	lockDialogue(locationTriggers.overworld)
 	setTitleScreen(1)
 	music.overworld:setLooping( true )
@@ -356,163 +358,167 @@ function love.draw()
 	love.graphics.pop()
 end
 
+function love.textinput(t)
+  addNotes(t)
+end
+
 -- KEY PRESSES --
 ---------------
 function love.keypressed(key)
-	if keyInput == 1 then
+	if menuView == 1 then
+		removeNotes(key)
+	end
+	if noteMode == 0 then
+		if keyInput == 1 then
+		--- interact with objects or people
+		  if key == "z" then
+				print("pressed z")
+				textn = 0
+				if menuView == 0 then
+					if titleScreen == 0 then
+						if usedItem == 1 then
+							afterItemUse()
+						end
+						if storedIndex[1] ~= 0 then
+							DialogueSetup(npcs, dialogueStage, storedIndex[1])
+						else
+							DialogueSetup(npcs, dialogueStage)
+						end
+						faceObject(player, player.facing, staticObjects[currentLocation]) -- still objects
+						faceObject(player, player.facing, movingObjectData[currentLocation])
+						faceObject(player, player.facing, locationTriggers[currentLocation])
+					else
+						setTitleScreen(0)
+					end
+				else
+					 menuHierarchy(key)
+				end
+				print("dialogueMode after z" .. dialogueMode)
+			end
+
+		-- move between dialogue or menu options
+
+		if key == "down" or key == "up" then
+			if menuView ~= 1 then
+				if choice.mode == 1 then
+					local tbl = {}
+					if choice.type == "npc" then
+						tbl = NPCdialogue[dialogueStage][choice.name][choice.case].text
+					elseif choice.type == "yesno" then
+						print ("yes no text: " .. objectText.yesno.text[choice.pos])
+						tbl = objectText.yesno.text
+					end
+					choiceChange(key, tbl)
+				end
+			else
+				if menu.currentTab == "inventory" then
+					inventorySelect(key, #player.inventory, menu.currentTab)
+				elseif menu.currentTab == "map1" then
+					inventorySelect(key, #socialMap, menu.currentTab)
+				end
+			end
+		end
+		if key == "left" or key == "right" then
+			if menuView == 1 then
+				if menu.position[1] == 1 then
+					menu.currentTab = switchTabs(key)
+				elseif menu.position[1] > 1 then
+					if menu.currentTab == "map1" then
+						inventorySelect(key, #socialMap, menu.currentTab)
+					end
+					if menu.position[1] == 2 then
+						if menu.currentTab == "inventory" then
+							inventorySelect(key, #player.inventory, menu.currentTab)
+						end
+					end
+				end
+			end
+		end
 
 
-	--- interact with objects or people
-	  if key == "z" then
-			print("pressed z")
-			textn = 0
+		-- end battle
+			if battleMode == 1 and key == "q" then
+				battleMode = 0
+				battleGlobal.phase = 0
+				-- battleEnd(storedLocation.x, storedLocation.y)
+			end
+		end
+		--end keyInput, keys below can be pressed any time
+
+		if key == "x" then
+			if menuView == 0 then
+				exitAction()
+				if dialogueMode == 1 then
+					print("textn " .. textn)
+					textn = 200
+					keyInput = 1
+				else
+					if titleScreen == 1 then
+						setTitleScreen(0)
+					end
+				end
+			else
+				menuHierarchy(key)
+			end
+		end
+
+		if key == "f11" then
+			local fullscreen, fstype = love.window.getFullscreen( )
+			if fullscreen == false then
+				love.mouse.setVisible(false)
+				love.window.setFullscreen(true, "exclusive")
+				scale.x, scale.y = getScale()
+			else
+				love.mouse.setVisible(true)
+				love.window.setFullscreen(false, "exclusive")
+				scale.x, scale.y = getScale()
+			end
+		end
+
+		if key == "escape" then
 			if menuView == 0 then
 				if titleScreen == 0 then
-					if usedItem == 1 then
-						afterItemUse()
+					if dialogueMode == 0 then
+						setTitleScreen(1)
 					end
-					if storedIndex[1] ~= 0 then
-						DialogueSetup(npcs, dialogueStage, storedIndex[1])
-					else
-						DialogueSetup(npcs, dialogueStage)
-					end
-					faceObject(player, player.facing, staticObjects[currentLocation]) -- still objects
-					faceObject(player, player.facing, movingObjectData[currentLocation])
-					faceObject(player, player.facing, locationTriggers[currentLocation])
 				else
-					setTitleScreen(0)
+					quitGame(0)
 				end
 			else
-				 menuHierarchy(key)
-			end
-			print("dialogueMode after z" .. dialogueMode)
-		end
-
-	-- move between dialogue or menu options
-
-	if key == "down" or key == "up" then
-		if menuView ~= 1 then
-			if choice.mode == 1 then
-				local tbl = {}
-				if choice.type == "npc" then
-					tbl = NPCdialogue[dialogueStage][choice.name][choice.case].text
-				elseif choice.type == "yesno" then
-					print ("yes no text: " .. objectText.yesno.text[choice.pos])
-					tbl = objectText.yesno.text
-				end
-				choiceChange(key, tbl)
-			end
-		else
-			if menu.position[1] == 3 then
-				if menu.currentTab == "inventory" then
-					inventorySelect(key, #player.inventory)
-				end
-			elseif menu.position[1] == 2 then
-				if menu.currentTab == "map1" then
-					inventorySelect(key, #socialMap, menu.currentTab)
+				if menu.position[1] ~= 4 and menu.currentTab ~= "map1" and menu.position[3] ~= 2 then
+					menuEscape()
 				end
 			end
 		end
-	end
-	if key == "left" or key == "right" then
-		if menuView == 1 then
-			if menu.position[1] == 1 then
-				menu.currentTab = switchTabs(key)
-			elseif menu.position[1] > 1 then
-				if menu.currentTab == "map1" then
-					inventorySelect(key, #socialMap, menu.currentTab)
-				end
-				if menu.position[1] == 2 then
-					if menu.currentTab == "inventory" then
-						inventorySelect(key, #player.inventory, menu.currentTab)
-					end
+
+		if key == "r" then
+			quitGame("restart")
+		end
+
+		if key == "i" then
+			if dialogueMode == 0 and titleScreen == 0 then
+				if menuView == 0 then
+					player.canMove = 0
+					menuView = 1
+				else
+					menuEscape()
 				end
 			end
 		end
-	end
-
-
-	-- end battle
-		if battleMode == 1 and key == "q" then
-			battleMode = 0
-			battleGlobal.phase = 0
-			-- battleEnd(storedLocation.x, storedLocation.y)
-		end
-	end
-	--end keyInput, keys below can be pressed any time
-
-	if key == "x" then
-		if menuView == 0 then
-			exitAction()
-			if dialogueMode == 1 then
-				print("textn " .. textn)
-				textn = 200
-				keyInput = 1
+	-- ====CHEAT KEYS===
+	-- initiate debug/map editing mode
+	  if key == "p" then
+		 	if debugView == 0 then
+	    	debugView = 1
+			elseif debugView == 1 then
+				debugView = 0
+			end
+			if infoView == 0 then
+				infoView = 1
 			else
-				if titleScreen == 1 then
-					setTitleScreen(0)
-				end
+				infoView = 0
 			end
-		else
-			menuHierarchy(key)
-		end
-	end
-
-	if key == "f11" then
-		local fullscreen, fstype = love.window.getFullscreen( )
-		if fullscreen == false then
-			love.mouse.setVisible(false)
-			love.window.setFullscreen(true, "exclusive")
-			scale.x, scale.y = getScale()
-		else
-			love.mouse.setVisible(true)
-			love.window.setFullscreen(false, "exclusive")
-			scale.x, scale.y = getScale()
-		end
-	end
-
-	if key == "escape" then
-		if menuView == 0 then
-			if titleScreen == 0 then
-				if dialogueMode == 0 then
-					setTitleScreen(1)
-				end
-			else
-				quitGame(0)
-			end
-		else
-			menuEscape()
-		end
-	end
-
-	if key == "r" then
-		quitGame("restart")
-	end
-
-	if key == "i" then
-		if dialogueMode == 0 and titleScreen == 0 then
-			if menuView == 0 then
-				player.canMove = 0
-				menuView = 1
-			else
-				menuEscape()
-			end
-		end
-	end
--- ====CHEAT KEYS===
--- initiate debug/map editing mode
-  if key == "p" then
-	 	if debugView == 0 then
-    	debugView = 1
-		elseif debugView == 1 then
-			debugView = 0
-		end
-		if infoView == 0 then
-			infoView = 1
-		else
-			infoView = 0
-		end
-  end
+	  end
 
 	-- add block to editor
 		if key == "space" and debugView == 1 then
@@ -560,4 +566,6 @@ function love.keypressed(key)
 			print("gameStage: " .. gameStage)
 		end
 -- ====END CHEAT KEYS===
+	end
+
 end

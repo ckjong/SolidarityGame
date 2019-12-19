@@ -15,6 +15,30 @@ function changeCharStats(char, stat1, stat2, amount)
 	end
 end
 
+function table_print (tt, indent, done)
+  done = done or {}
+  indent = indent or 0
+  if type(tt) == "table" then
+    for key, value in pairs (tt) do
+      io.write(string.rep (" ", indent)) -- indent it
+      if type (value) == "table" and not done [value] then
+        done [value] = true
+        io.write(string.format("[%s] => table\n", tostring (key)));
+        io.write(string.rep (" ", indent+4)) -- indent it
+        io.write("(\n");
+        table_print (value, indent + 7, done)
+        io.write(string.rep (" ", indent+4)) -- indent it
+        io.write(")\n");
+      else
+        io.write(string.format("[%s] => %s\n",
+            tostring (key), tostring(value)))
+      end
+    end
+  else
+    io.write(tt .. "\n")
+  end
+end
+
 function changeTrust(char1, char2, amount)
 	local k = 0
 	for i = 1, #trustTable do
@@ -29,6 +53,7 @@ function changeTrust(char1, char2, amount)
 			trustTable[j][k] = trustTable[j][k] + amount
 		end
 	end
+	table_print(trustTable)
 end
 
 --initiate dialogue if char enters a certain square
@@ -411,6 +436,10 @@ function addInfo(txt, name)
 	resetDialogue(npcs, i)
 end
 
+function addNotes()
+
+end
+
 function quitGame(t)
   print("restarting")
   love.event.quit(t)
@@ -463,4 +492,13 @@ function updateUI (element, b, name)
 		sleepCheck(true)
 	end
 	resetDialogue(npcs, i)
+end
+
+function changeMoney(c, s, g)
+	local c = c or 0
+	local s = s or 0
+	local g = g or 0
+	player.money.current.c = player.money.current.c + c
+	player.money.current.s = player.money.current.s + s
+	player.money.current.g = player.money.current.g + g
 end

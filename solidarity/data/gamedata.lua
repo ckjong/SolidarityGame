@@ -10,6 +10,7 @@ gridsize = 16
 debugView = 0
 infoView = 0
 menuView = 0
+noteMode = 0
 mapExists = 0
 tempBlocks = {overworld = {
                           {x = 17, y = 20, on = 1},
@@ -104,23 +105,32 @@ currentJournal = {}
                 }
   currentspeaker = "player"
   uiSheet = love.graphics.newImage("images/solidarityui_16x16.png")
-
-  ui = {arrowup = love.graphics.newImage("images/solidarity_ui_00.png"),
-    arrowdown = love.graphics.newImage("images/solidarity_ui_01.png"),
-    arrowright = love.graphics.newImage("images/solidarity_ui_02.png"),
-    arrowleft = love.graphics.newImage("images/solidarity_ui_03.png"),
-    pressz = love.graphics.newImage("images/solidarity_ui_04.png"),
-    cornerLTop = love.graphics.newImage("images/solidarity_ui_09.png"),
-    cornerRTop = love.graphics.newImage("images/solidarity_ui_10.png"),
-    cornerLBottom = love.graphics.newImage("images/solidarity_ui_11.png"),
-    cornerRBottom = love.graphics.newImage("images/solidarity_ui_12.png"),
-    wharrowup = love.graphics.newImage("images/solidarity_ui_13.png"),
-    wharrowdown = love.graphics.newImage("images/solidarity_ui_14.png"),
-    textboxbg = love.graphics.newImage("images/solidarity_textboxfull.png"),
-    textboxbottom = love.graphics.newImage("images/solidarity_textboxbottom.png"),
-    portraitbox = love.graphics.newImage("images/portrait_box_0.png"),
-    portraitboxframe = love.graphics.newImage("images/portrait_box_1.png")
+  uiSheetSm = love.graphics.newImage("images/solidarity_ui.png")
+  uiQuadsSm = {arrowup = love.graphics.newQuad(0, 0, 8, 8, uiSheetSm:getDimensions()),
+    arrowdown = love.graphics.newQuad(8, 0, 8, 8, uiSheetSm:getDimensions()),
+    arrowright = love.graphics.newQuad(2*8, 0, 8, 8, uiSheetSm:getDimensions()),
+    arrowleft = love.graphics.newQuad(3*8, 0, 8, 8, uiSheetSm:getDimensions()),
+    pressz = love.graphics.newQuad(4*8, 0, 8, 8, uiSheetSm:getDimensions()),
+    cornerLTop = love.graphics.newQuad(8, 8, 8, 8, uiSheetSm:getDimensions()),
+    cornerRTop = love.graphics.newQuad(2*8, 8, 8, 8, uiSheetSm:getDimensions()),
+    cornerLBottom = love.graphics.newQuad(3*8, 8, 8, 8, uiSheetSm:getDimensions()),
+    cornerRBottom = love.graphics.newQuad(4*8, 8, 8, 8, uiSheetSm:getDimensions()),
+    wharrowup = love.graphics.newQuad(5*8, 8, 8, 8, uiSheetSm:getDimensions()),
+    wharrowdown = love.graphics.newQuad(6*8, 8, 8, 8, uiSheetSm:getDimensions()),
+    trusthigh = love.graphics.newQuad(7*8, 8, 8, 8, uiSheetSm:getDimensions()),
+    trustmed = love.graphics.newQuad(0, 2*8, 8, 8, uiSheetSm:getDimensions()),
+    trustlow = love.graphics.newQuad(8, 2*8, 8, 8, uiSheetSm:getDimensions()),
+    trustunknown = love.graphics.newQuad(2*8, 2*8, 8, 8, uiSheetSm:getDimensions()),
+    coppercoin = love.graphics.newQuad(3*8, 2*8, 8, 8, uiSheetSm:getDimensions()),
+    silvercoin = love.graphics.newQuad(4*8, 2*8, 8, 8, uiSheetSm:getDimensions()),
+    goldcoin = love.graphics.newQuad(5*8, 2*8, 8, 8, uiSheetSm:getDimensions()),
   }
+
+  ui = {textboxbg = love.graphics.newImage("images/solidarity_textboxfull.png"),
+      textboxbottom = love.graphics.newImage("images/solidarity_textboxbottom.png"),
+      portraitbox = love.graphics.newImage("images/portrait_box_0.png"),
+      portraitboxframe = love.graphics.newImage("images/portrait_box_1.png")
+    }
 
   uiSwitches = {bedArrow = false}
 
@@ -183,7 +193,13 @@ currentJournal = {}
 
   boxMap = {}
 
-  menu = {currentTab = "inventory", allTabs = {"inventory", "map2", "map1", "journal"}, tabData = {inventory = {text = "Inventory", x = 0, c = 8, r = 1}, map2 = {text = "Island Map", x = 64}, map1 = {text = "Social Map", x = 0, c = 5, r = 3}, journal = {text = "Journal", x = 0}}, position = {1, 1, 1}, grid = {1, 1}, total = 3, tabNum = 3}
+  menu = {currentTab = "inventory",
+  allTabs = {"inventory", "map2", "map1", "journal"},
+  tabData = {inventory = {text = "Inventory", x = 0, c = 8, r = 1}, map2 = {text = "Island Map", x = 64}, map1 = {text = "Social Map", x = 0, c = 5, r = 3}, journal = {text = "Journal", x = 0}},
+  position = {1, 1, 1, 1},
+  grid = {1, 1},
+  total = 3,
+  tabNum = 3}
 
   -- objects that are not part of static background
   animsheet3 = love.graphics.newImage("images/solidarity_objects.png")
@@ -229,7 +245,7 @@ player = {
   name = "Saffron",
   battlestats = {maxhp = 2, damage = 1, moves = 2},
   inventory = {},
-  maxInventory = 8,
+  maxInventory = 6,
   party = {},
   showParty = false,
   leaveParty = false,
@@ -237,6 +253,7 @@ player = {
   energy = 100,
   quota = 60,
   sleep = false,
+  money = {current = {c = 0, s = 0, g = 0}, next = {c = 5, s = 0, g = 0}},
   actions = {current = 0, max = 100, rate = 10, x = 0, y = 0, key = 0, index = 0},
   next = {{x = 0, y = 0, facing = 0, location = "overworld"},
           {x = 0, y = 0, facing = 0, location = "dininghall"},
@@ -276,8 +293,8 @@ npcs = {{
   timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc.
   location = "overworld",
   dialogue = 0, -- curently in dialogue
-  mapping = {added = 0, dialogueCount = 0},
-  info = {pos = "Field Hand", time = 4, notes = " My best friend.", comp = "Berry Fields"},
+  mapping = {added = 0, dialogueCount = 0, lvl = "?"},
+  info = {pos = "Field Hand", time = 4, notes = "", comp = "Berry Fields"},
   name = "Fennel",
   status = "worker",
   n = 1, --stage in single conversation
@@ -324,8 +341,8 @@ npcs = {{
     timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc.
     location = "overworld",
     dialogue = 0,
-    mapping = {added = 0, dialogueCount = 0},
-    info = {pos = "Field Hand", time = 7, notes = " An old friend.", comp = "Berry Fields"},
+    mapping = {added = 0, dialogueCount = 0, lvl = "?"},
+    info = {pos = "Field Hand", time = 7, notes = "", comp = "Berry Fields"},
     name = "Mint", --2
     status = "worker",
     n = 1,
@@ -371,7 +388,7 @@ npcs = {{
       timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc.
       location = "overworld",
       dialogue = 0,
-      mapping = {added = 0, dialogueCount = 0},
+      mapping = {added = 0, dialogueCount = 0, lvl = "?"},
       info = {pos = "Field Hand", time = 2, notes = "", comp = "Berry Fields"},
       name = "Cress", -- 5
       status = "worker",
@@ -418,7 +435,7 @@ npcs = {{
       timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc.
       location = "overworld",
       dialogue = 0,
-      mapping = {added = 0, dialogueCount = 0},
+      mapping = {added = 0, dialogueCount = 0, lvl = "?"},
       info = {pos = "Field Hand", notes = "", comp = "Berry Fields"},
       name = "Agave", --6
       status = "worker",
@@ -464,7 +481,7 @@ npcs = {{
       timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc.
       location = "overworld",
       dialogue = 0,
-      mapping = {added = 0, dialogueCount = 0},
+      mapping = {added = 0, dialogueCount = 0, lvl = "?"},
       info = {pos = "Field Hand", notes = "", comp = "Berry Fields"},
       name = "Tarragon", --7
       status = "worker",
@@ -510,7 +527,7 @@ npcs = {{
       timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc.
       location = "overworld",
       dialogue = 0,
-      mapping = {added = 0, dialogueCount = 0},
+      mapping = {added = 0, dialogueCount = 0, lvl = "?"},
       info = {pos = "Field Hand", notes = "", comp = "Berry Fields"},
       name = "Robin", --8
       status = "worker",
@@ -556,7 +573,7 @@ npcs = {{
       timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc., current time, max time, wait time
       location = "offscreen",
       dialogue = 0,
-      mapping = {added = 0, dialogueCount = 0},
+      mapping = {added = 0, dialogueCount = 0, lvl = "?"},
       info = {pos = "Field Hand", notes = "", comp = "Berry Fields"},
       name = "Durian", --9
       status = "worker",
@@ -603,8 +620,8 @@ npcs = {{
       timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc., current time, max time, wait time
       location = "offscreen",
       dialogue = 0,
-      mapping = {added = 0, dialogueCount = 0},
-      info = {pos = "Field Hand, Dorm Supervisor", notes = " My uncle.", comp = "Berry Fields"},
+      mapping = {added = 0, dialogueCount = 0, lvl = "?"},
+      info = {pos = "Dorm Supervisor", notes = "", comp = "Berry Fields"},
       name = "Brier", --9
       status = "worker",
       n = 1, --stage in single conversation
@@ -650,7 +667,7 @@ npcs = {{
       timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc., current time, max time, wait time
       location = "offscreen",
       dialogue = 0,
-      mapping = {added = 0, dialogueCount = 0},
+      mapping = {added = 0, dialogueCount = 0, lvl = "?"},
       info = {pos = "Field Hand", notes = "", comp = "Berry Fields"},
       name = "Lotus", --9
       status = "worker",
@@ -695,7 +712,7 @@ npcs = {{
       timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc., current time, max time, wait time
       location = "dininghall",
       dialogue = 0,
-      mapping = {added = 0, dialogueCount = 0},
+      mapping = {added = 0, dialogueCount = 0, lvl = "?"},
       info = {pos = "Cook", notes = "", comp = "Berry Fields"},
       name = "Euca",
       status = "worker",
@@ -741,7 +758,7 @@ npcs = {{
       timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc.
       location = "overworld",
       dialogue = 0,
-      mapping = {added = 0, dialogueCount = 0},
+      mapping = {added = 0, dialogueCount = 0, lvl = "?"},
       info = {pos = "Guard", notes = "", comp = "Berry Fields"},
       name = "Finch", --4
       status = "boss",
@@ -786,7 +803,7 @@ npcs = {{
       timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc.
       location = "overworld",
       dialogue = 0,
-      mapping = {added = 0, dialogueCount = 0},
+      mapping = {added = 0, dialogueCount = 0, lvl = "?"},
       info = {pos = "Foreman", notes = "", comp = "Berry Fields"},
       name = "Lark", -- 3
       status = "boss",
@@ -831,7 +848,7 @@ npcs = {{
       timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc., current time, max time, wait time
       location = "dininghall",
       dialogue = 0,
-      mapping = {added = 0, dialogueCount = 0},
+      mapping = {added = 0, dialogueCount = 0, lvl = "?"},
       info = {pos = "Guard", notes = "", comp = "Berry Fields"},
       name = "Hawk",
       status = "boss",
@@ -876,7 +893,7 @@ npcs = {{
       timer = {ct = 0, mt = 0, wt = 0}, -- timer for direction changes, etc., current time, max time, wait time
       location = "offscreen",
       dialogue = 0,
-      mapping = {added = 0, dialogueCount = 0},
+      mapping = {added = 0, dialogueCount = 0, lvl = "?"},
       info = {pos = "Berry Fields Manager", notes = "", comp = "Berry Fields"},
       name = "Ani",
       status = "boss",
@@ -891,7 +908,7 @@ npcs = {{
               {x = 0, y = 0, facing = 1, location = "offscreen", canWork = 0},
               {x = 0, y = 0, facing = 0, location = "offscreen", canWork = 0},
               {x = 23*gridsize, y = 20*gridsize, facing = 1, location = "offscreen", canWork = 0},
-              {x = 0, y = 0, facing = 2, location = "dininghall", canWork = 0}
+              {x = 0, y = 0, facing = 2, location = "offscreen", canWork = 0}
             },
       animations = {walk = {{anim = newAnimation(animsheet1, 56*16, 4, 16, 16, .5 ), name = "up", loop = 0},
                             {anim = newAnimation(animsheet1, 57*16, 4, 16, 16, .5 ), name = "down", loop = 0},
@@ -1286,6 +1303,7 @@ cutsceneList ={{
   path = {},
   fadeout = 0,
   black = 0,
+  goback = true,
   skipnext = false, -- do we go directly to next cutscene?
   nextStage = true,
   switchTime = 0, -- what time of day is it after the end
