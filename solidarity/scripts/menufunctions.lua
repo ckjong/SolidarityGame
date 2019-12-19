@@ -212,9 +212,13 @@ function addNotes(t)
     local l = 220 -- character limit
     local i = menu.position[2]
     if menu.position[3] == 2 then
-      noteMode = 1
-      if string.len(socialMap[i].info.notes) < l then
-        socialMap[i].info.notes = socialMap[i].info.notes .. t
+      if noteMode == 0 then
+        noteMode = 1
+        return
+      else
+        if string.len(socialMap[i].info.notes) < l then
+          socialMap[i].info.notes = socialMap[i].info.notes .. t
+        end
       end
     end
   end
