@@ -1,3 +1,17 @@
+function openMenu(tab)
+  if dialogueMode == 0 and titleScreen == 0 then
+    if menuView == 0 then
+      if tab ~= nil then
+        menu.currentTab = tab
+      end
+      player.canMove = 0
+      menuView = 1
+    else
+      menuEscape()
+    end
+  end
+end
+
 function menuEscape()
   print("escape menu")
   menu.position = {1, 1, 1, 1}
@@ -198,7 +212,7 @@ function removeNotes(key)
         --   if string.len(socialMap[i].info.notes) < l then
         --     socialMap[i].info.notes = socialMap[i].info.notes .. " "
         --   end
-        elseif key == "escape" then
+        elseif key == "return" then
           menu.position[1] = menu.position[1] - 1
           noteMode = 0
         end

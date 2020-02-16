@@ -500,8 +500,34 @@ function areaTriggers()
 			end
 		end
 	end
+	if areaCheck(24, 17, 28, 18, player) and currentLocation == "overworld" then
+		if gameStage == 6 then
+			local i = getCharIndex("Euca")
+			local char = npcs[i]
+			local n = cutsceneControl.current
+			if char.location ~= "overworld" then
+				print("change location to overworld")
+				changeCharLoc(char, "overworld")
+				changeCharXY(char, 25*gridsize, 12*gridsize, 1)
+				char.canMove = 1
+				print("cutscene number " .. n)
+				if cutsceneList[n].triggered == false then
+					print("cutscene triggered")
+					cutsceneControl.stage = 1
+				end
+			end
+		end
+	end
 end
 
 function changeCharLoc(char, loc)
 	char.location = loc
+end
+
+function changeCharXY(char, x, y, f)
+	char.grid_x, char.grid_y = x, y
+	char.act_x, char.act_y = char.grid_x, char.grid_y
+	if f ~= nil then
+		char.facing = f
+	end
 end

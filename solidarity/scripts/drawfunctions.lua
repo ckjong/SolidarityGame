@@ -91,7 +91,7 @@ function drawTitleScreen()
   love.graphics.draw(canvasTitle, boxX, boxY)
   love.graphics.setColor(75, 37, 58)
   love.graphics.setFont( font )
-  love.graphics.printf("Instructions:\nArrow keys to move. Z to talk/interact.\nX to exit menu or speed up dialogue.\nI for inventory. R to restart.\nEsc to quit or see instructions.\nMusic by The Platinum Hawk\n\nPress Z to Start", boxX, boxY + 40, menuW, "center")
+  love.graphics.printf("Instructions:\nArrow keys to move. Z to talk/interact.\nX to exit menu or speed up dialogue.\nI for inventory. R to restart.\nEsc to quit or see instructions.\n\n\nPress Z to Start", boxX, boxY + 40, menuW, "center")
 end
 
 --animation
@@ -558,7 +558,7 @@ function drawMenu(x, y, tab)
   love.graphics.draw(canvas, boxX, y-offset.y+14)
   drawMenuTabs(boxX+6, y-offset.y, tab)
   if tab == "inventory" then
-    drawInventory(x, y, offset.x - 21, offset.y - 26)
+    drawInventory(x, y, offset.x - 21, offset.y - 40)
   elseif tab == "map2" then
     --"Island Map"
     drawMap2(x + gridsize/2, y-offset.y + 26)
@@ -607,6 +607,14 @@ function drawInventory(x, y, offX, offY)
   local selectText = ""
   local descriptionText = ""
   local g = 34
+  love.graphics.setColor(255, 255, 255)
+  love.graphics.draw(uiSheetSm, uiQuadsSm.goldcoin, x - offX + (g*4), y - offY-18)
+  love.graphics.draw(uiSheetSm, uiQuadsSm.silvercoin, x - offX + (g*4) + 18, y - offY-18)
+  love.graphics.draw(uiSheetSm, uiQuadsSm.coppercoin, x - offX + (g*4) + 36, y - offY-18)
+  love.graphics.setColor(75, 37, 58)
+  love.graphics.print(player.money.current.g, x - offX + (g*4) + 10 , y - offY-18)
+  love.graphics.print(player.money.current.s, x - offX + (g*4) + 28 , y - offY-18)
+  love.graphics.print(player.money.current.c, x - offX + (g*4) + 46 , y - offY-18)
   for i = 1, player.maxInventory do
     love.graphics.setColor(255, 255, 255)
     love.graphics.draw(uiSheet, uiQuads.itembg, x - offX + (i-1)*g, y - offY)
@@ -627,7 +635,7 @@ function drawInventory(x, y, offX, offY)
   if menu.position[1] == 2 then
     local i = menu.position[2]
     if #player.inventory > 0 then
-      drawMenuBottom(x, y, offX, offY)
+      drawMenuBottom(x, y, offX, offY+16)
     end
     if timer[1].trigger == 1 then
       love.graphics.setColor(255, 255, 255)
@@ -654,7 +662,7 @@ function drawInventory(x, y, offX, offY)
     love.graphics.draw(uiSheetSm, uiQuadsSm.cornerLBottom, x - offX - 4 + (i-1)*g, y - offY + gridsize)
     love.graphics.draw(uiSheetSm, uiQuadsSm.cornerRBottom, x - offX + gridsize + (i-1)*g, y - offY + gridsize)
     if #player.inventory > 0 then
-      drawMenuBottom(x, y, offX, offY)
+      drawMenuBottom(x, y, offX, offY+16)
     end
     love.graphics.setColor(255, 255, 255)
     love.graphics.draw(ui.textboxbg, boxposx, boxposy - 2)
@@ -709,7 +717,7 @@ function drawNPCprofiles(x, y, i)
       love.graphics.setColor(255, 255, 255)
       love.graphics.draw(uiSheetSm, uiQuadsSm.arrowleft, x+105, y + 46)
       love.graphics.setColor(75, 37, 58)
-      love.graphics.printf("Press Escape to finish notes", x+6, y + 118, 180, "center")
+      love.graphics.printf("Press Enter to finish notes", x+6, y + 118, 180, "center")
     end
   end
 end
@@ -780,7 +788,7 @@ function drawWorldUI()
     if player.sleep == true and currentLocation == "dormitory" then
       if uiSwitches.bedArrow == true then
         love.graphics.setColor(255, 255, 255)
-        love.graphics.draw(uiSheetSm, uiQuadsSm.wharrowdown, 15*gridsize + 5, 15*gridsize + 8)
+        love.graphics.draw(uiSheetSm, uiQuadsSm.puarrowdown, 15*gridsize + 5, 15*gridsize + 8)
       end
     end
     if gameStage == 1 and currentLocation == "overworld" then

@@ -152,8 +152,10 @@ function initDialogue (char)
 	local y = char.act_y
 	if currentLocation == char.location then
 		if char.offset ~= nil then
-			x = x + char.offset.x
-			y = y + char.offset.y
+			if char.offset.location == currentLocation then
+				x = x + char.offset.x
+				y = y + char.offset.y
+			end
 		end
 		if checkParty(char) == false then
 			if player.act_y == y then
@@ -275,6 +277,7 @@ function DialogueSetup(tbl, n, index) -- iterate through npcs table, lookup text
 	else
 		for i = 1, #tbl do
 			if initDialogue(tbl[i]) == true then
+				print("initDialogue true")
 				dialogueRun(tbl, n, i)
 			end
 		end
@@ -286,6 +289,7 @@ function dialogueRun(tbl, n, i, r)
 	local num = tbl[i].n
 	local case = tbl[i].c
 	if NPCdialogue[n][name] ~= nil then
+		print("NPCdialogue[n][name] ~= nil")
 		local dialOpt = NPCdialogue[n][name][case]
 		local canSpeak = 1
 		-- if freeze.dialogue == 1 then
@@ -424,21 +428,32 @@ function changeDialogue(npc, n)
 	npcs[i].c = n
 end
 
-function changeDialogueNext(item, stage, npc, i, n)
-	if checkInventory(item) == false then
-		NPCdialogue[stage][npc][i].logic.next = n
+function changeDialogueNext(type, stage, npc, i, n, par)
+	if type == "inventory" then
+		if checkInventory(par) == false then
+			NPCdialogue[stage][npc][i].logic.next = n
+		end
+	elseif type == "gateclosed" then
+		if nonInteractiveObjects.overworld.fenceclosedL[1].visible == 1 then -- gate closed
+			NPCdialogue[stage][npc][i].logic.next = n
+		end
+	elseif type == "spoken" then
+		if checkLineSpoken(par[1], par[2], par[3]) == true then -- stage name c
+			NPCdialogue[stage][npc][i].logic.next = n
+		end
+	end
+	if NPCdialogue[stage][npc][i].logic.off == true then
+		local j = getCharIndex(npc)
+		resetDialogue(npcs, j)
 	end
 end
 
-function addInfo(txt, name)
-	local i = getCharIndex(name)
-	npcs[i].info.notes = npcs[i].info.notes .. " " .. txt
-	resetDialogue(npcs, i)
-end
+-- function addInfo(txt, name)
+-- 	local i = getCharIndex(name)
+-- 	npcs[i].info.notes = npcs[i].info.notes .. " " .. txt
+-- 	resetDialogue(npcs, i)
+-- end
 
-function addNotes()
-
-end
 
 function quitGame(t)
   print("restarting")
@@ -495,10 +510,42 @@ function updateUI (element, b, name)
 end
 
 function changeMoney(c, s, g)
-	local c = c or 0
-	local s = s or 0
-	local g = g or 0
 	player.money.current.c = player.money.current.c + c
 	player.money.current.s = player.money.current.s + s
 	player.money.current.g = player.money.current.g + g
+end
+
+function changeVar(v, tbl, n, i, ...) -- v = variable to change to, n = number of nested tables, i = key
+	if n == 2 then
+		tbl[i] = v
+		print("variable changed to " .. v .. " n = 2")
+		checkReset()
+	elseif n == 3 then
+		tbl[i][arg[1]] = v
+		print("variable changed to " .. v .. " n = 3")
+		checkReset()
+	end
+end
+
+function checkReset()
+	for i = 1, #npcs do
+		if npcs[i].dialogue == 1 then
+			print("dialogue is 1")
+			local n = dialogueStage
+			local name = npcs[i].name
+			local c = npcs[i].c
+			if NPCdialogue[n][name][c].logic.off == true then
+				print("reset dialogue")
+				resetDialogue(npcs, i)
+			end
+		end
+	end
+end
+
+function checkLineSpoken(n, name, c)
+	if NPCdialogue[n][name][c].logic.spoken == true then
+		return true
+	else
+		return false
+	end
 end

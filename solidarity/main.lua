@@ -68,7 +68,7 @@ function love.load()
 	-- music.overworld:play()
 
 	love.mouse.setVisible(false)
-	-- love.window.setFullscreen(true, "exclusive")
+	love.window.setFullscreen(false, "exclusive")
 	scale.x, scale.y = getScale()
 end
 
@@ -485,7 +485,7 @@ function love.keypressed(key)
 					quitGame(0)
 				end
 			else
-				if menu.position[1] ~= 4 and menu.currentTab ~= "map1" and menu.position[3] ~= 2 then
+				if menu.position[1] ~= 3 then
 					menuEscape()
 				end
 			end
@@ -496,13 +496,12 @@ function love.keypressed(key)
 		end
 
 		if key == "i" then
-			if dialogueMode == 0 and titleScreen == 0 then
-				if menuView == 0 then
-					player.canMove = 0
-					menuView = 1
-				else
-					menuEscape()
-				end
+			openMenu("inventory")
+		end
+
+		if key == "j" then
+			if menu.tabNum >= 3 then
+				openMenu("map1")
 			end
 		end
 	-- ====CHEAT KEYS===
@@ -557,6 +556,7 @@ function love.keypressed(key)
 				table.insert(socialMap, npcs[i])
 				npcs[i].mapping.added = 1
 			end
+			menu.tabNum = 3
 		end
 
 		if key == "l" then

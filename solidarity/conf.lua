@@ -10,5 +10,5 @@ function love.conf(t)
 
 	-- For Windows debugging
 	t.console = true
-	
+
 end

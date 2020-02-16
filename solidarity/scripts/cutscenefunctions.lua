@@ -185,10 +185,12 @@ function cutsceneStage3Talk()
   if cutsceneList[n].forcetalk ~= nil then
     if cutsceneList[n].forcetalk == true then
       -- if dialogueStage[npcs[i].name][gameStage][npcs[i].c].logic.spoken == 0 then
+      npcs[i].dialogue = 1
       DialogueSetup(npcs, dialogueStage, i)
       -- end
     end
   else
+    print("Dialogue setup triggered stage " .. dialogueStage)
     DialogueSetup(npcs, dialogueStage)
   end
   cutsceneControl.stage = 4
@@ -206,8 +208,13 @@ function cutsceneStage4Talk(dt)
     if #path == 1 then cutsceneList[n].goback = false end -- if path is empty then don't go back to starting position
     if cutsceneList[n].goback == true then -- if character needs to return to start position
       if path then
-        player.canMove = 0
-        table.insert(cutsceneList[n].facing, npcs[i].start)
+        if player.canMove == 1 then
+          player.canMove = 0
+          keyInput = 0
+        end
+        if cutsceneList[n].facing ~= npcs[i].start then
+          table.insert(cutsceneList[n].facing, npcs[i].start)
+        end
         if char.act_x == char.grid_x and char.act_y == char.grid_y then
           if cutsceneList[n].noden > 0 then
             cutsceneList[n].noden = cutsceneList[n].noden - 1
@@ -221,6 +228,7 @@ function cutsceneStage4Talk(dt)
         char.facing = cutsceneList[n].facing[#cutsceneList[n].facing]
         npcs[i].moveDir = 0
         cutsceneControl.stage = 5
+        keyInput = 1
       end
     else
       cutsceneControl.stage = 5
