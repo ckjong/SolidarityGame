@@ -22,11 +22,11 @@ end
 
 --test to see if npc in the way of player
 function testNPC(dir, x, y)
-	for i = 1, #npcs do
-		if currentLocation == npcs[i].location then
-			local nCol = checkParty(npcs[i])
-			local x2 = npcs[i].act_x
-			local y2 = npcs[i].act_y
+	for k, v in pairs(npcs) do
+		if currentLocation == npcs[k].location then
+			local nCol = checkParty(npcs[k])
+			local x2 = npcs[k].act_x
+			local y2 = npcs[k].act_y
 			if nCol == false then
 				if dir == 1 then
 					if x == x2 and y - gridsize == y2 then
@@ -408,9 +408,9 @@ end
 
 function checkPartyLeave()
   if player.leaveParty == true then
-    for i = 1, #npcs do
-      if npcs[i].leaveControl ~= nil then
-          if npcs[i].leaveControl.moving == 1 then
+    for k, v in pairs(npcs) do
+      if npcs[k].leaveControl ~= nil then
+          if npcs[k].leaveControl.moving == 1 then
             return true
           end
       end
@@ -439,12 +439,12 @@ function movePartyToPos(n)
     end
   end
 	for i = 1, #player.party do
-    local j = getCharIndex(player.party[i])
+    local j = player.party[i]
     local char = npcs[j]
     removeBlock(char.grid_x/gridsize, char.grid_y/gridsize)
 	end
   for i = 1, #player.party do
-		local j = getCharIndex(player.party[i])
+		local j = player.party[i]
     local char = npcs[j]
     char.leaveControl.path = checkPaths(char, char.leaveParty[n].x, char.leaveParty[n].y, false)
     char.leaveControl.moving = 1
@@ -471,7 +471,7 @@ function areaTriggers()
 			if count > 0 then
 				if gameStage == 4 then
 					for i = 1, #player.party do
-						local k = getCharIndex(player.party[i])
+						local k = player.party[i]
 						npcs[k].leaveControl.n = 1
 					end
 					if player.party[#player.party] ~= nil then
@@ -489,7 +489,7 @@ function areaTriggers()
 		if gameStage == 5 then
 			if count > 0 then
 				for i = 1, #player.party do
-					local k = getCharIndex(player.party[i])
+					local k = player.party[i]
 					npcs[k].leaveControl.n = 2
 				end
 				if player.party[#player.party] ~= nil then
@@ -500,7 +500,7 @@ function areaTriggers()
 	end
 	if areaCheck(24, 17, 28, 18, player) and currentLocation == "overworld" then
 		if gameStage == 6 then
-			local i = getCharIndex("Euca")
+			local i = "Euca"
 			local char = npcs[i]
 			local n = cutsceneControl.current
 			if char.location ~= "overworld" then

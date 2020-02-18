@@ -1,7 +1,7 @@
 
 function changeCharStats(char, stat1, stat2, amount)
 	print("changing stats")
-	local i = getCharIndex(char)
+	local i = char
 	if npcs[i].stats[stat1] ~= nil then
 		if npcs[i].stats[stat1][stat2] ~= nil then
 			npcs[i].stats[stat1][stat2] = npcs[i].stats[stat1][stat2] + amount
@@ -116,14 +116,14 @@ function timerText(dt, i)
 	end
 end
 
-function getCharIndex(name)
-	for i = 1, #npcs do
-		if npcs[i].name == name then
-			return i
-		end
-	end
-	print("no character found in getCharIndex")
-end
+-- function getCharIndex(name)
+-- 	for k, v in pairs(npcs) do
+-- 		if npcs[k].name == name then
+-- 			return k
+-- 		end
+-- 	end
+-- 	print("no character found in getCharIndex")
+-- end
 
 function checkAdjacent(char)
 	if currentLocation == char.location then
@@ -275,10 +275,10 @@ function DialogueSetup(tbl, n, index) -- iterate through npcs table, lookup text
 	if index then
 		dialogueRun(tbl, n, index, true)
 	else
-		for i = 1, #tbl do
-			if initDialogue(tbl[i]) == true then
+		for k, v in pairs(tbl) do
+			if initDialogue(tbl[k]) == true then
 				print("initDialogue true")
-				dialogueRun(tbl, n, i)
+				dialogueRun(tbl, n, k)
 			end
 		end
 	end
@@ -403,12 +403,11 @@ end
 -- check if all chars spoken to
 function checkSpoken(tbl1, tbl2, num) -- npcs, NPCdialogue[stage]
 	local count = 0
-	for i = 1, #tbl1 do
-		local name = tbl1[i].name
-		if tbl2[name] ~= nil then
-			for k = 1, #tbl2[name] do
-				if tbl2[name][k].logic.spoken == 1 then
-					if tbl2[name][k].logic.off == true then
+	for k, v in pairs(tbl1) do
+		if tbl2[k] ~= nil then
+			for i = 1, #tbl2[k] do
+				if tbl2[k][i].logic.spoken == 1 then
+					if tbl2[k][i].logic.off == true then
 						count = count + 1
 					end
 				end
@@ -423,9 +422,8 @@ function checkSpoken(tbl1, tbl2, num) -- npcs, NPCdialogue[stage]
 end
 
 function changeDialogue(npc, n)
-	local i = getCharIndex(npc)
 	print("Change dialogue for " .. npc)
-	npcs[i].c = n
+	npcs[npc].c = n
 end
 
 function changeDialogueNext(type, stage, npc, i, n, par)
@@ -443,8 +441,7 @@ function changeDialogueNext(type, stage, npc, i, n, par)
 		end
 	end
 	if NPCdialogue[stage][npc][i].logic.off == true then
-		local j = getCharIndex(npc)
-		resetDialogue(npcs, j)
+		resetDialogue(npcs, npc)
 	end
 end
 
@@ -463,7 +460,7 @@ end
 function addParty(char)
 	local added = checkParty(char)
 	if added == false then
-		local j = getCharIndex(char)
+		local j = char
 		npcs[j].canMove = 1
 		npcs[j].canWork = 0
 		npcs[j].working = 0
@@ -495,18 +492,16 @@ function removeParty(char)
 end
 
 function changeQuota(n, name)
-	local i = getCharIndex(name)
 	player.quota = n
-	resetDialogue(npcs, i)
+	resetDialogue(npcs, name)
 end
 
 function updateUI (element, b, name)
-	local i = getCharIndex(name)
 	uiSwitches[element] = b
 	if element == "bedArrow" and b == true then
 		sleepCheck(true)
 	end
-	resetDialogue(npcs, i)
+	resetDialogue(npcs, name)
 end
 
 function changeMoney(c, s, g)
@@ -528,15 +523,14 @@ function changeVar(v, tbl, n, i, ...) -- v = variable to change to, n = number o
 end
 
 function checkReset()
-	for i = 1, #npcs do
-		if npcs[i].dialogue == 1 then
+	for k, v in pairs(npcs) do
+		if npcs[k].dialogue == 1 then
 			print("dialogue is 1")
 			local n = dialogueStage
-			local name = npcs[i].name
-			local c = npcs[i].c
-			if NPCdialogue[n][name][c].logic.off == true then
+			local c = npcs[k].c
+			if NPCdialogue[n][k][c].logic.off == true then
 				print("reset dialogue")
-				resetDialogue(npcs, i)
+				resetDialogue(npcs, k)
 			end
 		end
 	end

@@ -280,7 +280,7 @@ player = {
 
 }
 
-npcs = {{
+npcs = {Fennel = {
   grid_x = 18*gridsize,
   grid_y = 30*gridsize,
   act_x = 18*gridsize,
@@ -329,7 +329,7 @@ npcs = {{
           {anim = newAnimation(animsheet_act, 7*16, 4, 16, 16, .6), name = "right", loop = 0, current = 0, running = 0, count = 0}}
         }
   },
-  {
+  Mint = {
     grid_x = 13*gridsize,
     grid_y = 23*gridsize,
     act_x = 13*gridsize,
@@ -379,7 +379,7 @@ npcs = {{
             {anim = newAnimation(animsheet_act, 11*16, 4, 16, 16, .6), name = "right", loop = 0, current = 0, running = 0, count = 0}}
           }
     },
-    {
+    Cress = {
       grid_x = 21*gridsize,
       grid_y = 26*gridsize,
       act_x = 21*gridsize,
@@ -428,7 +428,7 @@ npcs = {{
               {anim = newAnimation(animsheet_act, 23*16, 4, 16, 16, .6), name = "right", loop = 0, current = 0, running = 0, count = 0}}
             }
     },
-    {
+    Agave = {
       grid_x = 13*gridsize,
       grid_y = 31*gridsize,
       act_x = 13*gridsize,
@@ -477,7 +477,7 @@ npcs = {{
               {anim = newAnimation(animsheet_act, 27*16, 4, 16, 16, .6), name = "right", loop = 0, current = 0, running = 0, count = 0}}
             }
     },
-    {
+    Tarragon = {
       grid_x = 21*gridsize,
       grid_y = 31*gridsize,
       act_x = 21*gridsize,
@@ -525,7 +525,7 @@ npcs = {{
               {anim = newAnimation(animsheet_act, 31*16, 4, 16, 16, .6), name = "right", loop = 0, current = 0, running = 0, count = 0}}
             }
     },
-    {
+    Robin = {
       grid_x = 14*gridsize,
       grid_y = 27*gridsize,
       act_x = 14*gridsize,
@@ -573,7 +573,7 @@ npcs = {{
               {anim = newAnimation(animsheet_act, 35*16, 4, 16, 16, .6), name = "right", loop = 0, current = 0, running = 0, count = 0}}
             }
     },
-    {
+    Durian = {
       grid_x = 0*gridsize,
       grid_y = 0*gridsize,
       act_x = 0*gridsize,
@@ -621,7 +621,7 @@ npcs = {{
               {anim = newAnimation(animsheet_act, 39*16, 4, 16, 16, .6), name = "right", loop = 0, current = 0, running = 0, count = 0}}
             }
     },
-    {
+    Brier = {
       grid_x = 0*gridsize,
       grid_y = 0*gridsize,
       act_x = 0*gridsize,
@@ -670,7 +670,7 @@ npcs = {{
               {anim = newAnimation(animsheet_act, 43*16, 4, 16, 16, .6), name = "right", loop = 0, current = 0, running = 0, count = 0}}
             }
     },
-    {
+    Lotus = {
       grid_x = 0*gridsize,
       grid_y = 0*gridsize,
       act_x = 0*gridsize,
@@ -719,7 +719,7 @@ npcs = {{
               {anim = newAnimation(animsheet_act, 47*16, 4, 16, 16, .6), name = "right", loop = 0, current = 0, running = 0, count = 0}}
             }
     },
-    {
+    Euca = {
       grid_x = 18*gridsize,
       grid_y = 9*gridsize,
       act_x = 18*gridsize,
@@ -767,7 +767,7 @@ npcs = {{
               {anim = newAnimation(animsheet_act, 51*16, 4, 16, 16, .6), name = "right", loop = 0, current = 0, running = 0, count = 0}}
             }
     },
-    {
+    Finch = {
       grid_x = 16*gridsize,
       grid_y = 21*gridsize,
       act_x = 16*gridsize,
@@ -814,7 +814,7 @@ npcs = {{
               {anim = newAnimation(animsheet_act, 15*16, 4, 16, 16, .6), name = "right", loop = 0, current = 0, running = 0, count = 0}}
             }
     },
-    {
+    Lark = {
       grid_x = 10*gridsize,
       grid_y = 27*gridsize,
       act_x = 10*gridsize,
@@ -861,7 +861,7 @@ npcs = {{
               {anim = newAnimation(animsheet_act, 19*16, 4, 16, 16, .6), name = "right", loop = 0, current = 0, running = 0, count = 0}}
             }
     },
-    {
+    Hawk = {
       grid_x = 14*gridsize,
       grid_y = 10*gridsize,
       act_x = 14*gridsize,
@@ -908,7 +908,7 @@ npcs = {{
               {anim = newAnimation(animsheet_act, 55*16, 4, 16, 16, .6), name = "right", loop = 0, current = 0, running = 0, count = 0}}
             }
     },
-    {
+    Ani = {
       grid_x = 23*gridsize,
       grid_y = 20*gridsize,
       act_x = 23*gridsize,

@@ -112,17 +112,19 @@ end
 --control npc act animations
 
 function npcActSetup()
-  for i = 1, #npcs do
-    npcs[i].facing = npcs[i].start
-    if npcs[i].canWork == 1 then
+  local i = 1
+  for k, v in pairs(npcs) do
+    npcs[k].facing = npcs[k].start
+    if npcs[k].canWork == 1 then
       math.randomseed(i)
       local a = math.random(2, 6)
       local b = math.random(4, 12)
-      npcs[i].timer.mt = a
-      npcs[i].timer.wt = b
-      print(npcs[i].name .. " mt " .. npcs[i].timer.mt)
-      print(npcs[i].name .. " wt " .. npcs[i].timer.wt)
+      npcs[k].timer.mt = a
+      npcs[k].timer.wt = b
+      print(npcs[k].name .. " mt " .. npcs[k].timer.mt)
+      print(npcs[k].name .. " wt " .. npcs[k].timer.wt)
     end
+    i = i + 1
   end
 end
 

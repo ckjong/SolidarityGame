@@ -121,7 +121,7 @@ function love.update(dt)
 				if objectInventory.barrelSmBerries + objectInventory.barrelLgBerries < 60 then
 					moveCharBack(17, 21, 17, 22, 2)
 				else
-					local i = getCharIndex("Finch")
+					local i = "Finch"
 					if npcs[i].c == 3 then
 						moveCharBack(17, 21, 17, 20, 1)
 					elseif npcs[i].c == 4 then
@@ -152,12 +152,12 @@ function love.update(dt)
 	player.moveDir, player.act_x, player.act_y = moveChar(player.moveDir, player.act_x, player.grid_x, player.act_y, player.grid_y, (player.speed *dt))
 
 	for j = 1, #player.party do
-		local i = getCharIndex(player.party[j])
+		local i = player.party[j]
 		if npcs[i] ~= nil then
 			if j == 1 then
 				partyFollows(dt, i, player)
 			else
-				local d = getCharIndex(player.party[j-1])
+				local d = player.party[j-1]
 				partyFollows(dt, i, npcs[d])
 			end
 			npcs[i].moveDir, npcs[i].act_x, npcs[i].act_y = moveChar(npcs[i].moveDir, npcs[i].act_x, npcs[i].grid_x, npcs[i].act_y, npcs[i].grid_y, (player.speed *dt))
@@ -171,9 +171,9 @@ function love.update(dt)
 	if dialogueMode == 0 and menuView == 0 then
 		if cutsceneControl.stage < 1 then
 			if time == 1 and currentLocation == "overworld" then
-				for i = 1, #npcs do
-					if npcs[i].location == "overworld" and npcs[i].randomturn == 1 then
-						npcs[i].timer.ct = randomFacing(npcs[i], npcs[i].timer.mt, npcs[i].timer.ct, dt)
+				for k, v in pairs(npcs) do
+					if npcs[k].location == "overworld" and npcs[k].randomturn == 1 then
+						npcs[k].timer.ct = randomFacing(npcs[k], npcs[k].timer.mt, npcs[k].timer.ct, dt)
 					end
 				end
 			end
@@ -190,28 +190,28 @@ function love.update(dt)
 
 
 
-	for i = 1, #npcs do
+	for k, v in pairs(npcs) do
 		if menuView == 0 then
-			if npcs[i].dialogue == 0 then
-				npcActUpdate(dt, i)
+			if npcs[k].dialogue == 0 then
+				npcActUpdate(dt, k)
 				if player.leaveParty == true then
-					if npcs[i].leaveControl ~= nil then
-						if npcs[i].leaveControl.moving == 1 then
-							print("followPath " .. npcs[i].name)
-							followPath(npcs[i], dt, npcs[i].leaveControl.n)
+					if npcs[k].leaveControl ~= nil then
+						if npcs[k].leaveControl.moving == 1 then
+							print("followPath " .. npcs[k].name)
+							followPath(npcs[k], dt, npcs[k].leaveControl.n)
 						end
 					end
 				end
-				if npcs[i].working == 1 then
-					if npcs[i].animations.act[npcs[i].start].running == 0 then
-						npcs[i].animations.act[npcs[i].start].running = 1
+				if npcs[k].working == 1 then
+					if npcs[k].animations.act[npcs[k].start].running == 0 then
+						npcs[k].animations.act[npcs[k].start].running = 1
 					end
-					animUpdate(npcs[i].animations.act, dt, npcs[i].start)
+					animUpdate(npcs[k].animations.act, dt, npcs[k].start)
 					if movingObjectData[currentLocation] ~= nil then
-						testNpcObject(npcs[i].start, npcs[i].grid_x, npcs[i].grid_y, movingObjectData[currentLocation], i, true)
+						testNpcObject(npcs[k].start, npcs[k].grid_x, npcs[k].grid_y, movingObjectData[currentLocation], k, true)
 					end
 				else
-					animUpdate(npcs[i].animations.walk, dt, npcs[i].facing)
+					animUpdate(npcs[k].animations.walk, dt, npcs[k].facing)
 				end
 			end
 		end
@@ -284,8 +284,8 @@ function love.draw()
 	end
 
 	--render npcs
-	for i = 1, #npcs do
-		drawNPCs(npcs[i].animations.walk, i)
+	for k, v in pairs(npcs) do
+		drawNPCs(npcs[k].animations.walk, k)
 	end
 
 	--render player
@@ -552,9 +552,9 @@ function love.keypressed(key)
 		end
 
 		if key == "9" then
-			for i = 1, #npcs do
-				table.insert(socialMap, npcs[i])
-				npcs[i].mapping.added = 1
+			for k, v in pairs(npcs) do
+				table.insert(socialMap, npcs[k])
+				npcs[k].mapping.added = 1
 			end
 			menu.tabNum = 3
 		end

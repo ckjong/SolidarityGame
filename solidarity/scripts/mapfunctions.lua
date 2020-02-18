@@ -74,7 +74,7 @@ function changeMap(px, py, tbl)
 				player.grid_y = tbl[i].y2
 				player.act_y = player.grid_y
 				for j = 1, #player.party do
-					local n = getCharIndex(player.party[j])
+					local n = player.party[j]
 					npcs[n].location = currentLocation
 					npcs[n].grid_x, npcs[n].grid_y = player.grid_x, player.grid_y
 					npcs[n].act_x, npcs[n].act_y = player.grid_x, player.grid_y
@@ -220,13 +220,13 @@ end
 -- add location of NPCs or other moving obstacles to map collision
 function updateMap(tbl)
 	clearMap(2)
-	for i = 1, #tbl do
+	for k, v in pairs(tbl) do
 		if tbl == npcs then
-			if tbl[i].location == currentLocation then
-				addBlock (initTable, tbl[i].grid_x, tbl[i].grid_y, 2)
+			if tbl[k].location == currentLocation then
+				addBlock (initTable, tbl[k].grid_x, tbl[k].grid_y, 2)
 			end
 		else
-			addBlock (initTable, tbl[i].grid_x, tbl[i].grid_y, 2)
+			addBlock (initTable, tbl[k].grid_x, tbl[k].grid_y, 2)
 		end
 	end
 	saveMap()

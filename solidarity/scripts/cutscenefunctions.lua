@@ -89,7 +89,7 @@ function cutsceneTrigger()
           local n = cutsceneControl.current
           if cutsceneList[n].triggered == false then
             print("spoken to everyone, cutscene 6 triggered")
-            local i = getCharIndex("Ani")
+            local i = "Ani"
             changeCharLoc(npcs[i], "dininghall")
             cutsceneControl.stage = 1
           end
@@ -105,7 +105,7 @@ function cutsceneStage1Talk()
   updateMap(npcs) -- add NPC locations to map and save
   local n = cutsceneControl.current
   if cutsceneList[n].move == true then -- if npc is supposed to move
-    local i = getCharIndex(cutsceneList[n].npc)
+    local i = cutsceneList[n].npc
     local char = npcs[i]
     local target = cutsceneList[n].target
     local x1, y1 = target.grid_x, target.grid_y
@@ -135,7 +135,7 @@ function cutsceneStage2Talk(dt)
   player.canMove = 0
   keyInput = 0
 	local n = cutsceneControl.current
-	local i = getCharIndex(cutsceneList[n].npc)
+	local i = cutsceneList[n].npc
 	local char = npcs[i]
   if cutsceneList[n].move == true then
     local path = cutsceneList[n].path
@@ -180,7 +180,7 @@ end
 function cutsceneStage3Talk()
   print("cutscene stage 3")
   local n = cutsceneControl.current
-  local i = getCharIndex(cutsceneList[n].npc)
+  local i = cutsceneList[n].npc
   npcs[i].c = cutsceneList[n].dialoguekey
   if cutsceneList[n].forcetalk ~= nil then
     if cutsceneList[n].forcetalk == true then
@@ -200,7 +200,7 @@ end
 function cutsceneStage4Talk(dt)
   print("cutscene stage 4")
   local n = cutsceneControl.current
-  local i = getCharIndex(cutsceneList[n].npc)
+  local i = cutsceneList[n].npc
   local char = npcs[i]
   if cutsceneList[n].move == true then
     local path = cutsceneList[n].path
@@ -312,7 +312,7 @@ function changeGameStage()
       player.facing = player.next[gameStage].facing
     end
     player.location = player.next[gameStage].location
-    for i = 1, #npcs do
+    for i, v in pairs(npcs) do
       if npcs[i].next[gameStage].location ~= "offscreen" then
         if npcs[i].next[gameStage].x ~= 0 then
           npcs[i].grid_x = npcs[i].next[gameStage].x
@@ -382,7 +382,7 @@ function workStageUpdate(dt)
     end
   --can leave field
   elseif workStage == 3 then
-		local i = getCharIndex("Finch")
+		local i = "Finch"
 		if objectInventory.barrelSmBerries + objectInventory.barrelLgBerries >= player.quota then
 			if currentLocation == "overworld" and areaCheck(16, 21, 17, 22, player) then
 				local bool1, k = checkInventory("plantSmBerries")
@@ -538,7 +538,7 @@ end
 -- end
 
 function makeObjectsInvisible(tbl, l, o)
-  for i = 1, #npcs do
+  for i, v in pairs(npcs) do
     for k = 1, #tbl[l][o] do
       if npcs[i].location == l then
         if npcs[i].grid_x == tbl[l][o][k].x and npcs[i].grid_y == tbl[l][o][k].y then

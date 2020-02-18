@@ -553,8 +553,12 @@ NPCdialogue = {
                     logic = {next = 2, speaker = "Lotus", cond = true, off = false, display = 1, spoken = 0, energy = 1}}, -- say once
              [2] = {text = {"Why do you like her so much?", "*say nothing*"},
                     logic = {next = 3, offset = 2, speaker = "player", cond = true, off = false, display = 2}},
-             [3] = {text = {"Hmm if you say so. Maybe I'm just imagining things."},
-                    logic = {next = 5, speaker = "Lotus", cond = true, off = false, display = 1, spoken = 0, energy = 0}},
+             [3] = {text = {"Isn't it obvious? She's a strong, independent woman!", "Too many people think women are weak and fragile.", "But Ms. Ani is proving them all wrong.", "I want to be just like her. She's an inspiration!"},
+                    logic = {next = 5, speaker = "Lotus", cond = true, off = true, display = 1, spoken = 0, energy = 0}},
+             [4] = {text = {"Her speeches are always so inspiring and uplifting."},
+                   logic = {next = 5, speaker = "Lotus", cond = true, off = true, display = 1, spoken = 0, energy = 0}},
+             [5] = {text = {"Maybe I should start a Ms. Ani fan club?"},
+                   logic = {next = 5, speaker = "Lotus", cond = true, off = true, display = 1, spoken = 0, energy = 0}},
           }
   },
 

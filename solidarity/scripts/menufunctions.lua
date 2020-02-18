@@ -347,7 +347,7 @@ function saveGameData()
     tbl.player[k] = player[k]
   end
   tbl.npcs = {}
-  for i = 1, #npcs do
+  for i, u in pairs(npcs) do
     tbl.npcs[i] = {}
     for k, v in pairs(npcs[i]) do
       tbl.npcs[i][k] = npcs[i][k]
