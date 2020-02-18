@@ -182,10 +182,10 @@ function love.update(dt)
 
 	--animation time update
 	if player.moveDir ~= 0 then
-		animUpdate(player.animations.walk, dt, player.moveDir)
+		animUpdate(charanimations.player.walk, dt, player.moveDir)
 	end
-	if player.animations.act[player.facing].running == 1 then
-		animUpdate(player.animations.act, dt, player.facing)
+	if charanimations.player.act[player.facing].running == 1 then
+		animUpdate(charanimations.player.act, dt, player.facing)
 	end
 
 
@@ -289,7 +289,7 @@ function love.draw()
 	end
 
 	--render player
-	drawPlayer(player.animations.walk)
+	drawPlayer(charanimations.player.walk)
 	-- render tiles on top of player
 	if currentLocation ~= "overworld" then
 		drawStillObjects(currentLocation, toptileData, toptilesSheet, toptiles)

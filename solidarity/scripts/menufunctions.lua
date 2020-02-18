@@ -283,6 +283,78 @@ function saveGame(name, data)
   f:close(data)
 end
 
+function saveDialogueLogic()
+  local tbl = {}
+  for i = 0, #NPCdialogue do
+    tbl[i] = {}
+    for k, v in pairs(NPCdialogue[i]) do
+      tbl[i][k] = {}
+      for j = 1, #NPCdialogue[i][k] do
+        tbl[i][k][j] = {}
+        NPCdialogue[i][k][j].logic = {}
+        tbl[i][k][j].logic.next = NPCdialogue[i][k][j].logic.next
+        tbl[i][k][j].logic.cond = NPCdialogue[i][k][j].logic.cond
+        if NPCdialogue[i][k][j].logic.spoken ~= nil then
+          tbl[i][k][j].logic.spoken = NPCdialogue[i][k][j].logic.spoken
+        end
+      end
+    end
+  end
+  return tbl
+end
+
+function loadDialogueLogic(tbl)
+  for i = 0, #tbl do
+    for k, v in pairs(tbl[i]) do
+      for j = 1, #tbl[i][k] do
+        if NPCdialogue[i][k][j] ~= nil then
+          NPCdialogue[i][k][j].logic.next = tbl[i][k][j].logic.next
+          NPCdialogue[i][k][j].logic.cond = tbl[i][k][j].logic.cond
+          if NPCdialogue[i][k][j].logic.spoken ~= nil then
+            NPCdialogue[i][k][j].logic.spoken = tbl[i][k][j].logic.spoken
+          end
+        end
+      end
+    end
+  end
+end
+
+function saveGameData()
+  local tbl = {}
+  tbl.gameStage = gameStage
+  tbl.workStage = workStage
+  tbl.tempBlocks = {}
+  for k, v in pairs(tempBlocks) do
+    tbl.tempBlocks[k] = {}
+    for i = 1, #tempBlocks[k] do
+      tbl.tempBlocks[k][i] = {}
+      tbl.tempBlocks[k][i] = {on = tempBlocks[k][i].on}
+    end
+  end
+  for k, v in pairs(locationTriggers) do
+    tbl.locationTriggers[k] = {}
+    for i = 1, #locationTriggers[k] do
+      tbl.locationTriggers[k][i] = {locked = locationTriggers[k][i].locked}
+    end
+  end
+  tbl.currentLocation = currentLocation
+  tbl.time = time
+  tbl.day = day
+  tbl.uiSwitches = {bedArrow = uiSwitches.bedArrow}
+  tbl.menu = {tabNum = menu.tabNum}
+  tbl.player = {}
+  for k, v in pairs(player) do
+    tbl.player[k] = player[k]
+  end
+  tbl.npcs = {}
+  for i = 1, #npcs do
+    tbl.npcs[i] = {}
+    for k, v in pairs(npcs[i]) do
+      tbl.npcs[i][k] = npcs[i][k]
+    end
+  end
+end
+
 function compileSaveData(name)
   local dir = "maps"
   local files = love.filesystem.enumerate(dir)

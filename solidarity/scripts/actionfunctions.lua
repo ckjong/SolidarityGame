@@ -267,7 +267,7 @@ function BerryHarvestStart(b, c)
 			player.energy = player.energy - 1
 		end
 		sfx.berryPickup:play()
-		player.animations.act[player.facing].running = 1
+		charanimations.player.act[player.facing].running = 1
 		movingObjectData[currentLocation][b][c].running = 1
 
     -- k = key for object animation
@@ -282,7 +282,7 @@ function BerryHarvestStart(b, c)
 			player.energy = player.energy - 1
 		end
 		sfx.berryPickup2:play()
-		player.animations.act[player.facing].running = 1
+		charanimations.player.act[player.facing].running = 1
 		movingObjectData[currentLocation][b][c].running = 1
   end
   actionMode = 1
@@ -313,7 +313,7 @@ function BerryBarrel(b, c, sub, icon)
   local present, k = checkInventory(icon)
   if present == true then
 		local total = countTotal(sub)
-		player.animations.act[player.facing].running = 1
+		charanimations.player.act[player.facing].running = 1
 		movingObjectData[currentLocation][b][c].running = 1
 		objectInventory[b] = objectInventory[b] + total
 		setBubble(b, c)

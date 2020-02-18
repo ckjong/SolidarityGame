@@ -231,6 +231,17 @@ currentJournal = {}
 
 animsheet1 = love.graphics.newImage("images/solidarity_anim.png")
 animsheet_act = love.graphics.newImage("images/solidarity_anim_act.png")
+
+charanimations = {player = {walk = {{anim = newAnimation(animsheet1, 0, 4, 16, 16, .50), name = "up", loop = 0},
+                        {anim = newAnimation(animsheet1, 1*16, 4, 16, 16, .50), name = "down", loop = 0},
+                        {anim = newAnimation(animsheet1, 2*16, 4, 16, 16, .55), name = "left", loop = 0},
+                        {anim = newAnimation(animsheet1, 3*16, 4, 16, 16, .55), name = "right", loop = 0}},
+        act = {{anim = newAnimation(animsheet_act, 0, 4, 16, 16, .4), name = "up", loop = 1, current = 0, running = 0, count = 0},
+              {anim = newAnimation(animsheet_act, 1*16, 4, 16, 16, .4), name = "down", loop = 1, current = 0, running = 0, count = 0},
+              {anim = newAnimation(animsheet_act, 2*16, 4, 16, 16, .4), name = "left", loop = 1, current = 0, running = 0, count = 0},
+              {anim = newAnimation(animsheet_act, 3*16, 4, 16, 16, .4), name = "right", loop = 1, current = 0, running = 0, count = 0}}
+            },
+    }
 --characters
 player = {
   grid_x = 17*gridsize,
@@ -266,15 +277,7 @@ player = {
           {x = 24*gridsize, y = 12*gridsize, facing = 4, location = "overworld"},
           {x = 0, y = 0, facing = 0, location = "overworld"},
         },
-  animations = {walk = {{anim = newAnimation(animsheet1, 0, 4, 16, 16, .50), name = "up", loop = 0},
-                        {anim = newAnimation(animsheet1, 1*16, 4, 16, 16, .50), name = "down", loop = 0},
-                        {anim = newAnimation(animsheet1, 2*16, 4, 16, 16, .55), name = "left", loop = 0},
-                        {anim = newAnimation(animsheet1, 3*16, 4, 16, 16, .55), name = "right", loop = 0}},
-        act = {{anim = newAnimation(animsheet_act, 0, 4, 16, 16, .4), name = "up", loop = 1, current = 0, running = 0, count = 0},
-              {anim = newAnimation(animsheet_act, 1*16, 4, 16, 16, .4), name = "down", loop = 1, current = 0, running = 0, count = 0},
-              {anim = newAnimation(animsheet_act, 2*16, 4, 16, 16, .4), name = "left", loop = 1, current = 0, running = 0, count = 0},
-              {anim = newAnimation(animsheet_act, 3*16, 4, 16, 16, .4), name = "right", loop = 1, current = 0, running = 0, count = 0}}
-      }
+
 }
 
 npcs = {{

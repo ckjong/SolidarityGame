@@ -45,8 +45,6 @@ function testNPC(dir, x, y)
 						return true
 					end
 				end
-			else
-				print("collision off for " .. npcs[i].name)
 			end
 		end
 	end

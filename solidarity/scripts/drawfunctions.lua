@@ -287,10 +287,10 @@ function drawPlayer(tbl)
     love.graphics.draw(tbl[i]["anim"]["spriteSheet"], tbl[i]["anim"]["quads"][spriteNum], player.act_x, player.act_y, 0, 1)
   elseif player.moveDir == 0 then
     i = player.facing
-    if player.animations.act[i].running == 0 then
+    if 	charanimations.player.act[i].running == 0 then
       love.graphics.draw(tbl[i]["anim"]["spriteSheet"], tbl[i]["anim"]["quads"][1], player.act_x, player.act_y, 0, 1)
     else
-      drawActAnims(player.animations.act, player.facing, player.act_x, player.act_y)
+      drawActAnims(	charanimations.player.act, player.facing, player.act_x, player.act_y)
     end
   end
 end
