@@ -10,6 +10,7 @@ function love.load()
 	json = require("json")
 	--data for save file
 	require("data/gamedata")
+	require("data/mapdata")
 
 	--dialogue and object descriptions
 	require("scripts/dialoguefunctions")
@@ -19,12 +20,12 @@ function love.load()
 	require("scripts/pathfinding")
 	require("scripts/cutscenefunctions")
 	require("scripts/actionfunctions")
-	require("scripts/dialogue")
 	require("scripts/menufunctions")
 
+-- dialogue
+	require("data/dialogue")
 
 --editor for creating new maps and other functions
-	require("maps/mapdata")
 	require("scripts/mapfunctions")
 
 	--generate maps
@@ -203,15 +204,15 @@ function love.update(dt)
 					end
 				end
 				if npcs[k].working == 1 then
-					if npcs[k].animations.act[npcs[k].start].running == 0 then
-						npcs[k].animations.act[npcs[k].start].running = 1
+					if charanimations[k].act[npcs[k].start].running == 0 then
+						charanimations[k].act[npcs[k].start].running = 1
 					end
-					animUpdate(npcs[k].animations.act, dt, npcs[k].start)
+					animUpdate(charanimations[k].act, dt, npcs[k].start)
 					if movingObjectData[currentLocation] ~= nil then
 						testNpcObject(npcs[k].start, npcs[k].grid_x, npcs[k].grid_y, movingObjectData[currentLocation], k, true)
 					end
 				else
-					animUpdate(npcs[k].animations.walk, dt, npcs[k].facing)
+					animUpdate(charanimations[k].walk, dt, npcs[k].facing)
 				end
 			end
 		end
@@ -285,7 +286,7 @@ function love.draw()
 
 	--render npcs
 	for k, v in pairs(npcs) do
-		drawNPCs(npcs[k].animations.walk, k)
+		drawNPCs(charanimations[k].walk, k)
 	end
 
 	--render player
@@ -524,8 +525,20 @@ function love.keypressed(key)
 			addBlock(initTable, player.grid_x, player.grid_y, 1) -- editor.lua
 		end
 
-		if key == "s" and debugView == 1 then
-			saveMap()
+		if key == "s" then
+			if debugView == 1 then
+				saveMap()
+			else
+				local name = "test1"
+				createSaveFile(name)
+				print("saved game: " .. name)
+			end
+		end
+
+		if key == "t" then
+			local name = "test1"
+			unpackSaveTables(name)
+			print("loaded game: " .. name)
 		end
 
 

@@ -1,3 +1,5 @@
+local bitser = require("libraries/bitser/bitser")
+
 function openMenu(tab)
   if dialogueMode == 0 and titleScreen == 0 then
     if menuView == 0 then
@@ -291,7 +293,7 @@ function saveDialogueLogic()
       tbl[i][k] = {}
       for j = 1, #NPCdialogue[i][k] do
         tbl[i][k][j] = {}
-        NPCdialogue[i][k][j].logic = {}
+        tbl[i][k][j].logic = {}
         tbl[i][k][j].logic.next = NPCdialogue[i][k][j].logic.next
         tbl[i][k][j].logic.cond = NPCdialogue[i][k][j].logic.cond
         if NPCdialogue[i][k][j].logic.spoken ~= nil then
@@ -319,6 +321,7 @@ function loadDialogueLogic(tbl)
   end
 end
 
+
 function saveGameData()
   local tbl = {}
   tbl.gameStage = gameStage
@@ -327,10 +330,10 @@ function saveGameData()
   for k, v in pairs(tempBlocks) do
     tbl.tempBlocks[k] = {}
     for i = 1, #tempBlocks[k] do
-      tbl.tempBlocks[k][i] = {}
       tbl.tempBlocks[k][i] = {on = tempBlocks[k][i].on}
     end
   end
+  tbl.locationTriggers = {}
   for k, v in pairs(locationTriggers) do
     tbl.locationTriggers[k] = {}
     for i = 1, #locationTriggers[k] do
@@ -348,10 +351,97 @@ function saveGameData()
   end
   tbl.npcs = {}
   for i, u in pairs(npcs) do
-    tbl.npcs[i] = {}
-    for k, v in pairs(npcs[i]) do
-      tbl.npcs[i][k] = npcs[i][k]
+    tbl.npcs[i] = npcs[i]
+  end
+  return tbl
+end
+
+function loadGameData(tbl)
+  gameStage = tbl.gameStage
+  workStage = tbl.workStage
+  for k, v in pairs(tbl.tempBlocks) do
+    for i = 1, #tbl.tempBlocks[k] do
+      tempBlocks[k][i].on = tbl.tempBlocks[k][i].on
     end
+  end
+  for k, v in pairs(tbl.locationTriggers) do
+    for i = 1, #tbl.locationTriggers[k] do
+      locationTriggers[k][i].locked = tbl.locationTriggers[k][i].locked
+    end
+  end
+  currentLocation = tbl.currentLocation
+  time = tbl.time
+  day = tbl.day
+  uiSwitches.bedArrow = tbl.uiSwitches.bedArrow
+  menu.tabNum = tbl.menu.tabNum
+  for k, v in pairs(tbl.player) do
+    player[k] = v
+  end
+  for i, u in pairs(tbl.npcs) do
+    npcs[i] = u
+  end
+end
+
+function saveMapData()
+  local tbl = {}
+  for k, v in pairs(mapdata) do
+    tbl[k] = v
+  end
+  return tbl
+end
+
+function loadMapData(tbl)
+  for k, v in pairs(tbl) do
+    if mapdata[k] ~= nil then
+      mapdata[k] = v
+    end
+  end
+  locationMaps(currentLocation)
+  changeBackground(currentLocation)
+end
+
+function combineSaveTables()
+  local tbl = {}
+  tbl.gamedata = saveGameData()
+  tbl.mapdata = saveMapData()
+  tbl.dialogue = saveDialogueLogic()
+  return tbl
+end
+
+function createSaveFile(filename)
+  local tbl = combineSaveTables()
+  --when saving a game:
+  love.filesystem.write(filename, bitser.dumps(tbl))
+end
+
+function loadSaveFile(filename)
+  local tbl = {}
+  local exists = love.filesystem.exists(filename)
+  if exists == true then
+    local data = love.filesystem.newFileData(filename)
+    tbl = bitser.loadData(data:getPointer(), data:getSize())
+    return tbl
+  else
+    print("file does not exist")
+  end
+end
+
+function unpackSaveTables(filename)
+  local tbl = loadSaveFile(filename)
+  if tbl.gamedata ~= nil then
+    loadGameData(tbl.gamedata)
+  else
+    print("gamedata table not valid")
+  end
+  if tbl.dialogue ~= nil then
+    loadDialogueLogic(tbl.dialogue)
+  else
+    print("dialogue table not valid")
+  end
+  if tbl.mapdata ~= nil then
+    loadMapData(tbl.mapdata)
+  else
+    print("mapdata table not valid")
   end
 end
 

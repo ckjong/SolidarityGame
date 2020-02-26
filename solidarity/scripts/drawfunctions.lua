@@ -136,8 +136,8 @@ function npcActUpdate(dt, i)
         npcs[i].timer.ct = 0
         npcs[i].working = 0
         npcs[i].actions.on = 0
-        if npcs[i].animations.act[npcs[i].facing].running == 1 then
-          npcs[i].animations.act[npcs[i].facing].running = 0
+        if charanimations[i].act[npcs[i].facing].running == 1 then
+          charanimations[i].act[npcs[i].facing].running = 0
           -- print(npcs[i].name .. " animation turned off " .. player.animations.act[npcs[i].facing].running)
         end
       end
@@ -145,7 +145,7 @@ function npcActUpdate(dt, i)
       if npcs[i].timer.ct >= npcs[i].timer.wt then
         npcs[i].timer.ct = 0
         npcs[i].working = 1
-        npcs[i].animations.act[npcs[i].facing].running = 1
+        charanimations[i].act[npcs[i].facing].running = 1
           -- print(npcs[i].name .. " npc animation running " .. npcs[i].animations.act[npcs[i].facing].running)
       end
     end
@@ -324,9 +324,9 @@ function drawNPCs(tbl, i)
         end
       else
         if npcs[i].working == 1 then
-          drawActAnims(npcs[i].animations.act, f, npcs[i].act_x, npcs[i].act_y)
+          drawActAnims(charanimations[i].act, f, npcs[i].act_x, npcs[i].act_y)
         else
-          tbl = npcs[i].animations.walk
+          tbl = charanimations[i].walk
           love.graphics.draw(tbl[s]["anim"]["spriteSheet"], tbl[s]["anim"]["quads"][1], npcs[i].act_x, npcs[i].act_y, 0, 1)
         end
       end
@@ -731,7 +731,8 @@ function drawMap1(x, y)
   local g = 44 -- gap between sprites
   if menu.position[1] < 3 then
     for i = 1, #socialMap do
-      local tbl = socialMap[i].animations.walk
+      local k = socialMap[i].name
+      local tbl = charanimations[k].walk
       if i < 6 then
         x2 = x + (i-1)*(g)
         y2 = y

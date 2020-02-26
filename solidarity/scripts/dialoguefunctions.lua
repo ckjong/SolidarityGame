@@ -292,12 +292,12 @@ function dialogueRun(tbl, n, i, r)
 		print("NPCdialogue[n][name] ~= nil")
 		local dialOpt = NPCdialogue[n][name][case]
 		local canSpeak = 1
-		-- if freeze.dialogue == 1 then
-		-- 	if dialOpt.logic.energy ~= nil then
-		-- 		canSpeak = 0
-		-- 		dialogueFreeze(tbl[i])
-		-- 	end
-		-- end
+		if freeze.dialogue == 1 then
+			if dialOpt.logic.energy ~= nil then
+				canSpeak = 0
+				dialogueFreeze(tbl[i])
+			end
+		end
 		if canSpeak == 1 then
 			print("tbl[i].n " .. tbl[i].n)
 			wait.triggered = 1
@@ -501,7 +501,9 @@ function updateUI (element, b, name)
 	if element == "bedArrow" and b == true then
 		sleepCheck(true)
 	end
-	resetDialogue(npcs, name)
+	if name ~= nil then
+		resetDialogue(npcs, name)
+	end
 end
 
 function changeMoney(c, s, g)
