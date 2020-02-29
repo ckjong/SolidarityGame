@@ -36,9 +36,9 @@ function testObject(x, y, tbl)
 	end
 end
 
-function updateActionsTable(tbl, k, i, n)
+function updateActionsTable(tbl, k, i, n, tbl2)
 	if npcs[n].working == 1 then
-		tbl[k][i].running = 1
+		tbl2[k][i].running = 1
 		tbl[k][i].used = 1
 	-- else
 	-- 	if tbl[k][i].running == 1 then
@@ -48,7 +48,7 @@ function updateActionsTable(tbl, k, i, n)
 	end
 end
 
-function testNpcObject(dir, x, y, tbl, npc, check)
+function testNpcObject(dir, x, y, tbl, npc, check, tbl2)
 	if tbl ~= nil then
 		for k, v in pairs(tbl) do
 			for i = 1, #tbl[k] do
@@ -57,41 +57,41 @@ function testNpcObject(dir, x, y, tbl, npc, check)
 				if dir == 1 then
 					if x == x2 and y - gridsize == y2 then
 						if check == true then
-							if tbl[k][i].running == 0 then
-								updateActionsTable(tbl, k, i, npc)
+							if tbl2[k][i].running == 0 then
+								updateActionsTable(tbl, k, i, npc, tbl2)
 							end
 						else
-							updateActionsTable(tbl, k, i, npc)
+							updateActionsTable(tbl, k, i, npc, tbl2)
 						end
 					end
 				elseif dir == 2 then
 					if x == x2 and y + gridsize == y2 then
 						if check == true then
-							if tbl[k][i].running == 0 then
-								updateActionsTable(tbl, k, i, npc)
+							if tbl2[k][i].running == 0 then
+								updateActionsTable(tbl, k, i, npc, tbl2)
 							end
 						else
-							updateActionsTable(tbl, k, i, npc)
+							updateActionsTable(tbl, k, i, npc, tbl2)
 						end
 					end
 				elseif dir == 3 then
 					if y == y2 and x - gridsize == x2 then
 						if check == true then
-							if tbl[k][i].running == 0 then
-								updateActionsTable(tbl, k, i, npc)
+							if tbl2[k][i].running == 0 then
+								updateActionsTable(tbl, k, i, npc, tbl2)
 							end
 						else
-							updateActionsTable(tbl, k, i, npc)
+							updateActionsTable(tbl, k, i, npc, tbl2)
 						end
 					end
 				elseif dir == 4 then
 					if y == y2 and x + gridsize == x2 then
 						if check == true then
-							if tbl[k][i].running == 0 then
-								updateActionsTable(tbl, k, i, npc)
+							if tbl2[k][i].running == 0 then
+								updateActionsTable(tbl, k, i, npc, tbl2)
 							end
 						else
-							updateActionsTable(tbl, k, i, npc)
+							updateActionsTable(tbl, k, i, npc, tbl2)
 						end
 					end
 				end
@@ -257,6 +257,7 @@ function BerryHarvestStart(b, c)
 	wait.triggered = 1
 	wait.current = .4
   if b == "plantSmBerries" then
+		print("Smberries picked " .. movingObjectData[currentLocation][b][c].picked)
 		if movingObjectData[currentLocation][b][c].picked < 3 then
 			movingObjectData[currentLocation][b][c].picked = movingObjectData[currentLocation][b][c].picked + 1
 			movingObjectData[currentLocation][b][c].trigger = 1
@@ -268,10 +269,11 @@ function BerryHarvestStart(b, c)
 		end
 		sfx.berryPickup:play()
 		charanimations.player.act[player.facing].running = 1
-		movingObjectData[currentLocation][b][c].running = 1
+		movingObjectAnims[currentLocation][b][c].running = 1
 
     -- k = key for object animation
   elseif b == "plantLgBerries" then
+			print("Lgberries picked " .. movingObjectData[currentLocation][b][c].picked)
 		if movingObjectData[currentLocation][b][c].picked < 5 then
 			movingObjectData[currentLocation][b][c].picked = movingObjectData[currentLocation][b][c].picked + 1
 			movingObjectData[currentLocation][b][c].trigger = 2
@@ -283,7 +285,7 @@ function BerryHarvestStart(b, c)
 		end
 		sfx.berryPickup2:play()
 		charanimations.player.act[player.facing].running = 1
-		movingObjectData[currentLocation][b][c].running = 1
+		movingObjectAnims[currentLocation][b][c].running = 1
   end
   actionMode = 1
 end
@@ -314,7 +316,7 @@ function BerryBarrel(b, c, sub, icon)
   if present == true then
 		local total = countTotal(sub)
 		charanimations.player.act[player.facing].running = 1
-		movingObjectData[currentLocation][b][c].running = 1
+		movingObjectAnims[currentLocation][b][c].running = 1
 		objectInventory[b] = objectInventory[b] + total
 		setBubble(b, c)
 		sfx.berryDrop:play()
@@ -533,26 +535,30 @@ end
 
 function resetBerries()
 	for k, v in pairs(movingObjectData.overworld.plantSm) do
-		movingObjectData.overworld.plantSm[k].anim = newAnimation(animsheet2, 0, 3, 16, 16, .3)
+		movingObjectAnims.overworld.plantSm[k].anim = newAnimation(animsheet2, 0, 3, 16, 16, .3)
 		movingObjectData.overworld.plantSm[k].trigger = 0
 		movingObjectData.overworld.plantSm[k].picked = 0
 		table.insert(movingObjectData.overworld.plantSmBerries, movingObjectData.overworld.plantSm[k])
+		table.insert(movingObjectAnims.overworld.plantSmBerries, movingObjectAnims.overworld.plantSm[k])
 		table.remove(movingObjectData.overworld.plantSm, k)
+		table.remove(movingObjectAnims.overworld.plantSm, k)
 	end
 	for k, v in pairs(movingObjectData.overworld.plantLg) do
-		movingObjectData.overworld.plantLg[k].anim = newAnimation(animsheet2, 4*gridsize, 3, 16, 16, .3)
+		movingObjectAnims.overworld.plantLg[k].anim = newAnimation(animsheet2, 4*gridsize, 3, 16, 16, .3)
 		movingObjectData.overworld.plantLg[k].trigger = 0
 		movingObjectData.overworld.plantLg[k].picked = 0
 		table.insert(movingObjectData.overworld.plantLgBerries, movingObjectData.overworld.plantLg[k])
+		table.insert(movingObjectAnims.overworld.plantLgBerries,movingObjectAnims.overworld.plantLg[k])
 		table.remove(movingObjectData.overworld.plantLg, k)
+		table.remove(movingObjectAnims.overworld.plantLg, k)
 	end
 	for k, v in pairs(movingObjectData.overworld.plantSmBerries) do
-		movingObjectData.overworld.plantSmBerries[k].anim = newAnimation(animsheet2, 0, 3, 16, 16, .3)
+		movingObjectAnims.overworld.plantSmBerries[k].anim = newAnimation(animsheet2, 0, 3, 16, 16, .3)
 		movingObjectData.overworld.plantSmBerries[k].trigger = 0
 		movingObjectData.overworld.plantSmBerries[k].picked = 0
 	end
 	for k, v in pairs(movingObjectData.overworld.plantLgBerries) do
-		movingObjectData.overworld.plantLgBerries[k].anim = newAnimation(animsheet2, 4*gridsize, 3, 16, 16, .3)
+		movingObjectAnims.overworld.plantLgBerries[k].anim = newAnimation(animsheet2, 4*gridsize, 3, 16, 16, .3)
 		movingObjectData.overworld.plantLgBerries[k].trigger = 0
 		movingObjectData.overworld.plantLgBerries[k].picked = 0
 	end

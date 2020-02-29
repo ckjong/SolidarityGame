@@ -191,6 +191,7 @@ function textUpdate(num, currentTbl)
 	dialogueMode = 1
 	player.canMove = 0
 	text = currentTbl.text[num]
+	addLineBreaks(166)
 	wait.n = string.len(currentTbl.text[num])
 end
 

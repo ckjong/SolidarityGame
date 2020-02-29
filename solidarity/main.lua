@@ -57,7 +57,7 @@ function love.load()
 	setTitleScreen(1)
 	music.overworld:setLooping( true )
 
-
+	movingObjectAnims = createAnimations(movingObjectData.overworld, movingObjectAnimParams)
 
 	for k, v in pairs(sfx) do
 		sfx[k]:setVolume(masterVolume * effectVolume)
@@ -209,7 +209,7 @@ function love.update(dt)
 					end
 					animUpdate(charanimations[k].act, dt, npcs[k].start)
 					if movingObjectData[currentLocation] ~= nil then
-						testNpcObject(npcs[k].start, npcs[k].grid_x, npcs[k].grid_y, movingObjectData[currentLocation], k, true)
+						testNpcObject(npcs[k].start, npcs[k].grid_x, npcs[k].grid_y, movingObjectData[currentLocation], k, true, movingObjectAnims[currentLocation])
 					end
 				else
 					animUpdate(charanimations[k].walk, dt, npcs[k].facing)
@@ -218,11 +218,11 @@ function love.update(dt)
 		end
 	end
 
-	if movingObjectData[currentLocation] ~= nil then
-		for k, v in pairs(movingObjectData[currentLocation]) do
-			for l, m in pairs(movingObjectData[currentLocation][k]) do
-				if movingObjectData[currentLocation][k][l].running == 1 then
-					animUpdate(movingObjectData[currentLocation][k], dt, l)
+	if movingObjectAnims[currentLocation] ~= nil then
+		for k, v in pairs(movingObjectAnims[currentLocation]) do
+			for l, m in pairs(movingObjectAnims[currentLocation][k]) do
+				if movingObjectAnims[currentLocation][k][l].running == 1 then
+					animUpdate(movingObjectAnims[currentLocation][k], dt, l, k)
 				end
 			end
 		end
@@ -272,7 +272,11 @@ function love.draw()
 		if movingObjectData[currentLocation] ~= nil then
 			for k, v in pairs(movingObjectData[currentLocation]) do
 				for i = 1, #movingObjectData[currentLocation][k] do
-					drawActAnims(movingObjectData[currentLocation][k], i, movingObjectData[currentLocation][k][i].x, movingObjectData[currentLocation][k][i].y)
+					if movingObjectAnims[currentLocation][k] ~= nil then
+						drawActAnims(movingObjectAnims[currentLocation][k], i, movingObjectData[currentLocation][k][i].x, movingObjectData[currentLocation][k][i].y)
+					else
+						print("movingObjectData not mirrored " .. k)
+					end
 				end
 			end
 		end
@@ -529,9 +533,11 @@ function love.keypressed(key)
 			if debugView == 1 then
 				saveMap()
 			else
-				local name = "test1"
-				createSaveFile(name)
-				print("saved game: " .. name)
+				if dialogueMode == 0 then
+					local name = "test1"
+					createSaveFile(name)
+					print("saved game: " .. name)
+				end
 			end
 		end
 

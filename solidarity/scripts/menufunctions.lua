@@ -225,15 +225,18 @@ end
 
 function addNotes(t)
   if menu.position[1] == 4 and menu.currentTab == "map1" then
-    local l = 220 -- character limit
     local i = menu.position[2]
     if menu.position[3] == 2 then
       if noteMode == 0 then
         noteMode = 1
         return
       else
-        if string.len(socialMap[i].info.notes) < l then
-          socialMap[i].info.notes = socialMap[i].info.notes .. t
+        socialMap[i].info.notes = socialMap[i].info.notes .. t
+        local width, wrappedtext = font:getWrap(socialMap[i].info.notes, 180)
+        print("lines: " .. #wrappedtext)
+        local l = #wrappedtext
+        if l >= 8 then
+          socialMap[i].info.notes = socialMap[i].info.notes:sub(1, -2)
         end
       end
     end
@@ -326,6 +329,7 @@ function saveGameData()
   local tbl = {}
   tbl.gameStage = gameStage
   tbl.workStage = workStage
+  tbl.dialogueStage = dialogueStage
   tbl.tempBlocks = {}
   for k, v in pairs(tempBlocks) do
     tbl.tempBlocks[k] = {}
@@ -345,13 +349,36 @@ function saveGameData()
   tbl.day = day
   tbl.uiSwitches = {bedArrow = uiSwitches.bedArrow}
   tbl.menu = {tabNum = menu.tabNum}
+  tbl.objectInventory = objectInventory
   tbl.player = {}
   for k, v in pairs(player) do
-    tbl.player[k] = player[k]
+    tbl.player[k] = v
   end
   tbl.npcs = {}
-  for i, u in pairs(npcs) do
-    tbl.npcs[i] = npcs[i]
+  for k, v in pairs(npcs) do
+    tbl.npcs[k] = v
+  end
+  tbl.socialMap = socialMap
+  tbl.movingObjectData = {}
+  tbl.movingObjectData.overworld = movingObjectData.overworld
+  -- tbl.movingObjectData = {}
+  -- for k, v in pairs(movingObjectData) do
+  --   tbl.movingObjectData[k] = {}
+  --   for l, u in pairs(movingObjectData[k]) do
+  --     tbl.movingObjectData[k][l] = {}
+  --     for i = 1, #movingObjectData[k][l] do
+  --       tbl.movingObjectData[k][l][i] = {
+  --         used = movingObjectData[k][l][i].used,
+  --         picked = movingObjectData[k][l][i].picked,
+  --         trigger = movingObjectData[k][l][i].trigger}
+  --     end
+  --   end
+  -- end
+  tbl.nonInteractiveObjects = nonInteractiveObjects
+  tbl.cutsceneControl = cutsceneControl
+  tbl.cutsceneList = {}
+  for i = 1, #cutsceneList do
+    tbl.cutsceneList[i] = {triggered = cutsceneList[i].triggered}
   end
   return tbl
 end
@@ -359,6 +386,7 @@ end
 function loadGameData(tbl)
   gameStage = tbl.gameStage
   workStage = tbl.workStage
+  dialogueStage = tbl.dialogueStage
   for k, v in pairs(tbl.tempBlocks) do
     for i = 1, #tbl.tempBlocks[k] do
       tempBlocks[k][i].on = tbl.tempBlocks[k][i].on
@@ -374,12 +402,33 @@ function loadGameData(tbl)
   day = tbl.day
   uiSwitches.bedArrow = tbl.uiSwitches.bedArrow
   menu.tabNum = tbl.menu.tabNum
+  objectInventory = tbl.objectInventory
   for k, v in pairs(tbl.player) do
     player[k] = v
   end
   for i, u in pairs(tbl.npcs) do
     npcs[i] = u
   end
+  socialMap = tbl.socialMap
+  cutsceneControl = tbl.cutsceneControl
+  movingObjectData = tbl.movingObjectData
+  movingObjectAnims = createAnimations(movingObjectData.overworld, movingObjectAnimParams)
+  nonInteractiveObjects = tbl.nonInteractiveObjects
+  for i = 1, #cutsceneList do
+    cutsceneList[i].triggered = tbl.cutsceneList[i].triggered
+    cutsceneList[i].path = {}
+    cutsceneList[i].noden = 1
+  end
+  -- for k, v in pairs(tbl.movingObjectData) do
+  --   for l, u in pairs(tbl.movingObjectData[k]) do
+  --     for i = 1, #tbl.movingObjectData[k][l] do
+  --       if movingObjectData[k][l][i] ~= nil then
+  --         movingObjectData[k][l][i].used = tbl.movingObjectData[k][l][i].used
+  --         movingObjectData[k][l][i].picked = tbl.movingObjectData[k][l][i].picked
+  --         movingObjectData[k][l][i].trigger = tbl.movingObjectData[k][l][i].trigger
+  --     end
+  --   end
+  -- end
 end
 
 function saveMapData()
@@ -410,8 +459,18 @@ end
 
 function createSaveFile(filename)
   local tbl = combineSaveTables()
-  --when saving a game:
-  love.filesystem.write(filename, bitser.dumps(tbl))
+  if love.filesystem.exists(filename) == true then
+    love.filesystem.remove(filename)
+  end
+  SaveGame = love.filesystem.newFile(filename, "w")
+  --when saving a game
+  local binary_data = bitser.dumps(tbl)
+  success, message = love.filesystem.write(filename, binary_data)
+  if success == true then
+    print("game saved")
+  else
+    print(message)
+  end
 end
 
 function loadSaveFile(filename)

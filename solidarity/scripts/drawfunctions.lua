@@ -94,6 +94,7 @@ function drawTitleScreen()
   love.graphics.printf("Instructions:\nArrow keys to move. Z to talk/interact.\nX to exit menu or speed up dialogue.\nI for inventory. R to restart.\nEsc to quit or see instructions.\n\n\nPress Z to Start", boxX, boxY + 40, menuW, "center")
 end
 
+
 --animation
 function newAnimation(image, start, length, width, height, duration, startx)
   local animation = {}
@@ -108,6 +109,57 @@ function newAnimation(image, start, length, width, height, duration, startx)
   animation.currentTime = 0
   return animation
 end
+
+function createAnimations(tbl1, tbl2) -- movingObjectData and movingObjectAnimParams
+  local tbl = {overworld = {}}
+  for k, v in pairs(tbl1) do
+    tbl.overworld[k] = {}
+    for l, m in pairs(tbl1[k]) do
+      if tbl2[k] ~= nil then
+        local p = tbl2[k]
+        tbl.overworld[k][l] = {current = 0, running = 0, count = 0}
+        if k == "plantSm" or k == "plantLg" then
+          tbl.overworld[k][l].running = 0
+          tbl.overworld[k][l].count = 0
+          tbl.overworld[k][l].loop = 1
+          tbl.overworld[k][l].anim = p
+        else
+          if k == "plantSmBerries" or k == "plantLgBerries" then
+            tbl.overworld[k][l].running = 0
+            tbl.overworld[k][l].count = 0
+            tbl.overworld[k][l].loop = 1
+            if tbl1[k][l].picked > 0 then
+              if k == "plantSmBerries" then
+                p = {animsheet2, tbl1[k][l].picked*gridsize, 3, 16, 16, .3}
+              else
+                p = {animsheet2, (tbl1[k][l].picked+4)*gridsize, 3, 16, 16, .3}
+              end
+            end
+          elseif k == "barrelSmBerries" or k == "barrelLgBerries" then
+            tbl.overworld[k][l].running = 0
+            tbl.overworld[k][l].count = 0
+            tbl.overworld[k][l].loop = 2
+          end
+          tbl.overworld[k][l].anim = newAnimation(unpack(p))
+        end
+      else
+        print("no animation params for " .. k)
+      end
+    end
+  end
+  return tbl
+end
+
+-- function createPlantData(tbl1)
+--   local tbl = {}
+--   for k, v in pairs(tbl1) do
+--     tbl[k] = {}
+--     for l, m in pairs(tbl1[k]) do
+--       tbl[k][l] = {used = 0, picked = 0, trigger = 0}
+--     end
+--   end
+--   return tbl
+-- end
 
 --control npc act animations
 
@@ -198,7 +250,7 @@ function bubbleUpdate(t, dt)
   end
 end
 
-function animUpdate(tbl, dt, k)
+function animUpdate(tbl, dt, k, l)
   if k then
     tbl[k]["anim"]["currentTime"] = tbl[k]["anim"]["currentTime"] + dt
     if tbl[k]["anim"]["currentTime"] >= tbl[k]["anim"]["duration"] then
@@ -206,7 +258,11 @@ function animUpdate(tbl, dt, k)
       if tbl[k].loop ~= 0 then
         tbl[k].count = tbl[k].count + 1
         if tbl[k].count == tbl[k].loop then
-          resetAnims(tbl, k)
+          if tbl[k].name == nil then
+            resetAnims(tbl, k, movingObjectData[currentLocation][l])
+          else
+            resetAnims(tbl, k)
+          end
           -- if actionMode == 0 then
           --   animFinish()
           -- end
@@ -221,8 +277,12 @@ function animUpdate(tbl, dt, k)
         if tbl[k].loop ~= 0 then
           tbl[k].count = tbl[k].count + 1
           if tbl[k].count == tbl[k].loop then
-            print("count:" .. tbl[k].count)
-            resetAnims(tbl, k)
+            if tbl[k].name == nil then
+              resetAnims(tbl, k, movingObjectData[currentLocation][l])
+            else
+              resetAnims(tbl, k)
+            end
+
             -- if actionMode == 0 then
             --   animFinish()
             -- end
@@ -238,35 +298,43 @@ end
 --   player.actions.index = 0
 -- end
 
-function resetAnims(tbl, k)
+function resetAnims(tbl, k, tbl2)
   if tbl[k].running == 1 then
     tbl[k].running = 0
     tbl[k].count = 0
-    if tbl[k].trigger ~= nil then
-      if tbl[k].trigger == 1 then
-        tbl[k].anim = newAnimation(animsheet2, tbl[k].picked*gridsize, 3, 16, 16, .3)
-        tbl[k].trigger = 0
-      elseif tbl[k].trigger == 2 then
-        tbl[k].anim = newAnimation(animsheet2, (tbl[k].picked+4)*gridsize, 3, 16, 16, .3)
-        tbl[k].trigger = 0
-      elseif tbl[k].trigger == 3 then
-        tbl[k]["anim"]["spriteSheet"] = animsheet3
-				tbl[k]["anim"]["quads"] = {movingObjectQuads.plantSm}
-        tbl[k].trigger = 0
-				table.insert(movingObjectData[currentLocation].plantSm, tbl[k])
-				table.remove(tbl, k)
-      elseif tbl[k].trigger == 4 then
-        tbl[k]["anim"]["spriteSheet"] = animsheet3
-        tbl[k]["anim"]["quads"] = {movingObjectQuads.plantLg}
-        tbl[k].trigger = 0
-        table.insert(movingObjectData[currentLocation].plantLg, tbl[k])
-        table.remove(tbl, k)
+    if tbl2 ~= nil then
+      if tbl2[k] ~= nil then
+        if tbl2[k].trigger ~= nil then
+          if tbl2[k].trigger == 1 then
+            print("update number of berries trigger " .. tbl2[k].trigger)
+            tbl[k].anim = newAnimation(animsheet2, tbl2[k].picked*gridsize, 3, 16, 16, .3)
+            tbl2[k].trigger = 0
+          elseif tbl2[k].trigger == 2 then
+            print("update number of berries trigger " .. tbl2[k].trigger)
+            tbl[k].anim = newAnimation(animsheet2, (tbl2[k].picked+4)*gridsize, 3, 16, 16, .3)
+            tbl2[k].trigger = 0
+          elseif tbl2[k].trigger == 3 then
+            tbl[k]["anim"]["spriteSheet"] = animsheet3
+    				tbl[k]["anim"]["quads"] = {movingObjectQuads.plantSm}
+            tbl2[k].trigger = 0
+            table.insert(movingObjectAnims[currentLocation].plantSm, tbl[k])
+    				table.insert(movingObjectData[currentLocation].plantSm, tbl2[k])
+    				table.remove(tbl, k)
+            table.remove(tbl2, k)
+          elseif tbl2[k].trigger == 4 then
+            tbl[k]["anim"]["spriteSheet"] = animsheet3
+            tbl[k]["anim"]["quads"] = {movingObjectQuads.plantLg}
+            tbl2[k].trigger = 0
+            table.insert(movingObjectAnims[currentLocation].plantLg, tbl[k])
+            table.insert(movingObjectData[currentLocation].plantLg, tbl2[k])
+            table.remove(tbl, k)
+            table.remove(tbl2, k)
+          end
+        end
       end
     end
   end
 end
-
-
 
 --render portrait
 function drawPortrait(name, x, y, sheet)
@@ -349,19 +417,23 @@ end
 
 function drawActAnims(tbl, k, x, y)
   setTintColor(time)
-  if tbl[k].running == 1 then
-    local spriteNum = math.floor(tbl[k]["anim"]["currentTime"] / tbl[k]["anim"]["duration"] * #tbl[k]["anim"]["quads"]) + 1
-    if tbl[k]["anim"]["quads"][spriteNum] ~= nil then
-      love.graphics.draw(tbl[k]["anim"]["spriteSheet"], tbl[k]["anim"]["quads"][spriteNum], x, y, 0, 1)
-    else
-      local n = 1
-      if spriteNum > #tbl[k]["anim"]["quads"] then
-        n = #tbl[k]["anim"]["quads"]
+  if tbl[k] ~= nil then
+    if tbl[k].running == 1 then
+      local spriteNum = math.floor(tbl[k]["anim"]["currentTime"] / tbl[k]["anim"]["duration"] * #tbl[k]["anim"]["quads"]) + 1
+      if tbl[k]["anim"]["quads"][spriteNum] ~= nil then
+        love.graphics.draw(tbl[k]["anim"]["spriteSheet"], tbl[k]["anim"]["quads"][spriteNum], x, y, 0, 1)
+      else
+        local n = 1
+        if spriteNum > #tbl[k]["anim"]["quads"] then
+          n = #tbl[k]["anim"]["quads"]
+        end
+        love.graphics.draw(tbl[k]["anim"]["spriteSheet"], tbl[k]["anim"]["quads"][n], x, y, 0, 1)
       end
-      love.graphics.draw(tbl[k]["anim"]["spriteSheet"], tbl[k]["anim"]["quads"][n], x, y, 0, 1)
+    elseif tbl[k].running == 0 then
+      love.graphics.draw(tbl[k]["anim"]["spriteSheet"], tbl[k]["anim"]["quads"][1], x, y, 0, 1)
     end
-  elseif tbl[k].running == 0 then
-    love.graphics.draw(tbl[k]["anim"]["spriteSheet"], tbl[k]["anim"]["quads"][1], x, y, 0, 1)
+  else
+    print("tbl[k] is nil in drawActAnims")
   end
 end
 
@@ -460,8 +532,23 @@ function drawName(nameposx, nameposy, name)
   end
 end
 
+function addLineBreaks(recwidth)
+  local w, wrappedtext = font:getWrap(text, recwidth)
+  local t = ""
+  if #wrappedtext > 1 then
+    print("add line break")
+    wrappedtext[2] = "\n" .. wrappedtext[2]
+  end
+  for i = 1, #wrappedtext do
+    t = t .. wrappedtext[i]
+  end
+  print(t)
+  text = t
+end
+
 function drawText(x, y, scalex, recwidth)
   local width = love.graphics.getWidth( )/scalex
+  local w, wrappedtext = font:getWrap(text, recwidth - 66)
   local c = text:sub(1, textn)
   if choice.mode == 1 then
     love.graphics.setColor(255, 255, 255)

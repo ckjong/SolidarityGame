@@ -84,8 +84,10 @@ function changeFacing(x1, y1, x2, y2, f)
 		print("change facing 4")
     return 4
   else
-		print("change facing f")
-    return f
+		if f ~= nil then
+			print("change facing f: " ..  f)
+    	return f
+		end
   end
 end
 

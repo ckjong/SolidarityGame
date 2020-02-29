@@ -121,28 +121,32 @@ function cutsceneStage1Talk()
     end
     --find path between npc location and target location (usually player)
     if cutsceneList[n].targetIndex ~= nil then
+      print("target index not nil")
       cutsceneList[n].path, cutsceneList[n].facing[1] = checkPaths(char, x1, y1, false, target.facing)
     else
+      print("target index nil")
       cutsceneList[n].path, cutsceneList[n].facing[1] = checkPaths(char, x1, y1, true)
     end
   end
+  print("cutscene move to stage 2")
   cutsceneControl.stage = 2
 end
 
 --walk to target
 function cutsceneStage2Talk(dt)
-  print("cutscene stage 2")
   player.canMove = 0
   keyInput = 0
 	local n = cutsceneControl.current
 	local i = cutsceneList[n].npc
 	local char = npcs[i]
   if cutsceneList[n].move == true then
+    print("cutscene move true")
     local path = cutsceneList[n].path
     local target = cutsceneList[n].target
     local x1, y1 = target.grid_x, target.grid_y
     local t = #cutsceneList[n].path
     if path then
+      print("path true")
       char.canMove = 1
       if char.act_x == char.grid_x and char.act_y == char.grid_y then
         if cutsceneList[n].noden < t then
@@ -161,14 +165,20 @@ function cutsceneStage2Talk(dt)
             char.act_y = char.grid_y
           end
         end
-     end
+      end
+    else
+      print("path false")
     end
+    -- print("char.moveDir " .. char.moveDir)
     char.moveDir, char.act_x, char.act_y = moveChar(char.moveDir, char.act_x, char.grid_x, char.act_y, char.grid_y, (char.speed *dt))
     if char.act_x == cutsceneList[n].path[t].x*gridsize and char.act_y == cutsceneList[n].path[t].y*gridsize then
       npcs[i].facing = cutsceneList[n].facing[1]
       print(npcs[i].facing)
-      target.facing = changeFacing(x1, y1, char.act_x, char.act_y, 1)
+      if cutsceneList[n].targetIndex == nil then
+        target.facing = changeFacing(x1, y1, char.act_x, char.act_y, 1)
+      end
       npcs[i].moveDir = 0
+      print("moving to cutscene 3")
       cutsceneControl.stage = 3
     end
   else
@@ -212,7 +222,7 @@ function cutsceneStage4Talk(dt)
           player.canMove = 0
           keyInput = 0
         end
-        if cutsceneList[n].facing ~= npcs[i].start then
+        if cutsceneList[n].facing[#cutsceneList[n].facing] ~= npcs[i].start then
           table.insert(cutsceneList[n].facing, npcs[i].start)
         end
         if char.act_x == char.grid_x and char.act_y == char.grid_y then
@@ -289,10 +299,10 @@ end
 
 function changeGameStage()
   local n = cutsceneControl.current
-  workStage = cutsceneList[cutsceneControl.current].workStage
+  workStage = cutsceneList[n].workStage
   if cutsceneList[n].nextStage == true then
-    if cutsceneList[cutsceneControl.current].switchTime ~= 0 then
-      changeTime(cutsceneList[cutsceneControl.current].switchTime)
+    if cutsceneList[n].switchTime ~= 0 then
+      changeTime(cutsceneList[n].switchTime)
     end
     clearMap(2)
     saveMap()
@@ -458,7 +468,6 @@ function fade(dt, a, b, r)
   if r > 0 then -- alpha going up
     if a <= b then
       a = a + r*dt
-      print("alpha " .. a)
       return a, true
     else
       fading.countdown = .5
