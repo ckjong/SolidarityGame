@@ -204,6 +204,11 @@ currentJournal = {}
   total = 3,
   tabNum = 2}
 
+  titleScreenOptions = {save = {current = 1, max = 3, nameinput = false, select = false, name = ""},
+  load = {current = 1, max = 1, name = "", select = false}}
+
+  -- save files
+  saves = {}
   -- objects that are not part of static background
   animsheet3 = love.graphics.newImage("images/solidarity_objects.png")
   movingObjectQuads = {stool = love.graphics.newQuad(0, 0, 16, 16, animsheet3:getDimensions()),
@@ -1426,7 +1431,3 @@ music ={overworld = love.audio.newSource("audio/8Bit_ghibli_1.wav")}
 masterVolume = 0.5 -- Maximum volume for all sounds
 effectVolume = 0.75
 musicVolume = 1
-
-
--- save files
-save = {total = 0, current = 0, name = ""}

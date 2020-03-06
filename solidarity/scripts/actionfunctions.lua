@@ -453,7 +453,7 @@ function printObjText(b, c)
 					choice.mode = 1
 					choice.total = 2
 					choice.type = "yesno"
-					choiceText(objectText.yesno.text, choice.pos, choice.total)
+					text = choiceText(objectText.yesno.text, choice.pos, choice.total, 1)
 					return
 				elseif choice.mode == 1 then
 					if choice.pos == 1 then

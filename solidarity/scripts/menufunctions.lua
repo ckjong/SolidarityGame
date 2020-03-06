@@ -1,5 +1,19 @@
 local bitser = require("libraries/bitser/bitser")
 
+function fillSaveTable()
+  local dir = love.filesystem.getSaveDirectory()
+  print(dir)
+  --assuming that our path is full of lovely files (it should at least contain main.lua in this case)
+  local files = love.filesystem.getDirectoryItems("")
+  for k, file in ipairs(files) do
+    local path = file
+    if love.filesystem.getRealDirectory(path) == dir then
+  	  table.insert(saves, file) --outputs something like "1. main.lua"
+      print(k .. ". " .. file)
+    end
+  end
+end
+
 function openMenu(tab)
   if dialogueMode == 0 and titleScreen == 0 then
     if menuView == 0 then
@@ -52,19 +66,27 @@ function switchTabs(key)
   end
 end
 
--- function changeMenuPosition(n1, n2, lim, amount, tbl)
---   if menu[tbl][n1] == n2 then
---     if amount > 0 then
---       if menu[tbl][n2] < lim then
---         menu[tbl][n2] = menu[tbl][n2] + amount
---       end
---     else
---       if menu[tbl][n2] > lim then
---         menu[tbl][n2] = menu[tbl][n2] + amount
---       end
---     end
---   end
--- end
+function titleSelect(key, c, m, dir)
+  local k1, k2 = "", ""
+  if dir == "h" then -- horizontal
+    k1 = "right"
+    k2 = "left"
+  elseif dir == "v" then -- vertical
+    k1 = "down"
+    k2 = "up"
+  end
+  if c < m then
+    if key == k1 then
+      c = c + 1
+    end
+  end
+  if c > 1 then
+    if key == k2 then
+      c = c - 1
+    end
+  end
+  return c
+end
 
 function inventorySelect(key, num, tab)
   print("menu.position[1] " .. menu.position[1])
@@ -277,16 +299,13 @@ function setTitleScreen(n)
   elseif n == 0 then
     player.canMove = 1
     titleScreen = 0
+    titleScreenOptions.load.select = false
+    titleScreenOptions.save.nameinput = false
     sfx.textSelect:play()
     print("title screen off")
   end
 end
 
-function saveGame(name, data)
-  f = assert(io.open(name, "w"))
-  f:write(data)
-  f:close(data)
-end
 
 function saveDialogueLogic()
   local tbl = {}
@@ -457,10 +476,34 @@ function combineSaveTables()
   return tbl
 end
 
+function inputSaveName(t)
+  if titleScreenOptions.save.nameinput == false then
+    titleScreenOptions.save.nameinput = true
+    return
+  else
+    titleScreenOptions.save.name = titleScreenOptions.save.name .. t
+  end
+end
+
+function finishSaveName(key)
+  if titleScreenOptions.save.nameinput == true then
+    if key == "backspace" then
+        titleScreenOptions.save.name = titleScreenOptions.save.name:sub(1, -2)
+    elseif key == "return" then
+      createSaveFile(titleScreenOptions.save.name)
+      titleScreenOptions.save.nameinput = false
+    elseif key == "escape" then
+      titleScreenOptions.save.nameinput = false
+    end
+  end
+end
+
 function createSaveFile(filename)
   local tbl = combineSaveTables()
   if love.filesystem.exists(filename) == true then
     love.filesystem.remove(filename)
+  else
+    table.insert(saves, filename)
   end
   SaveGame = love.filesystem.newFile(filename, "w")
   --when saving a game
@@ -468,10 +511,13 @@ function createSaveFile(filename)
   success, message = love.filesystem.write(filename, binary_data)
   if success == true then
     print("game saved")
+    titleScreenOptions.save.name = ""
+    titleScreenOptions.save.select = false
   else
     print(message)
   end
 end
+
 
 function loadSaveFile(filename)
   local tbl = {}
@@ -479,6 +525,7 @@ function loadSaveFile(filename)
   if exists == true then
     local data = love.filesystem.newFileData(filename)
     tbl = bitser.loadData(data:getPointer(), data:getSize())
+    print("file loaded")
     return tbl
   else
     print("file does not exist")
@@ -504,18 +551,9 @@ function unpackSaveTables(filename)
   end
 end
 
-function compileSaveData(name)
-  local dir = "maps"
-  local files = love.filesystem.enumerate(dir)
-  local path = {}
-  for k, file in ipairs(files) do
-    path[k] = tostring(dir .. "/" .. file)
-  end
-  local data = {love.filesystem.newFileData("scripts/dialogue")}
-  for i = 1, #path do
-    table.insert(data, path[i])
-  end
-  for i = 1, #data do
-    success, errormsg = love.filesystem.append(name, data[i])
-  end
+
+function newGame()
+  local name = "newGame"
+  local file = love.filesystem.newFile(name, "w")
+
 end

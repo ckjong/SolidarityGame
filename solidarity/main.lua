@@ -71,7 +71,10 @@ function love.load()
 	love.mouse.setVisible(false)
 	love.window.setFullscreen(false, "exclusive")
 	scale.x, scale.y = getScale()
+	fillSaveTable()
 end
+
+
 
 
 function love.update(dt)
@@ -94,7 +97,7 @@ function love.update(dt)
 		end
 	end
 
-	if menuView == 1 then
+	if menuView == 1 or titleScreen == 1 then
 		timerBlink(dt, 1)
 	end
 	--immobilize player if dialoguemode active
@@ -329,12 +332,12 @@ function love.draw()
 		--draw name of character speaking and text box
 		drawName(boxposx + 48, boxposy - 12, currentspeaker)
 
-		if dialogueMode == 1 then
-			drawPortrait(currentspeaker, boxposx-2, boxposy, portraitsheet1)
-		end
+
+		drawPortrait(currentspeaker, boxposx-2, boxposy, portraitsheet1)
+
 		love.graphics.draw(ui.textboxbottom, boxposx, boxposy - 2)
 		--draw z or arrow if more text
-		drawArrow(boxposx, boxposy, scale.y, recwidth)
+		drawArrow(boxposx, boxposy, scale.y, recwidth, choice.mode, choice.pos, choice.total)
 		--draw arrow for choices, shift text if arrow present
 		drawText(boxposx + 52, boxposy + 8, scale.x, recwidth)
 	end
@@ -357,7 +360,20 @@ function love.draw()
 	end
 
 	if titleScreen == 1 then
-		drawTitleScreen()
+		local width, height = love.graphics.getDimensions()
+		local boxX = player.act_x + gridsize/2 - menuW/2
+		local boxY = player.act_y - 48
+		local recheight = 32
+		local recwidth = 232
+		local xnudge = width/2
+		local ynudge = 1*scale.y
+		local boxposx = player.act_x + gridsize/2 - recwidth/2
+		local boxposy = player.act_y + gridsize/2 + (height/scale.y)/2 - recheight - ynudge
+		drawTitleScreen(width, height, boxX, boxY)
+		drawTitleUI(boxX + 8, boxY  + 94, titleScreenOptions.save.current, titleScreenOptions.load.current)
+		if titleScreenOptions.load.select == true then
+			drawArrow(boxposx, boxposy, scale.y, recwidth, 1, titleScreenOptions.load.current, #saves)
+		end
 	end
 
 	love.graphics.pop()
@@ -365,15 +381,18 @@ end
 
 function love.textinput(t)
   addNotes(t)
+	if titleScreen == 1 then
+		if titleScreenOptions.save.current == 3 and titleScreenOptions.save.select == true then
+			inputSaveName(t)
+		end
+	end
 end
 
 -- KEY PRESSES --
 ---------------
 function love.keypressed(key)
-	if menuView == 1 then
-		removeNotes(key)
-	end
-	if noteMode == 0 then
+
+	if noteMode == 0 and titleScreenOptions.save.nameinput == false then
 		if keyInput == 1 then
 		--- interact with objects or people
 		  if key == "z" then
@@ -393,7 +412,20 @@ function love.keypressed(key)
 						faceObject(player, player.facing, movingObjectData[currentLocation])
 						faceObject(player, player.facing, locationTriggers[currentLocation])
 					else
-						setTitleScreen(0)
+						if titleScreenOptions.save.nameinput == false then
+							if titleScreenOptions.load.select == true then
+								local filename = saves[titleScreenOptions.load.current]
+								unpackSaveTables(filename)
+								setTitleScreen(0)
+							end
+							if titleScreenOptions.save.current == 1 then
+								quitGame("restart")
+							elseif titleScreenOptions.save.current == 2 then
+								titleScreenOptions.load.select = true
+							elseif titleScreenOptions.save.current == 3 then
+								titleScreenOptions.save.select = true
+							end
+						end
 					end
 				else
 					 menuHierarchy(key)
@@ -415,6 +447,11 @@ function love.keypressed(key)
 					end
 					choiceChange(key, tbl)
 				end
+				if titleScreen == 1 then
+					if titleScreenOptions.load.select == true then
+						titleScreenOptions.load.current = titleSelect(key, titleScreenOptions.load.current, #saves, "v")
+					end
+				end
 			else
 				if menu.currentTab == "inventory" then
 					inventorySelect(key, #player.inventory, menu.currentTab)
@@ -435,6 +472,12 @@ function love.keypressed(key)
 						if menu.currentTab == "inventory" then
 							inventorySelect(key, #player.inventory, menu.currentTab)
 						end
+					end
+				end
+			else
+				if titleScreen == 1 then
+					if titleScreenOptions.save.nameinput == false and titleScreenOptions.load.select == false then
+						titleScreenOptions.save.current = titleSelect(key, titleScreenOptions.save.current, titleScreenOptions.save.max, "h") -- horizontal
 					end
 				end
 			end
@@ -487,7 +530,11 @@ function love.keypressed(key)
 						setTitleScreen(1)
 					end
 				else
-					quitGame(0)
+					if titleScreenOptions.load.select == false then
+						setTitleScreen(0)
+					else
+						titleScreenOptions.load.select = false
+					end
 				end
 			else
 				if menu.position[1] ~= 3 then
@@ -585,6 +632,12 @@ function love.keypressed(key)
 			print("gameStage: " .. gameStage)
 		end
 -- ====END CHEAT KEYS===
+	end
+	if titleScreen == 1 then
+		finishSaveName(key)
+	end
+	if menuView == 1 then
+		removeNotes(key)
 	end
 
 end

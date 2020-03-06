@@ -236,8 +236,10 @@ end
 
 
 --choice text
-function choiceText(tbl, pos, total) -- tbl = NPCdialogue[name][case], pos = choice.pos, total = choice.total
-	dialogueMode = 1
+function choiceText(tbl, pos, total, d) -- tbl = NPCdialogue[name][case], pos = choice.pos, total = choice.total
+	if d ~= nil then
+		dialogueMode = d
+	end
 	player.canMove = 0
 	local t = {}
 	local n = 1
@@ -252,7 +254,7 @@ function choiceText(tbl, pos, total) -- tbl = NPCdialogue[name][case], pos = cho
 			table.insert(t, tbl[i] .. "\n")
 		end
 	end
-	text = table.concat(t)
+	return table.concat(t)
 end
 
 function choiceChange(key, tbl)
@@ -269,7 +271,7 @@ function choiceChange(key, tbl)
 			print("choice.pos u " .. choice.pos)
 		end
 	end
-	choiceText(tbl, choice.pos, choice.total)
+	text = choiceText(tbl, choice.pos, choice.total, 1)
 end
 
 function DialogueSetup(tbl, n, index) -- iterate through npcs table, lookup text in NPCdialogue
@@ -359,7 +361,7 @@ function dialogueRun(tbl, n, i, r)
 						choice.total = #dialOpt.text
 						choice.name = name
 						choice.case = case
-						choiceText(dialOpt.text, choice.pos, choice.total) -- display dialogue options
+						text = choiceText(dialOpt.text, choice.pos, choice.total, 1) -- display dialogue options
 						choice.type = "npc"
 						return
 					elseif choice.mode == 1 then

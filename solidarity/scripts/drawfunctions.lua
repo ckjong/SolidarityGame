@@ -79,19 +79,16 @@ function drawCustomBox(x, y, tbl)
   end
 end
 
-function drawTitleScreen()
-  local width, height = love.graphics.getDimensions()
-  local boxX = player.act_x + gridsize/2 - menuW/2
-  local boxY = player.act_y - 48
+function drawTitleScreen(width, height, boxX, boxY)
   -- local textW = 16
   -- local textX = x + gridsize/2 - textW/2
   -- local textY = y-offset.y+6
-  local width, height = love.graphics.getDimensions()
   love.graphics.setColor(255, 255, 255)
   love.graphics.draw(canvasTitle, boxX, boxY)
   love.graphics.setColor(75, 37, 58)
   love.graphics.setFont( font )
-  love.graphics.printf("Instructions:\nArrow keys to move. Z to talk/interact.\nX to exit menu or speed up dialogue.\nI for inventory. R to restart.\nEsc to quit or see instructions.\n\n\nPress Z to Start", boxX, boxY + 40, menuW, "center")
+  love.graphics.printf("Instructions:\nArrow keys to move. Z to talk/interact.\nX to exit menu or speed up dialogue.\nI for inventory. R to restart.\nEsc to quit or see instructions.", boxX, boxY + 40, menuW +1, "center")
+  love.graphics.printf("New Game        Load Game        Save Game", boxX, boxY + 94, menuW +1, "center")
 end
 
 
@@ -546,26 +543,31 @@ function addLineBreaks(recwidth)
   text = t
 end
 
+function drawChoiceSelectArrow(x, y, pos, total)
+  love.graphics.setColor(255, 255, 255)
+  if total == 2 then
+    y = y + 4
+  end
+  if pos == 1 then
+    love.graphics.draw(uiSheetSm, uiQuadsSm.arrowright, x, y-3)
+  elseif pos < total then
+    love.graphics.draw(uiSheetSm, uiQuadsSm.arrowright, x, y + 5)
+  elseif pos == total then
+    if total == 2 then
+      love.graphics.draw(uiSheetSm, uiQuadsSm.arrowright, x, y + 5)
+    else
+      love.graphics.draw(uiSheetSm, uiQuadsSm.arrowright, x, y + 13)
+    end
+  end
+  return y
+end
+
 function drawText(x, y, scalex, recwidth)
   local width = love.graphics.getWidth( )/scalex
   local w, wrappedtext = font:getWrap(text, recwidth - 66)
   local c = text:sub(1, textn)
   if choice.mode == 1 then
-    love.graphics.setColor(255, 255, 255)
-    if choice.total == 2 then
-      y = y + 4
-    end
-    if choice.pos == 1 then
-        love.graphics.draw(uiSheetSm, uiQuadsSm.arrowright, x, y-3)
-    elseif choice.pos < choice.total then
-      love.graphics.draw(uiSheetSm, uiQuadsSm.arrowright, x, y + 5)
-    elseif choice.pos == choice.total then
-      if choice.total == 2 then
-        love.graphics.draw(uiSheetSm, uiQuadsSm.arrowright, x, y + 5)
-      else
-        love.graphics.draw(uiSheetSm, uiQuadsSm.arrowright, x, y + 13)
-      end
-    end
+    local y = drawChoiceSelectArrow(x, y, choice.pos, choice.total)
     love.graphics.setColor(75, 37, 58)
     love.graphics.printf(c, x+6, y-3, recwidth - 60)
   else
@@ -575,15 +577,15 @@ function drawText(x, y, scalex, recwidth)
 end
 
 
-function drawArrow(x, y, scaley, recwidth)
+function drawArrow(x, y, scaley, recwidth, mode, pos, total)
   local height = (love.graphics.getHeight( )/scaley)/2 - 6
   if timer[1].trigger == 1 then
     love.graphics.setColor(255, 255, 255)
-    if choice.mode == 1 then
-      if choice.pos < choice.total then
+    if mode == 1 then
+      if pos < total then
         love.graphics.draw(uiSheetSm, uiQuadsSm.arrowdown, x + recwidth - 12, player.act_y + height)
       end
-      if choice.pos > 1 then
+      if pos > 1 then
         love.graphics.draw(uiSheetSm, uiQuadsSm.arrowup, x + recwidth - 12, player.act_y + height - 20)
       end
     else
@@ -599,6 +601,30 @@ function drawInfo(x, y)
   love.graphics.print(currentLocation, x - 48, y - 48)
   love.graphics.print("x: " .. x/gridsize .." y: " .. y/gridsize, x - 48, y - 40)
   love.graphics.print("Current FPS: "..tostring(love.timer.getFPS( )), x - 48, y - 30)
+end
+
+function drawTitleUI(startx, starty, c, d)
+  local x = 0
+  local h = font:getHeight()
+  local recwidth = 232
+  local boxposx = player.act_x + gridsize/2 - recwidth/2
+  x = startx + (c-1)*75
+  love.graphics.setColor(255, 255, 255)
+  love.graphics.draw(uiSheetSm, uiQuadsSm.arrowright, x, starty)
+  if titleScreenOptions.save.nameinput == true then
+    love.graphics.setColor(255, 255, 255)
+    love.graphics.draw(ui.textboxbg, boxposx, starty + 16)
+    love.graphics.setColor(75, 37, 58)
+    love.graphics.print(titleScreenOptions.save.name, startx, starty + 24)
+  end
+  if titleScreenOptions.load.select == true then
+    local txt = choiceText(saves, titleScreenOptions.load.current, #saves)
+    love.graphics.setColor(255, 255, 255)
+    love.graphics.draw(ui.textboxbg, boxposx, starty + 16)
+    local y = drawChoiceSelectArrow(startx-5, starty + 25, titleScreenOptions.load.current, #saves)
+    love.graphics.setColor(75, 37, 58)
+    love.graphics.print(txt, startx, y-3)
+  end
 end
 
 
