@@ -87,7 +87,7 @@ function drawTitleScreen(width, height, boxX, boxY)
   love.graphics.draw(canvasTitle, boxX, boxY)
   love.graphics.setColor(75, 37, 58)
   love.graphics.setFont( font )
-  love.graphics.printf("Instructions:\nArrow keys to move. Z to talk/interact.\nX to exit menu or speed up dialogue.\nI for inventory. R to restart.\nEsc to quit or see instructions.", boxX, boxY + 40, menuW +1, "center")
+  love.graphics.printf("Instructions:\nArrow keys to move. Z to talk/interact.\nX to exit menu or speed up dialogue.\nI for inventory.\nEsc to close/open start menu.\nQ to quit game.", boxX, boxY + 40, menuW +1, "center")
   love.graphics.printf("New Game        Load Game        Save Game", boxX, boxY + 94, menuW +1, "center")
 end
 

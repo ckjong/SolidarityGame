@@ -69,7 +69,7 @@ function love.load()
 	-- music.overworld:play()
 
 	love.mouse.setVisible(false)
-	love.window.setFullscreen(false, "exclusive")
+	love.window.setFullscreen(true, "exclusive")
 	scale.x, scale.y = getScale()
 	fillSaveTable()
 end
@@ -543,8 +543,8 @@ function love.keypressed(key)
 			end
 		end
 
-		if key == "r" then
-			quitGame("restart")
+		if key == "q" then
+			quitGame("quit")
 		end
 
 		if key == "i" then
@@ -558,79 +558,79 @@ function love.keypressed(key)
 		end
 	-- ====CHEAT KEYS===
 	-- initiate debug/map editing mode
-	  if key == "p" then
-		 	if debugView == 0 then
-	    	debugView = 1
-			elseif debugView == 1 then
-				debugView = 0
-			end
-			if infoView == 0 then
-				infoView = 1
-			else
-				infoView = 0
-			end
-	  end
-
-	-- add block to editor
-		if key == "space" and debugView == 1 then
-			addBlock(initTable, player.grid_x, player.grid_y, 1) -- editor.lua
-		end
-
-		if key == "s" then
-			if debugView == 1 then
-				saveMap()
-			else
-				if dialogueMode == 0 then
-					local name = "test1"
-					createSaveFile(name)
-					print("saved game: " .. name)
-				end
-			end
-		end
-
-		if key == "t" then
-			local name = "test1"
-			unpackSaveTables(name)
-			print("loaded game: " .. name)
-		end
-
-
-		if key == "c" then --trigger cutscene for testing
-			if cutsceneControl.stage == 0 then
-				cutsceneControl.stage = 1
-			else
-				print("exit cutscene")
-				cutsceneControl.stage = 8
-				player.canMove = 1
-			end
-		end
-
-		if key == "1" then
-			player.energy = 100
-		end
-
-		if key == "0" then
-			player.energy = 0
-		end
-
-		if key == "6" then
-			addRemoveItem("You got 60 Plum Berries", "Plum Berries", 60, "plantSmBerries")
-		end
-
-		if key == "9" then
-			for k, v in pairs(npcs) do
-				table.insert(socialMap, npcs[k])
-				npcs[k].mapping.added = 1
-			end
-			menu.tabNum = 3
-		end
-
-		if key == "l" then
-			changeGameStage()
-			cutsceneControl.current = cutsceneControl.current + 1
-			cutsceneControl.stage = 0
-			print("gameStage: " .. gameStage)
-		end
+	--   if key == "p" then
+	-- 	 	if debugView == 0 then
+	--     	debugView = 1
+	-- 		elseif debugView == 1 then
+	-- 			debugView = 0
+	-- 		end
+	-- 		if infoView == 0 then
+	-- 			infoView = 1
+	-- 		else
+	-- 			infoView = 0
+	-- 		end
+	--   end
+	--
+	-- -- add block to editor
+	-- 	if key == "space" and debugView == 1 then
+	-- 		addBlock(initTable, player.grid_x, player.grid_y, 1) -- editor.lua
+	-- 	end
+	--
+	-- 	if key == "s" then
+	-- 		if debugView == 1 then
+	-- 			saveMap()
+	-- 		else
+	-- 			if dialogueMode == 0 then
+	-- 				local name = "test1"
+	-- 				createSaveFile(name)
+	-- 				print("saved game: " .. name)
+	-- 			end
+	-- 		end
+	-- 	end
+	--
+	-- 	if key == "t" then
+	-- 		local name = "test1"
+	-- 		unpackSaveTables(name)
+	-- 		print("loaded game: " .. name)
+	-- 	end
+	--
+	--
+	-- 	if key == "c" then --trigger cutscene for testing
+	-- 		if cutsceneControl.stage == 0 then
+	-- 			cutsceneControl.stage = 1
+	-- 		else
+	-- 			print("exit cutscene")
+	-- 			cutsceneControl.stage = 8
+	-- 			player.canMove = 1
+	-- 		end
+	-- 	end
+	--
+	-- 	if key == "1" then
+	-- 		player.energy = 100
+	-- 	end
+	--
+	-- 	if key == "0" then
+	-- 		player.energy = 0
+	-- 	end
+	--
+	-- 	if key == "6" then
+	-- 		addRemoveItem("You got 60 Plum Berries", "Plum Berries", 60, "plantSmBerries")
+	-- 	end
+	--
+	-- 	if key == "9" then
+	-- 		for k, v in pairs(npcs) do
+	-- 			table.insert(socialMap, npcs[k])
+	-- 			npcs[k].mapping.added = 1
+	-- 		end
+	-- 		menu.tabNum = 3
+	-- 	end
+	--
+	-- 	if key == "l" then
+	-- 		changeGameStage()
+	-- 		cutsceneControl.current = cutsceneControl.current + 1
+	-- 		cutsceneControl.stage = 0
+	-- 		print("gameStage: " .. gameStage)
+	-- 	end
 -- ====END CHEAT KEYS===
 	end
 	if titleScreen == 1 then

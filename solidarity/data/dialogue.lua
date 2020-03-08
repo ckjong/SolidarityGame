@@ -137,7 +137,7 @@ NPCdialogue = {
           [4] = {text = {"You must be starving too.", "I wish I had some food to share with you, like a big juicy steak.", "Not that I have any idea what steak tastes like.", "Maybe it's actually gross, and people just pretend to like it?", ".. haha I'm kidding, of course steak is good.", "It's just easier to believe it's not, you know?"},
                 logic = {next = 6, speaker = "Mint", cond = true, off = true, display = 1, spoken = 0, energy = 1}},
           [5] = {text = {"Wow, thank you! Please tell her I said thanks!"},
-                logic = {next = 6, speaker = "Mint", cond = true, off = true, display = 1, spoken = 0, energy = 1}},
+                logic = {next = 6, speaker = "Mint", cond = true, off = false, display = 1, spoken = 0, energy = 1}},
           [6] = {text = {"*yawn* Well, guess it's time for bed."},
                 logic = {next = 6, speaker = "Mint", cond = true, off = true, display = 1, spoken = 0, energy = 1, func = updateUI, par = {"bedArrow", true, "Mint"}}}
         },
@@ -365,7 +365,7 @@ NPCdialogue = {
            [4] = {text = {"*snoring* Hm, what? No I'm awake. I swear."},
                 logic = {next = 4, speaker = "Cress", cond = true, off = true, display = 1, spoken = 0, energy = 1}},
         },
-  Brier = {[1] = {text = {"Did you know there used to be a village here?", "Before the factory was built, this was the old guild hall."},
+  Brier = {[1] = {text = {"Did you know there used to be a village here?", "Before the company moved in, this was the old guild hall."},
                 logic = {next = 1, speaker = "Brier", cond = true, off = true, display = 1, spoken = 0, energy = 1}}
         },
   Agave = {[1] = {text = {"Oof, it feels good to sit down."},
@@ -532,22 +532,27 @@ NPCdialogue = {
               [7] = {text = {"We should go to bed. We have a lot of work to do tomorrow."},
                     logic = {next = 7, speaker = "Fennel", cond = true, off = true, display = 1, spoken = 0, energy = 1}},
           },
-    Mint = {[1] = {text = {"Is it just me, or is Fennel acting kind of...weird."},
-                  logic = {next = 2, speaker = "Mint", cond = true, off = false, display = 1, spoken = 0, energy = 1}}, -- say once
+    Mint = {[1] = {text = {"Finally, I can sleep."},
+                    logic = {next = 1, speaker = "Mint", cond = true, off = true, display = 1, spoken = 0, energy = 1}} -- say once
+          },
+    Cress = {[1] = {text = {"Is it just me, or is Fennel acting kind of...weird."},
+                  logic = {next = 2, speaker = "Cress", cond = true, off = false, display = 1, spoken = 0, energy = 1}}, -- say once
             [2] = {text = {"She seems fine to me.", "I agree."},
                   logic = {next = 3, offset = 2, speaker = "player", cond = true, off = false, display = 2}},
             [3] = {text = {"Hmm if you say so. Maybe I'm just imagining things."},
-                  logic = {next = 5, speaker = "Mint", cond = true, off = false, display = 1, spoken = 0, energy = 0}},
+                  logic = {next = 9, speaker = "Cress", cond = true, off = true, display = 1, spoken = 0, energy = 0}},
             [4] = {text = {"Did she tell you why she came home late last night?"},
-                  logic = {next = 5, speaker = "Mint", cond = true, off = false, display = 1, spoken = 0, energy = 0}},
+                  logic = {next = 5, speaker = "Cress", cond = true, off = false, display = 1, spoken = 0, energy = 0}},
             [5] = {text = {"No...she doesn't seem to want to talk."},
                   logic = {next = 6, speaker = "player", cond = true, off = false, display = 1, spoken = 0, energy = 0}},
-            [6] = {text = {"That's weird. It's not like her to keep secrets.", "I hope she's not in some kind of trouble.", "I heard workers are getting sick and dissappearing.", "Maybe it's just rumours but... I hope her parents are ok.", "They work in the factory, right?"},
-                  logic = {next = 7, speaker = "Mint", cond = true, off = false, display = 1, spoken = 0, energy = 0}},
-            [7] = {text = {"Yeah, they're mixers. I went to visit them with Fennel once.", "The fumes from the potions are really strong, even outside the building."},
+            [6] = {text = {"That's weird. It's not like her to keep secrets.", "I hope she's not in some kind of trouble.", "I heard workers are getting sick and dissappearing.", "Maybe it's just rumours but... I hope her parents are ok.", "They work in the potionworks compound, right?"},
+                  logic = {next = 7, speaker = "Cress", cond = true, off = false, display = 1, spoken = 0, energy = 0}},
+            [7] = {text = {"Yeah, they work the vats.", "I went to visit them with Fennel once.", "The fumes from the potions are really strong, even outside the building."},
                   logic = {next = 8, speaker = "player", cond = true, off = false, display = 1, spoken = 0, energy = 0}},
-            [8] = {text = {"I'm glad we don't work there.", "Field work is hard but at least there are trees and grass.", "I heard nothing grows near the factory...", "I guess there's not much we can do until Fennel decides to talk to us.", "We can't help if we don't know what's wrong.", "Let's hope she's feeling better tomorrow."},
-                  logic = {next = 8, speaker = "Mint", cond = true, off = true, display = 1, spoken = 0, energy = 0}},
+            [8] = {text = {"I'm glad we don't work there.", "Field work is hard but at least there are trees and grass.", "I heard nothing grows near the vats, because of the fumes.", "I guess there's not much we can do until Fennel decides to talk to us.", "We can't help if we don't know what's wrong.", "Let's hope she's feeling better tomorrow."},
+                  logic = {next = 9, speaker = "Cress", cond = true, off = true, display = 1, spoken = 0, energy = 0}},
+            [9] = {text = {"Time for bed I guess."},
+                  logic = {next = 9, speaker = "Cress", cond = true, off = true, display = 1, spoken = 0, energy = 0}},
           },
     Lotus = {[1] = {text = {"I can't wait until next week when Ms. Ani comes back."},
                     logic = {next = 2, speaker = "Lotus", cond = true, off = false, display = 1, spoken = 0, energy = 1}}, -- say once
@@ -559,7 +564,36 @@ NPCdialogue = {
                    logic = {next = 5, speaker = "Lotus", cond = true, off = true, display = 1, spoken = 0, energy = 0}},
              [5] = {text = {"Maybe I should start a Ms. Ani fan club?"},
                    logic = {next = 5, speaker = "Lotus", cond = true, off = true, display = 1, spoken = 0, energy = 0}},
-          }
+          },
+    Tarragon = {[1] = {text = {"..."},
+                    logic = {next = 1, speaker = "Tarragon", cond = true, off = true, display = 1, spoken = 0, energy = 1}} -- say once
+          },
+    Durian = {[1] = {text = {"Isn't it past your bedtime pipsqueak?"},
+                    logic = {next = 1, speaker = "Durian", cond = true, off = true, display = 1, spoken = 0, energy = 1}} -- say once
+          },
+    Robin = {[1] = {text = {"I bet she slept her way to the top.", "It's the only possible explanation."},
+                  logic = {next = 2, speaker = "Robin", cond = true, off = false, display = 1, spoken = 0, energy = 1}}, -- say once
+            [2] = {text = {"Uhh, who are you talking about?"},
+                  logic = {next = 3, speaker = "player", cond = true, off = false, display = 1, spoken = 0, energy = 0}},
+            [3] = {text = {"The compound manager, Ani, duh.", "Why else would they give her that position?", "I bet Lark could do her job twice as well in half the time."},
+                  logic = {next = 4, speaker = "Robin", cond = true, off = false, display = 1, spoken = 0, energy = 0}},
+            [4] = {text = {"Why are you always so sexist?", "Lark is a jerk.", "*say nothing*"},
+                  logic = {next = 8, offset = 4, speaker = "player", cond = true, off = false, display = 2}},
+            [5] = {text = {"Why are YOU always so sensitive?", "I'm just saying there's more qualified people.", "That's not sexist, it's just stating facts."},
+                  logic = {next = 8, speaker = "Robin", cond = true, off = true, display = 1, spoken = 0, energy = 0}},
+            [6] = {text = {"You just don't like him cause he doesn't tolerate slackers.", "If you want him to be nice maybe you should try working harder."},
+                  logic = {next = 8, speaker = "Robin", cond = true, off = true, display = 1, spoken = 0, energy = 0}},
+            [7] = {text = {"Ugh whatever, why am I even talking to you about this?", "It's not like you'd understand. You're one of *them.*", "You'd probably do the same thing if given the chance."},
+                  logic = {next = 8, speaker = "Robin", cond = true, off = true, display = 1, spoken = 0, energy = 0}},
+            [8] = {text = {"Buzz off. I'm busy."},
+                  logic = {next = 8, speaker = "Robin", cond = true, off = true, display = 1, spoken = 0, energy = 0}},
+          },
+    Brier = {[1] = {text = {"You're stilll up? Better get some sleep while you can."},
+                    logic = {next = 1, speaker = "Brier", cond = true, off = true, display = 1, spoken = 0, energy = 1}} -- say once
+          },
+    Agave = {[1] = {text = {"I wonder where all this is going to lead..."},
+                    logic = {next = 1, speaker = "Agave", cond = true, off = true, display = 1, spoken = 0, energy = 1}} -- say once
+          },
   },
 
 }
